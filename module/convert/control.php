@@ -39,7 +39,7 @@ class convert extends control
         $this->display();
     }
 
-    /**
+    /**Edit a company
      * Set configs of converter.
      *
      * This is the extrance of every system. It will call the set function of corresponding module.
