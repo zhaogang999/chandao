@@ -143,7 +143,20 @@
       <tr>
         <th><?php echo $lang->story->spec;?></th>
         <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control'");?><div class='help-block'><?php echo $lang->story->specTemplate;?></div></td>
-      </tr>  
+      </tr>
+<!--第二个需求2-->
+
+      <tr>
+        <th><?php echo $lang->story->spec2;?></th>
+        <td colspan='2'><?php echo html::textarea('spec2', $spec2, "rows='9' class='form-control'");?></td>
+      </tr>
+
+      <!--第二个需求3-->
+      <tr>
+        <th><?php echo $lang->story->spec3;?></th>
+        <td colspan='2'><?php echo html::textarea('spec3', $spec3, "rows='9' class='form-control'");?></td>
+      </tr>
+
       <?php if(strpos(",$showFields,", ',verify,') !== false):?>
       <tr>
         <th><?php echo $lang->story->verify;?></th>

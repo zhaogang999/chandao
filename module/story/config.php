@@ -19,8 +19,8 @@ $config->story->close->requiredFields  = 'closedReason';
 $config->story->review->requiredFields = 'assignedTo,reviewedBy';
 
 $config->story->editor = new stdclass();
-$config->story->editor->create   = array('id' => 'spec,verify', 'tools' => 'simpleTools');
-$config->story->editor->change   = array('id' => 'spec,verify,comment', 'tools' => 'simpleTools');
+$config->story->editor->create   = array('id' => 'spec,spec2,spec3,verify', 'tools' => 'simpleTools');
+$config->story->editor->change   = array('id' => 'spec,spec2,spec3,verify,comment', 'tools' => 'simpleTools');
 $config->story->editor->edit     = array('id' => 'comment', 'tools' => 'simpleTools');
 $config->story->editor->view     = array('id' => 'comment,lastComment', 'tools' => 'simpleTools');
 $config->story->editor->close    = array('id' => 'comment', 'tools' => 'simpleTools');
@@ -29,7 +29,7 @@ $config->story->editor->activate = array('id' => 'comment', 'tools' => 'simpleTo
 
 $config->story->list = new stdclass();
 $config->story->list->exportFields      = '
-    id, product, module, plan, source, title, spec, verify, keywords, 
+    id, product, module, plan, source, title, spec, spec2, spec3, verify, keywords, 
     pri, estimate, status, stage,
     openedBy, openedDate, assignedTo, assignedDate, mailto, 
     reviewedBy, reviewedDate, 

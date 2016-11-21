@@ -77,7 +77,12 @@
     <div class='main'>
       <fieldset>
         <legend><?php echo $lang->story->legendSpec;?></legend>
+        <legend><?php echo $lang->story->legendSpec1;?></legend>
         <div class='article-content'><?php echo $story->spec;?></div>
+        <legend><?php echo $lang->story->legendSpec2;?></legend>
+        <div class='article-content'><?php echo $story->spec2;?></div>
+        <legend><?php echo $lang->story->legendSpec3;?></legend>
+        <div class='article-content'><?php echo $story->spec3;?></div>
       </fieldset>
       <fieldset>
         <legend><?php echo $lang->story->legendVerify;?></legend>
