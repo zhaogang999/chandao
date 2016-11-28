@@ -4,6 +4,7 @@ class mytask extends task
 {
     public function import($projectID)
     {
+
         if($_FILES)
         {
             $file = $this->loadModel('file')->getUpload('file');
@@ -12,7 +13,8 @@ class mytask extends task
 
             $file = $this->file->savePath . $file['pathname'];
             $phpExcel  = $this->app->loadClass('phpexcel');
-            $phpReader = new PHPExcel_Reader_Excel2007(); 
+            $phpReader = new PHPExcel_Reader_Excel2007();
+
             if(!$phpReader->canRead($file))
             { 
                 $phpReader = new PHPExcel_Reader_Excel5(); 

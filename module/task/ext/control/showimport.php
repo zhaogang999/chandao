@@ -6,6 +6,7 @@ class mytask extends task
     {
         if($_POST)
         {
+            //var_dump($_POST);die;
             $this->task->createFromImport($projectID);
             die(js::locate($this->createLink('project','task', "projectID=$projectID"), 'parent'));
         }
@@ -23,13 +24,13 @@ class mytask extends task
         }
 
         $phpExcel  = $this->app->loadClass('phpexcel');
-        $phpReader = new PHPExcel_Reader_Excel2007(); 
+        $phpReader = new PHPExcel_Reader_Excel2007();
         if(!$phpReader->canRead($file)) $phpReader = new PHPExcel_Reader_Excel5(); 
 
         $phpExcel     = $phpReader->load($file);
-        $currentSheet = $phpExcel->getSheet(0); 
-        $allRows      = $currentSheet->getHighestRow(); 
-        $allColumns   = $currentSheet->getHighestColumn(); 
+        $currentSheet = $phpExcel->getSheet(0);
+        $allRows      = $currentSheet->getHighestRow();
+        $allColumns   = $currentSheet->getHighestColumn();
         $allColumns++;
         $currentColumn = 'A';
         while($currentColumn != $allColumns)
@@ -59,6 +60,7 @@ class mytask extends task
 
                 // check empty data.
                 $requiredFields = explode(',', $taskConfig->create->requiredFields);
+
                 if(in_array($field, $requiredFields) and empty($cellValue))
                 {
                     $ignoreRow = true;
