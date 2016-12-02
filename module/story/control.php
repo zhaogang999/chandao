@@ -1323,7 +1323,7 @@ class story extends control
             $storyLang   = $this->lang->story;
             $storyConfig = $this->config->story;
 
-            /* Create field lists. */
+            /* Create field lists. 导出字段列表*/
             $fields = $this->post->exportFields ? $this->post->exportFields : explode(',', $storyConfig->list->exportFields);
 
             foreach($fields as $key => $fieldName)
@@ -1505,7 +1505,6 @@ class story extends control
             $this->post->set('rows', $stories);
             $this->post->set('kind', 'story');
             $this->fetch('file', 'export2' . $this->post->fileType, $_POST);
-            //var_dump($this->fetch('file', 'export2' . $this->post->fileType, $_POST));die;
         }
 
         $this->view->allExportFields = $this->config->story->list->exportFields;

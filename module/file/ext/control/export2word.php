@@ -23,7 +23,7 @@ class myfile extends file
     {
         $this->app->loadClass('pclzip', true);
         $this->zfile  = $this->app->loadClass('zfile');
-        $this->fields = $this->post->fields;
+        $this->fields = $this->post->fields;//字段和字段名称对应
         $this->rows   = $this->post->rows;
         $this->relsID[6] = '';
 
@@ -35,10 +35,11 @@ class myfile extends file
 
         // post content: kind(string), exportFields(array), fields(array), rows(array), tableName(string), style(array), header(array).
         $this->kind         = $this->post->kind;
+        //导出字段
         $this->exportFields = isset($this->config->word->{$this->kind}->exportFields) ? $this->config->word->{$this->kind}->exportFields : '';
         $this->rowKey       = array();
         if(!empty($_POST['exprotFields'])) $this->exportFields = $this->post->exportFields;
-        $this->fields['files'] = $this->lang->word->fileField;
+        $this->fields['files'] = $this->lang->word->fileField;//附件
 
         $this->host = common::getSysURL();
     }
@@ -59,6 +60,7 @@ class myfile extends file
 
         $tableName  = (empty($_POST['tableName'])) ? (isset($this->config->word->tableName->{$this->kind}) ? $this->config->word->tableName->{$this->kind} : '') : $this->post->tableName;
         if(empty($tableName)) die(js::alert($this->lang->word->notice->noexport));
+        //模块信息
         $modules = $this->dao->select('t2.id, t2.path, t2.name, t2.parent, t2.grade, t1.id as kindID, t2.order')->from($this->config->word->tableName->{$this->kind})->alias('t1')
             ->leftJoin(TABLE_MODULE)->alias('t2')->on('t1.module=t2.id')
             ->where('t1.id')->in(array_keys($this->rows))
@@ -68,6 +70,7 @@ class myfile extends file
         $path   = '';
         $idList = array();
         foreach($modules as $module)$path .= ",{$module->path},";
+
         foreach(explode(',', $path) as $moduleID)
         {
             if(empty($moduleID)) continue;
@@ -85,14 +88,15 @@ class myfile extends file
         {
             if(!isset($treeMenu[$module->parent]) or !in_array($module->id, $treeMenu[$module->parent])) $treeMenu[$module->parent][] = $module->id;
         }
+        //$rowKey：模块id，需求id和对应的模块名称
         foreach($modules as $id => $module) $rowKey[(int)$module->id][$id] = empty($module->name) ? '/' : $module->name;
 
         if(!isset($rowKey[0]))  unset($treeMenu[0][0]);
         if(empty($treeMenu[0])) unset($treeMenu[0]);
         reset($treeMenu);
 
-        $this->treeMenu = $treeMenu;
-        $this->modules  = $allModules;
+        $this->treeMenu = $treeMenu;//模块id
+        $this->modules  = $allModules;//模块信息
         $this->rowKey   = $rowKey;
 
         if($headerName)
@@ -105,7 +109,7 @@ class myfile extends file
             $this->wordContent .= '</w:p>';
         }
 
-        $order = 1;
+        $order = 1;//word模块标题编号
         foreach($treeMenu as $moduleID => $modules)
         {
             if(!isset($this->treeMenu[$moduleID])) continue;
@@ -160,8 +164,10 @@ class myfile extends file
         if(isset($this->treeMenu[$module]) and $module != 0)
         {
             $order = $this->createTitle($module, $step, $order);
+
             foreach($this->treeMenu[$module] as $childModule)
             {
+
                 $order = $this->getNextOrder($order, $step + 1);
                 $this->createWord($childModule, $step + 1, $order);
             }
@@ -169,6 +175,7 @@ class myfile extends file
         }
         else
         {
+        //执行else
             $this->createTitle($module, $step, $order);
         }
     }
@@ -192,14 +199,26 @@ class myfile extends file
         {
             $moduleName = $this->modules[$moduleID]->name;
         }
+        //模块标题
         $this->addTitle($order . " " . $moduleName . "（#{$moduleID}）", $step);
         if(isset($this->rowKey[$moduleID]))
         {
             ksort($this->rowKey[$moduleID]);
+            /*$this->rowKey数据格式
+             * array(1) {
+                  [7]=>
+                  array(2) {
+                    [7]=>
+                    string(12) "关于我们"
+                    [33]=>
+                    string(12) "关于我们"
+                    }
+               }*/
             foreach($this->rowKey[$moduleID] as $rowID => $moduleName)
             {
-                $order = $this->getNextOrder($order, $step + 1);
-                $this->createContent($rowID, $step + 1, $order);
+                $order = $this->getNextOrder($order, $step + 1);//1,3  $order = 1.1
+                //获得所属模块的需求内容
+                $this->createContent($rowID, $step + 1, $order);//33,3,1.1  $rowID 需求id
             }
         }
 
@@ -207,7 +226,7 @@ class myfile extends file
     }
 
     /**
-     * Create content 
+     * Create content 需求内容
      * 
      * @param  int    $contentID 
      * @param  int    $step 
@@ -218,26 +237,38 @@ class myfile extends file
     public function createContent($contentID, $step, $order)
     {
         if(!isset($this->rows[$contentID])) return false;
-        $content  = $this->rows[$contentID];
+        $content  = $this->rows[$contentID];//输出内容
         $filePath = $this->config->word->filePath;
+        $number = 1;
         foreach($this->exportFields as $exportField)
         {
+
             $fieldName = $exportField;
+
             $style =isset($_POST['style'][$exportField]) ? $_POST['style'][$exportField] : (isset($this->config->word->{$this->kind}->style[$exportField]) ? $this->config->word->{$this->kind}->style[$exportField] : '');
 
-            if($style == 'title')
+            if($style == 'title')//需求标题
             {
                 $fieldContent = $order . ' ' . $content->$fieldName . "（#{$contentID}）";
-                $this->addTitle($fieldContent, $step);
+                $this->addTitle($fieldContent, $step);//,3
             }
             elseif($style == 'showImage')
             {
-                $this->addText($this->fields[$fieldName] . ":", array('font-weight' => 'bold'));
+                //不用addText(),用addTitle();start
+                //$this->addText($this->fields[$fieldName] . ":", array('font-weight' => 'bold'));
+                if (!in_array($fieldName,$this->config->word->story->sonTitle))
+                {
+                    $order = $this->getNextOrder($order, $step + 1);
+                    $this->addTitle($order . ' ' .$this->fields[$fieldName] . ":", $step+1);
+                }else{
+                    $sonNumber = $order . '.' .$number++;
+                    $this->addTitle($sonNumber . ' ' .$this->fields[$fieldName] . ":", $step+2);
+                }
+                //end
                 /* Change the tag of u em and stong to span. */
                 $search       = array('<u>', '</u>', '<em>', '</em>', '<strong>', '</strong>', '<b>', '</b>', '&nbsp;');
                 $replace      = array('<span style="text-decoration:underline">', '</span>', '<span style="font-style:italic">', '</span>', '<span style="font-weight:bold;">', '</span>', '<span style="font-weight:bold;">', '</span>', ' ');
-                $fieldContent = preg_replace_callback('/<img .*src=([\"|\'])(.+)\\1 .*\/?>/U', 'checkFileExist', $content->$fieldName);
-
+                $fieldContent = preg_replace_callback('/<img .*src=([\"|\'])(.+)\\1 .*\/?>/U', 'checkFileExist', $content->$fieldName);//$fieldContent 字段内容
                 $fieldContent = str_replace($search, $replace, $fieldContent);
                 $fieldContent = str_replace(array("</li>", '</tr>', '<br />', '</p>'), "\n", $fieldContent);
                 $fieldContent = preg_replace(array('/<h\d>/', '/<\/h\d>/'), array('', "\n"), $fieldContent);
@@ -251,20 +282,23 @@ class myfile extends file
                     $this->wordContent .= '</w:p>';
                 }
             }
-            elseif($fieldName == 'files')
+            elseif($fieldName == 'files')//附件
             {
                 $this->formatFiles($content);
             }
             else
             {
                 $this->wordContent .= '<w:p><w:pPr><w:rPr><w:rFonts w:hint="eastAsia"/><w:lang w:val="en-US" w:eastAsia="zh-CN"/></w:rPr></w:pPr>';
+                //增加字段名称
                 $this->addText($this->fields[$fieldName] . "：", array('font-weight' => 'bold'), true);
+                //增加字段内容
                 $this->addText($content->$fieldName, array(), true);
                 $this->wordContent .= '</w:p>';
             }
         }
         $detailLink = substr($this->server->http_referer, 0, strpos($this->server->http_referer, '/', 10)) . $this->createLink($this->kind, 'view', "id=$contentID");
         $this->wordContent .= '<w:p><w:pPr><w:rPr><w:rFonts w:hint="eastAsia"/><w:lang w:val="en-US" w:eastAsia="zh-CN"/></w:rPr></w:pPr>';
+        //增加‘更多点击’
         $this->addText($this->lang->word->more . '：',  array('font-weight' => 'bold'), true);
         $this->addLink($detailLink, $detailLink, array('color'=>'0000FF'), true);
         $this->wordContent .= '</w:p>';
@@ -284,6 +318,7 @@ class myfile extends file
         $this->addText($this->fields['files'] . ':', array('font-weight' => 'bold'));
         $filePath     = $this->config->word->filePath;
         $fieldContent = explode('<br />', $content->files);
+
         foreach($fieldContent as $linkHtml)
         {
             if(empty($linkHtml)) continue;
@@ -317,6 +352,7 @@ class myfile extends file
     {
         if($step == 1) return 0;
         $orders = explode('.', $order);
+
         if(count($orders) + 1 == $step -1)
         {
             $order .= '.1';
@@ -345,7 +381,6 @@ class myfile extends file
         $this->wordContent .= "<w:rPr><w:rFonts w:hint='eastAsia'/><w:lang w:val='en-US' w:eastAsia='zh-CN'/></w:rPr></w:pPr>";
         $this->pauseHtmlTag($text);
         $this->wordContent .= '</w:p>';
-
     }
 
     /**
@@ -360,6 +395,7 @@ class myfile extends file
         $out = array();
         preg_match_all('/(<br ?\/?>)/U', $text, $out);
         $splitByBR = preg_split("/<br ?\/?>/U", $text);
+
         if($out[0])
         {
             foreach($splitByBR as $i => $content)
@@ -375,6 +411,7 @@ class myfile extends file
         $out = array();
         preg_match_all("/<img .*src=([\"|\'])(.*)\\1 .*\/?>/U", $text, $out);
         $splitByIMG = preg_split("/<img .*src=([\"|\'])(.*)\\1 .*\/?>/U", $text);
+
         if($out[0])
         {
             foreach($splitByIMG as $i => $content)
@@ -392,6 +429,7 @@ class myfile extends file
         $splitByA = preg_split("/<a .*href=([\"|\'])(.*)\\1.*>(.*)<\/a>/U", $text);
         if($out[0])
         {
+
             foreach($splitByA as $i => $content)
             {
                 if($content) $this->pauseHtmlTag($content);
@@ -407,7 +445,7 @@ class myfile extends file
     }
 
     /**
-     * Add text 
+     * Add text
      * 
      * @param  string    $text 
      * @param  array  $styles 
@@ -420,6 +458,7 @@ class myfile extends file
         $out = array();
         preg_match_all("/<span .*style=([\"|\'])(.*)\\1>(.*)<\/span>/U", $text, $out);
         $noTags = preg_split("/<span .*style=([\"|\'])(.*)\\1>(.*)<\/span>/U", $text);
+
         if($out[2])
         {
             foreach($out[2] as $i => $styles)
@@ -578,16 +617,16 @@ class myfile extends file
     }
         
     /** 
-     * Set doc props 
+     * Set doc props 配置文档信息
      *  
      * @access public 
      * @return void 
      */
     public function setDocProps($header)
     {
-        $title      = $header ? $header->name : $this->post->kind;
+        $title      = $header ? $header->name : $this->post->kind;//标题
         $coreFile   = file_get_contents($this->exportPath . 'docProps/core.xml');
-        $createDate = date('Y-m-d') . 'T' . date('H:i:s') . 'Z';
+        $createDate = date('Y-m-d') . 'T' . date('H:i:s') . 'Z';//创建时间
         $account    = $this->app->user->account;
         $coreFile   = sprintf($coreFile, $createDate, $account, $account, $createDate, $title);
         file_put_contents($this->exportPath . 'docProps/core.xml', $coreFile);

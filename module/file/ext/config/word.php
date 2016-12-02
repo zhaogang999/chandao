@@ -17,7 +17,12 @@ $config->word->story->style['title']  = 'title';
 $config->word->story->style['spec']   = 'showImage';
 $config->word->story->style['spec2']   = 'showImage';
 $config->word->story->style['spec3']   = 'showImage';
+
 $config->word->story->style['verify'] = 'showImage';
+
+//控制需求描述拆分为子目录，有次配置则为标题4
+$config->word->story->sonTitle[] = 'spec2';
+$config->word->story->sonTitle[] = 'spec3';
 
 $config->word->tableName        = new stdclass();
 $config->word->tableName->story = TABLE_STORY;
