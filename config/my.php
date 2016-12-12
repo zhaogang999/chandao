@@ -10,3 +10,12 @@ $config->db->password    = 'root';
 $config->db->prefix      = 'zt_';
 $config->webRoot         = getWebRoot();
 $config->default->lang   = 'zh-cn';
+
+define('TABLE_REVIEW',         '`' . $config->db->prefix . 'review`');
+define('TABLE_REVIEWDETAIL',    '`' . $config->db->prefix . 'reviewDetail`');
+
+$config->objectTables['review']         = TABLE_REVIEW;
+$config->objectTables['reviewDetail']   = TABLE_REVIEWDETAIL;
+
+$config->file->maxSize = 1024 * 1024 * 1024;
+$config->timeout       = 60000;

@@ -1,0 +1,433 @@
+<?php
+/**
+ * Update a task.
+ *
+ * @param  int    $taskID
+ * @access public
+ * @return void
+ */
+public function update($taskID)
+{
+    //新增
+    $reviewDetail = array();
+    $taskDetail = '';
+    $review = '';
+    $emptyReview = '';
+    $emptyReviewDetail = '';
+    $reviewDetailChanges = array();
+    $changes = array();
+
+    $emptyReviewDetail->reviewID = '';
+    $emptyReviewDetail->number = '';
+    $emptyReviewDetail->reviewer = '';
+    $emptyReviewDetail->item = '';
+    $emptyReviewDetail->line = '';
+    $emptyReviewDetail->severity = '';
+    $emptyReviewDetail->description = '';
+    $emptyReviewDetail->proposal = '';
+    $emptyReviewDetail->changed = '';
+    $emptyReviewDetail->action = '';
+    $emptyReviewDetail->chkd = '';
+
+    $oldTask = $this->getById($taskID);
+    if(isset($_POST['lastEditedDate']) and $oldTask->lastEditedDate != $this->post->lastEditedDate)
+    {
+        dao::$errors[] = $this->lang->error->editedByOther;
+        return false;
+    }
+
+    $now  = helper::now();
+    $task = fixer::input('post')
+        ->setDefault('story, estimate, left, consumed', 0)
+        ->setDefault('deadline', '0000-00-00')
+        ->setIF($this->post->story != false and $this->post->story != $oldTask->story, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
+
+        ->setIF($this->post->status == 'done', 'left', 0)
+        ->setIF($this->post->status == 'done'   and !$this->post->finishedBy,   'finishedBy',   $this->app->user->account)
+        ->setIF($this->post->status == 'done'   and !$this->post->finishedDate, 'finishedDate', $now)
+
+        ->setIF($this->post->status == 'cancel' and !$this->post->canceledBy,   'canceledBy',   $this->app->user->account)
+        ->setIF($this->post->status == 'cancel' and !$this->post->canceledDate, 'canceledDate', $now)
+        ->setIF($this->post->status == 'cancel', 'assignedTo',   $oldTask->openedBy)
+        ->setIF($this->post->status == 'cancel', 'assignedDate', $now)
+
+        ->setIF($this->post->status == 'closed' and !$this->post->closedBy,     'closedBy',     $this->app->user->account)
+        ->setIF($this->post->status == 'closed' and !$this->post->closedDate,   'closedDate',   $now)
+        ->setIF($this->post->consumed > 0 and $this->post->left > 0 and $this->post->status == 'wait', 'status', 'doing')
+
+        ->setIF($this->post->assignedTo != $oldTask->assignedTo, 'assignedDate', $now)
+
+        ->setIF($this->post->status == 'wait' and $this->post->left == $oldTask->left and $this->post->consumed == 0, 'left', $this->post->estimate)
+
+        ->add('lastEditedBy',   $this->app->user->account)
+        ->add('lastEditedDate', $now)
+        ->stripTags($this->config->task->editor->edit['id'], $this->config->allowedTags)
+        ->join('mailto', ',')
+        ->remove('comment,files,labels,uid')
+        ->get();
+
+    if($task->consumed < $oldTask->consumed)
+    {
+        die(js::error($this->lang->task->error->consumedSmall));
+    }
+    elseif($task->consumed != $oldTask->consumed or $task->left != $oldTask->left)
+    {
+        $estimate = new stdClass();
+        $estimate->consumed = $task->consumed - $oldTask->consumed;
+        $estimate->left     = $task->left;
+        $estimate->task     = $taskID;
+        $estimate->account  = $this->app->user->account;
+        $estimate->date     = helper::now();
+        $this->addTaskEstimate($estimate);
+    }
+
+    $task = $this->loadModel('file')->processEditor($task, $this->config->task->editor->edit['id'], $this->post->uid);
+    //var_dump($task);die;
+    if ($task->type == 'review' && $task->status == 'done')
+    {
+        //任务数据新增
+        $taskDetail->module = $task->module;
+        $taskDetail->type = $task->type;
+        $taskDetail->story = $task->story;
+        $taskDetail->color = $task->color;
+        $taskDetail->name = $task->name;
+        $taskDetail->pri = $task->pri;
+        $taskDetail->estimate = $task->estimate;
+        $taskDetail->desc = $task->desc;
+        $taskDetail->estStarted = $task->estStarted;
+        $taskDetail->deadline = $task->deadline;
+        $taskDetail->mailto = $task->mailto;
+        $taskDetail->project = $task->project;
+        $taskDetail->left = $task->left;
+        $taskDetail->status = $task->status;
+        if ($this->post->story != false and $this->post->story != $oldTask->story)
+        {
+            $taskDetail->storyVersion = $task->storyVersion;
+        }
+        //$taskDetail->openedBy = $task->openedBy;
+        //$taskDetail->openedDate = $task->openedDate;
+        $taskDetail->assignedTo = $task->assignedTo;
+        $taskDetail->assignedDate = $task->assignedDate;
+        $taskDetail->consumed = $task->consumed;
+        $taskDetail->realStarted = $task->realStarted;
+        $taskDetail->finishedBy = $task->finishedBy;
+        $taskDetail->finishedDate = $task->finishedDate;
+        $taskDetail->canceledBy = $task->canceledBy;
+        $taskDetail->canceledDate = $task->canceledDate;
+        $taskDetail->closedBy = $task->closedBy;
+        $taskDetail->closedReason = $task->closedReason;
+        $taskDetail->closedDate = $task->closedDate;
+        $taskDetail->lastEditedBy = $task->lastEditedBy;
+        $taskDetail->lastEditedDate = $task->lastEditedDate;
+
+        $review->fileNO = $task->fileNO;
+        $review->recorder = $task->recorder;
+        $review->reviewName = $task->reviewName;
+        $review->task = $taskID;
+        $review->doc = $task->doc;
+        $review->referenceDoc = $task->referenceDoc;
+        $review->reference = $task->reference;
+        $review->pages = $task->pages;
+        $review->reviewers = $task->reviewers;
+        $review->reviewDate = $task->reviewDate;
+        $review->reviewScope = $task->reviewScope;
+        $review->reviewPlace = $task->reviewPlace;
+        $review->effort = $task->effort;
+        $review->conclusion = $task->conclusion;
+
+        $reviewType = $this->dao->select('*')
+            ->from(TABLE_REVIEW)
+            ->where('task')
+            ->eq("$taskID")
+            ->fetch();
+        if ($reviewType)
+        {
+            //var_dump($task);die;
+            //编辑评审
+            $oldReview = $this->dao->select('*')
+                ->from(TABLE_REVIEW)
+                ->where('id')
+                ->eq("$task->reviewID")
+                ->fetch();
+            //var_dump($oldReview);die;
+            //1.task
+            $this->dao->begin();
+            $this->dao->update(TABLE_TASK)->data($taskDetail)
+                ->autoCheck()
+                ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+                ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
+                ->checkIF($taskDetail->left     != false, 'left',     'float')
+                ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
+                ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
+
+                ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+                ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
+                ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
+                ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+                ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
+                ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+                ->where('id')->eq((int)$taskID)->exec();
+
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+            //2.review
+            $review->id = $task->reviewID;
+
+            $this->dao->update(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->where('id')->eq($review->id)->limit(1)->exec();
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+
+            //3.reviewDetail
+            $reviewIDs = $this->dao->select('id')
+                ->from(TABLE_REVIEWDETAIL)
+                ->where('reviewID')->eq($task->reviewID)
+                ->andWhere('deleted')->eq('0')
+                ->fetchAll();
+
+            $num = count($task->number);
+            for ($i = 0; $i < $num; $i++)
+            {
+                $reviewDetail["$i"]->id = $task->id["$i"];
+                $reviewDetail["$i"]->reviewID = $task->reviewID;
+                $reviewDetail["$i"]->number = $task->number["$i"];
+                $reviewDetail["$i"]->reviewer = $task->reviewer["$i"];
+                $reviewDetail["$i"]->item = $task->item["$i"];
+                $reviewDetail["$i"]->line = $task->line["$i"];
+                $reviewDetail["$i"]->severity = $task->severity["$i"];
+                $reviewDetail["$i"]->description = $task->description["$i"];
+                $reviewDetail["$i"]->proposal = $task->proposal["$i"];
+                $reviewDetail["$i"]->changed = $task->changed["$i"];
+                $reviewDetail["$i"]->action = $task->action["$i"];
+                $reviewDetail["$i"]->chkd = $task->chkd["$i"];
+                //过滤空记录
+                if ($reviewDetail["$i"]->description == '')
+                {
+                    continue;
+                }
+                $oldreViewDetail = $this->dao->select('*')
+                    ->from(TABLE_REVIEWDETAIL)
+                    ->where('id')->eq($reviewDetail["$i"]->id)
+                    ->andWhere('deleted')->eq('0')
+                    ->fetch();
+                //新增评审详情
+                if ($reviewDetail["$i"]->id == '')
+                {
+                    unset($reviewDetail["$i"]->id);
+
+                    $this->dao->insert(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
+                        ->autoCheck()
+                        ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                        ->exec();
+                    if (!dao::isError()) {
+                        //$reviewDetail["$i"]->id = $this->dao->lastInsertID();
+                        $emptyReviewDetail->reviewID = $task->reviewID;
+                        $reviewDetailChanges["$i"] = common::createChanges($emptyReviewDetail, $reviewDetail["$i"]);
+                    } else {
+                        $this->dao->rollback();
+                        return false;
+                    }
+                }
+                //编辑任务详情
+                else
+                {
+                    $this->dao->update(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
+                        ->autoCheck()
+                        ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                        ->where('id')->eq($reviewDetail["$i"]->id)->exec();
+                    if (!dao::isError())
+                    {
+                        $reviewDetailChanges["$i"] = common::createChanges($oldreViewDetail, $reviewDetail["$i"]);
+                    }
+                    else
+                    {
+                        $this->dao->rollback();
+                        return false;
+                    }
+                }
+                
+            }
+            //成功操作
+            $this->dao->commit();
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            $taskChange = common::createChanges($oldTask, $taskDetail);
+            $reviewChange = common::createChanges($oldReview, $review);
+            $changes = array_merge($taskChange,$reviewChange);
+            foreach($reviewDetailChanges as $reviewDetailChange)
+            {
+                $changes = array_merge($changes,$reviewDetailChange);
+            }
+            return $changes;
+        }
+        else
+        {
+            //添加评审
+            //1.task
+            //var_dump($task);die;
+            $this->dao->begin();
+            $this->dao->update(TABLE_TASK)->data($taskDetail)
+                ->autoCheck()
+                ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+                ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
+                ->checkIF($taskDetail->left     != false, 'left',     'float')
+                ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
+                ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
+
+                ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+                ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
+                ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
+                ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+                ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
+                ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+                ->where('id')->eq((int)$taskID)->exec();
+
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+
+            //2.insert review
+            $this->dao->insert(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                ->exec();
+            if (!dao::isError()) {
+                $reviewID = $this->dao->lastInsertID();
+            } else {
+                $this->dao->rollback();
+                return false;
+            }
+
+            //
+            $emptyReviewDetail->reviewID = $reviewID;
+
+            $num = count($task->number);
+            for ($i = 0; $i < $num; $i++) {
+                $reviewDetail["$i"]->reviewID = $reviewID;
+                $reviewDetail["$i"]->number = $task->number["$i"];
+                $reviewDetail["$i"]->reviewer = $task->reviewer["$i"];
+                $reviewDetail["$i"]->item = $task->item["$i"];
+                $reviewDetail["$i"]->line = $task->line["$i"];
+                $reviewDetail["$i"]->severity = $task->severity["$i"];
+                $reviewDetail["$i"]->description = $task->description["$i"];
+                $reviewDetail["$i"]->proposal = $task->proposal["$i"];
+                $reviewDetail["$i"]->changed = $task->changed["$i"];
+                $reviewDetail["$i"]->action = $task->action["$i"];
+                $reviewDetail["$i"]->chkd = $task->chkd["$i"];
+                //过滤空记录
+                if ($reviewDetail["$i"]->description == '')
+                {
+                    continue;
+                }
+                $this->dao->insert(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
+                    ->autoCheck()
+                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->exec();
+                if (!dao::isError()) {
+                    //$reviewDetail["$i"]->id = $this->dao->lastInsertID();
+                    $reviewDetailChanges["$i"] = common::createChanges($emptyReviewDetail, $reviewDetail["$i"]);
+                } else {
+                    $this->dao->rollback();
+                    return false;
+                }
+            }
+            //成功操作
+            $this->dao->commit();
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            //设置需求状态
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            //历史记录
+            $taskChange = common::createChanges($oldTask, $taskDetail);
+            //建一个空对象
+            $emptyReview->fileNO = '';
+            $emptyReview->recorder = '';
+            $emptyReview->reviewName = '';
+            $emptyReview->task = $taskID;
+            $emptyReview->doc = '';
+            $emptyReview->referenceDoc = '';
+            $emptyReview->reference = '';
+            $emptyReview->pages = '';
+            $emptyReview->reviewers = '';
+            $emptyReview->reviewDate = '';
+            $emptyReview->reviewScope = '';
+            $emptyReview->reviewPlace = '';
+            $emptyReview->effort = '';
+            $emptyReview->conclusion = '';
+            $reviewChange = common::createChanges($emptyReview, $review);
+            $changes = array_merge($taskChange,$reviewChange);
+
+
+            foreach($reviewDetailChanges as $reviewDetailChange)
+            {
+                $changes = array_merge($changes,$reviewDetailChange);
+            }
+            return $changes;
+        }
+        //return common::createChanges($oldTask, $task);
+    } else {
+        //var_dump($task);die;
+        //源代码
+        $this->dao->update(TABLE_TASK)->data($task)
+            ->autoCheck()
+            ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+            ->checkIF($task->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+            ->checkIF($task->estimate != false, 'estimate', 'float')
+            ->checkIF($task->left     != false, 'left',     'float')
+            ->checkIF($task->consumed != false, 'consumed', 'float')
+            ->checkIF($task->status != 'wait' and $task->left == 0 and $task->status != 'cancel' and $task->status != 'closed', 'status', 'equal', 'done')
+
+            ->batchCheckIF($task->status == 'wait' or $task->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+            ->checkIF($task->status == 'done', 'consumed', 'notempty')
+            ->checkIF($task->status == 'done' and $task->closedReason, 'closedReason', 'equal', 'done')
+            ->batchCheckIF($task->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+            ->checkIF($task->status == 'closed', 'closedReason', 'notempty')
+            ->batchCheckIF($task->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+            ->where('id')->eq((int)$taskID)->exec();
+
+        if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+        if(!dao::isError())
+        {
+            //die("ddd");
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            return common::createChanges($oldTask, $task);
+        }
+    }
+}
