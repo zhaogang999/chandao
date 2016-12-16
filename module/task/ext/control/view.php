@@ -20,19 +20,11 @@ class myTask extends task
                 ->where('task')
                 ->eq($taskID)
                 ->fetch();
-<<<<<<< HEAD
-=======
-            //var_dump($this->view->review);die;
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             $this->view->reviewDetails = $this->dao->select('*')
                 ->from(TABLE_REVIEWDETAIL)
                 ->where('reviewID')->eq($this->view->review->id)
                 ->andWhere('deleted')->eq('0')
                 ->fetchAll();
-<<<<<<< HEAD
-=======
-            //var_dump($this->view->reviewDetails);die;
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         }
 
         if(!$task) die(js::error($this->lang->notFound) . js::locate('back'));

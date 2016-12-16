@@ -103,12 +103,7 @@
     <div class='main'>
       <fieldset>
         <legend><?php echo $lang->story->legendSpec;?></legend>
-        <legend><?php echo $lang->story->legendSpec1;?></legend>
         <div class='article-content'><?php echo $story->spec;?></div>
-        <legend><?php echo $lang->story->legendSpec2;?></legend>
-        <div class='article-content'><?php echo $story->spec2;?></div>
-        <legend><?php echo $lang->story->legendSpec3;?></legend>
-        <div class='article-content'><?php echo $story->spec3;?></div>
       </fieldset>
       <fieldset>
         <legend><?php echo $lang->story->legendVerify;?></legend>
@@ -284,19 +279,7 @@
           <div class='tab-pane active' id='legendProjectAndTask'>
             <ul class='list-unstyled'>
             <?php
-            //产品-需求-项目任务中只显示最近关联的项目的任务信息
-            //开始
-            $projectTasks = array_shift($story->tasks);
-            foreach($projectTasks as $task)
-            {
-              if(!isset($projects[$task->project])) continue;
-              $projectName = $projects[$task->project];
-              echo "<li title='$task->name'>" . html::a($this->createLink('task', 'view', "taskID=$task->id", '', true), "#$task->id $task->name", '', "class='iframe' data-width='80%'");
-              echo html::a($this->createLink('project', 'browse', "projectID=$task->project"), $projectName, '', "class='text-muted'") . '</li>';
-            }
-            //结束
-            /*源代码
-             * foreach($story->tasks as $projectTasks)
+            foreach($story->tasks as $projectTasks)
             {
                 foreach($projectTasks as $task)
                 {
@@ -305,7 +288,7 @@
                     echo "<li title='$task->name'>" . html::a($this->createLink('task', 'view', "taskID=$task->id", '', true), "#$task->id $task->name", '', "class='iframe' data-width='80%'");
                     echo html::a($this->createLink('project', 'browse', "projectID=$task->project"), $projectName, '', "class='text-muted'") . '</li>';
                 }
-            }*/
+            }
             if(count($story->tasks) == 0)
             {
                 foreach($story->projects as $project)

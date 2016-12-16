@@ -37,24 +37,7 @@
           <?php echo html::input('name', $task->name, 'class="form-control" placeholder="' . $lang->task->name . '"');?>
         </div>
       </div>
-<<<<<<< HEAD
 
-=======
-      <fieldset class='fieldset-pure'>
-        <legend><?php echo $lang->task->desc;?></legend>
-        <div class='form-group'>
-          <?php echo html::textarea('desc', htmlspecialchars($task->desc), "rows='8' class='form-control'");?>
-        </div>
-      </fieldset>
-      <fieldset class='fieldset-pure'>
-        <legend><?php echo $lang->comment;?></legend>
-        <div class='form-group'><?php echo html::textarea('comment', '',  "rows='5' class='form-control'");?></div>
-      </fieldset>
-      <fieldset class='fieldset-pure'>
-        <legend><?php echo $lang->files;?></legend>
-        <div class='form-group'><?php echo $this->fetch('file', 'buildform');?></div>
-      </fieldset>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <!--新改-->
       <?php if($task->type == 'review' && $task->status == 'done'):?>
         <fieldset class='fieldset-pure'>
@@ -78,104 +61,54 @@
               <td><?php echo html::input('reviewName', $review->reviewName, "class='form-control minw-60px'");?></td>
               <td colspan="2">
                 <div id='mailtoGroup' class='input-group'>
-<<<<<<< HEAD
                   <span class="input-group-addon"><?php echo $lang->task->reviewDate;?></span>
                   <?php echo html::input('reviewDate', $review->reviewDate, "class='form-control form-date'");?>
-=======
-                  <span class="input-group-addon"><?php echo $lang->task->referenceDoc;?></span>
-                  <?php echo html::input('referenceDoc', $review->referenceDoc, "class='form-control minw-60px'");?>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 </div>
               </td>
             </tr>
             <tr>
-<<<<<<< HEAD
               <th><?php echo $lang->task->doc;?></th>
               <td><?php echo html::input('doc', $review->doc, "class='form-control minw-60px'");?></td>
               <td colspan="2">
                 <div id='mailtoGroup' class='input-group'>
                   <span class="input-group-addon"><?php echo $lang->task->reviewScope;?></span>
                   <?php echo html::input('reviewScope', $review->reviewScope, "class='form-control minw-60px'");?>
-=======
-              <th><?php echo $lang->task->reference;?></th>
-              <td><?php echo html::input('reference', $review->reference, "class='form-control minw-60px'");?></td>
-              <td colspan="2">
-                <div id='mailtoGroup' class='input-group'>
-                  <span class="input-group-addon"><?php echo $lang->task->pages;?></span>
-                  <?php echo html::input('pages', $review->pages, "class='form-control minw-60px'");?>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 </div>
               </td>
             </tr>
             <tr>
-<<<<<<< HEAD
               <th><?php echo $lang->task->referenceDoc;?></th>
               <td><?php echo html::input('referenceDoc', $review->referenceDoc, "class='form-control minw-60px'");?></td>
               <td colspan="2">
                 <div id='mailtoGroup' class='input-group'>
                   <span class="input-group-addon"><?php echo $lang->task->reviewPlace;?></span>
                   <?php echo html::input('reviewPlace', $review->reviewPlace, "class='form-control minw-60px'");?>
-=======
-              <th><?php echo $lang->task->reviewers;?></th>
-              <td><?php echo html::input('reviewers', $review->reviewers, "class='form-control minw-60px'");?></td>
-              <td colspan="2">
-                <div id='mailtoGroup' class='input-group'>
-                  <span class="input-group-addon"><?php echo $lang->task->reviewDate;?></span>
-                  <?php echo html::input('reviewDate', $review->reviewDate, "class='form-control form-date'");?>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 </div>
               </td>
             </tr>
             <tr>
-<<<<<<< HEAD
               <th><?php echo $lang->task->reference;?></th>
               <td><?php echo html::input('reference', $review->reference, "class='form-control minw-60px'");?></td>
               <td colspan="2">
                 <div id='mailtoGroup' class='input-group'>
                   <span class="input-group-addon"><?php echo $lang->task->effort;?></span>
                   <?php echo html::input('effort', $review->effort, "class='form-control minw-60px' placeholder='{$lang->task->minute}'");?>
-=======
-              <th><?php echo $lang->task->reviewScope;?></th>
-              <td><?php echo html::input('reviewScope', $review->reviewScope, "class='form-control minw-60px'");?></td>
-              <td colspan="2">
-                <div id='mailtoGroup' class='input-group'>
-                  <span class="input-group-addon"><?php echo $lang->task->reviewPlace;?></span>
-                  <?php echo html::input('reviewPlace', $review->reviewPlace, "class='form-control minw-60px'");?>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 </div>
               </td>
             </tr>
             <tr>
-<<<<<<< HEAD
               <th><?php echo $lang->task->pages;?></th>
               <td><?php echo html::input('pages', $review->pages, "class='form-control minw-60px'");?></td>
               <td colspan="2">
                 <div id='mailtoGroup' class='input-group'>
                   <span class="input-group-addon"><?php echo $lang->task->conclusion;?></span>
                   <?php echo html::select('conclusion', $lang->task->conclusionList, $review->conclusion, 'class=form-control');?>
-=======
-              <th><?php echo $lang->task->effort;?></th>
-              <td><?php echo html::input('effort', $review->effort, "class='form-control minw-60px' placeholder='{$lang->task->minute}'");?></td>
-              <td colspan="2">
-                <div id='mailtoGroup' class='input-group'>
-                  <span class="input-group-addon"><?php echo $lang->task->conclusion;?></span>
-                  <?php echo html::input('conclusion', $review->conclusion, "class='form-control minw-60px'");?>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 </div>
               </td>
             </tr>
             <tr>
-<<<<<<< HEAD
               <th><?php echo $lang->task->reviewers;?></th>
               <td colspan="2"><?php echo html::input('reviewers', $review->reviewers, "class='form-control minw-60px'");?></td>
-=======
-              <th><?php echo $lang->task->doc;?></th>
-              <td><?php echo html::input('doc', $review->doc, "class='form-control minw-60px'");?></td>
-              <td colspan="2">
-                <div id='mailtoGroup' class='input-group'>
-                </div>
-              </td>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             </tr>
           </table>
         </fieldset>
@@ -208,17 +141,10 @@
                 <td><?php echo html::input('item[]', '', "class='form-control'");?></td>
                 <td><?php echo html::input('line[]', '', "class='form-control'");?></td>
                 <td><?php echo html::select('severity[]', $lang->task->severityList, $reviewDetail->severity, 'class=form-control');?></td>
-<<<<<<< HEAD
                 <td><?php echo html::textarea('description[]', '', "class='form-control' rows= '1'");?></td>
                 <td><?php echo html::textarea('proposal[]', '', "class='form-control' rows= '1'");?></td>
                 <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
                 <td><?php echo html::textarea('action[]', '', "class='form-control' rows= '1'");?></td>
-=======
-                <td><?php echo html::textarea('description[]', '', "class='form-control'");?></td>
-                <td><?php echo html::textarea('proposal[]', '', "class='form-control'");?></td>
-                <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
-                <td><?php echo html::textarea('action[]', '', "class='form-control'");?></td>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 <td><?php echo html::select('chkd[]', $lang->task->chkdList, $reviewDetail->chkd, 'class=form-control');?></td>
                 <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
                 <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
@@ -234,17 +160,10 @@
                   <td><?php echo html::input('item[]', $reviewDetail->item, "class='form-control'");?></td>
                   <td><?php echo html::input('line[]', $reviewDetail->line, "class='form-control'");?></td>
                   <td><?php echo html::select('severity[]', $lang->task->severityList, $reviewDetail->severity, 'class=form-control');?></td>
-<<<<<<< HEAD
                   <td><?php echo html::textarea('description[]', $reviewDetail->description, "class='form-control' rows= '1'");?></td>
                   <td><?php echo html::textarea('proposal[]', $reviewDetail->proposal, "class='form-control' rows= '1'");?></td>
                   <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
                   <td><?php echo html::textarea('action[]', $reviewDetail->action, "class='form-control' rows= '1'");?></td>
-=======
-                  <td><?php echo html::textarea('description[]', $reviewDetail->description, "class='form-control'");?></td>
-                  <td><?php echo html::textarea('proposal[]', $reviewDetail->proposal, "class='form-control'");?></td>
-                  <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
-                  <td><?php echo html::textarea('action[]', $reviewDetail->action, "class='form-control'");?></td>
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                   <td><?php echo html::select('chkd[]', $lang->task->chkdList, $reviewDetail->chkd, 'class=form-control');?></td>
                   <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
                   <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
@@ -255,7 +174,6 @@
         </fieldset>
       <?php endif;?>
 
-<<<<<<< HEAD
       <fieldset class='fieldset-pure'>
         <legend><?php echo $lang->files;?></legend>
         <div class='form-group'><?php echo $this->fetch('file', 'buildform');?></div>
@@ -271,8 +189,6 @@
         <div class='form-group'><?php echo html::textarea('comment', '',  "rows='5' class='form-control'");?></div>
       </fieldset>
 
-=======
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <div class='actions actions-form'>
         <?php echo html::hidden('lastEditedDate', $task->lastEditedDate);?>
         <?php echo html::submitButton($lang->save) . html::linkButton($lang->goback, $this->inlink('view', "taskID=$task->id")) .html::hidden('consumed', $task->consumed);?>

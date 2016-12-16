@@ -28,11 +28,9 @@ class storyModel extends model
         if(!$story) return false;
         if(substr($story->closedDate, 0, 4) == '0000') $story->closedDate = '';
         if($version == 0) $version = $story->version;
-        $spec = $this->dao->select('title,spec,spec2,spec3,verify')->from(TABLE_STORYSPEC)->where('story')->eq($storyID)->andWhere('version')->eq($version)->fetch();
+        $spec = $this->dao->select('title,spec,verify')->from(TABLE_STORYSPEC)->where('story')->eq($storyID)->andWhere('version')->eq($version)->fetch();
         $story->title  = isset($spec->title)  ? $spec->title  : '';
         $story->spec   = isset($spec->spec)   ? $spec->spec   : '';
-        $story->spec2   = isset($spec->spec2)   ? $spec->spec2   : '';
-        $story->spec3   = isset($spec->spec3)   ? $spec->spec3   : '';
         $story->verify = isset($spec->verify) ? $spec->verify : '';
 
         if($setImgSize) $story->spec   = $this->loadModel('file')->setImgSize($story->spec);
@@ -143,9 +141,7 @@ class storyModel extends model
     public function create($projectID = 0, $bugID = 0)
     {
         $now   = helper::now();
-        //接受数据
         $story = fixer::input('post')
-
             ->cleanInt('product,module,pri,plan')
             ->cleanFloat('estimate')
             ->callFunc('title', 'trim')
@@ -171,10 +167,7 @@ class storyModel extends model
 
         if($this->checkForceReview()) $story->status = 'draft';
         $story = $this->loadModel('file')->processEditor($story, $this->config->story->editor->create['id'], $this->post->uid);
-
-        //写入数据库
-        $this->dao->insert(TABLE_STORY)->data($story, 'spec,spec2,spec3,verify')->autoCheck()->batchCheck($this->config->story->create->requiredFields, 'notempty')->exec();
-
+        $this->dao->insert(TABLE_STORY)->data($story, 'spec,verify')->autoCheck()->batchCheck($this->config->story->create->requiredFields, 'notempty')->exec();
         if(!dao::isError())
         {
             $storyID = $this->dao->lastInsertID();
@@ -186,8 +179,6 @@ class storyModel extends model
             $data->version = 1;
             $data->title   = $story->title;
             $data->spec    = $story->spec;
-            $data->spec2    = $story->spec2;
-            $data->spec3    = $story->spec3;
             $data->verify  = $story->verify;
             $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
 
@@ -377,7 +368,6 @@ class storyModel extends model
      */
     public function change($storyID)
     {
-       
         $specChanged = false;
         $oldStory    = $this->getById($storyID);
         if(isset($_POST['lastEditedDate']) and $oldStory->lastEditedDate != $this->post->lastEditedDate)
@@ -387,8 +377,7 @@ class storyModel extends model
         }
 
         $story = fixer::input('post')->stripTags($this->config->story->editor->change['id'], $this->config->allowedTags)->get();
-        //var_dump($story);die;
-        if($story->spec != $oldStory->spec or $story->spec2 != $oldStory->spec2 or $story->spec3 != $oldStory->spec3 or $story->verify != $oldStory->verify or $story->title != $oldStory->title or $this->loadModel('file')->getCount()) $specChanged = true;
+        if($story->spec != $oldStory->spec or $story->verify != $oldStory->verify or $story->title != $oldStory->title or $this->loadModel('file')->getCount()) $specChanged = true;
 
         $now   = helper::now();
         $story = fixer::input('post')
@@ -409,8 +398,7 @@ class storyModel extends model
             ->get();
         if($this->checkForceReview()) $story->status = 'changed';
         $story = $this->loadModel('file')->processEditor($story, $this->config->story->editor->change['id'], $this->post->uid);
-        //需求描述拆分修改
-        $this->dao->update(TABLE_STORY)->data($story, 'spec,spec2,spec3,verify')
+        $this->dao->update(TABLE_STORY)->data($story, 'spec,verify')
             ->autoCheck()
             ->batchCheck($this->config->story->change->requiredFields, 'notempty')
             ->where('id')->eq((int)$storyID)->exec();
@@ -423,21 +411,13 @@ class storyModel extends model
                 $data->version = $oldStory->version + 1;
                 $data->title   = $story->title;
                 $data->spec    = $story->spec;
-                $data->spec2    = $story->spec2;
-                $data->spec3    = $story->spec3;
-
                 $data->verify  = $story->verify;
                 $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
             }
             else
             {
                 unset($story->spec);
-                unset($story->spec2);
-                unset($story->spec3);
-
                 unset($oldStory->spec);
-                unset($oldStory->spec2);
-                unset($oldStory->spec3);
             }
             $this->file->updateObjectID($this->post->uid, $storyID, 'story');
             return common::createChanges($oldStory, $story);

@@ -1,10 +1,5 @@
 <?php
-<<<<<<< HEAD
 helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
-=======
-include "../../control.php";
-
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 function checkFileExist($matches)
 {
     global $config;
@@ -23,11 +18,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-<<<<<<< HEAD
     public function docxInit()
-=======
-    public function init()
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     {
         $this->app->loadClass('pclzip', true);
         $this->zfile  = $this->app->loadClass('zfile');
@@ -59,19 +50,11 @@ class myfile extends file
      */
     public function export2Word()
     {
-<<<<<<< HEAD
         $this->docxInit();
         $header     = isset($this->config->word->header->{$this->kind}) ? $this->config->word->header->{$this->kind} : (isset($this->post->header) ? $this->post->header : '');
         $header     = (object)$header;
         $headerName = empty($header) ? '' : $this->dao->select('*')->from($header->tableName)->where('id')->eq($this->session->{$header->name})->fetch();
         $this->setDocxDocProps($headerName);
-=======
-        $this->init();
-        $header     = isset($this->config->word->header->{$this->kind}) ? $this->config->word->header->{$this->kind} : (isset($this->post->header) ? $this->post->header : '');
-        $header     = (object)$header;
-        $headerName = empty($header) ? '' : $this->dao->select('*')->from($header->tableName)->where('id')->eq($this->session->{$header->name})->fetch();
-        $this->setDocProps($headerName);
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 
         $tableName  = (empty($_POST['tableName'])) ? (isset($this->config->word->tableName->{$this->kind}) ? $this->config->word->tableName->{$this->kind} : '') : $this->post->tableName;
         if(empty($tableName)) die(js::alert($this->lang->word->notice->noexport));
@@ -91,10 +74,7 @@ class myfile extends file
         }
         $allModules = $this->dao->select('id,path,name,parent,grade,`order`')->from(TABLE_MODULE)
             ->where('id')->in($idList)
-<<<<<<< HEAD
             ->andWhere('deleted')->eq(0)
-=======
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             ->orderBy('grade asc, `order` asc')
             ->fetchAll('id');
 
@@ -272,11 +252,7 @@ class myfile extends file
             }
             elseif($fieldName == 'files')
             {
-<<<<<<< HEAD
                 $this->formatDocxFiles($content);
-=======
-                $this->formatFiles($content);
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             }
             else
             {
@@ -301,11 +277,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-<<<<<<< HEAD
     public function formatDocxFiles($content)
-=======
-    public function formatFiles($content)
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     {
         if(empty($content->files)) return;
         $this->addText($this->fields['files'] . ':', array('font-weight' => 'bold'));
@@ -610,11 +582,7 @@ class myfile extends file
      * @access public 
      * @return void 
      */
-<<<<<<< HEAD
     public function setDocxDocProps($header)
-=======
-    public function setDocProps($header)
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     {
         $title      = $header ? $header->name : $this->post->kind;
         $coreFile   = file_get_contents($this->exportPath . 'docProps/core.xml');

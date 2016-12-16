@@ -651,3 +651,285 @@
 13:38:24 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-9-my
 
 13:38:25 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting admin
+
+21:46:57 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting 
+
+21:46:59 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting user-login-Lw==
+
+21:46:59 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting cron-ajaxExec
+
+21:47:01 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting user-login-Lw==
+
+21:47:02 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting 
+
+21:47:02 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting my
+
+21:47:05 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-3-my
+
+21:47:05 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-6-my
+
+21:47:05 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-1-my
+
+21:47:05 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-4-my
+
+21:47:06 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-5-my
+
+21:47:06 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-2-my
+
+21:47:06 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-7-my
+
+21:47:06 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-8-my
+
+21:47:07 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting block-printBlock-9-my
+
+21:47:11 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting product
+
+21:47:13 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting product-browse
+
+21:47:14 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project
+
+21:47:15 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task
+
+21:47:20 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-create-3--0
+
+21:47:24 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting story-ajaxGetProjectStories-3-0-0-1
+
+21:47:26 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project
+
+21:47:28 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task
+
+21:47:32 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+21:47:32 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-create-3--0
+
+21:47:35 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting story-ajaxGetProjectStories-3-0-0-1
+
+21:48:02 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-create-3--0
+
+21:48:04 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-create-3-1-0
+
+21:48:08 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+21:48:11 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-start-219
+
+21:48:13 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-start-219
+
+21:48:16 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+21:48:23 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3-unclosed-0-id_asc-62-100
+
+21:48:27 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3-unclosed-0-id_desc-62-100
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 54 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 54 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 59 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 59 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 65 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 65 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 69 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 69 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 75 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 75 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 79 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 79 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 85 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 85 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 89 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 89 when visiting task-finish-219
+
+21:48:29 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 95 when visiting task-finish-219
+
+21:48:29 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 95 when visiting task-finish-219
+
+21:48:30 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 99 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 99 when visiting task-finish-219
+
+21:48:30 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 105 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 105 when visiting task-finish-219
+
+21:48:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 109 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 109 when visiting task-finish-219
+
+21:48:30 Undefined variable: review in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 115 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 115 when visiting task-finish-219
+
+21:48:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 145 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 145 when visiting task-finish-219
+
+21:48:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 148 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 148 when visiting task-finish-219
+
+21:48:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 150 when visiting task-finish-219
+
+21:48:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\finish.html.php on line 150 when visiting task-finish-219
+
+21:48:30 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-finish-219
+
+21:49:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 321 when visiting task-finish-219
+
+21:49:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 358 when visiting task-finish-219
+
+21:49:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 369 when visiting task-finish-219
+
+21:49:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 379 when visiting task-finish-219
+
+21:49:11 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 321 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 358 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 369 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 379 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 443 when visiting task-finish-219
+
+21:49:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 477 when visiting task-finish-219
+
+21:49:26 Undefined variable: reviewDetailChanges in F:\zentao\chandao\tmp\model\task.php on line 494 when visiting task-finish-219
+
+21:49:26 Invalid argument supplied for foreach() in F:\zentao\chandao\tmp\model\task.php on line 494 when visiting task-finish-219
+
+21:49:26 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-finish-219
+
+21:49:27 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3-unclosed-0-id_desc-62-100
+
+21:49:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 143 when visiting task-edit-219
+
+21:49:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 143 when visiting task-edit-219
+
+21:49:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 146 when visiting task-edit-219
+
+21:49:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 146 when visiting task-edit-219
+
+21:49:30 Undefined variable: reviewDetail in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 148 when visiting task-edit-219
+
+21:49:30 Trying to get property of non-object in F:\zentao\chandao\module\task\ext\view\edit.html.php on line 148 when visiting task-edit-219
+
+21:49:30 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:49:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+21:49:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 92 when visiting task-edit-219
+
+21:49:45 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 111 when visiting task-edit-219
+
+21:49:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 124 when visiting task-edit-219
+
+21:49:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 195 when visiting task-edit-219
+
+21:49:45 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:49:45 ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'spec2' in 'field list'The sql is: SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` wHeRe story  = '1' AND  version  = '2' in F:\zentao\chandao\lib\base\dao\dao.class.php on line 1318, last called by F:\zentao\chandao\lib\base\dao\dao.class.php on line 717 through function sqlError.
+ in F:\zentao\chandao\framework\base\router.class.php on line 1916 when visiting task-view-219
+
+21:49:45 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+21:51:25 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:51:26 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+21:51:26 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:51:41 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+21:51:41 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 92 when visiting task-edit-219
+
+21:51:41 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 111 when visiting task-edit-219
+
+21:51:41 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 124 when visiting task-edit-219
+
+21:51:41 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 195 when visiting task-edit-219
+
+21:51:41 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:51:41 ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'spec2' in 'field list'The sql is: SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` wHeRe story  = '1' AND  version  = '2' in F:\zentao\chandao\lib\base\dao\dao.class.php on line 1318, last called by F:\zentao\chandao\lib\base\dao\dao.class.php on line 717 through function sqlError.
+ in F:\zentao\chandao\framework\base\router.class.php on line 1916 when visiting task-view-219
+
+21:51:41 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+21:51:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:51:44 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+21:51:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+21:51:51 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+21:51:53 ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'spec2' in 'field list'The sql is: SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` wHeRe story  = '1' AND  version  = '2' in F:\zentao\chandao\lib\base\dao\dao.class.php on line 1318, last called by F:\zentao\chandao\lib\base\dao\dao.class.php on line 717 through function sqlError.
+ in F:\zentao\chandao\framework\base\router.class.php on line 1916 when visiting task-view-219
+
+21:51:53 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+21:51:56 ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'spec2' in 'field list'The sql is: SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` wHeRe story  = '1' AND  version  = '2' in F:\zentao\chandao\lib\base\dao\dao.class.php on line 1318, last called by F:\zentao\chandao\lib\base\dao\dao.class.php on line 717 through function sqlError.
+ in F:\zentao\chandao\framework\base\router.class.php on line 1916 when visiting task-view-219
+
+21:51:56 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+22:01:59 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping
+
+22:02:42 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+22:02:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+22:02:50 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+22:03:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 92 when visiting task-edit-219
+
+22:03:10 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 111 when visiting task-edit-219
+
+22:03:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 124 when visiting task-edit-219
+
+22:03:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 195 when visiting task-edit-219
+
+22:03:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 195 when visiting task-edit-219
+
+22:03:10 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:11 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-view-219
+
+22:03:22 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:23 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 23 when visiting task-edit-219
+
+22:03:23 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:34 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:39 Creating default object from empty value in F:\zentao\chandao\module\task\ext\control\deleteReview.php on line 10 when visiting task-deleteReview-89
+
+22:03:39 Object of class stdClass could not be converted to int in F:\zentao\chandao\module\task\model.php on line 806 when visiting task-deleteReview-89
+
+22:03:39 Object of class stdClass could not be converted to int in F:\zentao\chandao\module\file\model.php on line 47 when visiting task-deleteReview-89
+
+22:03:39 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-deleteReview-89
+
+22:03:40 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting task-edit-219
+
+22:03:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting project-task-3
+
+22:13:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping

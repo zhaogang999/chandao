@@ -1,13 +1,10 @@
 <?php
 $lang->task->typeList['review']    = '评审';
 
-<<<<<<< HEAD
 $lang->task->conclusionList['']          = '';
 $lang->task->conclusionList['通过']      = '通过';
 $lang->task->conclusionList['不通过（需要再评审）']   = '不通过（需要再评审）';
 
-=======
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 $lang->task->severityList['']     = '';
 $lang->task->severityList['A']     = 'A';
 $lang->task->severityList['B']     = 'B';
@@ -47,18 +44,13 @@ $lang->task->reviewer               = '评审人员';
 $lang->task->item                   = '页码章节';
 $lang->task->line                   = '行号';
 $lang->task->severity               = '严重性';
-<<<<<<< HEAD
 $lang->task->description            = '问题描述';
-=======
-$lang->task->description            = '评审描述';
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 $lang->task->proposal               = '评审建议';
 $lang->task->changed                = '是否变更';
 $lang->task->action                 = '不变更原因';
 $lang->task->chkd                   = '评审确认';
 
 $lang->task->minute                   = '分钟';
-<<<<<<< HEAD
 
 $this->lang->task->error->fileNotEmpty       = '附件不能为空';
 $this->lang->task->error->fileNOEmpty        = '文件编号不能为空';
@@ -76,5 +68,3 @@ $this->lang->task->error->conclusionEmpty    = '评审结论不能为空';
 $this->lang->task->error->reviewersEmpty     = '参评人员不能为空';
 $this->lang->task->error->effortNumber       = '评审用时应为数字';
 $this->lang->task->error->pagesNumber        = '文件页数应为数字';
-=======
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5

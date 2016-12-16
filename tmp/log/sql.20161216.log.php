@@ -7178,3 +7178,2818 @@
   SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
   SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
 
+20161216 21:46:57: 
+  SELECT * FROM `zt_company` ORDER BY `id`  LIMIT 1 
+  SELECT * FROM `zt_config` WHERE owner IN ('system','') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+
+20161216 21:46:59: user-login-Lw==
+  SELECT * FROM `zt_config` WHERE owner IN ('system','') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:46:59: cron-ajaxExec
+  SELECT * FROM `zt_config` WHERE owner IN ('system','') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+
+20161216 21:47:01: user-login-Lw==
+  SELECT * FROM `zt_config` WHERE owner IN ('system','') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT locked FROM `zt_user` WHERE account  = 'admin'
+  SELECT * FROM `zt_user` WHERE account  = 'admin' AND  deleted  = '0'
+  UPDATE `zt_user` SET  visits = visits + 1, `ip` = '127.0.0.1', `last` = '1481896021' WHERE account  = 'admin'
+  UPDATE `zt_user` SET  `fails` = '0', `locked` = '0000-00-00 00:00:00' WHERE account  = 'admin'
+  SELECT t1.acl FROM `zt_group` AS t1  LEFT JOIN `zt_usergroup` AS t2  ON t1.id=t2.group  WHERE t2.account  = 'admin'
+  SELECT module, method FROM `zt_usergroup` AS t1  LEFT JOIN `zt_grouppriv` AS t2  ON t1.group = t2.group  WHERE t1.account  = 'admin'
+  SELECT `group` FROM `zt_usergroup` WHERE `account` = 'admin' 
+  INSERT INTO `zt_action` SET `objectType` = 'user',`objectID` = '1',`actor` = 'admin',`action` = 'login',`date` = '2016-12-16 21:47:01',`comment` = '',`extra` = '',`product` = ',0,',`project` = '0'
+
+20161216 21:47:02: 
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+
+20161216 21:47:02: my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE account  = 'admin' AND  module  = 'my' AND  hidden  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:05: block-printBlock-3-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  status  != 'done' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_project` WHERE id IN ('5','4','3','2') ORDER BY `order` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_project` WHERE id IN ('5','4','3','2') 
+  SELECT * FROM `zt_project` WHERE id IN ('5','4','3','2') ORDER BY `order` desc 
+  SELECT id, project, estimate, consumed, `left`, status, closedReason FROM `zt_task` WHERE project IN ('5','4','3','2') AND  deleted  = '0'
+  SELECT project, date AS name, `left` AS value FROM `zt_burn` WHERE project IN ('5','4','3','2') ORDER BY `date` desc 
+
+20161216 21:47:05: block-printBlock-6-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '6'
+  SELECT t1.*, t2.id as projectID, t2.name as projectName, t3.id as storyID, t3.title as storyTitle, t3.status AS storyStatus, t3.version AS latestStoryVersion FROM `zt_task` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_story` AS t3  ON t1.story = t3.id  WHERE t1.deleted  = '0' AND  t1.assignedTo  = 'admin' ORDER BY `id` desc  LIMIT 15 
+  SELECT t1.*, t2.id as projectID, t2.name as projectName, t3.id as storyID, t3.title as storyTitle, t3.status AS storyStatus, t3.version AS latestStoryVersion FROM `zt_task` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_story` AS t3  ON t1.story = t3.id  WHERE t1.deleted  = '0' AND  t1.assignedTo  = 'admin' ORDER BY `id` desc  LIMIT 15 
+
+20161216 21:47:05: block-printBlock-1-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '1'
+
+20161216 21:47:05: block-printBlock-4-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '4'
+  SELECT * FROM `zt_todo` WHERE account  = 'admin' AND  date  >= '1970-01-01' AND  date  <= '2109-01-01' AND  status IN ('wait','doing') ORDER BY `date`,`status`,`begin`  LIMIT 20 
+  SELECT * FROM `zt_todo` WHERE account  = 'admin' AND  date  >= '1970-01-01' AND  date  <= '2109-01-01' AND  status IN ('wait','doing') ORDER BY `date`,`status`,`begin`  LIMIT 20 
+
+20161216 21:47:06: block-printBlock-5-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '5'
+  SELECT * FROM `zt_product` WHERE deleted  = '0' AND  status  != 'closed' ORDER BY `order` desc 
+  SELECT * FROM `zt_product` WHERE id IN ('4','3','2','1') ORDER BY `order` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_product` WHERE id IN ('4','3','2','1') 
+  SELECT * FROM `zt_product` WHERE id IN ('4','3','2','1') ORDER BY `order` desc 
+  SELECT product, status, count(status) AS count FROM `zt_story` WHERE deleted  = '0' AND  product IN ('4','3','2','1') GROUP BY product, status
+  SELECT product, count(*) AS count FROM `zt_productplan` WHERE deleted  = '0' AND  product IN ('4','3','2','1') AND  end  > '2016-12-16 21:47:06' GROUP BY product
+  SELECT product, count(*) AS count FROM `zt_release` WHERE deleted  = '0' AND  product IN ('4','3','2','1') GROUP BY product
+  SELECT product,count(*) AS conut FROM `zt_bug` WHERE deleted  = '0' AND  product IN ('4','3','2','1') GROUP BY product
+  SELECT product,count(*) AS count FROM `zt_bug` WHERE status  = 'active' AND  deleted  = '0' AND  product IN ('4','3','2','1') GROUP BY product
+  SELECT product,count(*) AS count FROM `zt_bug` WHERE AssignedTo  = '' AND  deleted  = '0' AND  product IN ('4','3','2','1') GROUP BY product
+
+20161216 21:47:06: block-printBlock-2-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '2'
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_action` WHERE 1  AND  date  > '2016-12-16' AND  date  < '2016-12-17' AND  (1)  ORDER BY `date` desc 
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT id, account AS name FROM `zt_user` WHERE id IN ('1')
+  SELECT id, name AS name FROM `zt_task` WHERE id IN ('210','209')
+  SELECT id, name AS name FROM `zt_project` WHERE id IN ('5')
+  SELECT id, name AS name FROM `zt_product` WHERE id IN ('4')
+  SELECT id, title AS name FROM `zt_story` WHERE id IN ('34')
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+
+20161216 21:47:06: block-printBlock-7-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '7'
+  SELECT * FROM `zt_bug` WHERE deleted  = '0' AND  assignedTo  = 'admin' ORDER BY `id` desc  LIMIT 15 
+
+20161216 21:47:06: block-printBlock-8-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '8'
+  SELECT t1.*, t2.name as productTitle FROM `zt_story` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.deleted  = '0' AND  assignedTo  = 'admin' ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_story` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.deleted  = '0' AND  assignedTo  = 'admin' 
+  SELECT t1.*, t2.name as productTitle FROM `zt_story` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.deleted  = '0' AND  assignedTo  = 'admin' ORDER BY `id` desc 
+  SELECT t1.*, t2.name as productTitle FROM `zt_story` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.deleted  = '0' AND  assignedTo  = 'admin' ORDER BY `id` desc 
+  SELECT t1.*, t2.name as productTitle FROM `zt_story` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.deleted  = '0' AND  assignedTo  = 'admin' ORDER BY `id` desc 
+  SELECT id,title FROM `zt_productplan` WHERE product IN ('1') AND  deleted  = '0'
+  SELECT * FROM `zt_storystage` WHERE branch IN ('0')
+
+20161216 21:47:07: block-printBlock-9-my
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_block` WHERE id  = '9'
+  SELECT t1.assignedTo AS assignedTo, t2.* FROM `zt_testrun` AS t1  LEFT JOIN `zt_case` AS t2  ON t1.case = t2.id  LEFT JOIN `zt_testtask` AS t3  ON t1.task = t3.id  WHERE t1.assignedTo  = 'admin' AND  t1.status  != 'done' AND  t3.status  != 'done' AND  t3.deleted  = '0' AND  t2.deleted  = '0' ORDER BY `id` desc  LIMIT 15 
+
+20161216 21:47:11: product
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+
+20161216 21:47:13: product-browse
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_story` WHERE product IN ('1') AND  status IN ('','draft','active','changed') AND  deleted  = '0' ORDER BY `source` asc,`id` asc 
+  SELECT COUNT(*) AS recTotal FROM `zt_story` WHERE product IN ('1') AND  status IN ('','draft','active','changed') AND  deleted  = '0' 
+  SELECT * FROM `zt_story` WHERE product IN ('1') AND  status IN ('','draft','active','changed') AND  deleted  = '0' ORDER BY `source` asc,`id` asc 
+  SELECT * FROM `zt_story` WHERE product IN ('1') AND  status IN ('','draft','active','changed') AND  deleted  = '0' ORDER BY `source` asc,`id` asc 
+  SELECT id,title FROM `zt_productplan` WHERE product IN ('1') AND  deleted  = '0'
+  SELECT * FROM `zt_storystage` WHERE branch IN ('0')
+  SELECT * FROM `zt_story` WHERE product IN ('1') AND  status IN ('','draft','active','changed') AND  deleted  = '0' ORDER BY `source` asc,`id` asc 
+  SELECT story, COUNT(*) AS tasks FROM `zt_task` WHERE story IN ('33','1','2','3','4','5','6','7') AND  deleted  = '0' GROUP BY story
+  SELECT story, COUNT(*) AS bugs FROM `zt_bug` WHERE story IN ('33','1','2','3','4','5','6','7') AND  deleted  = '0' GROUP BY story
+  SELECT story, COUNT(*) AS cases FROM `zt_case` WHERE story IN ('33','1','2','3','4','5','6','7') AND  deleted  = '0' GROUP BY story
+  SELECT id,CONCAT(title, " [", begin, " ~ ", end, "]") as title FROM `zt_productplan` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `begin` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_module` WHERE root  = '1' AND  type  = 'story' AND  deleted  = '0' ORDER BY `grade` desc,`order` 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT id,CONCAT(title, " [", begin, " ~ ", end, "]") as title FROM `zt_productplan` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `begin` desc 
+  SELECT DISTINCT story FROM `zt_case` WHERE story IN ('33','1','2','3','4','5','6','7')
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_module` WHERE root  = '1' AND  type  = 'story' AND  deleted  = '0' ORDER BY `grade` desc,`order` 
+  SELECT account, realname, deleted, INSTR(',pd,po,', role) AS roleOrder FROM `zt_user` WHERE deleted  = '0' ORDER BY `roleOrder` DESC,`account` 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_module` WHERE root  = '1' AND  type  = 'story' AND  deleted  = '0' ORDER BY `grade` desc,`order` 
+  SELECT * FROM `zt_branch` WHERE product  = '1' AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_storystage` WHERE story IN ('33','1','2','3','4','5','6','7')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:14: project
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+
+20161216 21:47:15: project-task
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:20: task-create-3--0
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT id, listName FROM `zt_usercontact` WHERE account  = 'admin'
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:24: story-ajaxGetProjectStories-3-0-0-1
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT id,type,parent FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE `id` = '1' 
+  SELECT id FROM `zt_module` WHERE path  LIKE ',1,%' AND  deleted  = '0'
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0' AND  t2.module IN ('1')
+
+20161216 21:47:26: project
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+
+20161216 21:47:28: project-task
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:32: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:32: task-create-3--0
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT id, listName FROM `zt_usercontact` WHERE account  = 'admin'
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:47:35: story-ajaxGetProjectStories-3-0-0-1
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT id,type,parent FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE `id` = '1' 
+  SELECT id FROM `zt_module` WHERE path  LIKE ',1,%' AND  deleted  = '0'
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0' AND  t2.module IN ('1')
+
+20161216 21:48:02: task-create-3--0
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT version FROM `zt_story` WHERE id  = '1'
+  SELECT id,name FROM `zt_task` WHERE deleted  = '0' AND  name IN ('首页设计和开发的说法都是') AND  openedDate  >= '2016-12-16 21:47:01' AND  project=3 
+  INSERT INTO `zt_task` SET `module` = '1',`type` = 'review',`story` = '1',`color` = '',`name` = '首页设计和开发的说法都是',`pri` = '3',`estimate` = '33',`desc` = 'fghfg',`estStarted` = '2016-12-16',`deadline` = '2016-12-16',`mailto` = ',tester1',`project` = '3',`left` = '33',`status` = 'wait',`storyVersion` = '2',`openedBy` = 'admin',`openedDate` = '2016-12-16 21:48:01',`assignedTo` = 'productManager',`assignedDate` = '2016-12-16 21:48:01'
+  DELETE FROM `zt_storystage` WHERE story  = '1'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.project,t3.branch FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_projectproduct` AS t3  ON t1.project = t3.project  WHERE t1.story  = '1' AND  t2.deleted  = '0'
+  SELECT type,project,status FROM `zt_task` WHERE project IN ('1','2','3') AND  story  = '1' AND  type IN ('devel','test') AND  status  != 'cancel' AND  closedReason  != 'cancel' AND  deleted  = '0'
+  SELECT * FROM `zt_release` WHERE CONCAT(',', stories, ',')  LIKE '%,1,%' AND  deleted  = '0'
+  UPDATE `zt_story` SET  `stage` = 'developed' WHERE id  = '1'
+  SELECT * FROM `zt_file` WHERE id  = ''
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'opened',`date` = '2016-12-16 21:48:02',`comment` = '',`extra` = '',`product` = ',1,',`project` = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '881' 
+  SELECT * FROM `zt_history` WHERE action IN ('881') ORDER BY `id` 
+
+20161216 21:48:04: task-create-3-1-0
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT id, listName FROM `zt_usercontact` WHERE account  = 'admin'
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:08: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:11: task-start-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:13: task-start-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  INSERT INTO `zt_taskestimate` SET `consumed` = '0',`left` = '33',`account` = 'admin',`task` = '219',`date` = '2016-12-16'
+  UPDATE `zt_task` SET `realStarted` = '2016-12-16',`consumed` = '0',`left` = '33',`assignedTo` = 'admin',`lastEditedBy` = 'admin',`lastEditedDate` = '2016-12-16 21:48:13',`assignedDate` = '2016-12-16 21:48:13',`status` = 'doing' WHERE id  = '219'
+  DELETE FROM `zt_storystage` WHERE story  = '1'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.project,t3.branch FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_projectproduct` AS t3  ON t1.project = t3.project  WHERE t1.story  = '1' AND  t2.deleted  = '0'
+  SELECT type,project,status FROM `zt_task` WHERE project IN ('1','2','3') AND  story  = '1' AND  type IN ('devel','test') AND  status  != 'cancel' AND  closedReason  != 'cancel' AND  deleted  = '0'
+  SELECT * FROM `zt_release` WHERE CONCAT(',', stories, ',')  LIKE '%,1,%' AND  deleted  = '0'
+  UPDATE `zt_story` SET  `stage` = 'developed' WHERE id  = '1'
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'started',`date` = '2016-12-16 21:48:13',`comment` = '',`extra` = '',`product` = ',1,',`project` = '3'
+  INSERT INTO `zt_history` SET `field` = 'realStarted',`old` = '0000-00-00',`new` = '2016-12-16',`diff` = '',`action` = '882'
+  INSERT INTO `zt_history` SET `field` = 'assignedTo',`old` = 'productManager',`new` = 'admin',`diff` = '',`action` = '882'
+  INSERT INTO `zt_history` SET `field` = 'status',`old` = 'wait',`new` = 'doing',`diff` = '',`action` = '882'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '882' 
+  SELECT * FROM `zt_history` WHERE action IN ('882') ORDER BY `id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+
+20161216 21:48:16: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:23: project-task-3-unclosed-0-id_asc-62-100
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` asc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` asc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:27: project-task-3-unclosed-0-id_desc-62-100
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:48:30: task-finish-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:49:11: task-finish-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  INSERT INTO `zt_taskestimate` SET `account` = 'admin',`task` = '219',`date` = '2016-12-16',`left` = '0',`consumed` = '33'
+  SELECT * FROM `zt_task` WHERE id  = '219'
+
+20161216 21:49:26: task-finish-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  INSERT INTO `zt_taskestimate` SET `account` = 'admin',`task` = '219',`date` = '2016-12-16',`left` = '0',`consumed` = '33'
+  SELECT * FROM `zt_task` WHERE id  = '219'
+  UPDATE `zt_task` SET `consumed` = '33',`assignedTo` = 'admin',`finishedDate` = '2016-12-16 21:49:26',`left` = '0',`assignedDate` = '2016-12-16 21:49:26',`status` = 'done',`finishedBy` = 'admin',`lastEditedBy` = 'admin',`lastEditedDate` = '2016-12-16 21:49:26' WHERE id  = '219'
+  INSERT INTO `zt_review` SET `fileNO` = '贵航股份',`recorder` = 'gfhgf',`reviewName` = 'fdgf',`task` = '219',`doc` = 'fdgfd',`referenceDoc` = 'fdgfd',`reference` = 'dfgfd',`pages` = '23',`reviewers` = 'fghgfh',`reviewDate` = '2016-12-16',`reviewScope` = 'fdgfd',`reviewPlace` = 'dfgfdg',`effort` = '34',`conclusion` = '通过'
+  INSERT INTO `zt_file` SET `extension` = 'txt',`pathname` = '201612/1621492603694ngl.txt',`title` = '新建文本文档',`size` = '111',`objectType` = 'task',`objectID` = '219',`addedBy` = 'admin',`addedDate` = '2016-12-16',`extra` = ''
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'finished',`date` = '2016-12-16 21:49:26',`comment` = '上传了附件 新建文本文档',`extra` = '',`product` = ',1,',`project` = '3'
+  INSERT INTO `zt_history` SET `field` = 'consumed',`old` = '0',`new` = '33',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'finishedDate',`old` = '',`new` = '2016-12-16 21:49:26',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'left',`old` = '33',`new` = '0',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'status',`old` = 'doing',`new` = 'done',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'finishedBy',`old` = '',`new` = 'admin',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'fileNO',`old` = '',`new` = '贵航股份',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'recorder',`old` = '',`new` = 'gfhgf',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reviewName',`old` = '',`new` = 'fdgf',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'doc',`old` = '',`new` = 'fdgfd',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'referenceDoc',`old` = '',`new` = 'fdgfd',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reference',`old` = '',`new` = 'dfgfd',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'pages',`old` = '',`new` = '23',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reviewers',`old` = '',`new` = 'fghgfh',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reviewDate',`old` = '',`new` = '2016-12-16',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reviewScope',`old` = '',`new` = 'fdgfd',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'reviewPlace',`old` = '',`new` = 'dfgfdg',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'effort',`old` = '',`new` = '34',`diff` = '',`action` = '883'
+  INSERT INTO `zt_history` SET `field` = 'conclusion',`old` = '',`new` = '通过',`diff` = '',`action` = '883'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '883' 
+  SELECT * FROM `zt_history` WHERE action IN ('883') ORDER BY `id` 
+
+20161216 21:49:27: project-task-3-unclosed-0-id_desc-62-100
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:49:30: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:49:45: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT version FROM `zt_story` WHERE id  = '1'
+  SELECT * FROM `zt_review` WHERE id  = '41'
+  UPDATE `zt_task` SET `module` = '1',`type` = 'review',`story` = '1',`color` = '',`name` = '首页设计和开发的说法都是',`pri` = '3',`estimate` = '33',`desc` = 'fghfg',`estStarted` = '2016-12-16',`deadline` = '2016-12-16',`mailto` = ',tester1',`project` = '3',`left` = '0',`status` = 'done',`assignedTo` = 'admin',`assignedDate` = '',`consumed` = '33',`realStarted` = '2016-12-16',`finishedBy` = 'admin',`finishedDate` = '2016-12-16 21:49:26',`canceledBy` = '',`canceledDate` = '',`closedBy` = '',`closedReason` = '',`closedDate` = '',`lastEditedBy` = 'admin',`lastEditedDate` = '2016-12-16 21:49:45' WHERE id  = '219'
+  UPDATE `zt_review` SET `fileNO` = '贵航股份',`recorder` = 'gfhgf',`reviewName` = 'fdgf',`task` = '219',`doc` = 'fdgfd',`referenceDoc` = 'fdgfd',`reference` = 'dfgfd',`pages` = '23',`reviewers` = 'fghgfh',`reviewDate` = '2016-12-16',`reviewScope` = 'fdgfd',`reviewPlace` = 'dfgfdg',`effort` = '34',`conclusion` = '通过',`id` = '41' WHERE id  = '41' LIMIT 1 
+  SELECT id FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_reviewDetail` WHERE id  = '' AND  deleted  = '0'
+  INSERT INTO `zt_reviewDetail` SET `reviewID` = '41',`number` = '1',`reviewer` = 'fds',`item` = 'dffd',`line` = 'sdf',`severity` = 'A',`description` = 'sdfds',`proposal` = 'dsfds',`changed` = 'Y',`action` = 'sdfds',`chkd` = 'Y'
+  DELETE FROM `zt_storystage` WHERE story  = '1'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.project,t3.branch FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_projectproduct` AS t3  ON t1.project = t3.project  WHERE t1.story  = '1' AND  t2.deleted  = '0'
+  SELECT type,project,status FROM `zt_task` WHERE project IN ('1','2','3') AND  story  = '1' AND  type IN ('devel','test') AND  status  != 'cancel' AND  closedReason  != 'cancel' AND  deleted  = '0'
+  SELECT * FROM `zt_release` WHERE CONCAT(',', stories, ',')  LIKE '%,1,%' AND  deleted  = '0'
+  UPDATE `zt_story` SET  `stage` = 'developed' WHERE id  = '1'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'edited',`date` = '2016-12-16 21:49:45',`comment` = '',`extra` = '',`product` = ',1,',`project` = '3'
+  INSERT INTO `zt_history` SET `field` = 'number',`old` = '',`new` = '1',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'reviewer',`old` = '',`new` = 'fds',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'item',`old` = '',`new` = 'dffd',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'line',`old` = '',`new` = 'sdf',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'severity',`old` = '',`new` = 'A',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'description',`old` = '',`new` = 'sdfds',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'proposal',`old` = '',`new` = 'dsfds',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'changed',`old` = '',`new` = 'Y',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'action',`old` = '',`new` = 'sdfds',`diff` = '',`action` = '884'
+  INSERT INTO `zt_history` SET `field` = 'chkd',`old` = '',`new` = 'Y',`diff` = '',`action` = '884'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '884' 
+  SELECT * FROM `zt_history` WHERE action IN ('884') ORDER BY `id` 
+
+20161216 21:49:45: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+
+20161216 21:51:25: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:51:26: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+
+20161216 21:51:41: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT version FROM `zt_story` WHERE id  = '1'
+  SELECT * FROM `zt_review` WHERE id  = '41'
+  UPDATE `zt_task` SET `module` = '1',`type` = 'review',`story` = '1',`color` = '',`name` = '首页设计和开发的说法都是',`pri` = '3',`estimate` = '33',`desc` = 'fghfg',`estStarted` = '2016-12-16',`deadline` = '2016-12-16',`mailto` = ',tester1',`project` = '3',`left` = '0',`status` = 'done',`assignedTo` = 'admin',`assignedDate` = '',`consumed` = '33',`realStarted` = '2016-12-16',`finishedBy` = 'admin',`finishedDate` = '2016-12-16 21:49:26',`canceledBy` = '',`canceledDate` = '',`closedBy` = '',`closedReason` = '',`closedDate` = '',`lastEditedBy` = 'admin',`lastEditedDate` = '2016-12-16 21:51:41' WHERE id  = '219'
+  UPDATE `zt_review` SET `fileNO` = '贵航股份',`recorder` = 'gfhgf',`reviewName` = 'fdgf',`task` = '219',`doc` = 'fdgfd',`referenceDoc` = 'fdgfd',`reference` = 'dfgfd',`pages` = '23',`reviewers` = 'fghgfh',`reviewDate` = '2016-12-16',`reviewScope` = 'fdgfd',`reviewPlace` = 'dfgfdg',`effort` = '34',`conclusion` = '通过',`id` = '41' WHERE id  = '41' LIMIT 1 
+  SELECT id FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_reviewDetail` WHERE id  = '88' AND  deleted  = '0'
+  UPDATE `zt_reviewDetail` SET `id` = '88',`reviewID` = '41',`number` = '1',`reviewer` = 'fds',`item` = 'dffd',`line` = 'sdf',`severity` = 'A',`description` = 'sdfds',`proposal` = 'dsfds',`changed` = 'Y',`action` = 'sdfds',`chkd` = 'Y' WHERE id  = '88'
+  DELETE FROM `zt_storystage` WHERE story  = '1'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.project,t3.branch FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_projectproduct` AS t3  ON t1.project = t3.project  WHERE t1.story  = '1' AND  t2.deleted  = '0'
+  SELECT type,project,status FROM `zt_task` WHERE project IN ('1','2','3') AND  story  = '1' AND  type IN ('devel','test') AND  status  != 'cancel' AND  closedReason  != 'cancel' AND  deleted  = '0'
+  SELECT * FROM `zt_release` WHERE CONCAT(',', stories, ',')  LIKE '%,1,%' AND  deleted  = '0'
+  UPDATE `zt_story` SET  `stage` = 'developed' WHERE id  = '1'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+
+20161216 21:51:41: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+
+20161216 21:51:44: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:51:44: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+
+20161216 21:51:51: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 21:51:53: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+
+20161216 21:51:56: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,spec2,spec3,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+
+20161216 22:01:59: misc-ping
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_config` WHERE 1 = 1  AND  owner IN ('system') AND  module IN ('common') AND  section IN ('global') AND  `key` IN ('sn')
+
+20161216 22:02:42: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:02:44: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+  SELECT t1.project, t2.name, t2.status FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  WHERE t1.story  = '1' ORDER BY t1.`project` DESC 
+  SELECT id, name, assignedTo, project, status, consumed, `left` FROM `zt_task` WHERE story  = '1' AND  deleted  = '0' ORDER BY `id` DESC 
+  SELECT * FROM `zt_storystage` WHERE story  = '1'
+  SELECT id,title,branch FROM `zt_productplan` WHERE id IN ('1')
+  SELECT * FROM `zt_file` WHERE objectType  = 'story' AND  objectID  = '1' AND  extra  != 'editor'
+  UPDATE `zt_action` SET  `read` = '1' WHERE objectType  = 'task' AND  objectID  = '219' AND  `read`  = '0'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_task` WHERE id  = '219' OR project  = '3' AND  deleted  = '0' AND  status IN ('','wait','doing','done','pause','cancel')  ORDER BY `id` desc 
+  SELECT path FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE id  = '1'
+  SELECT name FROM `zt_product` WHERE id  = '1'
+  SELECT path FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE id IN ('1') AND  deleted  = '0' ORDER BY `grade` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:02:50: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:03:10: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT version FROM `zt_story` WHERE id  = '1'
+  SELECT * FROM `zt_review` WHERE id  = '41'
+  UPDATE `zt_task` SET `module` = '1',`type` = 'review',`story` = '1',`color` = '',`name` = '首页设计和开发的说法都是',`pri` = '3',`estimate` = '33',`desc` = 'fghfg',`estStarted` = '2016-12-16',`deadline` = '2016-12-16',`mailto` = ',tester1',`project` = '3',`left` = '0',`status` = 'done',`assignedTo` = 'admin',`assignedDate` = '',`consumed` = '33',`realStarted` = '2016-12-16',`finishedBy` = 'admin',`finishedDate` = '2016-12-16 21:49:26',`canceledBy` = '',`canceledDate` = '',`closedBy` = '',`closedReason` = '',`closedDate` = '',`lastEditedBy` = 'admin',`lastEditedDate` = '2016-12-16 22:03:10' WHERE id  = '219'
+  UPDATE `zt_review` SET `fileNO` = '贵航股份',`recorder` = 'gfhgf',`reviewName` = 'fdgf',`task` = '219',`doc` = 'fdgfd',`referenceDoc` = 'fdgfd',`reference` = 'dfgfd',`pages` = '23',`reviewers` = 'fghgfh',`reviewDate` = '2016-12-16',`reviewScope` = 'fdgfd',`reviewPlace` = 'dfgfdg',`effort` = '34',`conclusion` = '通过',`id` = '41' WHERE id  = '41' LIMIT 1 
+  SELECT id FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_reviewDetail` WHERE id  = '88' AND  deleted  = '0'
+  UPDATE `zt_reviewDetail` SET `id` = '88',`reviewID` = '41',`number` = '1',`reviewer` = 'fds',`item` = 'dffd',`line` = 'sdf',`severity` = 'A',`description` = 'sdfds',`proposal` = 'dsfds',`changed` = 'Y',`action` = 'sdfds',`chkd` = 'Y' WHERE id  = '88'
+  SELECT * FROM `zt_reviewDetail` WHERE id  = '' AND  deleted  = '0'
+  INSERT INTO `zt_reviewDetail` SET `reviewID` = '41',`number` = '2',`reviewer` = 'efsd',`item` = 'dfd',`line` = 'dgds',`severity` = 'B',`description` = 'dfgf',`proposal` = 'gfdgfd',`changed` = 'Y',`action` = 'fdgfd',`chkd` = 'Y'
+  DELETE FROM `zt_storystage` WHERE story  = '1'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.project,t3.branch FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  LEFT JOIN `zt_projectproduct` AS t3  ON t1.project = t3.project  WHERE t1.story  = '1' AND  t2.deleted  = '0'
+  SELECT type,project,status FROM `zt_task` WHERE project IN ('1','2','3') AND  story  = '1' AND  type IN ('devel','test') AND  status  != 'cancel' AND  closedReason  != 'cancel' AND  deleted  = '0'
+  SELECT * FROM `zt_release` WHERE CONCAT(',', stories, ',')  LIKE '%,1,%' AND  deleted  = '0'
+  UPDATE `zt_story` SET  `stage` = 'developed' WHERE id  = '1'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'edited',`date` = '2016-12-16 22:03:10',`comment` = '',`extra` = '',`product` = ',1,',`project` = '3'
+  INSERT INTO `zt_history` SET `field` = 'number',`old` = '',`new` = '2',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'reviewer',`old` = '',`new` = 'efsd',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'item',`old` = '',`new` = 'dfd',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'line',`old` = '',`new` = 'dgds',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'severity',`old` = '',`new` = 'B',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'description',`old` = '',`new` = 'dfgf',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'proposal',`old` = '',`new` = 'gfdgfd',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'changed',`old` = '',`new` = 'Y',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'action',`old` = '',`new` = 'fdgfd',`diff` = '',`action` = '885'
+  INSERT INTO `zt_history` SET `field` = 'chkd',`old` = '',`new` = 'Y',`diff` = '',`action` = '885'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '885' 
+  SELECT * FROM `zt_history` WHERE action IN ('885') ORDER BY `id` 
+
+20161216 22:03:11: task-view-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT * FROM `zt_story` WHERE `id` = '1' 
+  SELECT title,spec,verify FROM `zt_storyspec` WHERE story  = '1' AND  version  = '2'
+  SELECT t1.project, t2.name, t2.status FROM `zt_projectstory` AS t1  LEFT JOIN `zt_project` AS t2  ON t1.project = t2.id  WHERE t1.story  = '1' ORDER BY t1.`project` DESC 
+  SELECT id, name, assignedTo, project, status, consumed, `left` FROM `zt_task` WHERE story  = '1' AND  deleted  = '0' ORDER BY `id` DESC 
+  SELECT * FROM `zt_storystage` WHERE story  = '1'
+  SELECT id,title,branch FROM `zt_productplan` WHERE id IN ('1')
+  SELECT * FROM `zt_file` WHERE objectType  = 'story' AND  objectID  = '1' AND  extra  != 'editor'
+  UPDATE `zt_action` SET  `read` = '1' WHERE objectType  = 'task' AND  objectID  = '219' AND  `read`  = '0'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('885','884','883','882','881') ORDER BY `id` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT path FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE id  = '1'
+  SELECT name FROM `zt_product` WHERE id  = '1'
+  SELECT path FROM `zt_module` WHERE id  = '1'
+  SELECT * FROM `zt_module` WHERE id IN ('1') AND  deleted  = '0' ORDER BY `grade` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:03:22: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('885','884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:03:23: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('885','884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+
+20161216 22:03:34: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('885','884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:03:39: task-deleteReview-89
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT * FROM `zt_reviewDetail` WHERE id  = '89' AND  deleted  = '0'
+  UPDATE `zt_reviewDetail` SET  `deleted` = '1' WHERE id  = '89'
+  SELECT task FROM `zt_review` WHERE id  = '41'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('885','884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT project, story FROM `zt_task` WHERE id  = '219'
+  SELECT product FROM `zt_story` WHERE id  = '1'
+  INSERT INTO `zt_action` SET `objectType` = 'task',`objectID` = '219',`actor` = 'admin',`action` = 'edited',`date` = '2016-12-16 22:03:39',`comment` = '',`extra` = '',`product` = ',1,',`project` = '3'
+  INSERT INTO `zt_history` SET `field` = 'number',`old` = '2',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'reviewer',`old` = 'efsd',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'item',`old` = 'dfd',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'line',`old` = 'dgds',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'severity',`old` = 'B',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'description',`old` = 'dfgf',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'proposal',`old` = 'gfdgfd',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'changed',`old` = 'Y',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'action',`old` = 'fdgfd',`new` = '',`diff` = '',`action` = '886'
+  INSERT INTO `zt_history` SET `field` = 'chkd',`old` = 'Y',`new` = '',`diff` = '',`action` = '886'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '1'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '1' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '1'
+  SELECT * FROM `zt_project` WHERE `id` = '1' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '1' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '1'
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT * FROM `zt_action` WHERE `id` = '886' 
+  SELECT * FROM `zt_history` WHERE action IN ('886') ORDER BY `id` 
+
+20161216 22:03:40: task-edit-219
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.id  = '219'
+  SELECT * FROM `zt_file` WHERE objectType  = 'task' AND  objectID  = '219' AND  extra  != 'editor'
+  SELECT id, title FROM `zt_case` WHERE story  = '1' AND  storyVersion  = '2'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.account, t2.realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType  = 'task' AND  objectID  = '219' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('886','885','884','883','882','881') ORDER BY `id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_review` WHERE task  = '219'
+  SELECT * FROM `zt_reviewDetail` WHERE reviewID  = '41' AND  deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT t2.id, t2.title, t2.module, t2.pri, t2.estimate, t3.name AS product FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_product` AS t3  ON t1.product = t3.id  WHERE t1.project  = '3' AND  t2.deleted  = '0'
+  SELECT account, realname, deleted FROM `zt_user` WHERE deleted  = '0' ORDER BY `account` 
+  SELECT account, realname, deleted FROM `zt_user` WHERE account IN ('admin','','')
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:03:44: project-task-3
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `isDone`,`status`,`order` desc 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t2.id, t2.name, t2.type, t1.branch FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT id, name FROM `zt_project` WHERE parent  = '3'
+  SELECT t1.*, t1.hours * t1.days AS totalHours, if(t2.deleted='0', t2.realname, t1.account) as realname FROM `zt_team` AS t1  LEFT JOIN `zt_user` AS t2  ON t1.account = t2.account  WHERE t1.project  = '3'
+  SELECT commiter, account, realname FROM `zt_user` WHERE commiter  != ''
+  SELECT * FROM `zt_action` WHERE objectType IN('project', 'testtask', 'build')  AND  project  = '3' ORDER BY `date` desc 
+  SELECT * FROM `zt_history` WHERE action IN ('400','354') ORDER BY `id` 
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT * FROM `zt_project` WHERE `id` = '3' 
+  SELECT 
+            SUM(estimate) AS totalEstimate, 
+            SUM(consumed) AS totalConsumed, 
+            SUM(`left`) AS totalLeft FROM `zt_task` WHERE project  = '3' AND  status  != 'cancel' AND  deleted  = '0'
+  SELECT sum(days * hours) AS totalHours FROM `zt_team` WHERE project  = '3'
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT COUNT(*) AS recTotal FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t3.realname AS assignedToRealName FROM `zt_task` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_user` AS t3  ON t1.assignedTo = t3.account  WHERE t1.project  = '3' AND  t1.deleted  = '0' AND  t1.status IN ('','wait','doing','done','pause','cancel') ORDER BY `id` desc 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT * FROM `zt_product` WHERE `id` = '1' 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT account, realname, deleted FROM `zt_user` ORDER BY `account` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT product,branch FROM `zt_projectproduct` WHERE project  = '3'
+  SELECT id,root,branch FROM `zt_module` WHERE root IN ('1') AND  type  = 'story' AND  deleted  = '0'
+  SELECT id FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.id FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task' and parent = 0  AND  deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task') OR (root = 1 and type = 'story'))  AND  deleted  = '0' ORDER BY `grade` desc,`branch`,`type`,`order` 
+  SELECT t1.product, t2.name FROM `zt_projectproduct` AS t1  LEFT JOIN `zt_product` AS t2  ON t1.product = t2.id  WHERE t1.project  = '3'
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT openedVersion FROM `zt_project` WHERE id  = '3'
+  SELECT DISTINCT t3.path FROM `zt_projectstory` AS t1  LEFT JOIN `zt_story` AS t2  ON t1.story = t2.id  LEFT JOIN `zt_module` AS t3  ON t2.module = t3.id  WHERE t1.project  = '3' AND  t3.deleted  = '0'
+  SELECT path FROM `zt_module` WHERE root  = '3' AND  type  = 'task' AND  deleted  = '0'
+  SELECT DISTINCT t1.path FROM `zt_module` AS t1  LEFT JOIN `zt_task` AS t2  ON t1.id=t2.module  WHERE t2.module  != '0' AND  t2.project  = '3' AND  t2.deleted  = '0' AND  t1.type  = 'story' AND  t1.deleted  = '0'
+  SELECT * FROM `zt_module` WHERE ((root = 3 and type = 'task' and parent != 0) OR (root = 1 and type = 'story' and branch ='0'))  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT * FROM `zt_module` WHERE root = 3 and type = 'task'  AND  deleted  = '0' ORDER BY `grade` desc,`type`,`order` 
+  SELECT *,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed FROM `zt_product` WHERE deleted  = '0' ORDER BY `isClosed`,`order` desc 
+  SELECT t1.id, t1.name,t1.status, t2.product FROM `zt_project` AS t1  LEFT JOIN `zt_projectproduct` AS t2  ON t1.id = t2.project  WHERE t1.deleted  = '0'
+  SELECT *, IF(INSTR(" done", status) < 2, 0, 1) AS isDone FROM `zt_project` WHERE iscat  = '0' AND  deleted  = '0' ORDER BY `order` desc 
+  SELECT * FROM `zt_branch` WHERE product IN ('1') AND  deleted  = '0' ORDER BY `order` 
+  SELECT * FROM `zt_product` WHERE id IN ('1')
+  SELECT * FROM `zt_cron` ORDER BY `lastTime` desc  LIMIT 1 
+
+20161216 22:13:44: misc-ping
+  SELECT * FROM `zt_config` WHERE owner IN ('system','admin') ORDER BY `id` 
+  SELECT * FROM `zt_lang` ORDER BY `lang`,`id` 
+

@@ -144,26 +144,8 @@
       </tr>  
       <tr>
         <th><?php echo $lang->story->spec;?></th>
-<<<<<<< HEAD
         <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
       </tr>  
-=======
-        <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control'");?><div class='help-block'><?php echo $lang->story->specTemplate;?></div></td>
-      </tr>
-<!--第二个需求2-->
-
-      <tr>
-        <th><?php echo $lang->story->spec2;?></th>
-        <td colspan='2'><?php echo html::textarea('spec2', $spec2, "rows='9' class='form-control'");?></td>
-      </tr>
-
-      <!--第二个需求3-->
-      <tr>
-        <th><?php echo $lang->story->spec3;?></th>
-        <td colspan='2'><?php echo html::textarea('spec3', $spec3, "rows='9' class='form-control'");?></td>
-      </tr>
-
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <?php if(strpos(",$showFields,", ',verify,') !== false):?>
       <tr>
         <th><?php echo $lang->story->verify;?></th>

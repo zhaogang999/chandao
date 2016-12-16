@@ -8,15 +8,8 @@ class excelTask extends taskModel
         $stories   = $this->loadModel('story')->getProjectStories($projectID);
         $priList   = $this->lang->task->priList;
         $typeList  = $this->lang->task->typeList;
-<<<<<<< HEAD
 
         unset($typeList['']);
-=======
-        //完善任务导入功能，新增status下拉列表
-        $statusList = $this->lang->task->statusList;
-
-        unset($statusList['']);
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 
         foreach($modules  as $id => $module) $modules[$id] .= "(#$id)";
         foreach($stories  as $id => $story)  $stories[$id]  = "$story->title(#$story->id)";
@@ -25,12 +18,6 @@ class excelTask extends taskModel
         $this->post->set('storyList',    array_values($stories));
         $this->post->set('priList',      join(',', $priList));
         $this->post->set('typeList',     join(',', $typeList));
-<<<<<<< HEAD
-=======
-        //完善任务导入功能，新增status下拉列表
-        $this->post->set('statusList',   join(',', $statusList));
-
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         $this->post->set('listStyle',  $this->config->task->export->listFields);
         $this->post->set('extraNum',   0);
         $this->post->set('project',    $project->name);
@@ -50,10 +37,6 @@ class excelTask extends taskModel
         {
             $taskData = new stdclass();
 
-<<<<<<< HEAD
-=======
-            $oldID                   = $data->id[$key];
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             $taskData->project      = $project;
             $taskData->module       = (int)$data->module[$key];
             $taskData->name         = $data->name[$key];
@@ -61,41 +44,9 @@ class excelTask extends taskModel
             $taskData->story        = (int)$data->story[$key];
             $taskData->pri          = (int)$data->pri[$key];
             $taskData->type         = $data->type[$key];
-<<<<<<< HEAD
             $taskData->estimate     = (float)$data->estimate[$key];
             $taskData->estStarted   = empty($data->estStarted[$key]) ? '0000-00-00' : $data->estStarted[$key];
             $taskData->deadline     = empty($data->deadline[$key]) ? '0000-00-00' : $data->deadline[$key];
-=======
-//完善任务导入功能，增加指派给，指派时间，mailto
-            $assingedToAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->assignedTo[$key]))->fetch();
-            $taskData->assignedTo  =  empty($assingedToAccount)?'':$assingedToAccount->account;
-            $taskData->assignedDate  =  $data->assignedDate[$key];
-            $taskData->mailto       =  $data->mailto[$key];
-
-            $taskData->estimate     = (float)$data->estimate[$key];
-            $taskData->estStarted   = empty($data->estStarted[$key]) ? '0000-00-00' : $data->estStarted[$key];
-            $taskData->deadline     = empty($data->deadline[$key]) ? '0000-00-00' : $data->deadline[$key];
-            /*完善任务导入功能，新增status,mailto,openedBy,openedDate,assignedTo,assignedDate,finishedBy,finishedDate,canceledBy,canceledDate,closedBy,closedDate,closedReason,lastEditedBy,lastEditedDate,files*/
-            $taskData->status          =  $data->status[$key];
-            $taskData->consumed        =  $data->consumed[$key];
-            $taskData->left            =  $data->left[$key];
-            $openedByAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->openedBy[$key]))->fetch();
-            $taskData->openedBy        =  empty($openedByAccount)?'':$openedByAccount->account;
-            $taskData->openedDate      =  $data->openedDate[$key];
-            $taskData->realStarted     =  $data->realStarted[$key];
-            $finishedByAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->finishedBy[$key]))->fetch();
-            $taskData->finishedBy      =  empty($finishedByAccount)?'':$finishedByAccount->account;
-            $taskData->finishedDate    =  $data->finishedDate[$key];
-            $canceledByAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->canceledBy[$key]))->fetch();
-            $taskData->canceledBy      =  empty($canceledByAccount)?'':$canceledByAccount->account;
-            $taskData->canceledDate    =  $data->canceledDate[$key];
-            $closedByAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->closedBy[$key]))->fetch();
-            $taskData->closedBy        =  empty($closedByAccount)?'':$closedByAccount->account;
-            $taskData->closedReason    =  $data->closedReason[$key];
-            $lastEditedByAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->lastEditedBy[$key]))->fetch();
-            $taskData->lastEditedBy    =  empty($lastEditedByAccount)?'':$lastEditedByAccount->account;
-            $taskData->lastEditedDate  =  $data->lastEditedDate[$key];
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 
             if(isset($this->config->task->create->requiredFields))
             {
@@ -145,7 +96,6 @@ class excelTask extends taskModel
             else
             {
                 if($taskData->story != false) $taskData->storyVersion = $this->loadModel('story')->getVersion($taskData->story);
-<<<<<<< HEAD
                 $taskData->left       = $taskData->estimate;
                 $taskData->status     = 'wait';
                 $taskData->openedBy   = $this->app->user->account;
@@ -162,48 +112,6 @@ class excelTask extends taskModel
                     $this->loadModel('action')->create('task', $taskID, 'Opened', '');
                     $tasksID[$key] = $taskID;
                 }
-=======
-                /*完善任务导入功能，删除项*/
-                //$taskData->left       = $taskData->estimate;
-                //$taskData->status     = 'wait';
-                //$taskData->openedBy   = $this->app->user->account;
-                //$taskData->openedDate = $now;
-
-                if($taskData->deadline != '0000-00-00' and strtotime($taskData->deadline) < strtotime($taskData->estStarted)) continue;
-                
-                $this->dao->insert(TABLE_TASK)->data($taskData)
-                    ->autoCheck()
-                    ->exec();
-                //完善任务导入功能,增加任务历史操作记录功能做出的改动
-                if(!dao::isError())
-                {
-                    $taskID = $this->dao->lastInsertID();
-                    $actions = $this->dao->select('*')->from(TABLE_ACTION)->where('objectType')->eq('task')->andWhere('objectID')->eq($oldID)->fetchAll();
-                    foreach($actions as  $action)
-                    {
-                        $histories = $this->dao->select('*')->from(TABLE_HISTORY)->where('action')->eq($action->id)->fetchAll();
-                        $action->id  = '';
-                        $action->objectID = $taskID;
-                        $this->dao->insert(TABLE_ACTION)->data($action)
-                            ->exec();
-                        $AID = $this->dao->lastInsertID();
-                        foreach($histories as $history)
-                        {
-                            $history->id = '';
-                            $history->action = $AID;
-                            $this->dao->insert(TABLE_HISTORY)->data($history)
-                                ->exec();
-                        }
-                    }
-                }
-                //源代码
-                /*if(!dao::isError())
-                {
-                    $taskID = $this->dao->lastInsertID();
-                    $this->loadModel('action')->create('task', $taskID, 'Opened', '');
-                    $tasksID[$key] = $taskID;
-                }*/
->>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 else
                 {
                     dao::getError();

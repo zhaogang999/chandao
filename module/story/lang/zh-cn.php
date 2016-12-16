@@ -54,9 +54,6 @@ $lang->story->sourceNote     = '来源备注';
 $lang->story->fromBug        = '来源Bug';
 $lang->story->title          = '需求名称';
 $lang->story->spec           = '需求描述';
-$lang->story->spec2           = '需求2';
-$lang->story->spec3           = '需求3';
-
 $lang->story->verify         = '验收标准';
 $lang->story->pri            = '优先级';
 $lang->story->estimate       = '预计工时';
@@ -167,9 +164,6 @@ $lang->story->legendCases          = '相关用例';
 $lang->story->legendLinkStories    = '相关需求';
 $lang->story->legendChildStories   = '细分需求';
 $lang->story->legendSpec           = '需求描述';
-$lang->story->legendSpec1           = '描述1';
-$lang->story->legendSpec2           = '描述2';
-$lang->story->legendSpec3           = '描述3';
 $lang->story->legendVerify         = '验收标准';
 $lang->story->legendMisc           = '其他相关';
 
