@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="e0b9e33a-a8f0-406e-b03c-3a66573d1066" name="默认" comment="">
       <change type="DELETED" beforePath="$PROJECT_DIR$/doc/navinfo/数据库文档.docx" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161114.log.php" afterPath="" />
@@ -364,6 +365,36 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/theme/default/zh-tw.lightblue.css" afterPath="$PROJECT_DIR$/www/theme/default/zh-tw.lightblue.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/theme/default/zh-tw.red.css" afterPath="$PROJECT_DIR$/www/theme/default/zh-tw.red.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/theme/zui/css/min.css" afterPath="$PROJECT_DIR$/www/theme/zui/css/min.css" />
+=======
+    <list default="true" id="9c086394-7ce7-4739-9c6c-9b456106bf20" name="默认" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/module/task/ext/control/deleteReview.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/module/task/ext/js/edit/reviewEdit.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/module/task/ext/lang/zh-cn/review.php" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161117.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161118.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161119.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161120.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161121.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161122.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161123.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161124.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/php.20161125.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161117.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161118.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161119.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161120.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161121.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161122.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161123.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161124.log.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/log/sql.20161125.log.php" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/my.php" afterPath="$PROJECT_DIR$/config/my.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tmp/log/sql.20161202.log.php" afterPath="$PROJECT_DIR$/tmp/log/sql.20161202.log.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tmp/model/task.php" afterPath="$PROJECT_DIR$/tmp/model/task.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/.htaccess" afterPath="$PROJECT_DIR$/www/.htaccess" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/.ztaccess" afterPath="$PROJECT_DIR$/www/.ztaccess" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     </list>
     <ignored path="chandao.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -386,12 +417,24 @@
   <component name="FileEditorManager">
     <leaf />
   </component>
+<<<<<<< HEAD
+=======
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/www/.ztaccess" />
         <option value="$PROJECT_DIR$/www/.htaccess" />
         <option value="$PROJECT_DIR$/config/my.php" />
@@ -407,6 +450,59 @@
         <option value="$PROJECT_DIR$/module/task/ext/control/view.php" />
         <option value="$PROJECT_DIR$/module/task/ext/lang/zh-cn/review.php" />
         <option value="$PROJECT_DIR$/module/task/ext/model/finish.php" />
+=======
+        <option value="$PROJECT_DIR$/module/file/ext/control/test.php" />
+        <option value="$PROJECT_DIR$/module/story/view/edit.html.php" />
+        <option value="$PROJECT_DIR$/www/index.php" />
+        <option value="$PROJECT_DIR$/module/file/ext/model/excel.php" />
+        <option value="$PROJECT_DIR$/module/extension/ext/excel/module/task/ext/model/class/excel.class.php" />
+        <option value="$PROJECT_DIR$/module/extension/ext/excel/module/task/ext/control/showimport.php" />
+        <option value="$PROJECT_DIR$/module/extension/ext/excel/module/task/ext/model/excel.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/model/excel.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/view/showimport.html.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/config/excel.php" />
+        <option value="$PROJECT_DIR$/module/task/lang/zh-cn.php" />
+        <option value="$PROJECT_DIR$/module/common/view/action.html.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/import.php" />
+        <option value="$PROJECT_DIR$/module/extension/ext/excel/lib/phpexcel/PHPExcel/Autoloader.php" />
+        <option value="$PROJECT_DIR$/module/story/model.php" />
+        <option value="$PROJECT_DIR$/module/story/view/view.html.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/showimport.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/model/class/excel.class.php" />
+        <option value="$PROJECT_DIR$/lib/phpword/PHPWord/Writer/Word2007/Styles.php" />
+        <option value="$PROJECT_DIR$/module/extension/ext/word/lib/word/word/styles.xml" />
+        <option value="$PROJECT_DIR$/module/file/ext/config/word.php" />
+        <option value="$PROJECT_DIR$/module/file/ext/control/export2word.php" />
+        <option value="$PROJECT_DIR$/module/story/control.php" />
+        <option value="$PROJECT_DIR$/module/story/config.php" />
+        <option value="$PROJECT_DIR$/module/task/js/create.js" />
+        <option value="$PROJECT_DIR$/module/task/ext/css/create.css" />
+        <option value="$PROJECT_DIR$/module/task/css/create.css" />
+        <option value="$PROJECT_DIR$/module/task/ext/lang/zh-cn/create.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/js/create/setOwners.js" />
+        <option value="$PROJECT_DIR$/www/js/my.min.js" />
+        <option value="$PROJECT_DIR$/config/config.php" />
+        <option value="$PROJECT_DIR$/module/task/config.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/css/edit/edit.css" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/commonAction.php" />
+        <option value="$PROJECT_DIR$/module/task/model.php" />
+        <option value="$PROJECT_DIR$/module/task/control.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/view/create.html.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/model/create.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/config/config.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/js/edit/setOwners.js" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/delete.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/view/view.html.php" />
+        <option value="$PROJECT_DIR$/module/action/model.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/model/edit.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/edit.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/deleteReview.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/js/edit/reviewEdit.js" />
+        <option value="$PROJECT_DIR$/module/task/ext/control/view.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/view/edit.html.php" />
+        <option value="$PROJECT_DIR$/module/task/ext/lang/zh-cn/review.php" />
+        <option value="$PROJECT_DIR$/config/my.php" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       </list>
     </option>
   </component>
@@ -457,8 +553,11 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< HEAD
       <pane id="Scope" />
       <pane id="Scratches" />
+=======
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -477,6 +576,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
+<<<<<<< HEAD
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="chandao" />
@@ -641,18 +741,35 @@
           </PATH>
         </subPane>
       </pane>
+=======
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="fileTemplates" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+<<<<<<< HEAD
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\ziliao\chandao\module\task\ext\css\finish" />
       <recent name="F:\ziliao\chandao\module\task\ext\js\finish" />
       <recent name="F:\ziliao\chandao\module\task\ext\view" />
+=======
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="last_opened_file_path" value="F:/zentaopms/zentaopms8_4" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\zentao\chandao\module\task\ext\view" />
+      <recent name="F:\zentao\chandao\module\task\ext\js" />
+      <recent name="F:\zentao\chandao\module\task\ext\css\edit" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     </key>
   </component>
   <component name="RunManager">
@@ -695,6 +812,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="e0b9e33a-a8f0-406e-b03c-3a66573d1066" name="默认" comment="" />
       <created>1481531310761</created>
       <option name="number" value="Default" />
@@ -712,16 +830,89 @@
       <workItem from="1481769011419" duration="2299000" />
       <workItem from="1481771897736" duration="728000" />
       <workItem from="1481851032691" duration="831000" />
+=======
+      <changelist id="9c086394-7ce7-4739-9c6c-9b456106bf20" name="默认" comment="" />
+      <created>1479258932477</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1479258932477</updated>
+      <workItem from="1479258934552" duration="41194000" />
+      <workItem from="1479345264641" duration="7092000" />
+      <workItem from="1479363405865" duration="13998000" />
+      <workItem from="1479430775967" duration="16690000" />
+      <workItem from="1479454241893" duration="10538000" />
+      <workItem from="1479523039179" duration="16000" />
+      <workItem from="1479525929098" duration="8936000" />
+      <workItem from="1479558175029" duration="81000" />
+      <workItem from="1479648294975" duration="2922000" />
+      <workItem from="1479651468740" duration="2379000" />
+      <workItem from="1479691655748" duration="3322000" />
+      <workItem from="1479707317922" duration="9020000" />
+      <workItem from="1479786456158" duration="14204000" />
+      <workItem from="1479806183550" duration="2059000" />
+      <workItem from="1479808267541" duration="24000" />
+      <workItem from="1479808326615" duration="1664000" />
+      <workItem from="1479823163101" duration="28000" />
+      <workItem from="1479823207287" duration="986000" />
+      <workItem from="1479824216301" duration="22865000" />
+      <workItem from="1479884451106" duration="11533000" />
+      <workItem from="1479911592641" duration="5017000" />
+      <workItem from="1479949846185" duration="13812000" />
+      <workItem from="1479991833639" duration="8464000" />
+      <workItem from="1480044093751" duration="15853000" />
+      <workItem from="1480295230453" duration="9113000" />
+      <workItem from="1480312897220" duration="9300000" />
+      <workItem from="1480335845561" duration="10510000" />
+      <workItem from="1480346531469" duration="36005000" />
+      <workItem from="1480467937588" duration="13230000" />
+      <workItem from="1480493477289" duration="6393000" />
+      <workItem from="1480573025363" duration="9107000" />
+      <workItem from="1480600763386" duration="1249000" />
+      <workItem from="1480645533549" duration="29880000" />
+      <workItem from="1480687807043" duration="4001000" />
+      <workItem from="1480726754671" duration="40539000" />
+      <workItem from="1480814005673" duration="14611000" />
+      <workItem from="1480900188624" duration="33556000" />
+      <workItem from="1480985944071" duration="19777000" />
+      <workItem from="1481015424390" duration="2353000" />
+      <workItem from="1481074029973" duration="1940000" />
+      <workItem from="1481077815075" duration="16454000" />
+      <workItem from="1481101101152" duration="3834000" />
+      <workItem from="1481159731453" duration="27349000" />
+      <workItem from="1481201209788" duration="42937000" />
+      <workItem from="1481331836639" duration="7302000" />
+      <workItem from="1481353147246" duration="2659000" />
+      <workItem from="1481433095874" duration="1540000" />
+      <workItem from="1481437473912" duration="829000" />
+      <workItem from="1481438775500" duration="509000" />
+      <workItem from="1481506577528" duration="3077000" />
+      <workItem from="1481511803261" duration="2812000" />
+      <workItem from="1481529063857" duration="158000" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
     <option name="totallyTimeSpent" value="47873000" />
+=======
+    <option name="totallyTimeSpent" value="563721000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
+<<<<<<< HEAD
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21406959" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -730,15 +921,33 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+=======
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2065053" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935154" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5546075" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+<<<<<<< HEAD
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+=======
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18941979" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -757,6 +966,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/config/my.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
@@ -782,10 +992,37 @@
     <entry file="file://$PROJECT_DIR$/lib/front/front.class.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
+=======
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/Core_c.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-189">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/framework/model.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="5" column="29" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/framework/base/router.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3564">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/framework/base/helper.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-11178">
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/VERSION">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -973,12 +1210,203 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/module/task/ext/lang/zh-cn/execel.php">
+=======
+    <entry file="file://$PROJECT_DIR$/lib/dao/dao.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="13" column="47" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/Core.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1134">
+          <caret line="42" column="9" selection-start-line="42" selection-start-column="9" selection-end-line="42" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/base/dao/dao.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="973" column="20" selection-start-line="973" selection-start-column="20" selection-end-line="973" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/js/create.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="59" column="8" selection-start-line="59" selection-start-column="8" selection-end-line="59" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/control/commonAction.php" />
+    <entry file="file://$PROJECT_DIR$/module/project/view/managemembers.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="854">
+          <caret line="71" column="25" selection-start-line="71" selection-start-column="25" selection-end-line="71" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/action/control.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="2" column="8" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/css/create.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/model/create.php" />
+    <entry file="file://$PROJECT_DIR$/module/task/ext/js/create/setOwners.js" />
+    <entry file="file://$PROJECT_DIR$/module/task/ext/css/create/create.css" />
+    <entry file="file://$PROJECT_DIR$/module/task/ext/view/create.html.php" />
+    <entry file="file://$PROJECT_DIR$/module/task/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="10" column="48" selection-start-line="10" selection-start-column="48" selection-end-line="10" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/js/view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/file/view/printfiles.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="14" column="55" selection-start-line="14" selection-start-column="49" selection-end-line="14" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/view/edit.html.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/view/create.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="101" column="87" selection-start-line="101" selection-start-column="87" selection-end-line="101" selection-end-column="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/css/edit/edit.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="25" selection-start-line="0" selection-start-column="25" selection-end-line="0" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/config/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="1" column="178" selection-start-line="1" selection-start-column="178" selection-end-line="1" selection-end-column="178" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/standard_3.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="347">
+          <caret line="1015" column="9" selection-start-line="1015" selection-start-column="9" selection-end-line="1015" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/standard_1.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="269" column="22" selection-start-line="269" selection-start-column="15" selection-end-line="269" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/lang/zh-cn.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="36" column="36" selection-start-line="36" selection-start-column="34" selection-end-line="36" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/common/model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="859" column="27" selection-start-line="859" selection-start-column="27" selection-end-line="859" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/action/model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="407" column="30" selection-start-line="407" selection-start-column="20" selection-end-line="407" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/control/deleteReview.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="244">
+          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="1115" column="26" selection-start-line="1115" selection-start-column="20" selection-end-line="1115" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/view/view.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2586">
+          <caret line="167" column="43" selection-start-line="167" selection-start-column="43" selection-end-line="167" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/js/edit/reviewEdit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" column="38" selection-start-line="7" selection-start-column="38" selection-end-line="7" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/control.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-949">
+          <caret line="994" column="20" selection-start-line="994" selection-start-column="20" selection-end-line="994" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/lang/zh-cn/review.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="13" column="0" selection-start-line="1" selection-start-column="42" selection-end-line="13" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/control/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="466">
+          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/action/lang/zh-cn.php">
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/www/.ztaccess">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="351">
@@ -1088,6 +1516,110 @@
         <state relative-caret-position="243">
           <caret line="150" column="30" selection-start-line="150" selection-start-column="30" selection-end-line="150" selection-end-column="30" />
           <folding />
+=======
+    <entry file="file://$PROJECT_DIR$/module/task/ext/model/edit.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3510">
+          <caret line="205" column="42" selection-start-line="205" selection-start-column="42" selection-end-line="205" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/control/edit.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="36" column="25" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/task/ext/view/edit.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2423">
+          <caret line="163" column="45" selection-start-line="163" selection-start-column="45" selection-end-line="163" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/standard_7.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="131">
+          <caret line="569" column="49" selection-start-line="569" selection-start-column="49" selection-end-line="569" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/doc/view/create.html.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1404">
+          <caret line="61" column="66" selection-start-line="61" selection-start-column="57" selection-end-line="61" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/doc/lang/zh-cn.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2052">
+          <caret line="85" column="17" selection-start-line="85" selection-start-column="12" selection-end-line="85" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/doc/model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/my.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/framework/base/control.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="794" column="20" selection-start-line="794" selection-start-column="20" selection-end-line="794" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/doc/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="5" selection-start-line="0" selection-start-column="5" selection-end-line="0" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/file/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="5" selection-start-line="0" selection-start-column="5" selection-end-line="0" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2827">
+          <caret line="78" column="9" selection-start-line="78" selection-start-column="3" selection-end-line="78" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/doc/control.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="273" column="8" selection-start-line="273" selection-start-column="8" selection-end-line="273" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/file/model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5017">
+          <caret line="462" column="21" selection-start-line="462" selection-start-column="21" selection-end-line="462" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/file/control.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         </state>
       </provider>
     </entry>

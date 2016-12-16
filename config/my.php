@@ -17,4 +17,8 @@ define('TABLE_REVIEWDETAIL',    '`' . $config->db->prefix . 'reviewDetail`');
 $config->objectTables['review']         = TABLE_REVIEW;
 $config->objectTables['reviewDetail']   = TABLE_REVIEWDETAIL;
 
+<<<<<<< HEAD
+=======
+$config->file->maxSize = 1024 * 1024 * 1024;
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 $config->timeout       = 60000;

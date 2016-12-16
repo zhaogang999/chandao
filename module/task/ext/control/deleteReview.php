@@ -32,7 +32,11 @@ class myTask extends task
             $this->commonAction($taskID->task);
             $actionID = $this->action->create('task', $taskID->task, 'Edited');
             if(!empty($changes)) $this->action->logHistory($actionID, $changes);
+<<<<<<< HEAD
             $this->task->sendmail($taskID, $actionID);
+=======
+            $this->sendmail($taskID, $actionID);
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             return 1;
         }
     }

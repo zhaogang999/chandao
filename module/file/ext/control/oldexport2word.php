@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+=======
+include "../../control.php";
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
 class myfile extends file
 {
     /**

@@ -42,6 +42,15 @@
         <th><?php echo $lang->story->spec;?></th>
         <td><?php echo html::textarea('spec', htmlspecialchars($story->spec), 'rows=8 class="form-control"');?><span class='help-block'><?php echo $lang->story->specTemplate;?></span></td>
       </tr>
+
+      <tr>
+        <th><?php echo $lang->story->spec2;?></th>
+        <td><?php echo html::textarea('spec2', htmlspecialchars($story->spec2), 'rows=8 class="form-control"');?><span class='help-block'><?php echo $lang->story->specTemplate;?></span></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->story->spec3;?></th>
+        <td><?php echo html::textarea('spec3', htmlspecialchars($story->spec3), 'rows=8 class="form-control"');?><span class='help-block'><?php echo $lang->story->specTemplate;?></span></td>
+      </tr>
       <tr>
         <th><?php echo $lang->story->verify;?></th>
         <td><?php echo html::textarea('verify', htmlspecialchars($story->verify), 'rows=6 class="form-control"');?></td>

@@ -90,6 +90,7 @@
       <?php echo $this->fetch('file', 'printFiles', array('files' => $task->files, 'fieldset' => 'true'));?>
 <!--新增-->
       <?php if($review != ''):?>
+<<<<<<< HEAD
         <fieldset>
           <legend><?php echo $lang->task->review;?></legend>
           <table class='table table-form table-fixed'>
@@ -224,6 +225,140 @@
               无评审问题
           <?php endif;?>
         </fieldset>
+=======
+      <fieldset>
+        <legend><?php echo $lang->task->review;?></legend>
+        <table class='table table-form table-fixed'>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->fileNO;?></th>
+            <td class='w-350px'>
+              <?php echo $review->fileNO;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->recorder;?></th>
+            <td class='w-350px'>
+              <?php echo $review->recorder;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->reviewName;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reviewName;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->reviewDate;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reviewDate;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->doc;?></th>
+            <td class='w-350px'>
+              <?php echo $review->doc;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->reviewScope;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reviewScope;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->referenceDoc;?></th>
+            <td class='w-350px'>
+              <?php echo $review->referenceDoc;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->reviewPlace;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reviewPlace;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->reference;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reference;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->effort;?></th>
+            <td class='w-350px'>
+              <?php echo $review->effort;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->pages;?></th>
+            <td class='w-350px'>
+              <?php echo $review->pages;?>
+            </td>
+            <th class='w-80px'><?php echo $lang->task->conclusion;?></th>
+            <td class='w-350px'>
+              <?php echo $review->conclusion;?>
+            </td>
+          </tr>
+          <tr>
+            <th class='w-80px'><?php echo $lang->task->reviewers;?></th>
+            <td class='w-350px'>
+              <?php echo $review->reviewers;?>
+            </td>
+            <th class='w-80px'></th>
+            <td class='w-350px'></td>
+          </tr>
+        </table>
+        <div style="height:30px;font:bold 12px 宋体;line-height: 30px;"><?php echo $lang->task->problem;?></div>
+
+        <?php foreach($reviewDetails as $reviewDetail):?>
+          <?php if ($reviewDetail != ''):?>
+          <table class='table table-form table-fixed with-border'>
+            <tr>
+              <th class='w-80px'><?php echo $lang->task->number;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->number;?>
+              </td>
+              <th class='w-80px'><?php echo $lang->task->reviewer;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->reviewer;?>
+              </td>
+            </tr>
+            <tr>
+              <th class='w-80px'><?php echo $lang->task->item;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->item;?>
+              </td>
+              <th class='w-80px'><?php echo $lang->task->line;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->line;?>
+              </td>
+            </tr>
+            <tr>
+              <th class='w-80px'><?php echo $lang->task->severity;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->severity;?>
+              </td>
+              <th class='w-80px'><?php echo $lang->task->description;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->description;?>
+              </td>
+            </tr>
+            <tr>
+              <th class='w-80px'><?php echo $lang->task->proposal;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->proposal;?>
+              </td>
+              <th class='w-80px'><?php echo $lang->task->changed;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->changed;?>
+              </td>
+            </tr>
+            <tr>
+              <th class='w-80px'><?php echo $lang->task->action;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->action;?>
+              </td>
+              <th class='w-80px'><?php echo $lang->task->chkd;?></th>
+              <td class='w-350px'>
+                <?php echo $reviewDetail->chkd;?>
+              </td>
+            </tr>
+          </table>
+          <?php endif;?>
+        <?php endforeach;?>
+
+      </fieldset>
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
       <?php endif; ?>
       
       <?php include '../../../common/view/action.html.php';?>

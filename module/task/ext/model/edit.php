@@ -12,7 +12,11 @@ public function update($taskID)
     $reviewDetail = array();
     $taskDetail = '';
     $review = '';
+<<<<<<< HEAD
     //$emptyReview = '';
+=======
+    $emptyReview = '';
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
     $emptyReviewDetail = '';
     $reviewDetailChanges = array();
     $changes = array();
@@ -104,6 +108,11 @@ public function update($taskID)
         {
             $taskDetail->storyVersion = $task->storyVersion;
         }
+<<<<<<< HEAD
+=======
+        //$taskDetail->openedBy = $task->openedBy;
+        //$taskDetail->openedDate = $task->openedDate;
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         $taskDetail->assignedTo = $task->assignedTo;
         $taskDetail->assignedDate = $task->assignedDate;
         $taskDetail->consumed = $task->consumed;
@@ -133,6 +142,7 @@ public function update($taskID)
         $review->effort = $task->effort;
         $review->conclusion = $task->conclusion;
 
+<<<<<<< HEAD
         //编辑评审
         $oldReview = $this->dao->select('*')
             ->from(TABLE_REVIEW)
@@ -216,19 +226,244 @@ public function update($taskID)
             {
                 unset($reviewDetail["$i"]->id);
 
+=======
+        $reviewType = $this->dao->select('*')
+            ->from(TABLE_REVIEW)
+            ->where('task')
+            ->eq("$taskID")
+            ->fetch();
+        if ($reviewType)
+        {
+            //var_dump($task);die;
+            //编辑评审
+            $oldReview = $this->dao->select('*')
+                ->from(TABLE_REVIEW)
+                ->where('id')
+                ->eq("$task->reviewID")
+                ->fetch();
+            //var_dump($oldReview);die;
+            //1.task
+            $this->dao->begin();
+            $this->dao->update(TABLE_TASK)->data($taskDetail)
+                ->autoCheck()
+                ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+                ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
+                ->checkIF($taskDetail->left     != false, 'left',     'float')
+                ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
+                ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
+
+                ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+                ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
+                ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
+                ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+                ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
+                ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+                ->where('id')->eq((int)$taskID)->exec();
+
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+            //2.review
+            $review->id = $task->reviewID;
+
+            $this->dao->update(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->where('id')->eq($review->id)->limit(1)->exec();
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+
+            //3.reviewDetail
+            $reviewIDs = $this->dao->select('id')
+                ->from(TABLE_REVIEWDETAIL)
+                ->where('reviewID')->eq($task->reviewID)
+                ->andWhere('deleted')->eq('0')
+                ->fetchAll();
+
+            $num = count($task->number);
+            for ($i = 0; $i < $num; $i++)
+            {
+                $reviewDetail["$i"]->id = $task->id["$i"];
+                $reviewDetail["$i"]->reviewID = $task->reviewID;
+                $reviewDetail["$i"]->number = $task->number["$i"];
+                $reviewDetail["$i"]->reviewer = $task->reviewer["$i"];
+                $reviewDetail["$i"]->item = $task->item["$i"];
+                $reviewDetail["$i"]->line = $task->line["$i"];
+                $reviewDetail["$i"]->severity = $task->severity["$i"];
+                $reviewDetail["$i"]->description = $task->description["$i"];
+                $reviewDetail["$i"]->proposal = $task->proposal["$i"];
+                $reviewDetail["$i"]->changed = $task->changed["$i"];
+                $reviewDetail["$i"]->action = $task->action["$i"];
+                $reviewDetail["$i"]->chkd = $task->chkd["$i"];
+                //过滤空记录
+                if ($reviewDetail["$i"]->description == '')
+                {
+                    continue;
+                }
+                $oldreViewDetail = $this->dao->select('*')
+                    ->from(TABLE_REVIEWDETAIL)
+                    ->where('id')->eq($reviewDetail["$i"]->id)
+                    ->andWhere('deleted')->eq('0')
+                    ->fetch();
+                //新增评审详情
+                if ($reviewDetail["$i"]->id == '')
+                {
+                    unset($reviewDetail["$i"]->id);
+
+                    $this->dao->insert(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
+                        ->autoCheck()
+                        ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                        ->exec();
+                    if (!dao::isError()) {
+                        //$reviewDetail["$i"]->id = $this->dao->lastInsertID();
+                        $emptyReviewDetail->reviewID = $task->reviewID;
+                        $reviewDetailChanges["$i"] = common::createChanges($emptyReviewDetail, $reviewDetail["$i"]);
+                    } else {
+                        $this->dao->rollback();
+                        return false;
+                    }
+                }
+                //编辑任务详情
+                else
+                {
+                    $this->dao->update(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
+                        ->autoCheck()
+                        ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                        ->where('id')->eq($reviewDetail["$i"]->id)->exec();
+                    if (!dao::isError())
+                    {
+                        $reviewDetailChanges["$i"] = common::createChanges($oldreViewDetail, $reviewDetail["$i"]);
+                    }
+                    else
+                    {
+                        $this->dao->rollback();
+                        return false;
+                    }
+                }
+                
+            }
+            //成功操作
+            $this->dao->commit();
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            $taskChange = common::createChanges($oldTask, $taskDetail);
+            $reviewChange = common::createChanges($oldReview, $review);
+            $changes = array_merge($taskChange,$reviewChange);
+            foreach($reviewDetailChanges as $reviewDetailChange)
+            {
+                $changes = array_merge($changes,$reviewDetailChange);
+            }
+            return $changes;
+        }
+        else
+        {
+            //添加评审
+            //1.task
+            //var_dump($task);die;
+            $this->dao->begin();
+            $this->dao->update(TABLE_TASK)->data($taskDetail)
+                ->autoCheck()
+                ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+                ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
+                ->checkIF($taskDetail->left     != false, 'left',     'float')
+                ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
+                ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
+
+                ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+                ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
+                ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
+                ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+                ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
+                ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+                ->where('id')->eq((int)$taskID)->exec();
+
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            if(!dao::isError())
+            {
+                //$this->file->updateObjectID($this->post->uid, $taskID, 'task');
+                //return common::createChanges($oldTask, $task);
+            }
+            else
+            {
+                $this->dao->rollback;
+                return false;
+            }
+
+            //2.insert review
+            $this->dao->insert(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                ->exec();
+            if (!dao::isError()) {
+                $reviewID = $this->dao->lastInsertID();
+            } else {
+                $this->dao->rollback();
+                return false;
+            }
+
+            //
+            $emptyReviewDetail->reviewID = $reviewID;
+
+            $num = count($task->number);
+            for ($i = 0; $i < $num; $i++) {
+                $reviewDetail["$i"]->reviewID = $reviewID;
+                $reviewDetail["$i"]->number = $task->number["$i"];
+                $reviewDetail["$i"]->reviewer = $task->reviewer["$i"];
+                $reviewDetail["$i"]->item = $task->item["$i"];
+                $reviewDetail["$i"]->line = $task->line["$i"];
+                $reviewDetail["$i"]->severity = $task->severity["$i"];
+                $reviewDetail["$i"]->description = $task->description["$i"];
+                $reviewDetail["$i"]->proposal = $task->proposal["$i"];
+                $reviewDetail["$i"]->changed = $task->changed["$i"];
+                $reviewDetail["$i"]->action = $task->action["$i"];
+                $reviewDetail["$i"]->chkd = $task->chkd["$i"];
+                //过滤空记录
+                if ($reviewDetail["$i"]->description == '')
+                {
+                    continue;
+                }
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 $this->dao->insert(TABLE_REVIEWDETAIL)->data($reviewDetail["$i"])
                     ->autoCheck()
                     ->batchCheck($this->config->task->create->requiredFields, 'notempty')
                     ->exec();
                 if (!dao::isError()) {
                     //$reviewDetail["$i"]->id = $this->dao->lastInsertID();
+<<<<<<< HEAD
                     $emptyReviewDetail->reviewID = $task->reviewID;
+=======
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                     $reviewDetailChanges["$i"] = common::createChanges($emptyReviewDetail, $reviewDetail["$i"]);
                 } else {
                     $this->dao->rollback();
                     return false;
                 }
             }
+<<<<<<< HEAD
             //编辑任务详情
             else
             {
@@ -261,6 +496,43 @@ public function update($taskID)
         }
         return $changes;
     } else {
+=======
+            //成功操作
+            $this->dao->commit();
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            //设置需求状态
+            if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+            //历史记录
+            $taskChange = common::createChanges($oldTask, $taskDetail);
+            //建一个空对象
+            $emptyReview->fileNO = '';
+            $emptyReview->recorder = '';
+            $emptyReview->reviewName = '';
+            $emptyReview->task = $taskID;
+            $emptyReview->doc = '';
+            $emptyReview->referenceDoc = '';
+            $emptyReview->reference = '';
+            $emptyReview->pages = '';
+            $emptyReview->reviewers = '';
+            $emptyReview->reviewDate = '';
+            $emptyReview->reviewScope = '';
+            $emptyReview->reviewPlace = '';
+            $emptyReview->effort = '';
+            $emptyReview->conclusion = '';
+            $reviewChange = common::createChanges($emptyReview, $review);
+            $changes = array_merge($taskChange,$reviewChange);
+
+
+            foreach($reviewDetailChanges as $reviewDetailChange)
+            {
+                $changes = array_merge($changes,$reviewDetailChange);
+            }
+            return $changes;
+        }
+        //return common::createChanges($oldTask, $task);
+    } else {
+        //var_dump($task);die;
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         //源代码
         $this->dao->update(TABLE_TASK)->data($task)
             ->autoCheck()
@@ -285,6 +557,10 @@ public function update($taskID)
         if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
         if(!dao::isError())
         {
+<<<<<<< HEAD
+=======
+            //die("ddd");
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             $this->file->updateObjectID($this->post->uid, $taskID, 'task');
             return common::createChanges($oldTask, $task);
         }

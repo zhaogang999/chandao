@@ -348,7 +348,7 @@ class bug extends control
     }
 
     /**
-     * Batch create. 
+     * BAjax get branchesatch create.
      * 
      * @param  int    $productID 
      * @param  int    $projectID 

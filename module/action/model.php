@@ -199,7 +199,9 @@ class actionModel extends model
             ->where('objectType')->eq($objectType)
             ->andWhere('objectID')->eq($objectID)
             ->fi()
-            ->orderBy('date, id')->fetchAll('id');
+            ->orderBy('date desc')->fetchAll('id');
+            //->orderBy('date id')->fetchAll('id');
+        //var_dump($actions);die;
         $histories = $this->getHistory(array_keys($actions));
         $this->loadModel('file');
 
@@ -209,6 +211,9 @@ class actionModel extends model
             $this->app->loadLang('testtask');
             $actions = $this->processProjectActions($actions);
         }
+
+//临时更改
+        static $isInlink = 0;
 
         foreach($actions as $actionID => $action)
         {
@@ -307,9 +312,18 @@ class actionModel extends model
             }
             $action->history = isset($histories[$actionID]) ? $histories[$actionID] : array();
             $action->comment = $this->file->setImgSize($action->comment, $this->config->action->commonImgSize);
-            $actions[$actionID] = $action;
-        }
+            //临时修改
+            if ($action->action =='linked2project' && $isInlink != 0) {
+                unset($actions[$actionID]);
+            }elseif($action->action =='linked2project' && $isInlink == 0){
+                $actions[$actionID] = $action;
+                $isInlink = 1;
+            }else{
+                $actions[$actionID] = $action;
+            }
 
+            //$actions[$actionID] = $action;
+        }
         return $actions;
     }
 

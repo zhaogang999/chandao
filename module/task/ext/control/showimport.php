@@ -6,6 +6,10 @@ class mytask extends task
     {
         if($_POST)
         {
+<<<<<<< HEAD
+=======
+            //var_dump($_POST);die;
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             $this->task->createFromImport($projectID);
             die(js::locate($this->createLink('project','task', "projectID=$projectID"), 'parent'));
         }
@@ -23,6 +27,7 @@ class mytask extends task
         }
 
         $phpExcel  = $this->app->loadClass('phpexcel');
+<<<<<<< HEAD
         $phpReader = new PHPExcel_Reader_Excel2007(); 
         if(!$phpReader->canRead($file)) $phpReader = new PHPExcel_Reader_Excel5(); 
 
@@ -30,6 +35,15 @@ class mytask extends task
         $currentSheet = $phpExcel->getSheet(0); 
         $allRows      = $currentSheet->getHighestRow(); 
         $allColumns   = $currentSheet->getHighestColumn(); 
+=======
+        $phpReader = new PHPExcel_Reader_Excel2007();
+        if(!$phpReader->canRead($file)) $phpReader = new PHPExcel_Reader_Excel5(); 
+
+        $phpExcel     = $phpReader->load($file);
+        $currentSheet = $phpExcel->getSheet(0);
+        $allRows      = $currentSheet->getHighestRow();
+        $allColumns   = $currentSheet->getHighestColumn();
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
         $allColumns++;
         $currentColumn = 'A';
         while($currentColumn != $allColumns)
@@ -59,6 +73,10 @@ class mytask extends task
 
                 // check empty data.
                 $requiredFields = explode(',', $taskConfig->create->requiredFields);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
                 if(in_array($field, $requiredFields) and empty($cellValue))
                 {
                     $ignoreRow = true;

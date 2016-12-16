@@ -48,6 +48,7 @@ class story extends control
             $response['message'] = '';
 
             $storyResult = $this->story->create($projectID, $bugID);
+           
             if(!$storyResult or dao::isError())
             {
                 $response['result']  = 'fail';
@@ -56,8 +57,10 @@ class story extends control
             }
 
             $storyID = $storyResult['id'];
-            if($storyResult['status'] == 'exists')
+
+            if($storyResult['status'] == 'exists')//没有进来
             {
+
                 $response['message'] = sprintf($this->lang->duplicate, $this->lang->story->common);
                 if($projectID == 0)
                 {
@@ -123,6 +126,8 @@ class story extends control
         $estimate   = '';
         $title      = '';
         $spec       = '';
+        $spec2       = '';
+        $spec3       = '';
         $verify     = '';
         $keywords   = '';
         $mailto     = '';
@@ -138,6 +143,10 @@ class story extends control
             $estimate   = $story->estimate;
             $title      = $story->title;
             $spec       = htmlspecialchars($story->spec);
+            //需求描述字段查询
+            $spec2       = htmlspecialchars($story->spec2);
+            $spec3       = htmlspecialchars($story->spec3);
+
             $verify     = htmlspecialchars($story->verify);
             $keywords   = $story->keywords;
             $mailto     = $story->mailto;
@@ -486,9 +495,12 @@ class story extends control
      */
     public function change($storyID)
     {
+
         if(!empty($_POST))
         {
+
             $changes = $this->story->change($storyID);
+
             if(dao::isError()) die(js::error(dao::getError()));
             $version = $this->dao->findById($storyID)->from(TABLE_STORY)->fetch('version');
             $files = $this->loadModel('file')->saveUpload('story', $storyID, $version);
@@ -506,6 +518,7 @@ class story extends control
 
         $this->commonAction($storyID);
         $this->story->getAffectedScope($this->view->story);
+
         $this->app->loadLang('task');
         $this->app->loadLang('bug');
         $this->app->loadLang('testcase');
@@ -513,6 +526,7 @@ class story extends control
 
         /* Assign. */
         $this->view->title      = $this->lang->story->change . "STORY" . $this->lang->colon . $this->view->story->title;
+        //var_dump($this->view->title);die('sds');
         $this->view->users      = $this->user->getPairs('nodeleted|pofirst', $this->view->story->assignedTo);
         $this->view->position[] = $this->lang->story->change;
         $this->view->needReview = ($this->app->user->account == $this->view->product->PO || $this->config->story->needReview == 0) ? "checked='checked'" : "";
@@ -560,6 +574,7 @@ class story extends control
     {
         $storyID = (int)$storyID;
         $story   = $this->story->getById($storyID, $version, true);
+        
         if(!$story) die(js::error($this->lang->notFound) . js::locate('back'));
 
         $story->files = $this->loadModel('file')->getByObject('story', $storyID);
@@ -1285,16 +1300,22 @@ class story extends control
      * @return void
      */
     public function export($productID, $orderBy)
-    { 
+    {
+
         /* format the fields of every story in order to export data. */
         if($_POST)
         {
+<<<<<<< HEAD
             $this->loadModel('file');
+=======
+
+>>>>>>> 56ce38b3ee68171c3a03a5f43eb2e61413da34c5
             $storyLang   = $this->lang->story;
             $storyConfig = $this->config->story;
 
-            /* Create field lists. */
+            /* Create field lists. 导出字段列表*/
             $fields = $this->post->exportFields ? $this->post->exportFields : explode(',', $storyConfig->list->exportFields);
+
             foreach($fields as $key => $fieldName)
             {
                 $fieldName = trim($fieldName);
@@ -1304,11 +1325,13 @@ class story extends control
 
             /* Get stories. */
             $stories = array();
+
             if($this->session->storyOnlyCondition)
             {
                 $stories = $this->dao->select('*')->from(TABLE_STORY)->where($this->session->storyQueryCondition)
                     ->beginIF($this->post->exportType == 'selected')->andWhere('id')->in($this->cookie->checkedItem)->fi()
                     ->orderBy($orderBy)->fetchAll('id');
+
             }
             else
             {
@@ -1349,12 +1372,17 @@ class story extends control
             foreach($stories as $story)
             {
                 $story->spec   = '';
+                $story->spec2   = '';
+                $story->spec3   = '';
                 $story->verify = '';
                 if(isset($relatedSpecs[$story->id]))
                 {
                     $storySpec     = $relatedSpecs[$story->id][0];
                     $story->title  = $storySpec->title;
                     $story->spec   = $storySpec->spec;
+                    //拆分需求字段添加
+                    $story->spec2   = $storySpec->spec2;
+                    $story->spec3   = $storySpec->spec3;
                     $story->verify = $storySpec->verify;
                 }
 
@@ -1363,6 +1391,14 @@ class story extends control
                     $story->spec = htmlspecialchars_decode($story->spec);
                     $story->spec = str_replace("<br />", "\n", $story->spec);
                     $story->spec = str_replace('"', '""', $story->spec);
+//拆分需求描述增加
+                    $story->spec2 = htmlspecialchars_decode($story->spec2);
+                    $story->spec2 = str_replace("<br />", "\n", $story->spec2);
+                    $story->spec2 = str_replace('"', '""', $story->spec2);
+
+                    $story->spec3 = htmlspecialchars_decode($story->spec3);
+                    $story->spec3 = str_replace("<br />", "\n", $story->spec3);
+                    $story->spec3 = str_replace('"', '""', $story->spec3);
 
                     $story->verify = htmlspecialchars_decode($story->verify);
                     $story->verify = str_replace("<br />", "\n", $story->verify);
@@ -1399,7 +1435,6 @@ class story extends control
                 $story->lastEditedDate = substr($story->lastEditedDate, 0, 10);
                 $story->closedDate     = substr($story->closedDate, 0, 10);
 
-
                 if($story->linkStories)
                 {
                     $tmpLinkStories = array();
@@ -1426,6 +1461,7 @@ class story extends control
 
                 /* Set related files. */
                 $story->files = '';
+
                 if(isset($relatedFiles[$story->id]))
                 {
                     foreach($relatedFiles[$story->id] as $file)
