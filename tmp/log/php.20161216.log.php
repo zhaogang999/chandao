@@ -935,3 +935,7 @@
 22:13:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping
 
 22:23:44 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping
+
+22:33:45 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping
+
+22:43:45 Constant TABLE_REVIEWDETAIL already defined in F:\zentao\chandao\config\my.php on line 15 when visiting misc-ping
