@@ -390,3 +390,18 @@ command: moduleName=mail&methodName=asyncSend.
 return : .
 output : OK
 
+22:20:04 task 7 executed,
+command: moduleName=mail&methodName=asyncSend.
+return : .
+output : OK
+
+22:25:04 task 7 executed,
+command: moduleName=mail&methodName=asyncSend.
+return : .
+output : OK
+
+22:30:04 task 7 executed,
+command: moduleName=mail&methodName=asyncSend.
+return : .
+output : OK
+
