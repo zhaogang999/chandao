@@ -18,15 +18,15 @@ $lang->user->password    = 'Password';
 $lang->user->password2   = 'Repeat password';
 $lang->user->role        = 'Role';
 $lang->user->group       = 'Group';
-$lang->user->realname    = 'Real Name';
+$lang->user->realname    = 'Name';
 $lang->user->nickname    = 'Nickname';
-$lang->user->commiter    = 'Commit Account';
+$lang->user->commiter    = 'Commiter';
 $lang->user->birthyear   = 'Birth Year';
 $lang->user->gender      = 'Gender';
 $lang->user->email       = 'Email';
 $lang->user->basicInfo   = 'Basic Info';
 $lang->user->accountInfo = 'Account';
-$lang->user->verify      = 'Verification';
+$lang->user->verify      = 'Acceptance';
 $lang->user->contactInfo = 'Contact';
 $lang->user->skype       = 'Skype';
 $lang->user->qq          = 'QQ';
@@ -89,7 +89,7 @@ $lang->user->canceledBy  = 'Cancelled by him';
 
 $lang->user->testTask2Him = 'His Build';
 $lang->user->case2Him     = 'His Case';
-$lang->user->caseByHim    = 'Case Opened by Him';
+$lang->user->caseByHim    = 'Case Open by Him';
 
 $lang->user->errorDeny    = "Sorry, your access to <b>%s</b> Module <b>%s</b> Feature has been denied. Please contact Admin to get permission. Click Back to return.";
 $lang->user->loginFailed  = "Login failed. Please check your account and password.";
@@ -147,8 +147,8 @@ $lang->user->contacts = new stdclass();
 $lang->user->contacts->common   = 'Contact';
 $lang->user->contacts->listName = 'List Name';
 
-$lang->user->contacts->manage        = 'Manage List';
-$lang->user->contacts->contactsList  = 'List';
+$lang->user->contacts->manage        = 'Manage';
+$lang->user->contacts->contactsList  = 'Contacts';
 $lang->user->contacts->selectedUsers = 'Select User';
 $lang->user->contacts->selectList    = 'Select List';
 $lang->user->contacts->createList    = 'Create a List';
@@ -158,8 +158,8 @@ $lang->user->contacts->or            = ' or ';
 
 $lang->user->resetFail       = "Reset failed. Please check the account";
 $lang->user->resetSuccess    = "Password reset! Please use your new password to login.";
-$lang->user->noticeResetFile = "<h5>For security reason, your Administrator account has to be verified.</h5>
-    <h5>Please login into your Zentao host and create the %s file.</h5>
+$lang->user->noticeResetFile = "<h5>If you are not Administrator, please contact Administrator to reset your password.</h5>
+    <h5>If you are, please login into your Zentao host and create the <span>%s</span> file.</h5>
     <p>Note:</p>
     <ol>
     <li>Keep the ok.txt empty.</li>

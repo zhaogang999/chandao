@@ -93,7 +93,7 @@ class testcaseModel extends model
         $cases       = fixer::input('post')->get();
         $batchNum    = count(reset($cases));
 
-        $result = $this->loadModel('common')->removeDuplicate('case', $cases, "product={$productID} and branch={$branch}");
+        $result = $this->loadModel('common')->removeDuplicate('case', $cases, "product={$productID}");
         $cases  = $result['data'];
 
         for($i = 0; $i < $batchNum; $i++)
@@ -125,7 +125,7 @@ class testcaseModel extends model
             {
                 $data[$i] = new stdclass();
                 $data[$i]->product      = $productID;
-                $data[$i]->branch       = $branch;
+                $data[$i]->branch       = $cases->branch[$i];
                 $data[$i]->module       = $cases->module[$i];
                 $data[$i]->type         = $cases->type[$i];
                 $data[$i]->pri          = $cases->pri[$i];
@@ -380,6 +380,41 @@ class testcaseModel extends model
         return $this->dao->findByOpenedBy($account)->from(TABLE_CASE)
             ->andWhere('deleted')->eq(0)
             ->orderBy($orderBy)->page($pager)->fetchAll();
+    }
+
+    /**
+     * Get cases of a story.
+     *
+     * @param  int    $storyID
+     * @access public
+     * @return array
+     */
+    public function getStoryCases($storyID)
+    {
+        return $this->dao->select('id, title, pri, type, status, lastRunner, lastRunDate, lastRunResult')
+            ->from(TABLE_CASE)
+            ->where('story')->eq((int)$storyID)
+            ->andWhere('deleted')->eq(0)
+            ->fetchAll('id');
+    }
+
+    /**
+     * Get counts of some stories' cases.
+     *
+     * @param  array  $stories
+     * @access public
+     * @return int
+     */
+    public function getStoryCaseCounts($stories)
+    {
+        $caseCounts = $this->dao->select('story, COUNT(*) AS cases')
+            ->from(TABLE_CASE)
+            ->where('story')->in($stories)
+            ->andWhere('deleted')->eq(0)
+            ->groupBy('story')
+            ->fetchPairs();
+        foreach($stories as $storyID) if(!isset($caseCounts[$storyID])) $caseCounts[$storyID] = 0;
+        return $caseCounts;
     }
 
     /**

@@ -569,15 +569,21 @@ class taskModel extends model
         $consumed = 0;
         $left     = $task->left;
         $now      = helper::now();
+        $lastDate = $this->dao->select('*')->from(TABLE_TASKESTIMATE)->where('task')->eq($taskID)->orderBy('date_desc')->limit(1)->fetch('date');
         $this->loadModel('action');
         foreach($estimates as $estimate)
         {
             $consumed += $estimate->consumed;
-            $left      = $estimate->left;
             $work      = $estimate->work;
             $this->addTaskEstimate($estimate);
             $estimateID = $this->dao->lastInsertID();
             $actionID   = $this->action->create('task', $taskID, 'RecordEstimate', $work, $estimate->consumed);
+
+            if(empty($lastDate) or $lastDate <= $estimate->date)
+            {
+                $left     = $estimate->left;
+                $lastDate = $estimate->date;
+            }
         }
 
         $data = new stdClass();
@@ -639,7 +645,6 @@ class taskModel extends model
     public function finish($taskID)
     {
         $oldTask = $this->getById($taskID);
-        if($this->post->consumed < $oldTask->consumed) die(js::error($this->lang->task->error->consumedSmall));
         $now  = helper::now();
         $task = fixer::input('post')
             ->setDefault('left', 0)
@@ -655,15 +660,16 @@ class taskModel extends model
         if(!is_numeric($task->consumed)) die(js::error($this->lang->task->error->consumedNumber));
 
         /* Record consumed and left. */
-        $consumed = $task->consumed - $oldTask->consumed; 
+        $consumed = $task->consumed - $oldTask->consumed;
+        if($consumed < 0) die(js::error($this->lang->task->error->consumedSmall));
         $estimate = fixer::input('post')
             ->setDefault('account', $this->app->user->account) 
             ->setDefault('task', $taskID) 
             ->setDefault('date', date(DT_DATE1)) 
             ->setDefault('left', 0)
-            ->remove('finishedDate,comment,assignedTo,files,labels')
+            ->remove('finishedDate,comment,assignedTo,files,labels,consumed')
             ->get();
-        $estimate->consumed = $estimate->consumed - $oldTask->consumed; 
+        $estimate->consumed = $consumed; 
         if($estimate->consumed) $this->addTaskEstimate($estimate);
 
         $this->dao->update(TABLE_TASK)->data($task)
@@ -706,7 +712,7 @@ class taskModel extends model
      */
     public function close($taskID)
     {
-        $oldTask = $this->getById($taskID);
+        $oldTask = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq($taskID)->fetch();
         $now     = helper::now();
         $task = fixer::input('post')
             ->setDefault('status', 'closed')
@@ -804,6 +810,10 @@ class taskModel extends model
         if($task->assignedTo == 'closed') $task->assignedToRealName = 'Closed';
         foreach($task as $key => $value) if(strpos($key, 'Date') !== false and !(int)substr($value, 0, 4)) $task->$key = '';
         $task->files = $this->loadModel('file')->getByObject('task', $taskID);
+
+        /* Get related test cases. */
+        if($task->story) $task->cases = $this->dao->select('id, title')->from(TABLE_CASE)->where('story')->eq($task->story)->andWhere('storyVersion')->eq($task->storyVersion)->fetchPairs();
+
         return $this->processTask($task);
     }
 
@@ -851,7 +861,7 @@ class taskModel extends model
         if($tasks) return $this->processTasks($tasks);
         return array();
     }
-    
+
     /**
      * Get tasks of a project.
      *
@@ -977,14 +987,14 @@ class taskModel extends model
      * @access public
      * @return array
      */
-    public function getStoryTaskPairs($storyID, $projectID = 0)
+    public function getStoryTasks($storyID, $projectID = 0)
     {
-        return $this->dao->select('id, name')
+        return $this->dao->select('id, name, assignedTo, pri, status, estimate, consumed, `left`')
             ->from(TABLE_TASK)
             ->where('story')->eq((int)$storyID)
             ->andWhere('deleted')->eq(0)
             ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
-            ->fetchPairs();
+            ->fetchAll('id');
     }
 
     /**
@@ -1019,7 +1029,7 @@ class taskModel extends model
     {
         return $this->dao->select('*')->from(TABLE_TASKESTIMATE)  
           ->where('task')->eq($taskID)
-          ->orderBy('id')
+          ->orderBy('date,id')
           ->fetchAll();
     }
 
@@ -1177,6 +1187,23 @@ class taskModel extends model
         {
             $product = $this->loadModel('product')->getById($task->product);
             $task->productType = $product->type;
+        }
+
+        /* Set closed realname. */
+        if($task->assignedTo == 'closed') $task->assignedToRealName = 'Closed';
+
+        /* Compute task progess. */
+        if($task->consumed == 0 and $task->left == 0)
+        {
+            $task->progess = 0;
+        }
+        elseif($task->consumed != 0 and $task->left == 0)
+        {
+            $task->progess = 100;
+        }
+        else
+        {
+            $task->progess = round($task->consumed / ($task->consumed + $task->left), 2) * 100;
         }
 
         return $task;
@@ -1573,7 +1600,7 @@ class taskModel extends model
                 break;
             case 'pri':
                 echo "<span class='pri" . zget($this->lang->task->priList, $task->pri, $task->pri) . "'>";
-                echo zget($this->lang->task->priList, $task->pri, $task->pri);
+                echo $task->pri == '0' ? '' : zget($this->lang->task->priList, $task->pri, $task->pri);
                 echo "</span>";
                 break;
             case 'name':
@@ -1597,6 +1624,9 @@ class taskModel extends model
                 break;
             case 'left':
                 echo round($task->left, 1);
+                break;
+            case 'progess':
+                echo "<div class='progress-pie' title='{$task->progess}%' data-value='{$task->progess}'></div>";
                 break;
             case 'deadline':
                 if(substr($task->deadline, 0, 4) > 0) echo substr($task->deadline, 5, 6);
@@ -1663,5 +1693,71 @@ class taskModel extends model
             }
             echo '</td>';
         }
+    }
+
+    /**
+     * Send mail.
+     * 
+     * @param  int    $taskID 
+     * @param  int    $actionID 
+     * @access public
+     * @return void
+     */
+    public function sendmail($taskID, $actionID)
+    {
+        $this->loadModel('mail');
+        $task        = $this->getById($taskID);
+        $projectName = $this->loadModel('project')->getById($task->project)->name;
+        $users       = $this->loadModel('user')->getPairs('noletter');
+
+        /* Get action info. */
+        $action          = $this->loadModel('action')->getById($actionID);
+        $history         = $this->action->getHistory($actionID);
+        $action->history = isset($history[$actionID]) ? $history[$actionID] : array();
+
+        /* Get mail content. */
+        $modulePath = $this->app->getModulePath();
+        $oldcwd     = getcwd();
+        $viewFile   = $modulePath . 'view/sendmail.html.php';
+        chdir($modulePath . 'view');
+        if(file_exists($modulePath . 'ext/view/sendmail.html.php'))
+        {
+            $viewFile = $modulePath . 'ext/view/sendmail.html.php';
+            chdir($modulePath . 'ext/view');
+        }
+        ob_start();
+        include $viewFile;
+        foreach(glob($modulePath . 'ext/view/sendmail.*.html.hook.php') as $hookFile) include $hookFile;
+        $mailContent = ob_get_contents();
+        ob_end_clean();
+        chdir($oldcwd);
+
+        /* Set toList and ccList. */
+        $toList = $task->assignedTo;
+        $ccList = trim($task->mailto, ',');
+
+        if(empty($toList))
+        {
+            if(empty($ccList)) return;
+            if(strpos($ccList, ',') === false)
+            {
+                $toList = $ccList;
+                $ccList = '';
+            }
+            else
+            {
+                $commaPos = strpos($ccList, ',');
+                $toList = substr($ccList, 0, $commaPos);
+                $ccList = substr($ccList, $commaPos + 1);
+            }
+        }
+        elseif(strtolower($toList) == 'closed')
+        {
+            $toList = $task->finishedBy;
+        }
+
+        /* Send emails. */
+        $this->mail->send($toList, 'TASK#' . $task->id . ' ' . $task->name . ' - ' . $projectName, $mailContent, $ccList);
+        if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
     }
 }

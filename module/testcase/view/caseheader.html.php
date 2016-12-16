@@ -76,13 +76,27 @@
         ?>
         </ul>
       </div>
-      <?php 
-      common::printIcon('testcase', 'import', "productID=$productID&branch=$branch", '', 'button', '', '', 'export cboxElement iframe');
-
-      $initModule = isset($moduleID) ? (int)$moduleID : 0;
-      common::printIcon('testcase', 'batchCreate', "productID=$productID&branch=$branch&moduleID=$initModule");
-      common::printIcon('testcase', 'create', "productID=$productID&branch=$branch&moduleID=$initModule");
-      ?>
+      <?php common::printIcon('testcase', 'import', "productID=$productID&branch=$branch", '', 'button', '', '', 'export cboxElement iframe');?>
+    </div>
+    <div class='btn-group'>
+      <div class='btn-group' id='createActionMenu'>
+        <?php
+        $initModule = isset($moduleID) ? (int)$moduleID : 0;
+        $misc = common::hasPriv('testcase', 'create') ? "class='btn btn-primary'" : "class='btn btn-primary disabled'";
+        $link = common::hasPriv('testcase', 'create') ?  $this->createLink('testcase', 'create', "productID=$productID&branch=$branch&moduleID=$initModule") : '#';
+        echo html::a($link, "<i class='icon-plus'></i>" . $lang->testcase->create, '', $misc);
+        ?>
+        <button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+          <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu'>
+        <?php 
+        $misc = common::hasPriv('testcase', 'batchCreate') ? '' : "class=disabled";
+        $link = common::hasPriv('testcase', 'batchCreate') ?  $this->createLink('testcase', 'batchCreate', "productID=$productID&branch=$branch&moduleID=$initModule") : '#';
+        echo "<li>" . html::a($link, $lang->testcase->batchCreate, '', $misc) . "</li>";
+        ?>
+        </ul>
+      </div>
     </div>
   </div>
   <div id='querybox' class='<?php if($browseType =='bysearch') echo 'show';?>'></div>

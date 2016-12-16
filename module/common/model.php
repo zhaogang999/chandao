@@ -168,20 +168,16 @@ class commonModel extends model
         if($module == 'sso' and $method == 'logout') return true;
         if($module == 'sso' and $method == 'bind') return true;
         if($module == 'sso' and $method == 'gettodolist') return true;
-        if($module == 'product' and $method == 'showerrornone') return true;
-        if($module == 'block' and $method == 'printblock') return true;
         if($module == 'block' and $method == 'main') return true;
 
-        if($this->loadModel('user')->isLogon())
+        if($this->loadModel('user')->isLogon() or ($this->app->company->guest and $this->app->user->account == 'guest'))
         {
             if(stripos($method, 'ajax') !== false) return true;
             if(stripos($method, 'downnotify') !== false) return true;
             if($module == 'tutorial') return true;
             if($module == 'block') return true;
+            if($module == 'product' and $method == 'showerrornone') return true;
         }
-
-        if(stripos($method, 'ajaxgetdropmenu') !== false) return true;
-        if(stripos($method, 'ajaxgetmatcheditems') !== false) return true;
         return false;
     }
 
@@ -303,10 +299,10 @@ class commonModel extends model
         echo "<a href='javascript:;' data-toggle='dropdown'>" . $lang->help . " <span class='caret'></span></a>";
         echo "<ul class='dropdown-menu pull-right'>";
         echo '<li>' . html::a('javascript:;', $lang->manual, '', "class='open-help-tab'") . '</li>';
-        if(!commonModel::isTutorialMode() and $app->user->account != 'guest') echo '<li>' . html::a(helper::createLink('tutorial', 'start'), $lang->tutorial, '', "class='iframe' data-width='800' data-headerless='true'") . "</li>";
-        echo '<li>' . html::a(helper::createLink('misc', 'changeLog'), $lang->changeLog, '', "class='iframe' data-width='800' data-headerless='true'") . '</li>';
+        if(!commonModel::isTutorialMode() and $app->user->account != 'guest') echo '<li>' . html::a(helper::createLink('tutorial', 'start'), $lang->tutorial, '', "class='iframe' data-width='800' data-headerless='true' data-backdrop='true' data-keyboard='true'") . "</li>";
+        echo '<li>' . html::a(helper::createLink('misc', 'changeLog'), $lang->changeLog, '', "class='iframe' data-width='800' data-headerless='true' data-backdrop='true' data-keyboard='true'") . '</li>';
         echo "</ul></div>";
-        echo html::a(helper::createLink('misc', 'about'), $lang->aboutZenTao, '', "class='about iframe' data-width='900' data-headerless='true' data-class='modal-about'");
+        echo html::a(helper::createLink('misc', 'about'), $lang->aboutZenTao, '', "class='about iframe' data-width='900' data-headerless='true' data-backdrop='true' data-keyboard='true' data-class='modal-about'");
     }
 
     /**
@@ -828,7 +824,8 @@ class commonModel extends model
         global $lang, $app;
         if(isonlybody()) return false;
 
-        echo html::a($backLink, '<i class="icon-goback icon-level-up icon-large icon-rotate-270"></i>', '', "class='btn' title={$lang->goback}");
+        $title = $lang->goback . $lang->backShortcutKey;
+        echo html::a($backLink, '<i class="icon-goback icon-level-up icon-large icon-rotate-270"></i>', '', "id='back' class='btn' title={$title}");
 
         if(isset($preAndNext->pre) and $preAndNext->pre) 
         {
@@ -869,6 +866,7 @@ class commonModel extends model
             if(strtolower($key) == 'assigneddate')   continue;
             if(strtolower($key) == 'editedby')       continue;
             if(strtolower($key) == 'editeddate')     continue;
+            if(strtolower($key) == 'uid')            continue;
 
             if($magicQuote) $value = stripslashes($value);
             if($value != stripslashes($old->$key))
@@ -1014,10 +1012,12 @@ class commonModel extends model
         if($onlyCondition)
         {
             $queryCondition = explode('WHERE', $sql);
-            if(!isset($queryCondition[1])) return true;
-
-            $queryCondition = explode('ORDER', $queryCondition[1]);
-            $queryCondition = str_replace('t1.', '', $queryCondition[0]);
+            $queryCondition = isset($queryCondition[1]) ? $queryCondition[1] : '';
+            if($queryCondition)
+            {
+                $queryCondition = explode('ORDER', $queryCondition);
+                $queryCondition = str_replace('t1.', '', $queryCondition[0]);
+            }
         }
         else
         {
@@ -1032,17 +1032,14 @@ class commonModel extends model
 
         /* Set the query condition session. */
         $orderBy = explode('ORDER BY', $sql);
-        if(isset($orderBy[1]))
+        $orderBy = isset($orderBy[1]) ? $orderBy[1] : '';
+        if($orderBy)
         {
-            $orderBy = explode('limit', $orderBy[1]);
-            $orderBy = str_replace('t1.', '', $orderBy[0]);
-
-            $this->session->set($objectType . 'OrderBy', $orderBy);
+            $orderBy = explode('limit', $orderBy);
+            $orderBy = $orderBy[0];
+            if($onlyCondition) $orderBy = str_replace('t1.', '', $orderBy);
         }
-        else
-        {
-            $this->session->set($objectType . 'OrderBy', '');
-        }
+        $this->session->set($objectType . 'OrderBy', $orderBy);
     }
 
     /**
@@ -1131,9 +1128,12 @@ class commonModel extends model
         $statusFile = $this->loadModel('upgrade')->checkSafeFile();
         if($statusFile)
         {
+            $cmd = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? $this->lang->upgrade->createFileWinCMD : $this->lang->upgrade->createFileLinuxCMD;
+            $cmd = sprintf($cmd, $statusFile);
+
             echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head><body>";
-            echo "<table align='center' style='margin-top:100px; border:1px solid gray; font-size:14px;'><tr><td>";
-            printf($this->lang->upgrade->setStatusFile, $statusFile, $statusFile, $statusFile);
+            echo "<table align='center' style='margin-top:100px; border:1px solid gray; font-size:14px;padding:8px;'><tr><td>";
+            printf($this->lang->upgrade->setStatusFile, $cmd, $statusFile);
             die('</td></tr></table></body></html>');
         }
     }
@@ -1148,6 +1148,7 @@ class commonModel extends model
     {
         $module = $this->app->getModuleName();
         $method = $this->app->getMethodName();
+        if(isset($this->app->user->modifyPassword) and $this->app->user->modifyPassword and $module != 'my' and $method != 'changepassword') die(js::locate(helper::createLink('my', 'changepassword')));
         if($this->isOpenMethod($module, $method)) return true;
         if(!$this->loadModel('user')->isLogon() and $this->server->php_auth_user) $this->user->identifyByPhpAuth();
         if(!$this->loadModel('user')->isLogon() and $this->cookie->za) $this->user->identifyByCookie();

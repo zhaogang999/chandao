@@ -57,7 +57,7 @@
         }
     }
 
-    echo "<li id='kanbanTab'>"; common::printLink('project', 'kanban', "projectID=$projectID", $lang->project->kanban) . '</li>';
+    echo "<li id='kanbanTab'>"; common::printLink('project', 'kanban', "projectID=$projectID", $lang->project->kanban); echo '</li>';
     if($project->type == 'sprint' or $project->type == 'waterfall')
     {
         echo "<li id='burnTab'>";
@@ -121,10 +121,23 @@
       </div>
     </div>
     <div class='btn-group'>
-    <?php
-    common::printIcon('task', 'batchCreate', "projectID=$projectID");
-    common::printIcon('task', 'create', "project=$projectID" . (isset($moduleID) ? "&storyID=&moduleID=$moduleID" : ''), '', 'button', 'sitemap');
-    ?>
+      <div class='btn-group' id='createActionMenu'>
+        <?php 
+        $misc = common::hasPriv('task', 'create') ? "class='btn btn-primary'" : "class='btn btn-primary disabled'";
+        $link = common::hasPriv('task', 'create') ?  $this->createLink('task', 'create', "project=$projectID" . (isset($moduleID) ? "&storyID=&moduleID=$moduleID" : '')) : '#';
+        echo html::a($link, "<i class='icon icon-plus'></i>" . $lang->task->create, '', $misc);
+        ?>
+        <button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+          <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu'>
+        <?php
+        $misc = common::hasPriv('task', 'batchCreate') ? '' : "class=disabled";
+        $link = common::hasPriv('task', 'batchCreate') ?  $this->createLink('task', 'batchCreate', "project=$projectID" . (isset($moduleID) ? "&storyID=&moduleID=$moduleID" : '')) : '#';
+        echo "<li>" . html::a($link, $lang->task->batchCreate, '', $misc) . "</li>";
+        ?>
+        </ul>
+      </div>
     </div>
   </div>
   <div id='querybox' class='<?php if($browseType =='bysearch') echo 'show';?>'></div>

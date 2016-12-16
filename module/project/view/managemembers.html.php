@@ -19,9 +19,17 @@
     <strong><?php echo $lang->project->manageMembers;?></strong>
     <i class='icon icon-angle-right text-muted'></i>
   </div>
-  <div id='deptSelector'><?php echo html::select('dept', $depts, $dept, "class='form-control chosen' onchange='setDeptUsers(this)' data-placeholder='{$lang->project->selectDept}'");?></div>
-  <div class='actions'>
-    <button class='btn' id='itBtn'><?php echo html::icon($lang->icons['copy']) . ' ' . $lang->project->copyTeam;?></button>
+  <div id='importTeams' class='clearfix'>
+    <div class='input-group'>
+      <span class='input-group-addon'><?php echo $lang->project->selectDept?></span>
+      <?php echo html::select('dept', $depts, $dept, "class='form-control chosen' onchange='setDeptUsers(this)' data-placeholder='{$lang->project->selectDeptTitle}'");?>
+    </div>
+    <?php if(count($teams2Import) != 1):?>
+    <div class='input-group'>
+      <span class='input-group-addon'><?php echo $lang->project->copyTeam?></span>
+      <?php echo html::select('project', $teams2Import, $team2Import, "class='form-control chosen' onchange='choseTeam2Copy(this)' data-placeholder='{$lang->project->copyTeamTitle}'");?>
+    </div>
+    <?php endif;?>
   </div>
 </div>
 <div class='main'>
@@ -127,35 +135,5 @@
       <td><a href='javascript:;' onclick='deleteItem(this)' class='btn btn-block'><i class='icon icon-remove'></i></a></td>
     </tr>
   </table>
-</div>
-<div class='modal fade' id='importTeamModal'>
-  <div class='modal-dialog mw-700px'>
-    <div class='modal-header'>
-      <button type='button' class='close' data-dismiss='modal'>&times;</button>
-      <h4 class='modal-title' id='myModalLabel'><?php echo $lang->project->copyTeamTitle;?></h4>
-    </div>
-    <div class='modal-body'>
-      <?php if(count($teams2Import) == 1):?>
-      <div class='alert alert-warning'>
-        <i class='icon-info-sign'></i>
-        <div class='content'>
-          <p><?php echo $lang->project->copyNoProject;?></p>
-        </div>
-      </div>
-      <?php else:?>
-      <div id='importTeams' class='row'>
-      <?php foreach ($teams2Import as $id => $name):?>
-      <?php if(empty($id)):?>
-        <?php if($team2Import != 0):?>
-        <div class='col-md-4 col-sm-6'><a href='javascript:;' data-id='' class='cancel'><?php echo html::icon($lang->icons['cancel']) . ' ' . $lang->project->cancelCopy;?></a></div>
-        <?php endif;?>
-      <?php else: ?>
-        <div class='col-md-4 col-sm-6'><a href='javascript:;' data-id='<?php echo $id;?>' class='nobr <?php echo ($team2Import == $id) ? ' active' : '';?>'><?php echo html::icon($lang->icons['team'], 'text-muted') . ' ' . $name;?></a></div>
-      <?php endif; ?>
-      <?php endforeach;?>
-      </div>
-      <?php endif;?>
-    </div>
-  </div>
 </div>
 <?php include '../../common/view/footer.html.php';?>

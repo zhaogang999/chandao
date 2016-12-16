@@ -87,7 +87,7 @@ class bugModel extends model
         $data       = fixer::input('post')->get();
         $batchNum   = count(reset($data));
 
-        $result = $this->loadModel('common')->removeDuplicate('bug', $data, "product={$productID} and branch={$branch}");
+        $result = $this->loadModel('common')->removeDuplicate('bug', $data, "product={$productID}");
         $data   = $result['data'];
 
         for($i = 0; $i < $batchNum; $i++)
@@ -132,7 +132,7 @@ class bugModel extends model
             $bug->openedBy    = $this->app->user->account;
             $bug->openedDate  = $now;
             $bug->product     = $productID;
-            $bug->branch      = $branch;
+            $bug->branch      = $data->branches[$i];
             $bug->module      = $data->modules[$i];
             $bug->project     = $data->projects[$i];
             $bug->openedBuild = implode(',', $data->openedBuilds[$i]);
@@ -415,7 +415,7 @@ class bugModel extends model
             krsort($moduleIDList);
             if($moduleIDList)
             {
-                $modules = $this->dao->select('*')->from(TABLE_MODULE)->where('id')->in($moduleIDList)->fetchAll('id');
+                $modules = $this->dao->select('*')->from(TABLE_MODULE)->where('id')->in($moduleIDList)->andWhere('deleted')->eq(0)->fetchAll('id');
                 foreach($moduleIDList as $moduleID)
                 {
                     if(isset($modules[$moduleID]))
@@ -1214,6 +1214,41 @@ class bugModel extends model
     }
 
     /**
+     * Get bugs of a story.
+     *
+     * @param  int    $storyID
+     * @access public
+     * @return array
+     */
+    public function getStoryBugs($storyID)
+    {
+        return $this->dao->select('id, title, pri, type, status, assignedTo, resolvedBy, resolution')
+            ->from(TABLE_BUG)
+            ->where('story')->eq((int)$storyID)
+            ->andWhere('deleted')->eq(0)
+            ->fetchAll('id');
+    }
+
+    /**
+     * Get counts of some stories' bugs.
+     *
+     * @param  array  $stories
+     * @access public
+     * @return int
+     */
+    public function getStoryBugCounts($stories)
+    {
+        $bugCounts = $this->dao->select('story, COUNT(*) AS bugs')
+            ->from(TABLE_BUG)
+            ->where('story')->in($stories)
+            ->andWhere('deleted')->eq(0)
+            ->groupBy('story')
+            ->fetchPairs();
+        foreach($stories as $storyID) if(!isset($bugCounts[$storyID])) $bugCounts[$storyID] = 0;
+        return $bugCounts;
+    }
+
+    /**
      * Get bug info from a result.
      * 
      * @param  int    $resultID 
@@ -1807,11 +1842,12 @@ class bugModel extends model
      */
     public function getByLonglifebugs($productID, $branch, $modules, $projects, $orderBy, $pager)
     {
-        return $this->dao->findByLastEditedDate("<", date(DT_DATE1, strtotime('-7 days')))->from(TABLE_BUG)->andWhere('product')->eq($productID)
+        $lastEditedDate = date(DT_DATE1, time() - $this->config->bug->longlife * 24 * 3600);
+        return $this->dao->findByLastEditedDate("<", $lastEditedDate)->from(TABLE_BUG)->andWhere('product')->eq($productID)
             ->andWhere('project')->in(array_keys($projects))
             ->beginIF($branch)->andWhere('branch')->in($branch)->fi()
             ->beginIF($modules)->andWhere('module')->in($modules)->fi()
-            ->andWhere('openedDate')->lt(date(DT_DATE1,strtotime('-7 days')))
+            ->andWhere('openedDate')->lt($lastEditedDate)
             ->andWhere('deleted')->eq(0)
             ->andWhere('status')->ne('closed')->orderBy($orderBy)->page($pager)->fetchAll();
     }
@@ -2079,13 +2115,13 @@ class bugModel extends model
                 echo $bug->activatedCount;
                 break;
             case 'openedBy':
-                echo zget($users, $bug->openedBy, $bug->openedBy);
+                echo zget($users, $bug->openedBy);
                 break;
             case 'openedDate':
                 echo substr($bug->openedDate, 5, 11);
                 break;
             case 'openedBuild':
-                foreach(explode(',', $bug->openedBuild) as $build) echo zget($builds, $build, $build) . '<br />';
+                foreach(explode(',', $bug->openedBuild) as $build) echo zget($builds, $build) . '<br />';
                 break;
             case 'assignedTo':
                 echo zget($users, $bug->assignedTo, $bug->assignedTo);
@@ -2097,7 +2133,7 @@ class bugModel extends model
                 echo zget($users, $bug->resolvedBy, $bug->resolvedBy);
                 break;
             case 'resolution':
-                echo $this->lang->bug->resolutionList[$bug->resolution];
+                echo zget($this->lang->bug->resolutionList, $bug->resolution);
                 break;
             case 'resolvedDate':
                 echo substr($bug->resolvedDate, 5, 11);
@@ -2106,7 +2142,7 @@ class bugModel extends model
                 echo $bug->resolvedBuild;
                 break;
             case 'closedBy':
-                echo zget($users, $bug->closedBy, $bug->closedBy);
+                echo zget($users, $bug->closedBy);
                 break;
             case 'lastEditedDate':
                 echo substr($bug->lastEditedDate, 5, 11);
@@ -2126,5 +2162,70 @@ class bugModel extends model
             }
             echo '</td>';
         }
+    }
+
+    /**
+     * Send mail 
+     * 
+     * @param  int    $bugID 
+     * @param  int    $actionID 
+     * @access public
+     * @return void
+     */
+    public function sendmail($bugID, $actionID)
+    {
+        $this->loadModel('mail');
+        $bug         = $this->getByID($bugID);
+        $productName = $this->loadModel('product')->getById($bug->product)->name;
+        $users       = $this->loadModel('user')->getPairs('noletter');
+
+        /* Get action info. */
+        $action          = $this->loadModel('action')->getById($actionID);
+        $history         = $this->action->getHistory($actionID);
+        $action->history = isset($history[$actionID]) ? $history[$actionID] : array();
+
+        /* Get mail content. */
+        $modulePath = $this->app->getModulePath();
+        $oldcwd     = getcwd();
+        $viewFile   = $modulePath . 'view/sendmail.html.php';
+        chdir($modulePath . 'view');
+        if(file_exists($modulePath . 'ext/view/sendmail.html.php'))
+        {
+            $viewFile = $modulePath . 'ext/view/sendmail.html.php';
+            chdir($modulePath . 'ext/view');
+        }
+        ob_start();
+        include $viewFile;
+        foreach(glob($modulePath . 'ext/view/sendmail.*.html.hook.php') as $hookFile) include $hookFile;
+        $mailContent = ob_get_contents();
+        ob_end_clean();
+        chdir($oldcwd);
+
+        /* Set toList and ccList. */
+        $toList = $bug->assignedTo;
+        $ccList = trim($bug->mailto, ',');
+        if(empty($toList))
+        {
+            if(empty($ccList)) return;
+            if(strpos($ccList, ',') === false)
+            {
+                $toList = $ccList;
+                $ccList = '';
+            }
+            else
+            {
+                $commaPos = strpos($ccList, ',');
+                $toList = substr($ccList, 0, $commaPos);
+                $ccList = substr($ccList, $commaPos + 1);
+            }
+        }
+        elseif(strtolower($toList) == 'closed')
+        {
+            $toList = $bug->resolvedBy;
+        }
+
+        /* Send it. */
+        $this->mail->send($toList, 'BUG #'. $bug->id . ' ' . $bug->title . ' - ' . $productName, $mailContent, $ccList);
+        if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
     }
 }

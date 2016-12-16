@@ -83,7 +83,9 @@
         <td>
           <div class='input-group'>
             <?php echo html::select('assignedTo', $users, empty($needReview) ? $product->PO : '', "class='form-control chosen'");?>
+            <?php if(!$this->story->checkForceReview()):?>
             <span class='input-group-addon'><?php echo html::checkbox('needNotReview', $lang->story->needNotReview, '', "id='needNotReview' {$needReview}");?></span>
+            <?php endif;?>
           </div>
         </td>
       </tr> 
@@ -142,7 +144,7 @@
       </tr>  
       <tr>
         <th><?php echo $lang->story->spec;?></th>
-        <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control'");?><div class='help-block'><?php echo $lang->story->specTemplate;?></div></td>
+        <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
       </tr>  
       <?php if(strpos(",$showFields,", ',verify,') !== false):?>
       <tr>

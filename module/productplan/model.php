@@ -60,16 +60,21 @@ class productplanModel extends model
      * Get list 
      * 
      * @param  int    $product 
+     * @param  int    $branch
+     * @param  string $browseType
      * @param  object $pager
      * @param  string $orderBy
      * @access public
      * @return object
      */
-    public function getList($product = 0, $branch = 0, $pager = null, $orderBy = 'begin_desc')
+    public function getList($product = 0, $branch = 0, $browseType = 'all', $pager = null, $orderBy = 'begin_desc')
     {
+        $date = date('Y-m-d');
         return $this->dao->select('*')->from(TABLE_PRODUCTPLAN)->where('product')->eq($product)
             ->andWhere('deleted')->eq(0)
             ->beginIF(!empty($branch))->andWhere('branch')->eq($branch)->fi()
+            ->beginIF($browseType == 'unexpired')->andWhere('end')->gt($date)->fi()
+            ->beginIF($browseType == 'overdue')->andWhere('end')->le($date)->fi()
             ->orderBy($orderBy)
             ->page($pager)
             ->fetchAll();
@@ -86,12 +91,26 @@ class productplanModel extends model
     public function getPairs($product = 0, $branch = 0, $expired = '')
     {
         $date = date('Y-m-d');
-        return array('' => '') + $this->dao->select('id,CONCAT(title, " [", begin, " ~ ", end, "]") as title')->from(TABLE_PRODUCTPLAN)
+        $plans = $this->dao->select('id,CONCAT(title, " [", begin, " ~ ", end, "]") as title')->from(TABLE_PRODUCTPLAN)
             ->where('product')->in($product)
             ->andWhere('deleted')->eq(0)
             ->beginIF($branch)->andWhere("branch")->in("0,$branch")->fi()
             ->beginIF($expired == 'unexpired')->andWhere('end')->gt($date)->fi()
-            ->orderBy('begin desc')->fetchPairs();
+            ->orderBy('begin desc')
+            ->fetchPairs();
+
+        if($expired == 'unexpired' and empty($plans))
+        {
+            $plans = $this->dao->select('id,CONCAT(title, " [", begin, " ~ ", end, "]") as title')->from(TABLE_PRODUCTPLAN)
+                ->where('product')->in($product)
+                ->andWhere('deleted')->eq(0)
+                ->beginIF($branch)->andWhere("branch")->in("0,$branch")->fi()
+                ->orderBy('begin desc')
+                ->limit(5)
+                ->fetchPairs();
+        }
+
+        return array('' => '') + $plans;
     }
 
     /**

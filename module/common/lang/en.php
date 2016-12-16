@@ -74,6 +74,7 @@ $lang->tutorialConfirm = 'You are using tutorial. Do you want to exit right now�
 
 $lang->preShortcutKey  = '[Shortcut:←]';
 $lang->nextShortcutKey = '[Shortcut:→]';
+$lang->backShortcutKey = '[Shortcut:Alt+↑]';
 
 $lang->select        = 'Select';
 $lang->selectAll     = 'Select All';
@@ -87,7 +88,7 @@ $lang->year         = 'Year';
 $lang->workingHour  = 'Man-Hour';
 
 $lang->idAB         = 'ID';
-$lang->priAB        = 'Privilege';
+$lang->priAB        = 'Privil';
 $lang->statusAB     = 'Status';
 $lang->openedByAB   = 'Open';
 $lang->assignedToAB = 'To';
@@ -274,6 +275,9 @@ $lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|p
 $lang->report->menu->test    = array('link' => 'Testing|report|bugcreate', 'alias' => 'bugassign');
 $lang->report->menu->staff   = array('link' => 'Company|report|workload');
 
+$lang->report->notice = new stdclass();
+$lang->report->notice->help = 'Note: Report is generated from search results. Please search in the list page before you generate a report.';
+
 /* 组织结构视图菜单设置。*/
 $lang->company = new stdclass();
 $lang->company->menu = new stdclass();
@@ -300,9 +304,8 @@ $lang->admin = new stdclass();
 $lang->admin->menu = new stdclass();
 $lang->admin->menu->index     = array('link' => 'Homepage|admin|index');
 $lang->admin->menu->extension = array('link' => 'Extension|extension|browse', 'subModule' => 'extension');
-$lang->admin->menu->custom    = array('link' => 'Custom|custom|index', 'subModule' => 'custom');
+$lang->admin->menu->custom    = array('link' => 'Custom|custom|set', 'subModule' => 'custom');
 $lang->admin->menu->mail      = array('link' => 'Email|mail|index', 'subModule' => 'mail');
-$lang->admin->menu->convert   = array('link' => 'Import|convert|index', 'subModule' => 'convert');
 $lang->admin->menu->backup    = array('link' => 'Backup|backup|index', 'subModule' => 'backup');
 $lang->admin->menu->safe      = array('link' => 'Security|admin|safe', 'alias' => 'checkweak');
 $lang->admin->menu->cron      = array('link' => 'Cron|cron|index', 'subModule' => 'cron');
@@ -406,6 +409,7 @@ $lang->noResultsMatch     = "No results match!";
 $lang->searchMore         = "More results：";
 $lang->chooseUsersToMail  = "Choose users you want send Email to...";
 $lang->browserNotice      = 'Your current browser might not show the best effect. Please use Chrome, Firefox, IE9+, Opera or Safari.';
+$lang->noticePasteImg     = "Can parse image in editor.";
 
 /* 时间格式设置。*/
 define('DT_DATETIME1',  'Y-m-d H:i:s');
@@ -460,7 +464,7 @@ $lang->icons['test']      = 'check';
 $lang->icons['testtask']  = 'check';
 $lang->icons['group']     = 'group';
 $lang->icons['team']      = 'group';
-$lang->icons['company']   = 'building';
+$lang->icons['company']   = 'sitemap';
 $lang->icons['user']      = 'user';
 $lang->icons['dept']      = 'sitemap';
 $lang->icons['tree']      = 'sitemap';
@@ -497,8 +501,8 @@ $lang->icons['assignTo']       = 'hand-right';
 $lang->icons['change']         = 'random';
 $lang->icons['link']           = 'link';
 $lang->icons['close']          = 'off';
-$lang->icons['activate']       = 'off';
-$lang->icons['review']         = 'search';
+$lang->icons['activate']       = 'magic';
+$lang->icons['review']         = 'review';
 $lang->icons['confirm']        = 'search';
 $lang->icons['confirmBug']     = 'search';
 $lang->icons['putoff']         = 'calendar';

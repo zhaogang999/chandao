@@ -44,7 +44,7 @@ function computeDaysDelta(date1, date2)
     weekEnds = 0;
     for(i = 0; i < delta; i++)
     {
-        if(date1.getDay() == 0 || date1.getDay() == 6) weekEnds ++;
+        if((weekend == 2 && date1.getDay() == 6) || date1.getDay() == 0) weekEnds ++;
         date1 = date1.valueOf();
         date1 += 1000 * 60 * 60 * 24;
         date1 = new Date(date1);
@@ -145,7 +145,12 @@ function loadBranch(){}
 /* Auto compute the work days. */
 $(function() 
 {
-    if(typeof(replaceID) != 'undefined') setModal4List('iframe', replaceID);
+    if(typeof(replaceID) != 'undefined') setModal4List('iframe', replaceID, function($list)
+    {
+        $list.find('.progress-pie:visible').progressPie();
+        var datatable = $list.data('zui.datatable');
+        if(datatable) datatable.$datatable.find('.progress-pie:visible').progressPie();
+    });
     $(".date").bind('dateSelected', function()
     {
         computeWorkDays(this.id);

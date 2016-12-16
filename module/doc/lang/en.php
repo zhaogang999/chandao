@@ -34,6 +34,7 @@ $lang->doc->deleted        = 'Deleted';
 $lang->doc->fileObject     = 'The Object';
 $lang->doc->whiteList      = 'White List';
 $lang->doc->contentType    = 'Document Format';
+$lang->doc->separator      = "<i class='icon-angle-right'></i>";
 
 $lang->doc->moduleDoc      = 'By Module';
 $lang->doc->searchDoc      = 'By Search';
@@ -100,8 +101,7 @@ $lang->doc->errorEditSystemDoc = "System Doc Lib needs no modifications.";
 $lang->doc->errorEmptyProduct  = "No {$lang->productCommon}. Document cannot be created.";
 $lang->doc->errorEmptyProject  = "No {$lang->projectCommon}. Document cannot be created.";
 $lang->doc->errorMainSysLib    = "Can not delete this library.";
-$lang->doc->accessDenied       = "Access to library denied!";
-$lang->doc->noMatched          = "No library including '%s' can be found.";
+$lang->doc->accessDenied       = "Access denied!";
 $lang->doc->versionNotFount    = 'The document is not exist in this version.';
 
 $lang->doc->placeholder = new stdclass();
@@ -115,6 +115,8 @@ $lang->doclib->user    = 'User';
 $lang->doclib->files   = 'Files';
 $lang->doclib->all     = 'All Libraries';
 $lang->doclib->select  = 'Select Library';
+$lang->doclib->project = $lang->projectCommon . ' Library';
+$lang->doclib->product = $lang->productCommon . ' Library';
 
-$lang->doclib->main['product'] = $lang->productCommon . ' Library';
-$lang->doclib->main['project'] = $lang->projectCommon . ' Library';
+$lang->doclib->main['product'] = $lang->productCommon . ' Main Library';
+$lang->doclib->main['project'] = $lang->projectCommon . ' Main Library';

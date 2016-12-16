@@ -170,13 +170,14 @@ class productplan extends control
      * 
      * @param  int    $product 
      * @param  string $orderBy 
+     * @param  string $browseType
      * @param  int    $recTotal 
      * @param  int    $recPerPage
      * @param  int    $pageID
      * @access public
      * @return void
      */
-    public function browse($productID = 0, $branch = 0, $orderBy = 'begin_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1 )
+    public function browse($productID = 0, $branch = 0, $browseType = 'unexpired', $orderBy = 'begin_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1 )
     {
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -191,8 +192,9 @@ class productplan extends control
         $this->view->title      = $products[$productID] . $this->lang->colon . $this->lang->productplan->browse;
         $this->view->position[] = $this->lang->productplan->browse;
         $this->view->productID  = $productID;
+        $this->view->browseType = $browseType;
         $this->view->orderBy    = $orderBy;
-        $this->view->plans      = $this->productplan->getList($productID, $branch, $pager, $sort);
+        $this->view->plans      = $this->productplan->getList($productID, $branch, $browseType, $pager, $sort);
         $this->view->pager      = $pager;
         $this->display();
     }
@@ -228,6 +230,7 @@ class productplan extends control
         $this->view->actions     = $this->loadModel('action')->getList('productplan', $planID);
         $this->view->users       = $this->loadModel('user')->getPairs('noletter');
         $this->view->plans       = $this->productplan->getPairs($plan->product, $plan->branch);
+        $this->view->modules     = $this->loadModel('tree')->getOptionMenu($plan->product);
         $this->view->type        = $type;
         $this->view->orderBy     = $orderBy;
         $this->view->link        = $link;
@@ -239,13 +242,17 @@ class productplan extends control
      * Ajax: Get product plans. 
      * 
      * @param  int    $productID 
+     * @param  string $number
      * @access public
      * @return void
      */
-    public function ajaxGetProductplans($productID, $branch = 0)
+    public function ajaxGetProductplans($productID, $branch = 0, $number = '')
     {
         $plans = $this->productplan->getPairs($productID, $branch);
-        die(html::select('plan', $plans, '', "class='form-control'"));
+
+         $planName = $number === '' ? 'plan' : "plan[$number]";
+         $plans    = empty($plans) ? array('' => '') : $plans;
+         die(html::select($planName, $plans, '', "class='form-control'"));
     }
 
     /**
@@ -317,6 +324,7 @@ class productplan extends control
         $this->view->plans      = $this->dao->select('id, end')->from(TABLE_PRODUCTPLAN)->fetchPairs();
         $this->view->users      = $this->loadModel('user')->getPairs('noletter');
         $this->view->browseType = $browseType;
+        $this->view->modules    = $this->loadModel('tree')->getOptionMenu($plan->product);
         $this->view->param      = $param;
         $this->view->orderBy    = $orderBy;
         $this->display();

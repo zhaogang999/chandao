@@ -39,7 +39,10 @@
   <div class='col-md-9 col-lg-10'>
     <div class='panel panel-sm'>
       <div class='panel-heading'>
-        <strong><?php echo $lang->story->report->common;?></strong>
+        <strong>
+        <?php echo $lang->story->report->common;?>
+        <span><?php echo $lang->report->notice->help;?></span>
+        </strong>
       </div>
       <table class='table active-disabled'>
         <?php foreach($charts as $chartType => $chartOption):?>

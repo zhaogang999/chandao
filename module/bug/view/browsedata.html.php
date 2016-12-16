@@ -10,14 +10,14 @@
  * @link        http://www.zentao.net
  */
 ?>
-    <table class='table table-condensed table-hover table-striped tablesorter table-fixed' id='bugList'>
+    <table class='table table-condensed table-hover table-striped tablesorter table-fixed table-selectable' id='bugList'>
       <thead>
       <tr>
         <th class='w-id'>       <?php common::printOrderLink('id',          $orderBy, $vars, $lang->idAB);?></th>
         <th class='w-severity'> <?php common::printOrderLink('severity',    $orderBy, $vars, $lang->bug->severityAB);?></th>
         <th class='w-pri'>      <?php common::printOrderLink('pri',         $orderBy, $vars, $lang->priAB);?></th>
         <th>                    <?php common::printOrderLink('title',       $orderBy, $vars, $lang->bug->title);?></th>
-        <th class='w-80px'>     <?php common::printOrderLink('status',      $orderBy, $vars, $lang->bug->statusAB);?></th>
+        <th class='w-100px'>    <?php common::printOrderLink('status',      $orderBy, $vars, $lang->bug->statusAB);?></th>
 
         <?php if($browseType == 'needconfirm'):?>
         <th class='w-200px'><?php common::printOrderLink('story',           $orderBy, $vars, $lang->bug->story);?></th>
@@ -46,7 +46,7 @@
       <?php foreach($bugs as $bug):?>
       <?php $bugLink = inlink('view', "bugID=$bug->id");?>
       <tr class='text-center'>
-        <td class='bug-<?php echo $bug->status;?> strong text-left'>
+        <td class='cell-id bug-<?php echo $bug->status;?> strong text-left'>
           <input type='checkbox' name='bugIDList[]'  value='<?php echo $bug->id;?>'/> 
           <?php echo html::a($bugLink, sprintf('%03d', $bug->id));?>
         </td>
@@ -62,7 +62,20 @@
           echo html::a($bugLink, $bug->title, null, "style='color: $bug->color'");
           ?>
         </td>
-        <td class='bug-<?php echo $bug->status?>'><?php echo $bug->needconfirm ? "<span class='warning'>{$lang->story->changed}</span>" : $lang->bug->statusList[$bug->status];?></td>
+        <td class='bug-<?php echo $bug->status?>'>
+          <?php
+          if($bug->needconfirm)
+          {
+              echo "(<span class='warning'>{$lang->story->changed}</span> ";
+              echo html::a($this->createLink('bug', 'confirmStoryChange', "bugID=$bug->id"), $lang->confirm, 'hiddenwin');
+              echo ")";
+          }
+          else
+          {
+              echo $lang->bug->statusList[$bug->status];
+          }
+          ?>
+        </td>
 
         <?php if($browseType == 'needconfirm'):?>
         <td class='text-left' title="<?php echo $bug->storyTitle?>"><?php echo html::a($this->createLink('story', 'view', "stoyID=$bug->story"), $bug->storyTitle, '_blank');?></td>
@@ -76,7 +89,7 @@
 
         <td <?php if($bug->assignedTo == $this->app->user->account) echo 'class="red"';?>><?php echo zget($users, $bug->assignedTo, $bug->assignedTo);?></td>
         <td><?php echo zget($users, $bug->resolvedBy, $bug->resolvedBy)?></td>
-        <td><?php echo $lang->bug->resolutionList[$bug->resolution];?></td>
+        <td><?php echo zget($lang->bug->resolutionList, $bug->resolution);?></td>
 
         <?php if($this->cookie->windowWidth >= $this->config->wideSize):?>
         <td><?php echo substr($bug->resolvedDate, 5, 11)?></td>

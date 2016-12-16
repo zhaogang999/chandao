@@ -153,9 +153,11 @@ class upgradeModel extends model
                 $this->adjustDocModule();
                 $this->moveDocContent();
                 $this->adjustPriv8_3();
-                $this->updateFileObjectID();
-
-            default: if(!$this->isError()) $this->setting->updateVersion($this->config->version);
+            case '8_3':
+            case '8_3_1':
+                $this->execSQL($this->getUpgradeFile('8.3.1'));
+                $this->renameMainLib();
+                $this->adjustPriv8_4();
         }
 
         $this->deletePatch();
@@ -238,6 +240,8 @@ class upgradeModel extends model
         case '8_2_4':
         case '8_2_5':
         case '8_2_6':     $confirmContent .= file_get_contents($this->getUpgradeFile('8.2.6'));
+        case '8_3':
+        case '8_3_1':     $confirmContent .= file_get_contents($this->getUpgradeFile('8.3.1'));
         }
         return str_replace('zt_', $this->config->db->prefix, $confirmContent);
     }
@@ -1163,6 +1167,7 @@ class upgradeModel extends model
      */
     public function adjustDocModule()
     {
+        set_time_limit(0);
         $this->app->loadLang('doc');
         $productDocModules = $this->dao->select('*')->from(TABLE_MODULE)->where('type')->eq('productdoc')->orderBy('grade,id')->fetchAll('id');
         $allProductIdList  = $this->dao->select('id,name,acl,whitelist,createdBy')->from(TABLE_PRODUCT)->where('deleted')->eq('0')->fetchAll('id');
@@ -1270,15 +1275,35 @@ class upgradeModel extends model
      * @access public
      * @return bool
      */
-    public function updateFileObjectID()
+    public function updateFileObjectID($type = '', $lastID = 0)
     {
-        $smtm  = $this->dao->select('id,objectType,objectID,comment')->from(TABLE_ACTION)->where('comment')->ne('')->query();
-        while($action = $smtm->fetch())
+        $limit = 100;
+        if(empty($type)) $type = 'comment';
+        $result['type']   = $type;
+        $result['lastID'] = 0;
+        if($type == 'comment')
         {
-            $files = array();
-            preg_match_all('/"data\/upload\/.*1\/([0-9]{6}\/[^"]+)"/', $action->comment, $output);
-            foreach($output[1] as $path)$files[$path] = $path;
-            $this->dao->update(TABLE_FILE)->set('objectType')->eq($action->objectType)->set('objectID')->eq($action->objectID)->set('extra')->eq('editor')->where('pathname')->in($files)->exec();
+            $comments = $this->dao->select('id,objectType,objectID,comment')->from(TABLE_ACTION)->where('comment')->like('%data/upload/%')->andWhere('id')->gt($lastID)->orderBy('id')->limit($limit)->fetchAll('id');
+            foreach($comments as $comment)
+            {
+                $files = array();
+                preg_match_all('/"data\/upload\/.*1\/([0-9]{6}\/[^"]+)"/', $action->comment, $output);
+                foreach($output[1] as $path)$files[$path] = $path;
+                $this->dao->update(TABLE_FILE)->set('objectType')->eq($action->objectType)->set('objectID')->eq($action->objectID)->set('extra')->eq('editor')->where('pathname')->in($files)->exec();
+            }
+            if(count($comments) < $limit)
+            {
+                $result['type']   = 'doc';
+                $result['count']  = count($comments);
+				$result['lastID'] = 0;
+            }
+            else
+            {
+                $result['type']   = 'comment';
+                $result['count']  = count($comments);
+                $result['lastID'] = $comment->id;
+            }
+            return $result;
         }
 
         $editors['doc']         = array('table' => TABLE_DOCCONTENT,  'fields' => 'doc,`content`,`digest`');
@@ -1291,31 +1316,63 @@ class upgradeModel extends model
         $editors['testtask']    = array('table' => TABLE_TESTTASK,    'fields' => 'id,`desc`,`report`');
         $editors['todo']        = array('table' => TABLE_TODO,        'fields' => 'id,`desc`');
         $editors['task']        = array('table' => TABLE_TASK,        'fields' => 'id,`desc`');
-        foreach($editors as $objectType => $editor)
+        $editors['build']       = array('table' => TABLE_BUILD,       'fields' => 'id,`desc`');
+
+        $editor = $editors[$type];
+        $fields = explode(',', $editor['fields']);
+        $cond   = array();
+        foreach($fields as $field)
         {
-            $smtm = $this->dao->select($editor['fields'])->from($editor['table'])->query();
-            while($object = $smtm->fetch())
+            if(strpos($field, '`') !== false) $cond[]  = $field . " like '%data/upload/%'";
+            if(strpos($field, '`') === false) $idField = $field;
+        }
+        $objects = $this->dao->select($editor['fields'])->from($editor['table'])
+            ->where($idField)->gt($lastID)
+            ->beginIF($cond)->andWhere('(' . join(' OR ', $cond) . ')')->fi()
+            ->orderBy($idField)
+            ->limit($limit)
+            ->fetchAll($idField);
+        foreach($objects as $object)
+        {
+            $files    = array();
+            $objectID = 0;
+            foreach($fields as $field)
             {
-                $files    = array();
-                $objectID = 0;
-                $fields   = explode(',', $editor['fields']);
-                foreach($fields as $field)
+                if(strpos($field, '`') === false)
                 {
-                    if(strpos($field, '`') === false)
+                    $objectID = $object->$field;
+                }
+                else
+                {
+                    $field = trim($field, '`');
+                    preg_match_all('/"\/?data\/upload\/.*1\/([0-9]{6}\/[^"]+)"/', $object->$field, $output);
+                    foreach($output[1] as $path)$files[$path] = $path;
+                }
+            }
+            if($files) $this->dao->update(TABLE_FILE)->set('objectType')->eq($type)->set('objectID')->eq($objectID)->set('extra')->eq('editor')->where('pathname')->in($files)->exec();
+        }
+            if(count($objects) < $limit)
+            {
+                $editorKeys = array_keys($editors);
+                foreach($editorKeys as $i => $objectType)
+                {
+                    if($type == $objectType)
                     {
-                        $objectID = $object->$field;
-                    }
-                    else
-                    {
-                        $field = trim($field, '`');
-                        preg_match_all('/"\/?data\/upload\/.*1\/([0-9]{6}\/[^"]+)"/', $object->$field, $output);
-                        foreach($output[1] as $path)$files[$path] = $path;
+                        $nextType = isset($editorKeys[$i + 1]) ? $editorKeys[$i + 1] : '';
+                        break;
                     }
                 }
-                if($files) $this->dao->update(TABLE_FILE)->set('objectType')->eq($objectType)->set('objectID')->eq($objectID)->set('extra')->eq('editor')->where('pathname')->in($files)->exec();
+                $result['type']   = empty($nextType) ? 'finish' : $nextType;
+				$result['count']  = count($objects);
+                $result['lastID'] = 0;
             }
-        }
-        return true;
+            else
+            {
+                $result['type']   = $type;
+                $result['count']  = count($objects);
+                $result['lastID'] = $object->id;
+            }
+            return $result;
     }
 
     /**
@@ -1382,6 +1439,52 @@ class upgradeModel extends model
         }
         return true;
     }
+    
+    /**
+     * Rename main lib.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function renameMainLib()
+    {
+        $this->app->loadLang('doc');
+        $this->dao->update(TABLE_DOCLIB)->set('name')->eq($this->lang->doclib->main['product'])->where('name')->eq($this->lang->doclib->product)->exec();
+        $this->dao->update(TABLE_DOCLIB)->set('name')->eq($this->lang->doclib->main['project'])->where('name')->eq($this->lang->doclib->project)->exec();
+        return true;
+    }
+
+    /**
+     * Adjust priv for 8.4.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function adjustPriv8_4()
+    {
+        $groups = $this->dao->select('`group`')->from(TABLE_GROUPPRIV)->where('module')->eq('branch')->andWhere('method')->eq('manage')->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group = $groupID;
+            $data->module = 'branch';
+            $data->method = 'sort';
+            $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+        }
+        $groups = $this->dao->select('`group`')->from(TABLE_GROUPPRIV)->where('module')->eq('story')->andWhere('method')->eq('tasks')->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group = $groupID;
+            $data->module = 'story';
+            $data->method = 'bugs';
+            $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+
+            $data->method = 'cases';
+            $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+        }
+        return true;
+    }
 
     /**
      * Judge any error occers.
@@ -1417,5 +1520,19 @@ class upgradeModel extends model
     {
         $statusFile = $this->app->getAppRoot() . 'www' . DIRECTORY_SEPARATOR . 'ok.txt';
         return (!file_exists($statusFile) or (time() - filemtime($statusFile)) > 3600) ? $statusFile : false;
+    }
+
+    /**
+     * Check weither process or not.
+     * 
+     * @access public
+     * @return array
+     */
+    public function checkProcess()
+    {
+		$fromVersion = $this->config->installedVersion;
+		$needProcess = array();
+        if(strpos($fromVersion, 'pro') === false ? $fromVersion < '8.3' : $fromVersion < 'pro5.4') $needProcess['updateFile'] = true;
+		return $needProcess;
     }
 }

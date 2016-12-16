@@ -50,7 +50,14 @@ $(document).ready(function()
         scrollPos     : 'out',
         tableClass    : 'tablesorter',
         storage       : false,
-        selectable    : {clickBehavior: 'multi'},
+        selectable    : 
+        {
+            clickBehavior: 'multi',
+            startDrag: function(e)
+            {
+                if(!this.multiKey && !$(e.target).closest('td[data-index="0"]').length) return false;
+            }
+        },
         ready: function()
         {
             if(!this.$table) return;
@@ -63,6 +70,7 @@ $(document).ready(function()
             $dropdown.children('.dropdown').append($dropmenu);
             this.$datatable.before($dropdown);
             this.$datatable.find('[data-toggle=modal], a.iframe').modalTrigger();
+            if($.fn.progressPie) this.$datatable.find('.progress-pie').progressPie();
             $("a[data-toggle='showModuleModal']").click(function(){$('#showModuleModal').modal('show')});
 
             $('#customBtn').modalTrigger();

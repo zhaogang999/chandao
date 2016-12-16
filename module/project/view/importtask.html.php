@@ -24,7 +24,7 @@
   </div>
 </div>
 <form class='form-condensed' method='post' target='hiddenwin' id='importTaskForm'>
-  <table class='table tablesorter table-fixed'>
+  <table class='table tablesorter table-fixed table-selectable'>
     <thead>
     <tr class='colhead'>
       <th class='w-id'><?php echo $lang->idAB;?></th>
@@ -42,14 +42,12 @@
     <?php foreach($tasks2Imported as $task):?>
     <?php $class = $task->assignedTo == $app->user->account ? 'style=color:red' : '';?>
     <tr class='text-center'>
-
-      <td>
-      <input type='checkbox' name='tasks[]' value='<?php echo $task->id;?>' />
-      <?php if(!common::printLink('task', 'view', "task=$task->id", sprintf('%03d', $task->id))) printf('%03d', $task->id);?>
+      <td class='cell-id'>
+        <input type='checkbox' name='tasks[]' value='<?php echo $task->id;?>' />
+        <?php if(!common::printLink('task', 'view', "task=$task->id", sprintf('%03d', $task->id))) printf('%03d', $task->id);?>
       </td>
-
       <td><?php echo substr($projects[$task->project], 2);?></td>
-      <td><span class='<?php echo 'pri' . zget($lang->task->priList, $task->pri, $task->pri)?>'><?php echo zget($lang->task->priList, $task->pri, $task->pri);?></span></td>
+      <td><span class='<?php echo 'pri' . zget($lang->task->priList, $task->pri, $task->pri)?>'><?php echo $task->pri == '0' ? '' : zget($lang->task->priList, $task->pri, $task->pri);?></span></td>
       <td class='text-left nobr'><?php if(!common::printLink('task', 'view', "task=$task->id", $task->name)) echo $task->name;?></td>
       <td <?php echo $class;?>><?php echo $task->assignedToRealName;?></td>
       <td><?php echo $task->left;?></td>

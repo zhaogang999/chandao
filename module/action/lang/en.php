@@ -60,6 +60,7 @@ $lang->action->objectTypes['doc']         = 'Document';
 $lang->action->objectTypes['doclib']      = 'Doc Lib';
 $lang->action->objectTypes['todo']        = 'To-Dos';
 $lang->action->objectTypes['branch']      = 'Branch';
+$lang->action->objectTypes['module']      = 'Module';
 
 /* 用来描述操作历史记录。*/
 $lang->action->desc = new stdclass();
@@ -107,7 +108,7 @@ $lang->action->desc->unlinkrelatedcase = '$date, <strong>$actor</strong> removed
 /* 用来显示动态信息。*/
 $lang->action->label = new stdclass();
 $lang->action->label->created             = 'Created';
-$lang->action->label->opened              = 'Opened';
+$lang->action->label->opened              = 'Open';
 $lang->action->label->changed             = 'Changed';
 $lang->action->label->edited              = 'Edited';
 $lang->action->label->assigned            = 'Assigned';

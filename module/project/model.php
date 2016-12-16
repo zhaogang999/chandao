@@ -968,6 +968,75 @@ class projectModel extends model
     }
 
     /**
+     * Build story search form.
+     * 
+     * @param  array  $products 
+     * @param  array  $branchGroups 
+     * @param  array  $modules 
+     * @param  int    $queryID 
+     * @param  string $actionURL 
+     * @param  string $type
+     * @access public
+     * @return void
+     */
+    public function buildStorySearchForm($products, $branchGroups, $modules, $queryID, $actionURL, $type = 'projectStory')
+    {
+        $branchPairs  = array();
+        $productType  = 'normal';
+        $productNum   = count($products);
+        $productPairs = array(0 => '');
+        foreach($products as $product)
+        {
+            $productPairs[$product->id] = $product->name;
+            if($product->type != 'normal')
+            {
+                $productType = $product->type;
+                if($product->branch)
+                {
+                    $branchPairs[$product->branch] = (count($products) > 1 ? $product->name . '/' : '') . $branchGroups[$product->id][$product->branch];
+                }
+                else
+                {
+                    $productBranches = isset($branchGroups[$product->id]) ? $branchGroups[$product->id] : array(0);
+                    if(count($products) > 1)
+                    {
+                        foreach($productBranches as $branchID => $branchName) $productBranches[$branchID] = $product->name . '/' . $branchName;
+                    }
+                    $branchPairs += $productBranches;
+                }
+            }
+        }
+
+        /* Build search form. */
+        if($type == 'projectStory')
+        {
+            $this->config->product->search['module'] = 'projectStory';
+            unset($this->config->product->search['fields']['stage']);
+            unset($this->config->product->search['params']['stage']);
+        }
+        $this->config->product->search['actionURL'] = $actionURL;
+        $this->config->product->search['queryID']   = $queryID;
+        $this->config->product->search['params']['product']['values'] = $productPairs + array('all' => $this->lang->product->allProductsOfProject);
+        $this->config->product->search['params']['plan']['values'] = $this->loadModel('productplan')->getForProducts($products);
+        if(count($products) == 1) $this->config->product->search['params']['module']['values'] = $modules;
+        unset($this->lang->story->statusList['draft']);
+        if(count($products) >= 2) unset($this->config->product->search['fields']['module']);
+        if($productType == 'normal')
+        {
+            unset($this->config->product->search['fields']['branch']);
+            unset($this->config->product->search['params']['branch']);
+        }
+        else
+        {
+            $this->config->product->search['fields']['branch'] = sprintf($this->lang->product->branch, $this->lang->product->branchName[$productType]);
+            $this->config->product->search['params']['branch']['values'] = array('' => '') + $branchPairs;
+        }
+        $this->config->product->search['params']['status'] = array('operator' => '=', 'control' => 'select', 'values' => $this->lang->story->statusList);
+
+        $this->loadModel('search')->setSearchParams($this->config->product->search);
+    }
+
+    /**
      * Get projects to import 
      *
      * @param  array  $projectIds 
@@ -986,7 +1055,7 @@ class projectModel extends model
         $now   = date('Y-m-d');
         foreach($projects as $id => $project)
         {
-            if($this->checkPriv($project) and ($project->status == 'done' or $project->end < $now)) $pairs[$id] = ucfirst(substr($project->code, 0, 1)) . ':' . $project->name;
+            if($this->checkPriv($project)) $pairs[$id] = ucfirst(substr($project->code, 0, 1)) . ':' . $project->name;
         }
         return $pairs;
     }
@@ -1811,45 +1880,41 @@ class projectModel extends model
     public function getDateList($begin, $end, $type, $interval = '', $format = 'm/d/Y')
     {
         $begin = strtotime($begin);
-        $end   = strtotime($end);
+        $end   = strtotime($end) + 24 * 3600;
 
+        $beginWeekDay = date('w', $begin);
         $days = ($end - $begin) / 3600 / 24;
         if($type == 'noweekend')
         {
-            $mod   = $days % 7;
-            $days  = $days - floor($days / 7) * 2;
-            $days  = $mod == 6 ? $days - 1 : $days;
+            $allDays = $days;
+            $weekDay = $beginWeekDay;
+            for($i = 0; $i < $allDays; $i++, $weekDay++)
+            {
+                $weekDay = $weekDay % 7;
+                if(($this->config->project->weekend == 2 and $weekDay == 6) or $weekDay == 0) $days--;
+            }
         }
 
         if(!$interval) $interval = floor($days / $this->config->project->maxBurnDay);
 
         $dateList = array();
-        $date     = $begin;
         $spaces   = (int)$interval;
         $counter  = $spaces;
-        while($date <= $end)
+        $weekDay  = $beginWeekDay;
+        for($date = $begin; $date <= $end; $date += 24 * 3600, $weekDay++)
         {
             /* Remove weekend when type is noweekend.*/
             if($type == 'noweekend')
             {
-                $weekDay = date('w', $date);
-                if($weekDay == 6 or $weekDay == 0)
-                {
-                    $date += 24 * 3600;
-                    continue;
-                }
+                $weekDay = $weekDay % 7;
+                if(($this->config->project->weekend == 2 and $weekDay == 6) or $weekDay == 0) continue;
             }
 
             $counter ++;
-            if($counter <= $spaces)
-            {
-                $date += 24 * 3600;
-                continue;
-            }
+            if($counter <= $spaces) continue;
 
             $counter    = 0;
             $dateList[] = date($format, $date);
-            $date += 24 * 3600;
         }
 
         return array($dateList, $interval);
@@ -1910,7 +1975,7 @@ class projectModel extends model
     }
 
     /**
-     * Build search form.
+     * Build task search form.
      *
      * @param  int    $projectID
      * @param  array  $projects
@@ -1919,7 +1984,7 @@ class projectModel extends model
      * @access public
      * @return void
      */
-    public function buildSearchForm($projectID, $projects, $queryID, $actionURL)
+    public function buildTaskSearchForm($projectID, $projects, $queryID, $actionURL)
     {
         $this->config->project->search['actionURL'] = $actionURL;
         $this->config->project->search['queryID']   = $queryID;
@@ -2094,7 +2159,22 @@ class projectModel extends model
             foreach($tasks as $task) $taskGroups[$task->module][$task->story][$task->id] = $task;
         }
 
-        if(!empty($node->children)) foreach($node->children as $i => $child) $node->children[$i] = $this->fillTasksInTree($child, $projectID);
+        if(!empty($node->children))
+        {
+            foreach($node->children as $i => $child)
+            {
+                $subNode = $this->fillTasksInTree($child, $projectID);
+                /* Remove no children node. */
+                if($subNode->type != 'story' and $subNode->type != 'task' and empty($subNode->children))
+                {
+                    unset($node->children[$i]);
+                }
+                else
+                {
+                    $node->children[$i] = $subNode;
+                }
+            }
+        }
 
         if(!isset($node->id))$node->id = 0;
         if($node->type == 'story')
@@ -2144,6 +2224,7 @@ class projectModel extends model
         }
 
         $node->actions = false;
+        if(!empty($node->children)) $node->children = array_values($node->children);
         return $node;
     }
 
@@ -2213,7 +2294,15 @@ class projectModel extends model
         {
             $tree = (object)$tree;
             if($tree->type == 'product') array_unshift($tree->children, array('id' => 0, 'name' => '/', 'type' => 'story', 'actions' => false, 'root' => $tree->root));
-            $fullTrees[$i] = $this->fillTasksInTree($tree, $projectID);
+            $fullTree = $this->fillTasksInTree($tree, $projectID);
+            if(empty($fullTree->children))
+            {
+                unset($fullTrees[$i]);
+            }
+            else
+            {
+                $fullTrees[$i] = $fullTree;
+            }
         }
         if(empty($fullTrees[0]->children)) array_shift($fullTrees);
         return $fullTrees;

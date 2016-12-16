@@ -22,29 +22,59 @@ class docModel extends model
      * @access public
      * @return void
      */
-    public function setMenu($libs, $libID = 0, $moduleID = 0)
+    public function setMenu($libID = 0, $moduleID = 0, $crumb = '')
     {
-        if($libID)
+        if(isset($this->config->customMenu->doc))
         {
-            $lib = $this->getLibById($libID);
-            if(!$this->checkPriv($lib)) 
+            $customMenu = json_decode($this->config->customMenu->doc);
+            $menuLibIdList = array();
+            foreach($customMenu as $i => $menu)
             {
-                echo(js::alert($this->lang->doc->accessDenied));
-                die(js::locate('back'));
+                if(strpos($menu->name, 'custom') === 0)
+                {
+                    $menuLibID = (int)substr($menu->name, 6);
+                    if($menuLibID) $menuLibIdList[$i] = $menuLibID;
+                }
             }
 
-            if($lib->product or $lib->project)
+            $productIdList = array();
+            $projectIdList = array();
+            if($menuLibIdList)
             {
-                $table    = $lib->product ? TABLE_PRODUCT : TABLE_PROJECT;
-                $objectID = $lib->product ? $lib->product : $lib->project;
-                $object   = $this->dao->select('id,name')->from($table)->where('id')->eq($objectID)->fetch();
-                if($object) $libs[$libID] = $object->name . ' / ' . $lib->name;
+                $libs = $this->dao->select('id,name,product,project')->from(TABLE_DOCLIB)->where('id')->in($menuLibIdList)->fetchAll('id');
+                foreach($libs as $lib)
+                {
+                    if($lib->product) $productIdList[] = $lib->product;
+                    if($lib->project) $projectIdList[] = $lib->project;
+                }
             }
+            $products = $productIdList ? $this->dao->select('id,name')->from(TABLE_PRODUCT)->where('id')->in($productIdList)->fetchPairs('id', 'name') : array();
+            $projects = $projectIdList ? $this->dao->select('id,name')->from(TABLE_PROJECT)->where('id')->in($projectIdList)->fetchPairs('id', 'name') : array();
+            foreach($menuLibIdList as $i => $menuLibID)
+            {
+                $lib = $libs[$menuLibID];
+                $libName = '';
+                if($lib->product) $libName = isset($products[$lib->product]) ? '[' . $products[$lib->product] . ']' : '';
+                if($lib->project) $libName = isset($projects[$lib->project]) ? '[' . $projects[$lib->project] . ']' : '';
+                $libName .= $lib->name;
+                $customMenu[$i]->link = "{$libName}|doc|browse|libID={$menuLibID}";
+            }
+            $this->config->customMenu->doc = json_encode($customMenu);
         }
 
-        $selectHtml = "<a id='currentItem' data-lib-id='$libID' href=\"javascript:showLibMenu()\">{$libs[$libID]} <span class='icon-caret-down'></span></a><div id='dropMenu'><i class='icon icon-spin icon-spinner'></i><div id='libMenu'><div id='libMenuHeading'><input id='searchLib' type='search' placeholder='{$this->lang->doc->searchDoc}' class='form-control'></div><div id='libMenuGroups' class='clearfix'><div class='lib-menu-group' id='libMenuProductGroup'><div class='lib-menu-list-heading' data-type='product'>{$this->lang->doc->libTypeList['product']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div><div class='lib-menu-group' id='libMenuProjectGroup'><div class='lib-menu-list-heading' data-type='project'>{$this->lang->doc->libTypeList['project']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div><div class='lib-menu-group' id='libMenuCustomGroup'><div class='lib-menu-list-heading' data-type='custom'>{$this->lang->doc->libTypeList['custom']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div></div></div></div>";
+        $this->app->loadLang('project');
+        $selectHtml  = "<a id='currentItem' data-lib-id='$libID' href=\"javascript:showLibMenu()\">{$this->lang->doclib->all} <span class='icon-caret-down'></span></a>";
+        $selectHtml .= "<div id='dropMenu'>";
+        $selectHtml .= "<i class='icon icon-spin icon-spinner'></i>";
+        $selectHtml .= "<div id='libMenu'>";
+        $selectHtml .= "<div id='libMenuHeading'><input id='searchLib' type='search' placeholder='{$this->lang->doc->searchDoc}' class='form-control'></div>";
+        $selectHtml .= "<div id='libMenuGroups' class='clearfix'>";
+        $selectHtml .= "<div class='lib-menu-group' id='libMenuProductGroup'><div class='lib-menu-list-heading' data-type='product'>{$this->lang->doc->libTypeList['product']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
+        $selectHtml .= "<div class='lib-menu-group' id='libMenuProjectGroup'><div class='lib-menu-list-heading' data-type='project'>{$this->lang->doc->libTypeList['project']}<i class='icon icon-remove'></i></div><div class='lib-menu-project-done'>{$this->lang->project->statusList['done']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
+        $selectHtml .= "<div class='lib-menu-group' id='libMenuCustomGroup'><div class='lib-menu-list-heading' data-type='custom'>{$this->lang->doc->libTypeList['custom']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
+        $selectHtml .= "</div></div></div>";
         common::setMenuVars($this->lang->doc->menu, 'list', $selectHtml);
-        common::setMenuVars($this->lang->doc->menu, 'crumb', $this->getCrumbs($libID, $moduleID));
+        common::setMenuVars($this->lang->doc->menu, 'crumb', $crumb ? $crumb : $this->getCrumbs($libID, $moduleID));
     }
 
     /**
@@ -172,11 +202,10 @@ class docModel extends model
         }
         elseif($browseType == "openedbyme")
         {
-            $condition = $this->buildConditionSQL();
+            $condition = $this->buildConditionSQL('doc');
             $docs = $this->dao->select('*')->from(TABLE_DOC)
                 ->where('deleted')->eq(0)
                 ->andWhere('lib')->in($libID)
-                ->andWhere('addedBy')->eq($this->app->user->account)
                 ->beginIF($condition)->andWhere("($condition)")->fi()
                 ->orderBy($sort)
                 ->page($pager)
@@ -190,7 +219,7 @@ class docModel extends model
         }
         elseif($browseType == "bymenu")
         {
-            $condition = $this->buildConditionSQL();
+            $condition = $this->buildConditionSQL('doc');
             $docs = $this->dao->select('*')->from(TABLE_DOC)->where('deleted')->eq(0)->andWhere('lib')->in($libID)
                 ->andWhere('module')->eq($moduleID)
                 ->beginIF($condition)->andWhere("($condition)")->fi()
@@ -229,7 +258,7 @@ class docModel extends model
             $docQuery  = str_replace("`project` = 'all'", '1', $docQuery);                // Search all project.
             $docQuery  = str_replace("`lib` = 'all'", '1', $docQuery);                // Search all lib.
 
-            $condition = $this->buildConditionSQL();
+            $condition = $this->buildConditionSQL('lib');
             $libIdList = $this->dao->select('id')->from(TABLE_DOCLIB)->beginIF($condition)->where("($condition)")->fi()->get();
 
             $docs = $this->dao->select('*')->from(TABLE_DOC)->where($docQuery)
@@ -261,7 +290,7 @@ class docModel extends model
      */
     public function getDocs($libID, $module, $orderBy, $pager)
     {
-        $condition = $this->buildConditionSQL();
+        $condition = $this->buildConditionSQL('doc');
         return $this->dao->select('*')->from(TABLE_DOC)
             ->where('deleted')->eq(0)
             ->andWhere('lib')->in($libID)
@@ -283,7 +312,12 @@ class docModel extends model
     public function getById($docID, $version = 0, $setImgSize = false)
     {
         $doc = $this->dao->select('*')->from(TABLE_DOC)->where('id')->eq((int)$docID)->fetch();
-        if(!$doc or !$this->checkPriv($doc)) return false;
+        if(!$doc) return false;
+        if(!$this->checkPriv($doc))
+        {
+            echo(js::alert($this->lang->doc->accessDenied));
+            die(js::locate('back'));
+        }
         $version = $version ? $version : $doc->version;
         $docContent = $this->dao->select('*')->from(TABLE_DOCCONTENT)->where('doc')->eq($doc->id)->andWhere('version')->eq($version)->fetch();
 
@@ -482,43 +516,6 @@ class docModel extends model
 
         $this->loadModel('search')->setSearchParams($this->config->doc->search);
     }
- 
-    /**
-     * Get docs of a product.
-     * 
-     * @param  int    $productID 
-     * @access public
-     * @return array
-     */
-    public function getProductDocs($productID)
-    {
-        $condition = $this->buildConditionSQL('t1');
-        return $this->dao->select('t1.*, t2.name as module')->from(TABLE_DOC)->alias('t1')
-            ->leftjoin(TABLE_MODULE)->alias('t2')->on('t1.module = t2.id')
-            ->where('t1.product')->eq($productID)
-            ->beginIF($condition)->andWhere("($condition)")->fi()
-            ->andWhere('t1.deleted')->eq(0)
-            ->orderBy('t1.id_desc')
-            ->fetchAll();
-    }
-
-    /**
-     * Get docs of a project.
-     * 
-     * @param  int    $projectID 
-     * @access public
-     * @return array
-     */
-    public function getProjectDocs($projectID)
-    {
-        $condition = $this->buildConditionSQL();
-        return $this->dao->select('*')->from(TABLE_DOC)
-            ->where('project')->eq($projectID)
-            ->beginIF($condition)->andWhere("($condition)")->fi()
-            ->andWhere('deleted')->eq(0)
-            ->orderBy('id_desc')
-            ->fetchAll();
-    }
 
     /**
      * Get pairs of project modules.
@@ -548,6 +545,7 @@ class docModel extends model
         return $this->dao->select('*')->from(TABLE_MODULE)->where('root')->eq($libID)
             ->andWhere('type')->eq('doc')
             ->andWhere('parent')->eq($parent)
+            ->andWhere('deleted')->eq(0)
             ->orderBy($orderBy)
             ->fetchAll('id');
     }
@@ -601,6 +599,7 @@ class docModel extends model
         if($object->acl == 'open') return true;
 
         $account = ',' . $this->app->user->account . ',';
+        if(isset($object->addedBy) and $object->addedBy == $this->app->user->account) return true;
         if(strpos($this->app->company->admins, $account) !== false) return true;
         if($object->acl == 'private' and strpos(",$object->users,", $account) !== false) return true;
         if($object->acl == 'custom')
@@ -641,7 +640,7 @@ class docModel extends model
         }
         if(isset($projects)) $stmt = $stmt->andWhere('project')->in($projects);
 
-        $condition = $this->buildConditionSQL();
+        $condition = $this->buildConditionSQL('lib');
         $idList = $stmt->beginIF($condition)->andWhere("($condition)")->fi()->orderBy("{$key}_desc")->page($pager, $key)->fetchPairs($key, $key);
 
         if($type == 'product' or $type == 'project')
@@ -665,7 +664,7 @@ class docModel extends model
      */
     public function getAllLibGroups()
     {
-        $condition = $this->buildConditionSQL();
+        $condition = $this->buildConditionSQL('lib');
         $stmt = $this->dao->select("id,product,project,name")->from(TABLE_DOCLIB)
             ->where('deleted')->eq(0)
             ->beginIF($condition)->andWhere("($condition)")->fi()
@@ -691,7 +690,7 @@ class docModel extends model
             }
         }
         $productIdList = array_keys($productLibs);
-        $products      = $this->dao->select('id,name')->from(TABLE_PRODUCT)->where('id')->in($productIdList)->andWhere('deleted')->eq('0')->orderBy('`order`_desc')->fetchPairs('id', 'name');
+        $products      = $this->dao->select('id,name,status')->from(TABLE_PRODUCT)->where('id')->in($productIdList)->andWhere('deleted')->eq('0')->orderBy('`order`_desc')->fetchAll();
         $hasProject    = $this->dao->select('DISTINCT product')->from(TABLE_PROJECTPRODUCT)->alias('t1')
             ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project=t2.id')
             ->where('t1.product')->in($productIdList)
@@ -701,25 +700,31 @@ class docModel extends model
         $hasLibsPriv  = common::hasPriv('doc', 'allLibs');
         $hasFilesPriv = common::hasPriv('doc', 'showFiles');
         $productOrderLibs = array();
-        foreach($products as $productID => $productName)
+        foreach($products as $product)
         {
+            $productID   = $product->id;
+            $productName = $product->name;
             if(isset($productLibs[$productID]))
             {
-                $productOrderLibs[$productID]['id']   = $productID;
-                $productOrderLibs[$productID]['name'] = $productName;
+                $productOrderLibs[$productID]['id']     = $productID;
+                $productOrderLibs[$productID]['name']   = $productName;
+                $productOrderLibs[$productID]['status'] = $product->status;
                 foreach($productLibs[$productID] as $libID => $libName) $productOrderLibs[$productID]['libs'][$libID] = $libName;
-                if(isset($hasProject[$productID]) and $hasLibsPriv) $productOrderLibs[$productID]['libs']['project'] = $this->lang->doc->systemLibs['project'];
+                if(isset($hasProject[$productID]) and $hasLibsPriv) $productOrderLibs[$productID]['libs']['project'] = $this->lang->doclib->project;
                 if($hasFilesPriv) $productOrderLibs[$productID]['libs']['files'] = $this->lang->doclib->files;
             }
         }
-        $projects = $this->dao->select('id,name')->from(TABLE_PROJECT)->where('id')->in(array_keys($projectLibs))->andWhere('deleted')->eq('0')->orderBy('`order`_desc')->fetchPairs('id', 'name');
+        $projects = $this->dao->select('id,name,status')->from(TABLE_PROJECT)->where('id')->in(array_keys($projectLibs))->andWhere('deleted')->eq('0')->orderBy('`order`_desc')->fetchAll();
         $projectOrderLibs = array();
-        foreach($projects as $projectID => $projectName)
+        foreach($projects as $project)
         {
+            $projectID   = $project->id;
+            $projectName = $project->name;
             if(isset($projectLibs[$projectID]))
             {
-                $projectOrderLibs[$projectID]['id']   = $projectID;
-                $projectOrderLibs[$projectID]['name'] = $projectName;
+                $projectOrderLibs[$projectID]['id']     = $projectID;
+                $projectOrderLibs[$projectID]['name']   = $projectName;
+                $projectOrderLibs[$projectID]['status'] = $project->status;
                 foreach($projectLibs[$projectID] as $libID => $libName) $projectOrderLibs[$projectID]['libs'][$libID] = $libName;
                 if($hasFilesPriv) $projectOrderLibs[$projectID]['libs']['files'] = $this->lang->doclib->files;
             }
@@ -797,7 +802,7 @@ class docModel extends model
             {
                 if($this->checkPriv($lib)) $buildGroups[$objectID][$lib->id] = $lib->name;
             }
-            if($type == 'product' and isset($hasProject[$objectID]) and common::hasPriv('doc', 'allLibs')) $buildGroups[$objectID]['project'] = $this->lang->doc->systemLibs['project'];
+            if($type == 'product' and isset($hasProject[$objectID]) and common::hasPriv('doc', 'allLibs')) $buildGroups[$objectID]['project'] = $this->lang->doclib->project;
             if(common::hasPriv('doc', 'showFiles')) $buildGroups[$objectID]['files'] = $this->lang->doclib->files;
         }
 
@@ -832,7 +837,7 @@ class docModel extends model
 
         if(strpos($mode, 'onlylib') === false)
         {
-            if($type == 'product' and isset($hasProject[$objectID]) and common::hasPriv('doc', 'allLibs')) $libs['project'] = $this->lang->doc->systemLibs['project'];
+            if($type == 'product' and isset($hasProject[$objectID]) and common::hasPriv('doc', 'allLibs')) $libs['project'] = $this->lang->doclib->project;
             if(common::hasPriv('doc', 'showFiles')) $libs['files'] = $this->lang->doclib->files;
         }
 
@@ -851,12 +856,36 @@ class docModel extends model
     {
         $this->loadModel('file');
         $docIdList = $this->dao->select('id')->from(TABLE_DOC)->where($type)->eq($objectID)->get();
-        $files = $this->dao->select('*')->from(TABLE_FILE)
-            ->where("(objectType = '$type' and objectID = '$objectID')")
-            ->orWhere("(objectType = 'doc' and objectID in ($docIdList))")
-            ->andWhere('size')->gt('0')
-            ->page($pager)
-            ->fetchAll('id');
+        if($type == 'product')
+        {
+            $storyIdList   = $this->dao->select('id')->from(TABLE_STORY)->where('product')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $bugIdList     = $this->dao->select('id')->from(TABLE_BUG)->where('product')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $releaseIdList = $this->dao->select('id')->from(TABLE_RELEASE)->where('product')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $planIdList    = $this->dao->select('id')->from(TABLE_PRODUCTPLAN)->where('product')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $files = $this->dao->select('*')->from(TABLE_FILE)->alias('t1')
+                ->where("(objectType = 'product' and objectID = $objectID)")
+                ->orWhere("(objectType = 'doc' and objectID in ($docIdList))")
+                ->orWhere("(objectType = 'story' and objectID in ($storyIdList))")
+                ->orWhere("(objectType = 'bug' and objectID in ($bugIdList))")
+                ->orWhere("(objectType = 'release' and objectID in ($releaseIdList))")
+                ->orWhere("(objectType = 'productplan' and objectID in ($planIdList))")
+                ->andWhere('size')->gt('0')
+                ->page($pager)
+                ->fetchAll('id');
+        }
+        elseif($type == 'project')
+        {
+            $taskIdList  = $this->dao->select('id')->from(TABLE_TASK)->where('project')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $buildIdList = $this->dao->select('id')->from(TABLE_BUILD)->where('project')->eq($objectID)->andWhere('deleted')->eq('0')->get();
+            $files = $this->dao->select('*')->from(TABLE_FILE)->alias('t1')
+                ->where("(objectType = 'project' and objectID = $objectID)")
+                ->orWhere("(objectType = 'doc' and objectID in ($docIdList))")
+                ->orWhere("(objectType = 'task' and objectID in ($taskIdList))")
+                ->orWhere("(objectType = 'build' and objectID in ($buildIdList))")
+                ->andWhere('size')->gt('0')
+                ->page($pager)
+                ->fetchAll('id');
+        }
 
         foreach($files as $fileID => $file)
         {
@@ -874,7 +903,7 @@ class docModel extends model
      * @access public
      * @return string
      */
-    public function buildConditionSQL($table = '')
+    public function buildConditionSQL($type = 'lib', $table = '')
     {
         if($table) $table .= '.';
         $condition = '';
@@ -882,6 +911,7 @@ class docModel extends model
         if(strpos($this->app->company->admins, $account) === false)
         {
             $condition .= "{$table}acl='open'";
+            if($type == 'doc') $condition .= " OR {$table}addedBy = '{$this->app->user->account}'";
             $condition .= " OR ({$table}acl='private' and CONCAT(',', {$table}users, ',') like '%$account%')";
             $condition .= " OR ({$table}acl='custom' and (";
             foreach($this->app->user->groups as $groupID) $condition .= "(CONCAT(',', {$table}groups, ',') like '%,$groupID,%') OR ";
@@ -925,7 +955,7 @@ class docModel extends model
         static $docGroups;
         if(empty($docGroups))
         {
-            $condition = $this->buildConditionSQL();
+            $condition = $this->buildConditionSQL('doc');
             $docs = $this->dao->select('*')->from(TABLE_DOC)
                 ->where('lib')->eq((int)$libID)
                 ->beginIF($condition)->andWhere("($condition)")->fi()
@@ -1139,9 +1169,71 @@ class docModel extends model
     {
         if(empty($libID)) return '';
 
+        $lib = $this->getLibById($libID);
+        if(!$this->checkPriv($lib)) 
+        {
+            echo(js::alert($this->lang->doc->accessDenied));
+            die(js::locate('back'));
+        }
+
+        $type = $lib->product ? 'product' : 'custom';
+        $type = $lib->project ? 'project' : $type;
+
+        $mainLib = $type == 'product' ? $this->lang->productCommon : $this->lang->doc->customAB;
+        $mainLib = $type == 'project' ? $this->lang->projectCommon : $mainLib;
+
+        $crumb     = '';
+        $productID = $this->cookie->product ? $this->cookie->product : '0';
+        if($productID and $type == 'project')
+        {
+            $crumb .= $this->getProductCrumb($productID, $lib->project);
+        }
+        else
+        {
+            $crumb .= html::a(helper::createLink('doc', 'allLibs', "type=$type&product=$productID"), $mainLib) . $this->lang->doc->separator;
+        }
+        if($lib->product or $lib->project)
+        {
+            $table    = $lib->product ? TABLE_PRODUCT : TABLE_PROJECT;
+            $objectID = $lib->product ? $lib->product : $lib->project;
+            $object   = $this->dao->select('id,name')->from($table)->where('id')->eq($objectID)->fetch();
+            if($object) $crumb .= html::a(helper::createLink('doc', 'objectLibs', "type=$type&objectID=$objectID"), $object->name) . $this->lang->doc->separator;
+        }
+
         $parents = $moduleID ? $this->loadModel('tree')->getParents($moduleID) : array();
-        $crumb   = html::a(helper::createLink('doc', 'browse', "libID=$libID&browseType=all&param=0&orderBy=id_desc"), '&nbsp;/&nbsp;');
-        foreach($parents as $module) $crumb .= $this->lang->arrow . html::a(helper::createLink('doc', 'browse', "libID=$libID&browseType=byModule&param=$module->id&orderBy=id_desc"), $module->name);
+        $crumb  .= html::a(helper::createLink('doc', 'browse', "libID=$libID&browseType=all&param=0&orderBy=id_desc"), $lib->name);
+        foreach($parents as $module) $crumb .= $this->lang->doc->separator . html::a(helper::createLink('doc', 'browse', "libID=$libID&browseType=byModule&param=$module->id&orderBy=id_desc"), $module->name);
+        return $crumb;
+    }
+
+    /**
+     * Get product crumb.
+     * 
+     * @param  int    $productID 
+     * @param  int    $projectID 
+     * @access public
+     * @return string
+     */
+    public function getProductCrumb($productID, $projectID = 0)
+    {
+        if(empty($productID)) return '';
+        if($projectID)
+        {
+            $projectProduct = $this->dao->select('*')->from(TABLE_PROJECTPRODUCT)->where('product')->eq($productID)->andWhere('project')->eq($projectID)->fetch();
+            if(empty($projectProduct))
+            {
+                setcookie('product', 0, $this->config->cookieLife, $this->config->webRoot);
+                return html::a(helper::createLink('doc', 'allLibs', "type=project"), $this->lang->projectCommon) . $this->lang->doc->separator;
+            }
+        }
+        $object = $this->dao->select('id,name')->from(TABLE_PRODUCT)->where('id')->eq($productID)->fetch();
+        if(empty($object)) return '';
+
+        $crumb  = '';
+        $crumb .= html::a(helper::createLink('doc', 'allLibs', "type=product"), $this->lang->productCommon) . $this->lang->doc->separator;
+        $crumb .= html::a(helper::createLink('doc', 'objectLibs', "type=product&objectID=$productID"), $object->name) . $this->lang->doc->separator;
+        $crumb .= html::a(helper::createLink('doc', 'allLibs', "type=project&product=$productID"), $this->lang->doclib->project);
+        if($projectID) $crumb .= $this->lang->doc->separator;
         return $crumb;
     }
 

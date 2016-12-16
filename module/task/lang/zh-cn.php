@@ -31,7 +31,10 @@ $lang->task->activate           = "激活";
 $lang->task->export             = "导出数据";
 $lang->task->reportChart        = "报表统计";
 $lang->task->fromBug            = '来源Bug';
+$lang->task->case               = '相关用例';
 $lang->task->confirmStoryChange = "确认需求变动";
+$lang->task->progess            = '进度';
+$lang->task->progessTips        = '已消耗/(已消耗+剩余)';
 
 $lang->task->common            = '任务';
 $lang->task->id                = '编号';
@@ -88,6 +91,7 @@ $lang->task->editEstimate      = '编辑工时';
 $lang->task->deleteEstimate    = '删除工时';
 $lang->task->colorTag          = '颜色标签';
 $lang->task->files             = '附件';
+$lang->task->hasConsumed       = '已消耗';
 
 $lang->task->ditto         = '同上';
 $lang->task->dittoNotice   = "该任务与上一任务不属于同一项目！";
@@ -114,6 +118,7 @@ $lang->task->typeList['discuss'] = '讨论';
 $lang->task->typeList['ui']      = '界面';
 $lang->task->typeList['affair']  = '事务';
 $lang->task->typeList['misc']    = '其他';
+$lang->task->typeList['review']    = '评审';
 
 $lang->task->priList[0]  = '';
 $lang->task->priList[3]  = '3';
@@ -144,6 +149,7 @@ $lang->task->remindBug             = "该任务为Bug转化得到，是否更新
 $lang->task->confirmChangeProject  = "修改{$lang->projectCommon}会导致相应的所属模块、相关需求和指派人发生变化，确定吗？";
 $lang->task->confirmFinish         = '"预计剩余"为0，确认将任务状态改为"已完成"吗？';
 $lang->task->confirmRecord         = '"剩余"为0，任务将标记为"已完成"，您确定吗？';
+$lang->task->noticeLinkStory       = "没有可关联的相关需求，您可以为当前项目%s，然后%s";
 $lang->task->noticeSaveRecord      = '您有尚未保存的工时记录，请先将其保存。';
 $lang->task->commentActions        = '%s. %s, 由 <strong>%s</strong> 添加备注。';
 
@@ -154,7 +160,7 @@ $lang->task->error->consumedSmall    = '"已经消耗"必须大于之前消耗';
 $lang->task->error->consumedThisTime = '请填写"工时"';
 $lang->task->error->left             = '请填写"剩余"';
 $lang->task->error->work             = '"备注"必须小于255个字符';
-$lang->task->error->skipClose        = '任务：%s 不是“已完成”或“已取消”状态，不能关闭！';
+$lang->task->error->skipClose        = '任务：%s 不是“已完成”或“已取消”状态，确定要关闭吗？';
 $lang->task->error->consumed         = '任务：%s工时不能小于0，忽略该任务工时的改动';
 
 /* 统计报表。*/

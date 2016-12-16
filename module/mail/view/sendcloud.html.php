@@ -25,7 +25,17 @@ include '../../common/view/header.html.php';
         <th class='rowhead w-120px'><?php echo $lang->mail->turnon; ?></th>
         <td><?php echo html::radio('turnon', $lang->mail->turnonList, isset($mailConfig->turnon) ? $mailConfig->turnon : 1);?></td>
       </tr>
+      <?php if(!empty($config->global->cron)):?>
       <tr>
+        <th class='text-top'><?php echo $lang->mail->async?></th>
+        <td><?php echo html::radio('async', $lang->mail->asyncList, zget($config->mail, 'async', 0))?></td>
+      </tr>
+      <?php endif;?>
+      <tr>
+      <tr>
+        <th><?php echo $lang->mail->domain?></th>
+        <td><?php echo html::input('domain', zget($config->mail, 'domain', common::getSysURL()), "class='form-control'")?></td>
+      </tr>
         <th><?php echo $lang->mail->accessKey; ?></th>
         <td>
           <div class='required required-wrapper'></div>
@@ -46,11 +56,12 @@ include '../../common/view/header.html.php';
            if($this->config->mail->turnon and $mailExist) echo html::linkButton($lang->mail->test, inlink('test'));
            echo html::linkButton($lang->mail->closeSendCloud, inlink('reset'));
            if($this->config->mail->turnon and common::hasPriv('mail', 'sendcloudUser')) echo html::linkButton($lang->mail->sendcloudUser, inlink('sendcloudUser'));
+           if(common::hasPriv('mail', 'browse') and !empty($config->mail->async) and !empty($config->global->cron)) echo html::linkButton($lang->mail->browse, inlink('browse'));
            ?>
          </td>
        </tr>
     </table>
   </form>
-  <div class='alert alert-info alert-block'><?php printf($lang->mail->sendCloudHelp, common::hasPriv('mail', 'sendcloudUser') ? inlink('sendcloudUser') : '#')?></div>
+  <div class='alert alert-info alert-block' style='border-top:1px solid #ddd'><?php printf($lang->mail->sendCloudHelp, common::hasPriv('mail', 'sendcloudUser') ? inlink('sendcloudUser') : '#')?></div>
 </div>
 <?php include '../../common/view/footer.html.php';?>

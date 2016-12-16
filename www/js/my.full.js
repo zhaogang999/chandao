@@ -386,35 +386,6 @@ function showTreeBox(treeType)
 }
 
 /**
- * Toggle tree menu.
-  
- * @access public
- * @return void
- */
-function toggleTreeBox()
-{
-    var treeType = $('.side-handle').data('id');
-    if(typeof treeType == 'undefined' || treeType == null) return;
-    if($.cookie(treeType) == 'hide') hideTreeBox(treeType);
-
-    $('.side-handle').toggle
-    (
-        function()
-        {
-            if($.cookie(treeType) == 'hide') return showTreeBox(treeType);
-            hideTreeBox(treeType);
-        }, 
-        function()
-        {
-            if($.cookie(treeType) == 'show') return hideTreeBox(treeType);
-            showTreeBox(treeType);
-        }
-    );
-
-    setTimeout(function(){$('.outer.with-side').addClass('with-transition')}, 1000);
-}
-
-/**
  * set tree menu.
   
  * @access public
@@ -422,8 +393,32 @@ function toggleTreeBox()
  */
 function setTreeBox()
 {
+    var $handle = $('.side-handle');
+    if($handle.data('setted')) return;
+
+    var treeType = $handle.data('id');
+    if(treeType)
+    {
+        if($.cookie(treeType) == 'hide') hideTreeBox(treeType);
+
+        $handle.toggle
+        (
+            function()
+            {
+                if($.cookie(treeType) == 'hide') return showTreeBox(treeType);
+                hideTreeBox(treeType);
+            }, 
+            function()
+            {
+                if($.cookie(treeType) == 'show') return hideTreeBox(treeType);
+                showTreeBox(treeType);
+            }
+        ).data('setted', true);
+    }
+
     if($('.outer > .side').length) $('.outer').addClass('with-side');
-    toggleTreeBox();
+    setTimeout(function(){$('.outer.with-side').addClass('with-transition')}, 1000);
+    adjustOuterSize();
 }
 
 /**
@@ -479,6 +474,21 @@ function saveWindowSize()
 }
 
 /**
+ * Adjust Outer box's width and height.
+ * 
+ * @access public
+ * @return void
+ */
+function adjustOuterSize()
+{
+    var side   = $('#wrap .outer > .side');
+    var sideH  = side.length ? (side.outerHeight() + $('#featurebar').outerHeight() + 20) : 0;
+    var height = Math.max(sideH, $(window).height() - $('#header').outerHeight() - ($('#footer').outerHeight() || 0) - 20);
+    if(navigator.userAgent.indexOf("MSIE 8.0") >= 0) height -= 40;
+    $('#wrap .outer').css('min-height', height);
+}
+
+/**
  * Set Outer box's width and height.
  * 
  * @access public
@@ -486,20 +496,10 @@ function saveWindowSize()
  */
 function setOuterBox()
 {
-//    if($('.sub-featurebar').length) $('#featurebar').addClass('with-sub');
-
     var side   = $('#wrap .outer > .side');
-    var resetOuterHeight = function()
-    {
-        var sideH  = side.length ? (side.outerHeight() + $('#featurebar').outerHeight() + 20) : 0;
-        var height = Math.max(sideH, $(window).height() - $('#header').outerHeight() - ($('#footer').outerHeight() || 0) - 20);
-        if(navigator.userAgent.indexOf("MSIE 8.0") >= 0) height -= 40;
-        $('#wrap .outer').css('min-height', height);
-    }
-
-    side.resize(resetOuterHeight);
-    $(window).resize(resetOuterHeight);
-    resetOuterHeight();
+    side.resize(adjustOuterSize);
+    $(window).resize(adjustOuterSize);
+    adjustOuterSize();
 }
 
 /**
@@ -655,7 +655,24 @@ function setComment()
  */
 function checkTable($table)
 {
-    $table = $table || $('.tablesorter:not(.table-datatable)');
+    $(document).off('change.checktable').on('change.checktable', '.rows-selector:checkbox', function()
+    {
+        var $checkbox = $(this);
+        var $datatable = $checkbox.closest('.datatable');
+        if($datatable.length) {
+            var $checkAll = $datatable.find('.check-all.check-btn:first').trigger('click');
+            $checkbox.prop('checked', $checkAll.hasClass('checked'))
+            return;
+        }
+        var scope = $checkbox.data('scope');
+        var $target = scope ? $('#' + scope) : $checkbox.closest('.table');
+        var isChecked = $checkbox.prop('checked');
+        $target.find('tbody > tr').toggleClass('active', isChecked).find('td :checkbox').prop('checked', isChecked);
+    });
+
+    $table = $table || $('.table-selectable');
+
+    if(!$table.length) return;
 
     var checkRow = function(checked)
     {
@@ -679,6 +696,8 @@ function checkTable($table)
         }
     };
 
+    var isSelectableTable = $table.hasClass('table-selectable');
+
     $table.selectable(
     {
         selector: 'tbody > tr',
@@ -699,6 +718,10 @@ function checkTable($table)
             });
         },
         clickBehavior: 'multi',
+        startDrag: function(e)
+        {
+            if(!this.multiKey && isSelectableTable && !$(e.target).closest('.cell-id').length) return false;
+        },
         select: function(e)
         {
             checkRow.call(e.target, true);
@@ -708,21 +731,6 @@ function checkTable($table)
             checkRow.call(e.target, false);
         }
     }).on('click', 'tbody > tr :checkbox', function(e){checkRow.call(this); e.stopPropagation();}).on('click mousedown mousemove mouseup', 'tbody a,tbody select,tbody input', function(e) {e.stopPropagation();});
-
-    $(document).off('change.checktable').on('change.checktable', '.rows-selector:checkbox', function()
-    {
-        var $checkbox = $(this);
-        var $datatable = $checkbox.closest('.datatable');
-        if($datatable.length) {
-            var $checkAll = $datatable.find('.check-all.check-btn:first').trigger('click');
-            $checkbox.prop('checked', $checkAll.hasClass('checked'))
-            return;
-        }
-        var scope = $checkbox.data('scope');
-        var $target = scope ? $('#' + scope) : $checkbox.closest('.table');
-        var isChecked = $checkbox.prop('checked');
-        $target.find('tbody > tr').toggleClass('active', isChecked).find('td :checkbox').prop('checked', isChecked);
-    });
 }
 
 /**
@@ -989,18 +997,14 @@ function setModal()
                 var type = (setting ? setting.type : false) || ($e.hasClass('iframe') ? 'iframe' : ($e.data('type') || 'ajax'));
                 if(type == 'iframe')
                 {
-                    var options = 
+                    var options = $.extend(
                     {
                         url:        url,
-                        width:      $e.data('width') || 800,
-                        height:     $e.data('height') || 'auto',
-                        icon:       $e.data('icon') || '?',
-                        title:      $e.data('title') || $e.attr('title') || $e.text(),
-                        name:       $e.data('name') || 'modalIframe',
+                        title:      $e.attr('title') || $e.text(),
                         cssClass:   $e.data('class'),
-                        headerless: $e.data('headerless') || false,
-                        center:     $e.data('center') || true
-                    };
+                        icon:       '?',
+                        center:     true
+                    }, setting, $e.data());
 
                     if(options.icon == '?')
                     {
@@ -1008,19 +1012,22 @@ function setModal()
                         options.icon = i.length ? i.attr('class').substring(5) : 'file-text';
                     }
 
-                    showIframeModal($.extend(options, setting));
+                    showIframeModal(options);
                 }
                 else
                 {
                     initModalFrame();
                     $.get(url, function(data)
                     {
-                        var options = 
+                        var options = $.extend(
                         {
-                            width:      $e.data('width') || 800,
-                            icon:       $e.data('icon') || '?',
-                            title:      $e.data('title') || $e.attr('title') || $e.text(),
-                        };
+                            width: 800,
+                            title: $e.attr('title') || $e.text(),
+                            icon: '?',
+                            backdrop: 'static',
+                            show: true
+                        }, setting, $e.data());
+
                         var ajaxModal = $('#ajaxModal');
                         if(data.indexOf('modal-dialog') < 0)
                         {
@@ -1035,8 +1042,7 @@ function setModal()
                             $ajaxModal.data('width', modalWidth).find('.modal-dialog').css('width', modalWidth);
                             ajustModalPosition();
                         }
-
-                        ajaxModal.modal('show');
+                        ajaxModal.modal(options);
                     });
                 }
 
@@ -1061,8 +1067,10 @@ function setModal()
             cssClass:   '',
             headerless: false,
             waittime:   0,
-            center:     true
-        }
+            center:     true,
+            backdrop:   'static',
+            show:       true
+        };
         
         if(typeof(settings) == 'string')
         {
@@ -1118,7 +1126,7 @@ function setModal()
             }
             showModal(options, modal, modalBody, dialog);
         }
-        modal.modal('show');
+        modal.modal(options);
     }
 
     function showModal(options, modal, modalBody, dialog)
@@ -1297,10 +1305,10 @@ function setModal4List(triggerClass, replaceID, callback, width)
                     }
                     catch(err){}
 
-                    if($list.is('.tablesorter:not(.table-datatable)')) checkTable($list);
+                    if($list.is('.table-selectable:not(.table-datatable)')) checkTable($list);
                     else $list.find('tbody tr:not(.active-disabled) td').click(function(){$(this).closest('tr').toggleClass('active');});
 
-                    if($.isFunction(callback)) callback();
+                    if($.isFunction(callback)) callback($list);
                     $.cookie('selfClose', 0);
                 });
             }
@@ -1317,7 +1325,11 @@ function setModal4List(triggerClass, replaceID, callback, width)
  */
 function setTableBehavior()
 {
-    $('#wrap .outer > .table, #wrap .outer > form > .table, #wrap .outer > .mian > .table, #wrap .outer > .mian > form > .table, #wrap .outer > .container > .table').not('.table-data, .table-form, .table-custom').addClass('table table-condensed table-hover table-striped tablesorter');
+    $('#wrap .outer > .table, #wrap .outer > form > .table, #wrap .outer > .mian > .table, #wrap .outer > .mian > form > .table, #wrap .outer > .container > .table').not('.table-data, .table-form, .table-custom').addClass('table table-condensed table-hover table-striped tablesorter').each(function()
+    {
+        var $tbody = $(this).children('tbody');
+        if(!$tbody.children().length) $tbody.remove();
+    });
 
     $(document).on('click', 'tr[data-url]', function()
     {
@@ -1426,7 +1438,7 @@ function fixedTfootAction(formID)
     if($(formID).find('table:last').find('tfoot').size() == 0) return false;
 
     fixTfootInit();
-    $(window).scroll(fixTfoot);//Fix table foot when scrolling.
+    $(window).scroll(fixTfoot).resize(fixTfoot);//Fix table foot when scrolling.
     $('.side-handle').click(function(){setTimeout(fixTfootInit, 300);});//Fix table foot if module tree is hidden or displayed.
 
     var $table, $tfoot, $inputGroup, tableWidth, tableOffset, hasFixed;
@@ -1674,28 +1686,28 @@ function removeCookieByKey(cookieKey)
  */
 function initHotKey()
 {
-    /* CTRL+g, auto focus on the search box. */
-    $(document).bind('keydown', 'Ctrl+g', function(evt)
+    $(document).bind('keydown', 'Ctrl+g', function(e)
     {
-        $('#searchQuery').attr('value', '');
-        $('#searchQuery').focus();
-        evt.stopPropagation( );  
-        evt.preventDefault( );
+        /* CTRL+g, auto focus on the search box. */
+        $('#searchQuery').val('').focus();
+        e.stopPropagation();
+        e.preventDefault();
         return false;
-    });
-
-    /* left, go to pre object. */
-    $(document).bind('keydown', 'left', function(evt)
+    }).bind('keydown', 'Alt+up', function()
     {
-        preLink = ($('#pre').attr("href"));
-        if(typeof(preLink) != 'undefined') location.href = preLink;
-    });
-
-    /* right, go to next object. */
-    $(document).bind('keydown', 'right', function(evt)
+        /* Alt+up, go back to the previous page. */
+        var backLink = $('#back').attr('href');
+        if(backLink) location.href = backLink;
+    }).bind('keydown', 'left', function()
     {
-        nextLink = ($('#next').attr("href"));
-        if(typeof(nextLink) != 'undefined') location.href = nextLink;
+        /* left, go to pre object. */
+        var preLink = $('#pre').attr('href');
+        if(preLink) location.href = preLink;
+    }).bind('keydown', 'right', function()
+    {
+        /* right, go to next object. */
+        var nextLink = $('#next').attr('href');
+        if(nextLink) location.href = nextLink;
     });
 }
 
@@ -1707,6 +1719,7 @@ function initHotKey()
 function initHelpLink()
 {
     var zentaoUrl = 'http://www.zentao.net/book/zentaopmshelp.html?fullScreen=zentao';
+    if(config.clientLang == 'en') zentaoUrl = 'http://www.zentao.pm/book/zentaomanual/8.html?fullScreen=zentao';
     var $mainNav = $('#mainmenu > .nav').first();
     var showLoadingError;
     var timeout = 10000;

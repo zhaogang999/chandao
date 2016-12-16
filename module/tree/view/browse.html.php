@@ -81,8 +81,8 @@
                     echo "<div class='col-table'>" . html::input("modules[]", '', "class='form-control' placeholder='{$lang->tree->name}'") . '</div>';
                     if($hasBranch) echo '<div class="col-table">' . html::select("branch[]", $branches, $branch, 'class="form-control"') . '</div>';
                     echo "<div class='col-table' style='width:120px'><div class='input-group'>" . html::input("shorts[]", '', "class='form-control' placeholder='{$lang->tree->short}'");
-                    echo "<span class='input-group-addon fix-border'><a href='javascript:;' onclick='addItem(this)'><i class='icon icon-plus'></i></a></span>";
-                    echo "<span class='input-group-addon'><a href='javascript:;' onclick='deleteItem(this)'><i class='icon icon-remove'></i></a></span>";
+                    echo "<span class='input-group-btn'><a href='javascript:;' onclick='addItem(this)' class='btn btn-block'><i class='icon-plus'></i></a></span>";
+                    echo "<span class='input-group-btn'><a href='javascript:;' onclick='deleteItem(this)' class='btn btn-block'><i class='icon-remove'></i></a></span>";
                     echo '</div></div>';
                     echo '</div>';
                 }
@@ -125,7 +125,7 @@ $(function()
         data: data,
         itemCreator: function($li, item)
         {
-            var link = item.id !== undefined ? ('<a href="' + createLink('tree', 'browse', 'root=<?php echo $rootID ?>&viewType=<?php echo $viewType ?>&moduleID={0}&branch={1}'.format(item.id, item.branch)) + '">' + item.name + '</a>') : ('<span class="tree-toggle">' + item.name + '</span>');
+            var link = item.id !== undefined ? ('<a href="' + createLink('tree', 'browse', 'rootID=<?php echo $rootID ?>&viewType=<?php echo $viewType ?>&moduleID={0}&branch={1}'.format(item.id, item.branch)) + '">' + item.name + '</a>') : ('<span class="tree-toggle">' + item.name + '</span>');
             var $toggle = $('<span class="module-name" data-id="' + item.id + '">' + link + '</span>');
             if(item.type === 'bug') $toggle.append('&nbsp; <span class="text-muted">[B]</span>');
             if(item.type === 'case') $toggle.append('&nbsp; <span class="text-muted">[C]</span>');
@@ -138,19 +138,25 @@ $(function()
             sort:
             {
                 title: '<?php echo $lang->tree->dragAndSort ?>',
-                template: '<a class="sort-handler" data-toggle="tooltip" href="javascript:;"><i class="icon icon-move"></i></a>'
+                template: '<a class="sort-handler"><?php echo $lang->tree->sort ?></a>'
             },
             edit:
             {
                 linkTemplate: '<?php echo helper::createLink('tree', 'edit', "moduleID={0}&type=$viewType"); ?>',
                 title: '<?php echo $lang->tree->edit ?>',
-                template: '<a data-toggle="tooltip" href="javascript:;"><?php echo $lang->edit?></a>'
+                template: '<a href="javascript:;"><?php echo $lang->edit?></a>'
             },
             "delete":
             {
                 linkTemplate: '<?php echo helper::createLink('tree', 'delete', "rootID=$rootID&moduleID={0}"); ?>',
                 title: '<?php echo $lang->tree->delete ?>',
-                template: '<a data-toggle="tooltip" href="javascript:;"><?php echo $lang->delete?></a>'
+                template: '<a href="javascript:;"><?php echo $lang->delete?></a>'
+            },
+            subModules:
+            {
+                linkTemplate: '<?php echo helper::createLink('tree', 'browse', "rootID=$rootID&viewType=$viewType&moduleID={0}&branch={1}"); ?>',
+                title: '<?php echo $lang->tree->child ?>',
+                template: '<a href="javascript:;"><?php echo $lang->tree->child?></a>'
             }
         },
         action: function(event)
@@ -161,7 +167,8 @@ $(function()
                 $target.modalTrigger(
                 {
                     type: 'ajax',
-                    url: action.linkTemplate.format(item.id)
+                    url: action.linkTemplate.format(item.id),
+                    keyboard: true
                 }).trigger('click');
             }
             else if(action.type === 'delete')
@@ -181,6 +188,10 @@ $(function()
                 {
                     bootbox.alert(lang.timeout);
                 });
+            }
+            else if(action.type === 'subModules')
+            {
+                window.location.href = action.linkTemplate.format(item.id, item.branch);
             }
         }
     };

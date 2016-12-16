@@ -19,9 +19,9 @@ class testcase extends control
      * @access public
      * @return void
      */
-    public function __construct()
+    public function __construct($moduleName = '', $methodName = '')
     {
-        parent::__construct();
+        parent::__construct($moduleName, $methodName);
         $this->loadModel('product');
         $this->loadModel('tree');
         $this->loadModel('user');
@@ -220,6 +220,15 @@ class testcase extends control
 
             $this->loadModel('action');
             $this->action->create('case', $caseID, 'Opened');
+
+            /* If link from no head then reload. */
+            if(isonlybody())
+            {
+                $response['locate'] = 'reload';
+                $response['target'] = 'parent';
+                $this->send($response);
+            }
+
             $response['locate'] = $this->createLink('testcase', 'browse', "productID={$_POST['product']}&branch=" . (isset($_POST['branch']) ? $_POST['branch'] : '') . "&browseType=byModule&args={$_POST['module']}");
             $this->send($response);
         }
@@ -344,6 +353,7 @@ class testcase extends control
         {
             $caseID = $this->testcase->batchCreate($productID, $branch, $storyID);
             if(dao::isError()) die(js::error(dao::getError()));
+            if(isonlybody()) die(js::closeModal('parent.parent', 'this'));
             die(js::locate($this->createLink('testcase', 'browse', "productID=$productID&branch=$branch&browseType=byModule&param=$moduleID"), 'parent'));
         }
         if(empty($this->products)) $this->locate($this->createLink('product', 'create'));
@@ -370,14 +380,26 @@ class testcase extends control
         $moduleOptionMenu['ditto'] = $this->lang->testcase->ditto;
 
         /* Set custom. */
-        foreach(explode(',', $this->config->testcase->customBatchCreateFields) as $field) $customFields[$field] = $this->lang->testcase->$field;
+        $product = $this->product->getById($productID);
+        foreach(explode(',', $this->config->testcase->customBatchCreateFields) as $field)
+        {
+            if($product->type != 'normal') $customFields[$product->type] = $this->lang->product->branchName[$product->type];
+            $customFields[$field] = $this->lang->testcase->$field;
+        }
+        $showFields = $this->config->testcase->custom->batchCreateFields;
+        if($product->type == 'normal')
+        {
+            $showFields = str_replace(array(0 => ",branch,", 1 => ",platform,"), '', ",$showFields,");
+            $showFields = trim($showFields, ',');
+        }
         $this->view->customFields = $customFields;
-        $this->view->showFields   = $this->config->testcase->custom->batchCreateFields;
+        $this->view->showFields   = $showFields;
 
         $this->view->title            = $this->products[$productID] . $this->lang->colon . $this->lang->testcase->batchCreate;
         $this->view->position[]       = html::a($this->createLink('testcase', 'browse', "productID=$productID&branch=$branch"), $this->products[$productID]);
         $this->view->position[]       = $this->lang->testcase->common;
         $this->view->position[]       = $this->lang->testcase->batchCreate;
+        $this->view->product          = $product;
         $this->view->productID        = $productID;
         $this->view->story            = $story;
         $this->view->storyList        = $storyList;

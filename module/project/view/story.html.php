@@ -35,6 +35,7 @@
     ?>
     </div>
   </div>
+  <div id='querybox' class='show'></div>
 </div>
 
 <div class='side' id='taskTree'>
@@ -49,8 +50,9 @@
   </div>
 </div>
 <div class='main'>
+  <script>setTreeBox();</script>
   <form method='post' id='projectStoryForm'>
-    <table class='table tablesorter table-condensed table-fixed' id='storyList'>
+    <table class='table tablesorter table-condensed table-fixed table-selectable' id='storyList'>
       <thead>
         <tr class='colhead'>
         <?php $vars = "projectID={$project->id}&orderBy=%s&type=$type&param=$param&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}"; ?>
@@ -78,7 +80,7 @@
         $totalEstimate += $story->estimate;
         ?>
         <tr class='text-center' id="story<?php echo $story->id?>">
-          <td class='text-left'>
+          <td class='cell-id'>
             <?php if($canBatchEdit or $canBatchClose):?>
             <input type='checkbox' name='storyIDList[<?php echo $story->id;?>]' value='<?php echo $story->id;?>' /> 
             <?php endif;?>
@@ -108,15 +110,15 @@
             if(commonModel::isTutorialMode())
             {
                 $wizardParams = helper::safe64Encode($param);
-                echo html::a($this->createLink('tutorial', 'wizard', "module=task&method=create&params=$wizardParams"), "<i class='icon-list-ul'></i>",'', "class='btn-icon btn-task-create' title='{$lang->project->wbs}'");
+                echo html::a($this->createLink('tutorial', 'wizard', "module=task&method=create&params=$wizardParams"), "<i class='icon-plus-border'></i>",'', "class='btn-icon btn-task-create' title='{$lang->project->wbs}'");
             }
             else
             {
-                common::printIcon('task', 'create', $param, '', 'list', 'list-ul', '', 'btn-task-create');
+                common::printIcon('task', 'create', $param, '', 'list', 'plus-border', '', 'btn-task-create');
             }
 
             $lang->task->batchCreate = $lang->project->batchWBS;
-            common::printIcon('task', 'batchCreate', "projectID={$project->id}&story={$story->id}", '', 'list', 'stack');
+            common::printIcon('task', 'batchCreate', "projectID={$project->id}&story={$story->id}", '', 'list', 'plus-sign');
 
             $lang->testcase->batchCreate = $lang->testcase->create;
             if($productID) common::printIcon('testcase', 'batchCreate', "productID=$story->product&branch=$story->branch&moduleID=$story->module&storyID=$story->id", '', 'list', 'sitemap');
@@ -136,6 +138,7 @@
           <td colspan='10'>
             <div class='table-actions clearfix'>
             <?php
+            $storyInfo = sprintf($lang->project->productStories, inlink('linkStory'));
             if(count($stories))
             {
               if($canBatchEdit or $canBatchClose) echo html::selectButton();
@@ -161,8 +164,9 @@
                     echo '<li>' . html::a('#', $lang->project->unlinkStory, '', $misc) . '</li>';
                 }
                 echo '</ul></div>';
+                $storyInfo = $summary;
             }
-            echo "<div class='text'>" . $summary . '</div>';
+            echo "<div class='text'>{$storyInfo}</div>";
             ?>
             </div>
             <?php echo $pager->show();?>
