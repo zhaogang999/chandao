@@ -13,8 +13,10 @@ $config->default->lang   = 'zh-cn';
 
 define('TABLE_REVIEW',         '`' . $config->db->prefix . 'review`');
 define('TABLE_REVIEWDETAIL',    '`' . $config->db->prefix . 'reviewDetail`');
+define('TABLE_QAAUDIT',    '`' . $config->db->prefix . 'qaaudit`');
 
 $config->objectTables['review']         = TABLE_REVIEW;
 $config->objectTables['reviewDetail']   = TABLE_REVIEWDETAIL;
+$config->objectTables['qaaudit']   = TABLE_QAAUDIT;
 
 $config->timeout       = 60000;

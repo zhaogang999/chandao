@@ -37,7 +37,56 @@
           <?php echo html::input('name', $task->name, 'class="form-control" placeholder="' . $lang->task->name . '"');?>
         </div>
       </div>
-
+      <?php if ($task->source == 'QA'):?>
+        <fieldset class='fieldset-pure'>
+          <legend><?php echo $lang->task->noItem;?></legend>
+          <table class='table table-form table-fixed with-border'>
+            <thead>
+            <tr class='text-center'>
+              <th class='w-20px'><?php echo $lang->task->auditID; ?><i class="required required-wrapper"></i></th>
+              <th class='w-80px'><?php echo $lang->task->noDec; ?><i class="required required-wrapper"></i></th>
+              <th class='w-40px'><?php echo $lang->task->noType; ?><i class="required required-wrapper"></i></th>
+              <th class='w-50px'><?php echo $lang->task->serious; ?><i class="required required-wrapper"></i></th>
+              <th class='w-80px'><?php echo $lang->task->cause; ?><i class="required required-wrapper"></i></th>
+              <th class='w-80px'><?php echo $lang->task->action; ?><i class="required required-wrapper"></i></th>
+              <th class='w-20px'><?php echo $lang->task->add; ?></th>
+              <th class='w-20px'><?php echo $lang->task->del; ?></th>
+            </tr>
+            </thead>
+            <?php if($auditDetails == array()):?>
+              <tr class='text-center'>
+                <td>
+                  <?php echo html::input('auditID[]', '', "class='form-control'"); ?>
+                  <?php echo html::hidden('aid[]');?>
+                </td>
+                <td><?php echo html::textarea('noDec[]', '', "class=form-control rows= '1'"); ?></td>
+                <td><?php echo html::select('noType[]', $lang->task->noTypeList, $noType, "class='form-control'"); ?></td>
+                <td><?php echo html::select('serious[]', $lang->task->seriousList, '', "class='form-control'"); ?></td>
+                <td><?php echo html::textarea('cause[]', '', "class=form-control rows= '1'"); ?></td>
+                <td><?php echo html::textarea('measures[]', '', "class=form-control rows= '1'"); ?></td>
+                <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
+                <td><a href='javascript:;' class='delAudit'><i class='icon icon-remove'></i></a></td>
+              </tr>
+            <?php else:?>
+              <?php foreach($auditDetails as $auditDetail):?>
+                <tr class='text-center'>
+                  <td class='audit'>
+                    <?php echo html::input('auditID[]', $auditDetail->auditID, "class='form-control'"); ?>
+                    <?php echo html::hidden('aid[]',$auditDetail->id);?>
+                  </td>
+                  <td class='audit'><?php echo html::textarea('noDec[]', $auditDetail->noDec, "class=form-control rows= '1'"); ?></td>
+                  <td class='audit'><?php echo html::select('noType[]', $lang->task->noTypeList, $auditDetail->noType, "class='form-control'"); ?></td>
+                  <td class='audit'><?php echo html::select('serious[]', $lang->task->seriousList, $auditDetail->serious, "class='form-control'"); ?></td>
+                  <td class='audit'><?php echo html::textarea('cause[]', $auditDetail->cause, "class=form-control rows= '1'"); ?></td>
+                  <td class='audit'><?php echo html::textarea('measures[]', $auditDetail->measures, "class=form-control rows= '1'"); ?></td>
+                  <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
+                  <td><a href='javascript:;' class='delAudit'><i class='icon icon-remove'></i></a></td>
+                </tr>
+              <?php endforeach;?>
+            <?php endif;?>
+          </table>
+        </fieldset>
+      <?php endif;?>
       <!--新改-->
       <?php if($task->type == 'review' && $task->status == 'done'):?>
         <fieldset class='fieldset-pure'>
@@ -169,7 +218,7 @@
                   <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
                 </tr>
               <?php endforeach;?>
-              <?php endif;?>
+            <?php endif;?>
           </table>
         </fieldset>
       <?php endif;?>

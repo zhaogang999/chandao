@@ -10,10 +10,11 @@ public function update($taskID)
 {
     //新增
     $reviewDetail = array();
+    $auditDetail = array();
     $taskDetail = '';
     $review = '';
-    //$emptyReview = '';
     $emptyReviewDetail = '';
+    $emptyAuditDetail = '';
     $reviewDetailChanges = array();
     $changes = array();
 
@@ -82,42 +83,145 @@ public function update($taskID)
     }
 
     $task = $this->loadModel('file')->processEditor($task, $this->config->task->editor->edit['id'], $this->post->uid);
-    //var_dump($task);die;
+
+    //任务数据新增
+    $taskDetail->module = $task->module;
+    $taskDetail->type = $task->type;
+    $taskDetail->story = $task->story;
+    $taskDetail->color = $task->color;
+    $taskDetail->name = $task->name;
+    $taskDetail->pri = $task->pri;
+    $taskDetail->estimate = $task->estimate;
+    $taskDetail->desc = $task->desc;
+    $taskDetail->estStarted = $task->estStarted;
+    $taskDetail->deadline = $task->deadline;
+    $taskDetail->mailto = $task->mailto;
+    $taskDetail->project = $task->project;
+    $taskDetail->left = $task->left;
+    $taskDetail->status = $task->status;
+
+    if ($this->post->story != false and $this->post->story != $oldTask->story)
+    {
+        $taskDetail->storyVersion = $task->storyVersion;
+    }
+    $taskDetail->assignedTo = $task->assignedTo;
+    $taskDetail->assignedDate = $task->assignedDate;
+    $taskDetail->consumed = $task->consumed;
+    $taskDetail->realStarted = $task->realStarted;
+    $taskDetail->finishedBy = $task->finishedBy;
+    $taskDetail->finishedDate = $task->finishedDate;
+    $taskDetail->canceledBy = $task->canceledBy;
+    $taskDetail->canceledDate = $task->canceledDate;
+    $taskDetail->closedBy = $task->closedBy;
+    $taskDetail->closedReason = $task->closedReason;
+    $taskDetail->closedDate = $task->closedDate;
+    $taskDetail->lastEditedBy = $task->lastEditedBy;
+    $taskDetail->lastEditedDate = $task->lastEditedDate;
+    //1 task
+    $this->dao->begin();
+    $this->dao->update(TABLE_TASK)->data($taskDetail)
+        ->autoCheck()
+        ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+        ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+
+        ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
+        ->checkIF($taskDetail->left     != false, 'left',     'float')
+        ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
+        ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
+
+        ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
+
+        ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
+        ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
+        ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
+
+        ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
+        ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
+        ->where('id')->eq((int)$taskID)->exec();
+
+    if(dao::isError())
+    {
+        $this->dao->rollback;
+        return false;
+    }else
+    {
+        $changes = common::createChanges($oldTask, $taskDetail);
+    }
+    //QA审计;
+    if ($oldTask->source == 'QA')
+    {
+
+        $emptyAuditDetail->auditID = '';
+        $emptyAuditDetail->noDec = '';
+        $emptyAuditDetail->noType = '';
+        $emptyAuditDetail->serious = '';
+        $emptyAuditDetail->cause = '';
+        $emptyAuditDetail->measures = '';
+        //不符合项
+        $num = count($task->auditID);
+        for ($i = 0; $i < $num; $i++)
+        {
+            //$auditDetail["$i"]->aid       = $task->aid["$i"];
+            $auditDetail["$i"]->auditID  = $task->auditID["$i"];
+            $auditDetail["$i"]->noDec    = $task->noDec["$i"];
+            $auditDetail["$i"]->noType   = $task->noType["$i"];
+            $auditDetail["$i"]->serious  = $task->serious["$i"];
+            $auditDetail["$i"]->cause     = $task->cause["$i"];
+            $auditDetail["$i"]->measures   = $task->measures["$i"];
+            //过滤空记录
+            if ($auditDetail["$i"]->noDec == '')
+            {
+                continue;
+            }
+            $oldAuditDetail = $this->dao->select('*')
+                ->from(TABLE_QAAUDIT)
+                ->where('id')->eq($task->aid["$i"])
+                ->andWhere('deleted')->eq('0')
+                ->fetch();
+            //新增不合格项详情
+            if ($task->aid["$i"] == '')
+            {
+                //unset($auditDetail["$i"]->id);
+                $auditDetail["$i"]->task   = $taskID;
+                $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
+                    ->autoCheck()
+                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->exec();
+                if (!dao::isError()) {
+                    unset($auditDetail["$i"]->task);
+                    $auditDetailChanges["$i"] = common::createChanges($emptyAuditDetail, $auditDetail["$i"]);
+                } else {
+                    $this->dao->rollback();
+                    return false;
+                }
+            }
+            //编辑不合格项详情
+            else
+            {
+                $this->dao->update(TABLE_QAAUDIT)->data($auditDetail["$i"])
+                    ->autoCheck()
+                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->where('id')->eq($task->aid["$i"])->exec();
+                if (!dao::isError())
+                {
+                    $auditDetailChanges["$i"] = common::createChanges($oldAuditDetail, $auditDetail["$i"]);
+                }
+                else
+                {
+                    $this->dao->rollback();
+                    return false;
+                }
+            }
+        }
+        //成功操作
+        foreach($auditDetailChanges as $auditDetailChange)
+        {
+            $changes = array_merge($changes,$auditDetailChange);
+        }
+    }
+
     if ($task->type == 'review' && $task->status == 'done')
     {
-        //任务数据新增
-        $taskDetail->module = $task->module;
-        $taskDetail->type = $task->type;
-        $taskDetail->story = $task->story;
-        $taskDetail->color = $task->color;
-        $taskDetail->name = $task->name;
-        $taskDetail->pri = $task->pri;
-        $taskDetail->estimate = $task->estimate;
-        $taskDetail->desc = $task->desc;
-        $taskDetail->estStarted = $task->estStarted;
-        $taskDetail->deadline = $task->deadline;
-        $taskDetail->mailto = $task->mailto;
-        $taskDetail->project = $task->project;
-        $taskDetail->left = $task->left;
-        $taskDetail->status = $task->status;
-        if ($this->post->story != false and $this->post->story != $oldTask->story)
-        {
-            $taskDetail->storyVersion = $task->storyVersion;
-        }
-        $taskDetail->assignedTo = $task->assignedTo;
-        $taskDetail->assignedDate = $task->assignedDate;
-        $taskDetail->consumed = $task->consumed;
-        $taskDetail->realStarted = $task->realStarted;
-        $taskDetail->finishedBy = $task->finishedBy;
-        $taskDetail->finishedDate = $task->finishedDate;
-        $taskDetail->canceledBy = $task->canceledBy;
-        $taskDetail->canceledDate = $task->canceledDate;
-        $taskDetail->closedBy = $task->closedBy;
-        $taskDetail->closedReason = $task->closedReason;
-        $taskDetail->closedDate = $task->closedDate;
-        $taskDetail->lastEditedBy = $task->lastEditedBy;
-        $taskDetail->lastEditedDate = $task->lastEditedDate;
-
         $review->fileNO = $task->fileNO;
         $review->recorder = $task->recorder;
         $review->reviewName = $task->reviewName;
@@ -139,35 +243,8 @@ public function update($taskID)
             ->where('id')
             ->eq("$task->reviewID")
             ->fetch();
-        //1.task
-        $this->dao->begin();
-        $this->dao->update(TABLE_TASK)->data($taskDetail)
-            ->autoCheck()
-            ->batchCheckIF($taskDetail->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
-            ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
 
-            ->checkIF($taskDetail->estimate != false, 'estimate', 'float')
-            ->checkIF($taskDetail->left     != false, 'left',     'float')
-            ->checkIF($taskDetail->consumed != false, 'consumed', 'float')
-            ->checkIF($taskDetail->status != 'wait' and $taskDetail->left == 0 and $taskDetail->status != 'cancel' and $taskDetail->status != 'closed', 'status', 'equal', 'done')
-
-            ->batchCheckIF($taskDetail->status == 'wait' or $taskDetail->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
-
-            ->checkIF($taskDetail->status == 'done', 'consumed', 'notempty')
-            ->checkIF($taskDetail->status == 'done' and $taskDetail->closedReason, 'closedReason', 'equal', 'done')
-            ->batchCheckIF($taskDetail->status == 'done', 'canceledBy, canceledDate', 'empty')
-
-            ->checkIF($taskDetail->status == 'closed', 'closedReason', 'notempty')
-            ->batchCheckIF($taskDetail->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
-            ->where('id')->eq((int)$taskID)->exec();
-
-        //if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
-        if(dao::isError())
-        {
-            $this->dao->rollback;
-            return false;
-        }
-        //2.review
+        //review
         $review->id = $task->reviewID;
         $this->dao->update(TABLE_REVIEW)->data($review)
             ->autoCheck()
@@ -179,13 +256,7 @@ public function update($taskID)
             return false;
         }
 
-        //3.reviewDetail
-        $reviewIDs = $this->dao->select('id')
-            ->from(TABLE_REVIEWDETAIL)
-            ->where('reviewID')->eq($task->reviewID)
-            ->andWhere('deleted')->eq('0')
-            ->fetchAll();
-
+        //reviewDetail
         $num = count($task->number);
         for ($i = 0; $i < $num; $i++)
         {
@@ -221,7 +292,6 @@ public function update($taskID)
                     ->batchCheck($this->config->task->create->requiredFields, 'notempty')
                     ->exec();
                 if (!dao::isError()) {
-                    //$reviewDetail["$i"]->id = $this->dao->lastInsertID();
                     $emptyReviewDetail->reviewID = $task->reviewID;
                     $reviewDetailChanges["$i"] = common::createChanges($emptyReviewDetail, $reviewDetail["$i"]);
                 } else {
@@ -246,47 +316,19 @@ public function update($taskID)
                     return false;
                 }
             }
-
         }
         //成功操作
-        $this->dao->commit();
-        if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
-        $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-        $taskChange = common::createChanges($oldTask, $taskDetail);
+
         $reviewChange = common::createChanges($oldReview, $review);
-        $changes = array_merge($taskChange,$reviewChange);
+        $changes = array_merge($changes,$reviewChange);
+
         foreach($reviewDetailChanges as $reviewDetailChange)
         {
             $changes = array_merge($changes,$reviewDetailChange);
         }
-        return $changes;
-    } else {
-        //源代码
-        $this->dao->update(TABLE_TASK)->data($task)
-            ->autoCheck()
-            ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
-            ->checkIF($task->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
-
-            ->checkIF($task->estimate != false, 'estimate', 'float')
-            ->checkIF($task->left     != false, 'left',     'float')
-            ->checkIF($task->consumed != false, 'consumed', 'float')
-            ->checkIF($task->status != 'wait' and $task->left == 0 and $task->status != 'cancel' and $task->status != 'closed', 'status', 'equal', 'done')
-
-            ->batchCheckIF($task->status == 'wait' or $task->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
-
-            ->checkIF($task->status == 'done', 'consumed', 'notempty')
-            ->checkIF($task->status == 'done' and $task->closedReason, 'closedReason', 'equal', 'done')
-            ->batchCheckIF($task->status == 'done', 'canceledBy, canceledDate', 'empty')
-
-            ->checkIF($task->status == 'closed', 'closedReason', 'notempty')
-            ->batchCheckIF($task->closedReason == 'cancel', 'finishedBy, finishedDate', 'empty')
-            ->where('id')->eq((int)$taskID)->exec();
-
-        if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
-        if(!dao::isError())
-        {
-            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-            return common::createChanges($oldTask, $task);
-        }
     }
+    $this->dao->commit();
+    if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+    $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+    return $changes;
 }

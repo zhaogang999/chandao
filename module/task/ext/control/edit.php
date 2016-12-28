@@ -21,7 +21,6 @@ class myTask extends task
             if($comment == false)
             {
                 $changes = $this->task->update($taskID);
-                //var_dump($changes);die;
                 if(dao::isError()) die(js::error(dao::getError()));
                 $files = $this->loadModel('file')->saveUpload('task', $taskID);
             }
@@ -52,7 +51,17 @@ class myTask extends task
             die(js::locate($this->createLink('task', 'view', "taskID=$taskID"), 'parent'));
         }
 
-        //xinzeng
+        //新增QA审计
+        if ($this->view->task->source == 'QA')
+        {
+            $this->view->auditDetails = $this->dao->select('*')
+                ->from(TABLE_QAAUDIT)
+                ->where('task')->eq($taskID)
+                ->andWhere('deleted')->eq('0')
+                ->fetchAll();
+        }
+        $this->view->task->noType = '';
+        //新增评审
         if ($this->view->task->type == 'review')
         {
             $this->view->review = $this->dao->select('*')

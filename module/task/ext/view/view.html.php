@@ -89,17 +89,60 @@
       <?php endif;?>
       <?php echo $this->fetch('file', 'printFiles', array('files' => $task->files, 'fieldset' => 'true'));?>
 <!--新增-->
+      <?php if($task->source == 'QA'):?>
+        <fieldset>
+          <legend><?php echo $lang->task->noItem;?></legend>
+          <?php if($auditDetails != array()):?>
+            <?php foreach ($auditDetails as $auditDetail):?>
+              <table class='table table-form'>
+                <tr>
+                  <th class='w-80px'><?php echo $lang->task->auditID;?></th>
+                  <td class='w-300px'>
+                    <?php echo $auditDetail->auditID;?>
+                  </td>
+                  <th class='w-90px'><?php echo $lang->task->noDec;?></th>
+                  <td class='w-300px'>
+                    <?php echo $auditDetail->noDec;?>
+                  </td>
+                </tr>
+                <tr>
+                  <th><?php echo $lang->task->noType;?></th>
+                  <td>
+                    <?php echo $lang->task->noTypeList["$auditDetail->noType"];?>
+                  </td>
+                  <th><?php echo $lang->task->serious;?></th>
+                  <td>
+                    <?php echo $lang->task->seriousList["$auditDetail->serious"];;?>
+                  </td>
+                </tr>
+                <tr>
+                  <th><?php echo $lang->task->cause;?></th>
+                  <td class="break-word">
+                    <?php echo $auditDetail->cause;?>
+                  </td>
+                  <th><?php echo $lang->task->measures;?></th>
+                  <td class="break-word">
+                    <?php echo $auditDetail->measures;?>
+                  </td>
+                </tr>
+              </table>
+            <?php endforeach;?>
+          <?php else:?>
+            无不符合项
+          <?php endif;?>
+        </fieldset>
+      <?php endif;?>
       <?php if($review != ''):?>
         <fieldset>
           <legend><?php echo $lang->task->review;?></legend>
-          <table class='table table-form table-fixed'>
+          <table class='table table-form with-border'>
             <tr>
               <th class='w-80px'><?php echo $lang->task->fileNO;?></th>
-              <td class='w-350px'>
+              <td class='w-400px'>
                 <?php echo $review->fileNO;?>
               </td>
               <th class='w-80px'><?php echo $lang->task->recorder;?></th>
-              <td class='w-350px'>
+              <td class='w-400px'>
                 <?php echo $review->recorder;?>
               </td>
             </tr>
@@ -166,7 +209,7 @@
           <?php if($reviewDetails != array()):?>
             <?php foreach($reviewDetails as $reviewDetail):?>
               <?php /*if ($reviewDetail != ''):*/?>
-                <table class='table table-form table-fixed with-border'>
+                <table class='table table-form with-border'>
                   <tr>
                     <th class='w-80px'><?php echo $lang->task->number;?></th>
                     <td class='w-350px'>

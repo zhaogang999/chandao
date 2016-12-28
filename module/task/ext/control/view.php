@@ -13,6 +13,14 @@ class myTask extends task
     {
         $task = $this->task->getById($taskID, true);
         //xinzeng
+        if ($task->source == 'QA')
+        {
+            $this->view->auditDetails = $this->dao->select('*')
+                ->from(TABLE_QAAUDIT)
+                ->where('task')->eq($taskID)
+                ->andWhere('deleted')->eq('0')
+                ->fetchAll();
+        }
         if ($task->type == 'review')
         {
             $this->view->review = $this->dao->select('*')

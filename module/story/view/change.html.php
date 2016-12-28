@@ -9,7 +9,6 @@
  * @version     $Id: change.html.php 4129 2013-01-18 01:58:14Z wwccss $
  * @link        http://www.zentao.net
  */
-//测试检出分支
 ?>
 <?php include './header.html.php';?>
 <div class='container mw-1400px'>
