@@ -60,8 +60,8 @@
                   <?php echo html::hidden('aid[]');?>
                 </td>
                 <td><?php echo html::textarea('noDec[]', '', "class=form-control rows= '1'"); ?></td>
-                <td><?php echo html::select('noType[]', $lang->task->noTypeList, $noType, "class='form-control'"); ?></td>
-                <td><?php echo html::select('serious[]', $lang->task->seriousList, '', "class='form-control'"); ?></td>
+                <td><?php echo html::select('noType[]', $lang->task->noTypeList, $noType, "class='form-control' id='noType[]'"); ?></td>
+                <td><?php echo html::select('serious[]', $lang->task->seriousList, '', "class='form-control' id='serious[]'"); ?></td>
                 <td><?php echo html::textarea('cause[]', '', "class=form-control rows= '1'"); ?></td>
                 <td><?php echo html::textarea('measures[]', '', "class=form-control rows= '1'"); ?></td>
                 <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
@@ -75,8 +75,8 @@
                     <?php echo html::hidden('aid[]',$auditDetail->id);?>
                   </td>
                   <td class='audit'><?php echo html::textarea('noDec[]', $auditDetail->noDec, "class=form-control rows= '1'"); ?></td>
-                  <td class='audit'><?php echo html::select('noType[]', $lang->task->noTypeList, $auditDetail->noType, "class='form-control'"); ?></td>
-                  <td class='audit'><?php echo html::select('serious[]', $lang->task->seriousList, $auditDetail->serious, "class='form-control'"); ?></td>
+                  <td class='audit'><?php echo html::select('noType[]', $lang->task->noTypeList, $auditDetail->noType, "class='form-control' id='noType[]'"); ?></td>
+                  <td class='audit'><?php echo html::select('serious[]', $lang->task->seriousList, $auditDetail->serious, "class='form-control' id='serious[]'"); ?></td>
                   <td class='audit'><?php echo html::textarea('cause[]', $auditDetail->cause, "class=form-control rows= '1'"); ?></td>
                   <td class='audit'><?php echo html::textarea('measures[]', $auditDetail->measures, "class=form-control rows= '1'"); ?></td>
                   <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>

@@ -345,11 +345,13 @@ public function update($taskID)
             //新增不合格项详情
             if ($task->aid["$i"] == '')
             {
+                if(empty($auditDetail["$i"]->noType)) die(js::error($this->lang->task->error->emptyNoType));
+                if(empty($auditDetail["$i"]->serious)) die(js::error($this->lang->task->error->emptySerious));
                 //unset($auditDetail["$i"]->id);
                 $auditDetail["$i"]->task   = $taskID;
                 $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
                     ->autoCheck()
-                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->batchCheck($this->config->task->edit->requiredFields, 'notempty')
                     ->exec();
                 if (!dao::isError()) {
                     unset($auditDetail["$i"]->task);
@@ -364,7 +366,7 @@ public function update($taskID)
             {
                 $this->dao->update(TABLE_QAAUDIT)->data($auditDetail["$i"])
                     ->autoCheck()
-                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->batchCheck($this->config->task->edit->requiredFields, 'notempty')
                     ->where('id')->eq($task->aid["$i"])->exec();
                 if (!dao::isError())
                 {

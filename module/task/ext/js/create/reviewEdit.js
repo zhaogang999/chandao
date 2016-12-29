@@ -58,7 +58,7 @@ $(function(){
                     alert('原因分析不能为空');
                 }
                 if($('#measures'+i).val() == ''){
-                    alert('任务描述不能为空');
+                    alert('纠正预防措施不能为空');
                 }
             }
         }

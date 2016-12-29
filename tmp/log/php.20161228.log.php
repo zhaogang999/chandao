@@ -818,3 +818,477 @@
 15:09:24 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-8-my
 
 15:09:24 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-9-my
+
+16:26:49 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting 
+
+16:26:50 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting user-login-Lw==
+
+16:26:50 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting cron-ajaxExec
+
+16:26:52 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting user-login-Lw==
+
+16:26:52 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting 
+
+16:26:53 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting my
+
+16:26:53 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-1-my
+
+16:26:54 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-5-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-2-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-3-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-4-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-6-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-7-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-8-my
+
+16:26:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting block-printBlock-9-my
+
+16:26:56 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting my-task
+
+16:27:00 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project
+
+16:27:01 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task
+
+16:27:02 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-10
+
+16:27:06 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10--0
+
+16:27:07 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:27:13 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetProjectStories-10-0-0-16
+
+16:27:37 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:27:37 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:27:37 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:27:44 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:27:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:27:45 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:27:48 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:27:48 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:27:48 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:28:06 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-10
+
+16:28:08 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10--0
+
+16:28:08 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:28:17 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetProjectStories-10-0-0-16
+
+16:28:30 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:28:30 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:28:30 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:28:34 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:28:34 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:28:34 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:28:40 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:28:40 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:28:40 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:28:46 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:28:46 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:28:46 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:29:09 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10--0
+
+16:29:09 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10--0
+
+16:29:10 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10--0
+
+16:29:11 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10-36-0
+
+16:29:12 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:20 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10-36-0
+
+16:30:20 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:27 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10-36-0
+
+16:30:27 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-10-36-0
+
+16:30:27 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10-36-0
+
+16:30:27 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:28 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10-36-0
+
+16:30:28 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:38 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-10-36-0
+
+16:30:38 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-10-36-0
+
+16:30:38 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-10-36-0
+
+16:30:38 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:42 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-10-36-0
+
+16:30:42 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-10-36-0
+
+16:30:46 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-10
+
+16:30:52 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-ajaxGetDropMenu-10-project-task-unclosed
+
+16:30:57 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-3-unclosed
+
+16:38:36 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3--0
+
+16:38:37 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:38:42 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:38:42 Undefined property: stdClass::$storyVersion in F:\zentao\chandao\tmp\model\task.php on line 69 when visiting task-create-3--0
+
+16:38:42 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:38:42 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:39:17 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-3
+
+16:39:19 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3--0
+
+16:39:20 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:40:43 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetModule-1
+
+16:40:54 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:40:54 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:40:54 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:40:59 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:40:59 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:40:59 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3--0
+
+16:40:59 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:41:04 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:41:04 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:41:04 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3--0
+
+16:41:04 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:41:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:41:11 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:41:11 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3--0
+
+16:41:11 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:41:24 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+16:41:24 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+16:41:24 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3--0
+
+16:41:24 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+16:41:27 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:41:27 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:42:13 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:42:13 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:42:13 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:42:13 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:45:50 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:45:51 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:46:07 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:46:07 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:46:07 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:46:07 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:47:15 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:47:15 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:47:17 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetProjectStories-3-0-0-1
+
+16:47:33 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:47:33 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:47:33 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:47:39 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:47:39 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:47:39 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:47:44 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:47:44 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:47:44 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:48:47 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:48:48 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:48:58 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetModule-2
+
+16:49:05 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:49:05 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:49:05 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:49:05 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:49:22 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:49:22 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:49:22 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:49:22 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:49:47 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:49:48 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:52:11 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:52:11 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:52:31 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:52:31 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:52:31 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:52:31 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:52:55 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+16:52:55 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:53:10 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:53:10 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:53:10 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+16:53:15 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+16:53:15 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+16:53:15 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+16:53:15 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:02:59 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting misc-ping
+
+17:04:39 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:04:40 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:07:05 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:07:06 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:07:20 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:07:20 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:07:20 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:14:21 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:14:21 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:14:32 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:14:32 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:14:32 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:14:50 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:14:50 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:14:50 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:15:48 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:15:48 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:15:48 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:15:54 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:15:54 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:15:54 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:17:15 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:17:16 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:18:00 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetProjectStories-3-0-0-1
+
+17:18:05 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:18:05 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:18:05 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:18:07 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:18:07 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:21:06 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:21:06 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:21:06 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:22:05 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:22:05 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:32:05 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting misc-ping
+
+17:35:42 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:35:43 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:45:43 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting misc-ping
+
+17:46:37 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:46:37 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:47:04 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:47:04 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:47:21 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:47:21 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:47:21 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:47:21 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:47:28 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:47:28 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:47:28 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:47:28 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:47:35 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:47:35 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:47:35 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:47:35 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:47:40 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:47:40 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:47:40 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:47:40 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:52:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:52:45 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:52:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:52:45 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:52:45 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:53:03 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:53:03 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:53:03 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:53:03 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:53:03 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:53:09 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3-1-0
+
+17:53:09 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3-1-0
+
+17:53:09 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:53:09 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 95 when visiting task-create-3-1-0
+
+17:53:09 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:53:11 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3-1-0
+
+17:53:11 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3-1-0
+
+17:53:16 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting project-task-3
+
+18:03:16 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting misc-ping
+
+18:07:20 Undefined property: stdClass::$source in F:\zentao\chandao\module\task\ext\view\create.html.php on line 31 when visiting task-create-3--0
+
+18:07:20 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+18:07:33 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+18:07:33 Undefined property: stdClass::$storyVersion in F:\zentao\chandao\tmp\model\task.php on line 69 when visiting task-create-3--0
+
+18:07:33 Undefined property: stdClass::$assignedDate in F:\zentao\chandao\tmp\model\task.php on line 73 when visiting task-create-3--0
+
+18:07:33 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0
+
+18:07:39 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting story-ajaxGetModule-3
+
+18:07:58 Creating default object from empty value in F:\zentao\chandao\tmp\model\task.php on line 55 when visiting task-create-3--0
+
+18:07:58 Constant TABLE_QAAUDIT already defined in F:\zentao\chandao\config\my.php on line 16 when visiting task-create-3--0

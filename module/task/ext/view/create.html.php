@@ -118,7 +118,6 @@
           </div>
         </td>
       </tr>
-
       
       <tr id="qaAudit" style="display:none;">
         <th><?php echo $lang->task->noItem?></th>
@@ -139,11 +138,11 @@
             </thead>
             <tr class='text-center'>
               <td><?php echo html::input('auditID[]', '', "class='form-control' id='auditID1'"); ?></td>
-              <td><?php echo html::textarea('noDec[]', '', "class=form-control rows= '1'"); ?></td>
-              <td><?php echo html::select('noType[]', $lang->task->noTypeList, '', "class='form-control'"); ?></td>
-              <td><?php echo html::select('serious[]', $lang->task->seriousList, '', "class='form-control'"); ?></td>
-              <td><?php echo html::textarea('cause[]', '', "class=form-control rows= '1'"); ?></td>
-              <td><?php echo html::textarea('measures[]', '', "class=form-control rows= '1'"); ?></td>
+              <td><textarea name="noDec[]" id="noDec1" class="form-control" rows="1"></textarea></td>
+              <td><?php echo html::select('noType[]', $lang->task->noTypeList, '', "class='form-control' id='noType1'"); ?></td>
+              <td><?php echo html::select('serious[]', $lang->task->seriousList, '', "class='form-control' id='serious1'"); ?></td>
+              <td><textarea name="cause[]" id="cause1" class="form-control" rows="1"></textarea></td>
+              <td><textarea name="measures[]" id="measures1" class="form-control" rows="1"></textarea></td>
               <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
               <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
             </tr>

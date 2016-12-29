@@ -20,3 +20,6 @@ $lang->task->seriousList['']               = '';
 $lang->task->seriousList['improve']       = '改进机会';
 $lang->task->seriousList['slight']        = '轻微不符';
 $lang->task->seriousList['serious']       = '严重不符合';
+
+$this->lang->task->error->emptyNoType  = 'noType不能为空';
+$this->lang->task->error->emptySerious = 'serious不能为空';
