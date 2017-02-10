@@ -9,7 +9,7 @@
  * @version     $Id: en.php 4659 2013-04-17 06:45:08Z chencongzhi520@gmail.com $
  * @link        http://www.zentao.net
  */
-$lang->productplan->common     = $lang->productCommon . 'Planning';
+$lang->productplan->common     = $lang->productCommon . 'Plan';
 $lang->productplan->browse     = "View";
 $lang->productplan->index      = "List";
 $lang->productplan->create     = "Create";
@@ -21,17 +21,17 @@ $lang->productplan->basicInfo  = 'Basic Info';
 $lang->productplan->batchEdit  = 'Batch Edit';
 
 $lang->productplan->batchUnlink      = "Batch Remove";
-$lang->productplan->linkStory        = "Link Story";
+$lang->productplan->linkStory        = "Related Story";
 $lang->productplan->unlinkStory      = "Remove Story";
-$lang->productplan->batchUnlinkStory = "Batch Remove Story";
-$lang->productplan->linkedStories    = 'Linked Story';
-$lang->productplan->unlinkedStories  = 'Unlinked Story';
+$lang->productplan->batchUnlinkStory = "Batch Remove";
+$lang->productplan->linkedStories    = 'Relate Story';
+$lang->productplan->unlinkedStories  = 'Unrelated';
 
-$lang->productplan->linkBug          = "Link Bug";
+$lang->productplan->linkBug          = "Relate Bug";
 $lang->productplan->unlinkBug        = "Remove Bug";
-$lang->productplan->batchUnlinkBug   = "Batch Remove Bug";
-$lang->productplan->linkedBugs       = 'Linked Bug';
-$lang->productplan->unlinkedBugs     = 'Unlinked Bug';
+$lang->productplan->batchUnlinkBug   = "Batch Remove";
+$lang->productplan->linkedBugs       = 'Related Bug';
+$lang->productplan->unlinkedBugs     = 'Unrelated';
 
 $lang->productplan->confirmDelete      = "Do you want to delete this Plan?";
 $lang->productplan->confirmUnlinkStory = "Do you want to remove this Story?";
@@ -57,6 +57,6 @@ $lang->productplan->errorNoBegin = 'ID %s begin time should not be empty.';
 $lang->productplan->errorNoEnd   = 'ID %s end time should not be empty.';
 $lang->productplan->beginGeEnd   = 'ID %s begin time value should not be greater than t.';
 
-$lang->productplan->featureBar['browse']['unexpired'] = 'Unexpired';
+$lang->productplan->featureBar['browse']['unexpired'] = 'On Time';
 $lang->productplan->featureBar['browse']['all']       = 'All';
 $lang->productplan->featureBar['browse']['overdue']   = 'Overdue';

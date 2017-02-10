@@ -9,28 +9,29 @@
  * @version     $Id: en.php 4490 2013-02-27 03:27:05Z wyd621@gmail.com $
  * @link        http://www.zentao.net
  */
-$lang->testtask->index          = "Index";
-$lang->testtask->create         = "Create";
-$lang->testtask->delete         = "Delete";
-$lang->testtask->view           = "Info";
-$lang->testtask->edit           = "Edit";
-$lang->testtask->browse         = "Test Tasks";
-$lang->testtask->linkCase       = "Link Case";
-$lang->testtask->unlinkCase     = "Unlink Case";
-$lang->testtask->batchAssign    = "Batch Assign";
-$lang->testtask->runCase        = "Run";
-$lang->testtask->batchRun       = "Batch Run";
-$lang->testtask->results        = "Result";
-$lang->testtask->createBug      = "Bug(+)";
-$lang->testtask->assign         = 'Assign';
-$lang->testtask->cases          = 'Cases';
-$lang->testtask->groupCase      = "View By";
-$lang->testtask->pre            = 'Previous';
-$lang->testtask->next           = 'Next';
-$lang->testtask->start          = "Start";
-$lang->testtask->close          = "Close";
-$lang->testtask->wait           = "Build to be Tested";
-$lang->testtask->done           = "Tested Build";
+$lang->testtask->index            = "Index";
+$lang->testtask->create           = "Create";
+$lang->testtask->delete           = "Delete";
+$lang->testtask->view             = "Info";
+$lang->testtask->edit             = "Edit";
+$lang->testtask->browse           = "Test Tasks";
+$lang->testtask->linkCase         = "Relate Cases";
+$lang->testtask->unlinkCase       = "Unrelate";
+$lang->testtask->batchUnlinkCases = "Batch unlink cases";
+$lang->testtask->batchAssign      = "Batch Assign";
+$lang->testtask->runCase          = "Run";
+$lang->testtask->batchRun         = "Batch Run";
+$lang->testtask->results          = "Result";
+$lang->testtask->createBug        = "Bug(+)";
+$lang->testtask->assign           = 'Assign';
+$lang->testtask->cases            = 'Cases';
+$lang->testtask->groupCase        = "View By";
+$lang->testtask->pre              = 'Previous';
+$lang->testtask->next             = 'Next';
+$lang->testtask->start            = "Start";
+$lang->testtask->close            = "Close";
+$lang->testtask->wait             = "Build to be Tested";
+$lang->testtask->done             = "Tested Build";
 
 $lang->testtask->common         = 'Test build';
 $lang->testtask->product        = $lang->productCommon;
@@ -67,9 +68,9 @@ $lang->testtask->priList[1] = '1';
 $lang->testtask->priList[2] = '2';
 $lang->testtask->priList[4] = '4';
 
-$lang->testtask->unlinkedCases = 'Unlinked';
-$lang->testtask->linkByStory   = 'Link by Story';
-$lang->testtask->linkByBug     = 'Link by Bug';
+$lang->testtask->unlinkedCases = 'Unrelated Cases';
+$lang->testtask->linkByStory   = 'Related by Story';
+$lang->testtask->linkByBug     = 'Related by Bug';
 $lang->testtask->passAll       = 'All Pass';
 $lang->testtask->pass          = 'Pass';
 $lang->testtask->fail          = 'Failed';

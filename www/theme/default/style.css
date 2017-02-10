@@ -13,7 +13,7 @@
 /* Width definitions */
 .w-p5 {width: 5%} .w-p10 {width: 10%} .w-p15 {width: 15%} .w-p20 {width: 20%} .w-p25 {width: 25%} .w-p30 {width: 30%} .w-p35 {width: 35%} .w-p40 {width: 40%} .w-p45 {width: 45%} .w-p50 {width: 50%} .w-p55 {width: 55%} .w-p60 {width: 60%} .w-p65 {width: 65%} .w-p70 {width: 70%} .w-p75 {width: 75%} .w-p80 {width: 80%} .w-p85 {width: 85%} .w-p90 {width: 90%} .w-p94 {width: 94%} .w-p95 {width: 95%} .w-p98 {width: 98%} .w-p99 {width: 99%} .w-p100{width: 100%}
 
-.w-auto {width: auto} .w-20px {width:20px} .w-30px {width:30px} .w-35px {width:35px} .w-40px {width:40px} .w-45px {width:45px} .w-50px {width:50px} .w-60px {width:60px} .w-70px {width:70px} .w-80px {width:80px} .w-90px {width:90px} .w-100px {width:100px} .w-110px {width:110px} .w-120px {width:120px} .w-130px {width:130px} .w-140px {width:140px} .w-150px {width:150px} .w-160px {width:160px} .w-180px {width:180px} .w-200px {width:200px} .w-230px {width:230px} .w-250px {width:250px} .w-300px {width:300px} .w-400px {width:400px} .w-500px {width:500px} .w-600px {width:600px} .w-700px {width:700px} .w-800px {width:800px} .w-900px {width:900px}
+.w-auto {width: auto} .w-10px {width:10px} .w-20px {width:20px} .w-30px {width:30px} .w-35px {width:35px} .w-40px {width:40px} .w-45px {width:45px} .w-50px {width:50px} .w-60px {width:60px} .w-70px {width:70px} .w-80px {width:80px} .w-90px {width:90px} .w-100px {width:100px} .w-110px {width:110px} .w-120px {width:120px} .w-130px {width:130px} .w-140px {width:140px} .w-150px {width:150px} .w-160px {width:160px} .w-180px {width:180px} .w-200px {width:200px} .w-230px {width:230px} .w-250px {width:250px} .w-300px {width:300px} .w-400px {width:400px} .w-500px {width:500px} .w-600px {width:600px} .w-700px {width:700px} .w-800px {width:800px} .w-900px {width:900px}
 .mw-200px {max-width:200px!important} .mw-300px {max-width:300px!important} .mw-400px {max-width:400px!important} .mw-500px {max-width:500px!important} .mw-600px {max-width:600px!important} .mw-700px {max-width:700px!important} .mw-800px {max-width:800px!important} .mw-900px {max-width:900px!important} .mw-1400px {max-width:1400px!important}
 
 .w-id {width:70px;} .w-pri {width:40px;} .w-severity {width:50px;} .w-hour {width:57px;} .w-date {width:90px;} .w-user {width:80px;} .w-status {width:60px} .w-type {width:80px} .w-resolution {width:70px}
@@ -117,7 +117,7 @@ hr.small {margin: 10px 0}
 
 .table caption {padding: 8px 20px; border: 1px solid #DDD; border-bottom: 0; background: #fafafa;}
 .table.table-condensed caption {padding: 6px 15px;}
-.table td.td-has-control {padding: 2px 4px;}
+.table td.td-has-control {padding: 2px 4px; background-color: white!important}
 
 /* Datepicker */
 .datepicker-wrapper {position: relative; cursor: pointer;}
@@ -250,6 +250,7 @@ fieldset {margin-bottom: 15px; border: 1px solid #e5e5e5; padding: 10px 15px 15p
 fieldset.fieldset-pure {background: none; padding: 0; border: none; padding-top: 5px;}
 fieldset > legend {width: auto; margin: 0 0 0 -5px; font-size: 13px; font-weight: bold; border-bottom: none; padding: 0 5px}
 fieldset > .form-group {margin-bottom: 0;}
+fieldset > .content table, fieldset > .article-content table{table-layout: initial !important; max-width: 100% !important;} 
 
 /* placeholder */
 .placeholder {color: #999}
@@ -351,7 +352,8 @@ div.form-control[contenteditable='true'] {height: auto; text-align: left; outlin
 .panel .table-bordered > thead > tr:first-child th,.panel .table-bordered > tbody > tr:first-child th,.panel .table-bordered > tr:first-child th {border-top: 0;}
 .panel .table-bordered tr > td:first-child,.panel .table-bordered tr > th:first-child {border-left: 0;}
 .panel .table-bordered tr > td:last-child,.panel .table-bordered tr > th:last-child {border-right: 0;}
-.panel .table tr:last-child > td {border-bottom: 0 !important;}
+.panel > .table tr:last-child > td {border-bottom: 0 !important;}
+.panel > .table table tr:last-child > td {border-bottom: 1px solid #e5e5e5 !important;}
 
 /* small panel */
 .panel-sm .panel-heading {padding: 6px 10px}
@@ -450,10 +452,11 @@ body {color:#141414; padding-bottom: 40px;}
 #wrap .outer {position: relative; text-align:left; background:#fff;border:1px solid #cfcfcf; -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); padding: 20px}
 
 /* Footer. */
-#footer {position: relative; width:100%;position:fixed; bottom:0; left:0; margin:0; border-top: 1px solid #ddd; background:#eef4fe;height:40px; line-height:40px;-webkit-box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05); z-index: 10}
+#footer {width:100%;position:fixed; bottom:0; left:0; margin:0; border-top: 1px solid #ddd; background:#eef4fe;height:40px; line-height:40px;-webkit-box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05); z-index: 10}
 #crumbs a i.icon-home{display: none;}
 #crumbs {float: left;margin-left: 20px;}
-#crumbs .icon-angle-right{margin-right: 6px;}
+#crumbs > a {display: inline-block; margin-right: -4px;}
+#crumbs .icon-angle-right {margin: 0; position: relative; top: 1px;}
 #footer #poweredby {float: right; margin-right: 20px;}
 #qrcodePopover.show {display: block; position: fixed; right: 5px; bottom: 40px; left: inherit; top: inherit; max-width: 300px}
 #qrcodePopover.popover.top .arrow {left: inherit; right: 10px}
@@ -582,10 +585,10 @@ body {color:#141414; padding-bottom: 40px;}
 .outer .table tbody td > a:visited, #crumbs > a:visited, .side > a:visited {color: #551A8B}
 
 /* Querybox */
-#querybox {margin: 35px -10px -7px; background-color: #fff; height: 0; border-top: 1px solid #ddd; position: relative; z-index: 1000; overflow: visible; display: none;}
-#querybox form {padding: 10px}
+#querybox {margin: 5px 0 -7px; background-color: #fff; height: 0; position: relative; z-index: 1000; overflow: visible; display: none; float: left; width: 100%;}
+#querybox form {padding: 10px; border-top: 1px solid #ddd; margin: 0 -10px;}
 #querybox.show {display: block; height: auto}
-#titlebar #querybox {margin: 5px -20px -10px}
+#titlebar #querybox {margin: 5px -10px -12px; float: none; width: auto;}
 
 /* Container in outer */
 .outer > .container {margin: 0 auto; padding: 0; border: 1px solid #ddd;}
@@ -732,20 +735,23 @@ body {color:#141414; padding-bottom: 40px;}
 
 #passwordStrength{display:none;}
 
-.fixedTfootAction {position: fixed; bottom: 40px; box-shadow: 0 -3px 4px rgba(0,0,0,0.05)}
-.table > .fixedTfootAction > tr > td {background: #114f8e; border: none; color: #fff}
-.fixedTfootAction .btn {border: 1px solid #fff; border-color: rgba(255,255,255,.5); background-color: #2e6dad!important; text-shadow: none; color: #e5e5e5!important;}
-.fixedTfootAction .btn:hover {background-color: #114f8e!important;}
-.fixedTfootAction .pager,
-.fixedTfootAction .pager > a,
-.fixedTfootAction .pager > .dropdown > a,
-.fixedTfootAction .table-actions > .text {color: #e5e5e5}
-.fixedTfootAction .pager strong,
-.fixedTfootAction .table-actions > .text strong {color: #fff;}
-.fixedTfootAction .pager .dropdown > a:hover, .fixedTfootAction .pager > a:hover {background-color: #2e6dad}
+.fixedTfootAction {background-color: #f5f5f5; position: fixed; bottom: 40px; box-shadow: 0 -3px 4px rgba(0,0,0,0.05);}
+.table > .fixedTfootAction > tr > td {border-bottom: none}
+.table > .fixedTfootAction.scrolled > tr > td {background: #2e6dad; border: none; color: #fff}
+.fixedTfootAction.scrolled .btn {border: 1px solid #fff; border-color: rgba(255,255,255,.5); background-color: #2e6dad!important; text-shadow: none; color: #e5e5e5!important;}
+.fixedTfootAction.scrolled .btn:hover {background-color: #2e6dad!important;}
+.fixedTfootAction.scrolled .pager,
+.fixedTfootAction.scrolled .pager > a,
+.fixedTfootAction.scrolled .pager > .dropdown > a,
+.fixedTfootAction.scrolled .table-actions > .text {color: #e5e5e5}
+.fixedTfootAction.scrolled .pager strong,
+.fixedTfootAction.scrolled .table-actions > .text strong {color: #fff;}
+.fixedTfootAction.scrolled .pager .dropdown > a:hover,
+.fixedTfootAction.scrolled .pager > a:hover {background-color: #2e6dad}
+
 .fixedTheadOfList {position: fixed; top: 0px; z-index:1000;}
 .datatable.head-fixed > .datatable-head .table > thead > tr > th, 
-.fixedTheadOfList > thead > tr > th {background-color: #114f8e; border-bottom-color: #bbb; color: #aaa}
+.fixedTheadOfList > thead > tr > th {background-color: #2e6dad; border-bottom-color: #bbb; color: #dedede}
 .tablesorter.fixedTheadOfList thead tr .headerSortDown a,
 .tablesorter.fixedTheadOfList thead tr .headerSortUp a,
 .tablesorter.fixedTheadOfList thead tr .headerSortUp > a:after,
@@ -753,7 +759,7 @@ body {color:#141414; padding-bottom: 40px;}
 .datatable.head-fixed thead tr .headerSortUp > a:after,
 .datatable.head-fixed thead tr .headerSortDown > a:after,
 .datatable.head-fixed > .datatable-head .table > thead > tr > th a, .fixedTheadOfList > thead > tr > th a {color: #fff}
-.datatable.head-fixed > .datatable-head .table > thead > tr > th .header a, .fixedTheadOfList > thead > tr > th .header a {color: #ccc}
+.datatable.head-fixed > .datatable-head .table > thead > tr > th .header a, .fixedTheadOfList > thead > tr > th .header a {color: inherit}
 
 /* Help tab iframe */
 #helpContent {display: none; position: absolute; left: 0; right: 0; top: 73px; bottom: 40px; background-color: #fff;}

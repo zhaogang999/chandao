@@ -773,6 +773,11 @@ class story extends control
 
         /* Get edited stories. */
         $stories = $this->dao->select('*')->from(TABLE_STORY)->where('id')->in($storyIDList)->fetchAll('id');
+        foreach($stories as $story)
+        {
+            if($story->status == 'closed') unset($stories[$story->id]);
+        }
+        if(empty($stories)) die(js::alert($this->lang->story->notice->closed) . js::locate($this->session->storyList, 'parent'));
 
         /* The stories of a product. */
         if($productID)
@@ -1240,11 +1245,12 @@ class story extends control
      * 
      * @param  int    $productID 
      * @param  string $browseType 
+     * @param  int    $branchID
      * @param  int    $moduleID 
      * @access public
      * @return void
      */
-    public function report($productID, $browseType, $moduleID)
+    public function report($productID, $browseType, $branchID, $moduleID)
     {
         $this->loadModel('report');
         $this->view->charts   = array();
@@ -1264,7 +1270,7 @@ class story extends control
             }
         }
         $this->products = $this->product->getPairs();
-        $this->product->setMenu($this->products, $productID);
+        $this->product->setMenu($this->products, $productID, $branchID);
 
         $this->view->title         = $this->products[$productID] . $this->lang->colon . $this->lang->story->reportChart;
         $this->view->position[]    = $this->products[$productID];
@@ -1363,10 +1369,12 @@ class story extends control
                     $story->spec = htmlspecialchars_decode($story->spec);
                     $story->spec = str_replace("<br />", "\n", $story->spec);
                     $story->spec = str_replace('"', '""', $story->spec);
+                    $story->spec = str_replace('&nbsp;', ' ', $story->spec);
 
                     $story->verify = htmlspecialchars_decode($story->verify);
                     $story->verify = str_replace("<br />", "\n", $story->verify);
                     $story->verify = str_replace('"', '""', $story->verify);
+                    $story->verify = str_replace('&nbsp;', ' ', $story->verify);
                 }
                 /* fill some field with useful value. */
                 if(isset($products[$story->product]))              $story->product        = $products[$story->product] . "(#$story->product)";

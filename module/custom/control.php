@@ -75,6 +75,10 @@ class custom extends control
             {
                 $this->loadModel('setting')->setItems('system.project', fixer::input('post')->get());
             }
+            elseif($module == 'bug' && $field == 'longlife')
+            {
+                $this->loadModel('setting')->setItems('system.bug', fixer::input('post')->get());
+            }
             else
             {
                 $lang = $_POST['lang'];
@@ -83,7 +87,12 @@ class custom extends control
                 {
                     $value  = $_POST['values'][$index];
                     $system = $_POST['systems'][$index];
-                    if(!$system and (!$value or !$key)) continue;
+
+                    //if(!$system and (!$value or !$key)) continue; //Fix bug #951.
+
+                    /* Fix bug #942. */
+                    if($field == 'priList' and !is_numeric($key)) die(js::alert($this->lang->custom->notice->priListKey));
+                    if($module == 'bug' and $field == 'severityList' and !is_numeric($key)) die(js::alert($this->lang->custom->notice->severityListKey));
 
                     /* the length of role is 20, check it when save. */
                     if($module == 'user' and $field == 'roleList' and strlen($key) > 20) die(js::alert($this->lang->custom->notice->userRole));

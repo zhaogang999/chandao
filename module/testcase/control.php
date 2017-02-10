@@ -101,6 +101,7 @@ class testcase extends control
 
         /* Process case for check story changed. */
         $cases = $this->loadModel('story')->checkNeedConfirm($cases);
+        $cases = $this->testcase->appendBugAndResults($cases);
 
         /* Build the search form. */
         $actionURL = $this->createLink('testcase', 'browse', "productID=$productID&branch=$branch&browseType=bySearch&queryID=myQueryID");
@@ -156,6 +157,7 @@ class testcase extends control
 
         $cases = $this->testcase->getModuleCases($productID, $branch, 0, $groupBy);
         $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'testcase', false);
+        $cases = $this->testcase->appendBugAndResults($cases);
 
         $groupCases  = array();
         $groupByList = array();
@@ -836,17 +838,22 @@ class testcase extends control
      */
     public function export($productID, $orderBy, $taskID = 0)
     {
+        $product = $this->loadModel('product')->getById($productID);
+        if($product->type != 'normal') $this->lang->testcase->branch = $this->lang->product->branchName[$product->type];
         if($_POST)
         {
             $caseLang   = $this->lang->testcase;
             $caseConfig = $this->config->testcase;
 
             /* Create field lists. */
-            $fields = $this->post->exportFields ? $this->post->exportFields : explode(',', $caseConfig->exportFields);
+            $fields  = $this->post->exportFields ? $this->post->exportFields : explode(',', $caseConfig->exportFields);
             foreach($fields as $key => $fieldName)
             {
                 $fieldName = trim($fieldName);
-                $fields[$fieldName] = isset($caseLang->$fieldName) ? $caseLang->$fieldName : $fieldName;
+                if(!($product->type == 'normal' and $fieldName == 'branch'))
+                {
+                    $fields[$fieldName] = isset($caseLang->$fieldName) ? $caseLang->$fieldName : $fieldName;
+                }
                 unset($fields[$key]);
             }
 
@@ -884,6 +891,7 @@ class testcase extends control
             /* Get users, products and projects. */
             $users    = $this->loadModel('user')->getPairs('noletter');
             $products = $this->loadModel('product')->getPairs('nocode');
+            $branches = $this->loadModel('branch')->getPairs($productID);
 
             /* Get related objects id lists. */
             $relatedModuleIdList = array();
@@ -938,6 +946,7 @@ class testcase extends control
 
                 /* fill some field with useful value. */
                 if(isset($products[$case->product]))      $case->product = $products[$case->product] . "(#$case->product)";
+                if(isset($branches[$case->branch]))       $case->branch  = $branches[$case->branch] . "(#$case->branch)";
                 if(isset($relatedModules[$case->module])) $case->module  = $relatedModules[$case->module] . "(#$case->module)";
                 if(isset($relatedStories[$case->story]))  $case->story   = $relatedStories[$case->story] . "(#$case->story)";
 
@@ -990,6 +999,9 @@ class testcase extends control
     {
         if($_POST)
         {
+            $product = $this->loadModel('product')->getById($productID);
+
+            if($product->type != 'normal') $fields['branch'] = $this->lang->product->branchName[$product->type];
             $fields['module']       = $this->lang->testcase->module;
             $fields['title']        = $this->lang->testcase->title;
             $fields['stepDesc']     = $this->lang->testcase->stepDesc;
@@ -1005,6 +1017,10 @@ class testcase extends control
             $fields['typeValue']   = $this->lang->testcase->lblTypeValue;
             $fields['stageValue']  = $this->lang->testcase->lblStageValue;
             $fields['statusValue'] = $this->lang->testcase->lblStatusValue;
+            if($product->type != 'normal') $fields['branchValue'] = $this->lang->product->branchName[$product->type];
+
+            $branches = $this->loadModel('branch')->getPairs($productID);
+            foreach($branches as $branchID => $branchName) $branches[$branchID] = $branchName . "(#$branchID)";
 
             $modules = $this->loadModel('tree')->getOptionMenu($productID, 'case');
             $rows    = array();
@@ -1020,6 +1036,7 @@ class testcase extends control
                     $row->typeValue   = join("\n", $this->lang->testcase->typeList);
                     $row->stageValue  = join("\n", $this->lang->testcase->stageList);
                     $row->statusValue = join("\n", $this->lang->testcase->statusList);
+                    if($product->type != 'normal') $row->branchValue = join("\n", $branches);
                 }
                 $rows[] = $row;
             }
@@ -1053,7 +1070,7 @@ class testcase extends control
 
             $fileName = $this->file->savePath . $file['pathname'];
             $rows     = $this->file->parseCSV($fileName);
-            $fields   = $this->testcase->getImportFields();
+            $fields   = $this->testcase->getImportFields($productID);
             $fields   = array_flip($fields);
             $header   = array();
             foreach($rows[0] as $i => $rowValue)
@@ -1074,18 +1091,7 @@ class testcase extends control
             {
                 $fc     = file_get_contents($fileName);
                 $encode = $this->post->encode != "utf-8" ? $this->post->encode : 'gbk';
-                if(function_exists('mb_convert_encoding'))
-                {
-                    $fc = @mb_convert_encoding($fc, 'utf-8', $encode);
-                }
-                elseif(function_exists('iconv'))
-                {
-                    $fc = @iconv($encode, 'utf-8', $fc);
-                }
-                else
-                {
-                    die(js::alert($this->lang->testcase->noFunction));
-                }
+                $fc     = helper::convertEncoding($fc, $encode, 'utf-8');
                 file_put_contents($fileName, $fc);
 
                 $rows      = $this->file->parseCSV($fileName);
@@ -1134,7 +1140,7 @@ class testcase extends control
         $caseConfig = $this->config->testcase;
         $modules    = $this->loadModel('tree')->getOptionMenu($productID, 'case', 0, $branch);
         $stories    = $this->loadModel('story')->getProductStoryPairs($productID, $branch);
-        $fields     = $this->testcase->getImportFields();
+        $fields     = $this->testcase->getImportFields($productID);
         $fields     = array_flip($fields);
 
         $rows   = $this->loadModel('file')->parseCSV($file);
@@ -1162,16 +1168,7 @@ class testcase extends control
             {
                 if(!isset($data[$key])) continue;
                 $cellValue = $data[$key];
-                if($field == 'story')
-                {
-                    $case->$field = 0;
-                    if(strrpos($cellValue, '(#') !== false)
-                    {
-                        $id = trim(substr($cellValue, strrpos($cellValue,'(#') + 2), ')');
-                        $case->$field = $id;
-                    }   
-                }
-                elseif($field == 'module')
+                if($field == 'story' or $field == 'module' or $field == 'branch')
                 {
                     $case->$field = 0;
                     if(strrpos($cellValue, '(#') !== false)
@@ -1259,8 +1256,26 @@ class testcase extends control
         $this->view->caseData  = $caseData;
         $this->view->stepData  = $stepData;
         $this->view->productID = $productID;
+        $this->view->branches  = $this->loadModel('branch')->getPairs($productID);
         $this->view->branch    = $branch;
         $this->view->product   = $this->products[$productID];
+        $this->display();
+    }
+
+    /**
+     * Case bugs.
+     * 
+     * @param  int    $runID 
+     * @param  int    $caseID 
+     * @param  int    $version 
+     * @access public
+     * @return void
+     */
+    public function bugs($runID, $caseID = 0, $version = 0)
+    {
+        $this->view->title = $this->lang->testcase->bugs;
+        $this->view->bugs  = $this->loadModel('bug')->getCaseBugs($runID, $caseID, $version);
+        $this->view->users = $this->loadModel('user')->getPairs('noletter');
         $this->display();
     }
 }

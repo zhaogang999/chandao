@@ -53,7 +53,7 @@
         ?>
         </ul>
       </div>
-        <?php common::printIcon('story', 'report', "productID=$productID&browseType=$browseType&moduleID=$moduleID", '', 'button', 'bar-chart'); ?>
+        <?php common::printIcon('story', 'report', "productID=$productID&browseType=$browseType&branchID=$branch&moduleID=$moduleID", '', 'button', 'bar-chart'); ?>
     </div>
     <div class="btn-group" id='createActionMenu'>
       <?php
@@ -72,7 +72,7 @@
       <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
         <span class="caret"></span>
       </button>
-      <ul class='dropdown-menu'>
+      <ul class='dropdown-menu pull-right'>
       <?php
       $misc = common::hasPriv('story', 'batchCreate') ? '' : "class=disabled";
       $link = common::hasPriv('story', 'batchCreate') ?  $this->createLink('story', 'batchCreate', "productID=$productID&branch=$branch&moduleID=$moduleID") : '#';
@@ -109,7 +109,7 @@
     ?>
       <tfoot>
       <tr>
-        <td colspan='14'>
+        <td colspan='13'>
           <div class='table-actions clearfix'>
             <?php if(count($stories)):?>
             <?php echo html::selectButton();?>

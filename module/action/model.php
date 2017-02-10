@@ -199,9 +199,7 @@ class actionModel extends model
             ->where('objectType')->eq($objectType)
             ->andWhere('objectID')->eq($objectID)
             ->fi()
-            ->orderBy('date desc')->fetchAll('id');
-            //->orderBy('date id')->fetchAll('id');
-        //var_dump($actions);die;
+            ->orderBy('date, id')->fetchAll('id');
         $histories = $this->getHistory(array_keys($actions));
         $this->loadModel('file');
 
@@ -211,9 +209,6 @@ class actionModel extends model
             $this->app->loadLang('testtask');
             $actions = $this->processProjectActions($actions);
         }
-
-//临时更改
-        static $isInlink = 0;
 
         foreach($actions as $actionID => $action)
         {
@@ -312,18 +307,9 @@ class actionModel extends model
             }
             $action->history = isset($histories[$actionID]) ? $histories[$actionID] : array();
             $action->comment = $this->file->setImgSize($action->comment, $this->config->action->commonImgSize);
-            //临时修改
-            if ($action->action =='linked2project' && $isInlink != 0) {
-                unset($actions[$actionID]);
-            }elseif($action->action =='linked2project' && $isInlink == 0){
-                $actions[$actionID] = $action;
-                $isInlink = 1;
-            }else{
-                $actions[$actionID] = $action;
-            }
-
-            //$actions[$actionID] = $action;
+            $actions[$actionID] = $action;
         }
+
         return $actions;
     }
 
@@ -453,7 +439,7 @@ class actionModel extends model
          * 2. If no defined in the module language, search the common action define.
          * 3. If not found in the lang->action->desc, use the $lang->action->desc->common or $lang->action->desc->extra as the default.
          */
-        if(isset($this->lang->$objectType->action->$actionType))
+        if(isset($this->lang->$objectType) && isset($this->lang->$objectType->action->$actionType))
         {
             $desc = $this->lang->$objectType->action->$actionType;
         }
@@ -541,6 +527,12 @@ class actionModel extends model
             if(strpos($this->app->company->admins, ',' . $this->app->user->account . ',') !== false) $condition = 1; 
         }
 
+        $this->loadModel('doc');
+        $docCondition = $this->doc->buildConditionSQL('doc');
+        $libCondition = $this->doc->buildConditionSQL('lib');
+        if($docCondition) $docCondition = $this->dao->select('id')->from(TABLE_DOC)->where($docCondition)->andWhere('deleted')->eq(0)->get();
+        if($libCondition) $libCondition = $this->dao->select('id')->from(TABLE_DOCLIB)->where($libCondition)->andWhere('deleted')->eq(0)->get();
+
         /* Get actions. */
         $actions = $this->dao->select('*')->from(TABLE_ACTION)
             ->where(1)
@@ -552,6 +544,8 @@ class actionModel extends model
             ->beginIF($productID == 'notzero')->andWhere('product')->gt(0)->fi()
             ->beginIF($projectID == 'notzero')->andWhere('project')->gt(0)->fi()
             ->beginIF($projectID == 'all' or $productID == 'all')->andWhere("($condition)")->fi()
+            ->beginIF($docCondition)->andWhere("IF(objectType != 'doc', '1=1', objectID in ($docCondition))")->fi()
+            ->beginIF($libCondition)->andWhere("IF(objectType != 'doclib', '1=1', objectID in ($libCondition))")->fi()
             ->orderBy($orderBy)->page($pager)->fetchAll();
 
         if(!$actions) return array();
@@ -769,7 +763,7 @@ class actionModel extends model
         foreach($histories as $history)
         {
             $fieldName = $history->field;
-            $history->fieldLabel = isset($this->lang->$objectType->$fieldName) ? $this->lang->$objectType->$fieldName : $fieldName;
+            $history->fieldLabel = (isset($this->lang->$objectType) && isset($this->lang->$objectType->$fieldName)) ? $this->lang->$objectType->$fieldName : $fieldName;
             if(($length = strlen($history->fieldLabel)) > $maxLength) $maxLength = $length;
             $history->diff ? $historiesWithDiff[] = $history : $historiesWithoutDiff[] = $history;
         }
@@ -833,7 +827,7 @@ class actionModel extends model
         /* Revert doclib when undelet product or project. */
         if($action->objectType == 'project' or $action->objectType == 'product')
         {
-            $this->dao->update(TABLE_DOCLIT)->set('deleted')->eq(0)->where($action->objectType)->eq($action->objectID)->exec();
+            $this->dao->update(TABLE_DOCLIB)->set('deleted')->eq(0)->where($action->objectType)->eq($action->objectID)->exec();
         }
 
         /* Update action record in action table. */

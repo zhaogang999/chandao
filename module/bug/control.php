@@ -151,11 +151,12 @@ class bug extends control
      * 
      * @param  int    $productID 
      * @param  string $browseType 
+     * @param  int    $branchID
      * @param  int    $moduleID 
      * @access public
      * @return void
      */
-    public function report($productID, $browseType, $moduleID)
+    public function report($productID, $browseType, $branchID, $moduleID)
     {
         $this->loadModel('report');
         $this->view->charts   = array();
@@ -174,7 +175,7 @@ class bug extends control
             }
         }
 
-        $this->bug->setMenu($this->products, $productID);
+        $this->bug->setMenu($this->products, $productID, $branchID);
         $this->view->title         = $this->products[$productID] . $this->lang->colon . $this->lang->bug->common . $this->lang->colon . $this->lang->bug->reportChart;
         $this->view->position[]    = html::a($this->createLink('bug', 'browse', "productID=$productID"), $this->products[$productID]);
         $this->view->position[]    = $this->lang->bug->reportChart;
@@ -348,7 +349,7 @@ class bug extends control
     }
 
     /**
-     * BAjax get branchesatch create.
+     * Batch create. 
      * 
      * @param  int    $productID 
      * @param  int    $projectID 
@@ -444,6 +445,8 @@ class bug extends control
         if($bug->project and !$this->loadModel('project')->checkPriv($this->project->getByID($bug->project)))
         {
             echo(js::alert($this->lang->project->accessDenied));
+            $loginLink = $this->config->requestType == 'GET' ? "?{$this->config->moduleVar}=user&{$this->config->methodVar}=login" : "user{$this->config->requestFix}login";
+            if(strpos($this->server->http_referer, $loginLink) !== false) die(js::locate(inlink('index')));
             die(js::locate('back'));
         }
 
@@ -782,9 +785,10 @@ class bug extends control
     {
         if(!empty($_POST))
         {
-            $this->bug->confirm($bugID);
+            $changes = $this->bug->confirm($bugID);
             if(dao::isError()) die(js::error(dao::getError()));
             $actionID = $this->action->create('bug', $bugID, 'bugConfirmed', $this->post->comment);
+            $this->action->logHistory($actionID, $changes);
             $this->bug->sendmail($bugID, $actionID);
             if(isonlybody()) die(js::closeModal('parent.parent'));
             die(js::locate($this->createLink('bug', 'view', "bugID=$bugID"), 'parent'));

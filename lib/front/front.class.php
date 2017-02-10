@@ -98,7 +98,7 @@ class html extends baseHTML
     static public function select($name = '', $options = array(), $selectedItems = "", $attrib = "", $append = false)
     {
         global $app;
-        static $dataKeys = array();
+        static $dataKeys;
 
         $options = (array)($options);
         if($append and !isset($options[$selectedItems])) $options[$selectedItems] = $selectedItems;
@@ -113,13 +113,8 @@ class html extends baseHTML
         $string = "<select name='$name' {$id} $attrib>\n";
 
         /* The options. */
-        static $pinyin = null;
-        if(empty($pinyin))
-        {
-            $app->loadClass('pinyin', false);
-            helper::import(dirname(__DIR__) . '/pinyin/memoryfiledictloader.php');
-            $pinyin = new pinyin(new MemoryFileDictLoader(dirname(__DIR__) . '/pinyin/data/'));
-        }
+        static $pinyin;
+        if(empty($pinyin)) $pinyin = $app->loadClass('pinyin');
 
         $joinOptions = '';
         $sign        = ' aNd ';
@@ -130,20 +125,31 @@ class html extends baseHTML
 
         if($joinOptions)
         {
-            $valuesPinyin = $pinyin->convert($joinOptions);
-
-            $values = explode($sign, $joinOptions);
-            $sign   = trim($sign);
-            foreach($values as $value)
+            $valuesPinyin = $pinyin->romanize($joinOptions);
+            $signLenth    = strlen($sign);
+            $pinyinSign   = trim($sign);
+            $pySignLenth  = strlen($pinyinSign);
+            while($joinOptions)
             {
-                $valuePinyin = array();
-                $valueAbbr   = '';
-                while($wordPinyin = array_shift($valuesPinyin))
+                $valuePinyin = '';
+                $value       = '';
+
+                $pinyinPos = strpos($valuesPinyin, $pinyinSign);
+                if($pinyinPos !== false)
                 {
-                    if($wordPinyin == $sign or empty($wordPinyin)) break;
-                    $valuePinyin[] = $wordPinyin;
-                    $valueAbbr    .= $wordPinyin[0];
+                    $valuePinyin  = substr($valuesPinyin, 0, $pinyinPos);
+                    $valuesPinyin = substr($valuesPinyin, $pinyinPos + $pySignLenth);
                 }
+
+                $valuePos = strpos($joinOptions, $sign);
+                if($valuePos === false) break;
+                $value       = substr($joinOptions, 0, $valuePos);
+                $joinOptions = substr($joinOptions, $valuePos + $signLenth);
+
+                $valuePinyin = preg_split('/[^a-z]+/iu', trim($valuePinyin));
+                $valueAbbr   = '';
+                foreach($valuePinyin as $wordPinyin) if($wordPinyin) $valueAbbr .= $wordPinyin[0];
+
                 $dataKeys[$value] = empty($valuePinyin) ? '' : join($valuePinyin) . ' ' . $valueAbbr;
             }
         }

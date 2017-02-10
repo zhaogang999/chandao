@@ -19,7 +19,7 @@ include '../../common/view/chosen.html.php';
 #bysearchTab {transition: all .3s cubic-bezier(.175, .885, .32, 1);}
 #bysearchTab.active {background: #fff; padding: 2px 10px 3px; padding-bottom: 2px\0; border: 1px solid #ddd; border-bottom: none}
 #bysearchTab.active:hover {background: #ddd}
-#bysearchTab.active > a:after {font-size: 14px; font-family: ZenIcon; content: ' \e6e2'; color: #808080}
+#bysearchTab.active > a:after {font-size: 14px; font-family: NewZenIcon; content: ' \e6e2'; color: #808080}
 #featurebar .nav {position: relative;}
 #featurebar .nav .dropdown .dropdown-menu{z-index:1010;}
 #querybox form{padding-right: 40px;}
@@ -39,7 +39,7 @@ include '../../common/view/chosen.html.php';
 #selectPeriod > .dropdown-header {background: #f1f1f1; display: block; text-align: center; padding: 4px 0; line-height: 20px; margin-bottom: 5px; font-size: 14px; border-radius: 2px; color: #333; font-size: 12px}
 #selectPeriod li > a {padding: 4px 15px; border-radius: 2px}
 
-#moreOrLite {position: absolute; right: 0; top: 0; bottom: 0}
+#moreOrLite {position: absolute; right: -10px; top: 0; bottom: 0}
 #searchlite, #searchmore {color: #4d90fe; width: 50px; padding: 0 5px; line-height: 60px; text-align: center;}
 #searchlite {line-height: 127px}
 #searchform.showmore #searchmore, #searchform #searchlite {display: none;}
@@ -307,7 +307,7 @@ foreach($fieldParams as $fieldName => $param)
 {
     echo "<span id='box$fieldName'>";
     if($param['control'] == 'select') echo html::select('field' . $fieldName, $param['values'], '', "class='form-control searchSelect'");
-    if($param['control'] == 'input')  echo html::input('field' . $fieldName, '', "class='form-control searchInput'");
+    if($param['control'] == 'input')  echo html::input('field' . $fieldName, '', "class='form-control searchInput' autocomplete='off'");
     echo '</span>';
 }
 ?>
@@ -357,7 +357,7 @@ foreach($fieldParams as $fieldName => $param)
           {
               $fieldName  = $formSession["field$fieldNO"];
               $extraClass = isset($param['class']) ? $param['class'] : '';
-              echo html::input("value$fieldNO",  $formSession["value$fieldNO"], "class='form-control $extraClass searchInput'");
+              echo html::input("value$fieldNO",  $formSession["value$fieldNO"], "class='form-control $extraClass searchInput' autocomplete='off'");
           }
           echo '</td>';
 
@@ -407,7 +407,7 @@ foreach($fieldParams as $fieldName => $param)
           {
               $fieldName  = $formSession["field$fieldNO"];
               $extraClass = isset($param['class']) ? $param['class'] : '';
-              echo html::input("value$fieldNO",  $formSession["value$fieldNO"], "class='form-control $extraClass searchInput'");
+              echo html::input("value$fieldNO",  $formSession["value$fieldNO"], "class='form-control $extraClass searchInput' autocomplete='off'");
           }
           echo '</td>';
 

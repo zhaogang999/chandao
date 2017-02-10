@@ -12,16 +12,16 @@
 $lang->release->common    = 'Release';
 $lang->release->create    = "Create";
 $lang->release->edit      = "Edit";
-$lang->release->linkStory = "Link Story";
-$lang->release->linkBug   = "Link Bug";
+$lang->release->linkStory = "Relate Story";
+$lang->release->linkBug   = "Relate Bug";
 $lang->release->delete    = "Delete";
 $lang->release->deleted   = 'Deleted';
 $lang->release->view      = "Info";
-$lang->release->browse    = "Browse";
+$lang->release->browse    = "Releases";
 $lang->release->changeStatus     = "Change Status";
-$lang->release->batchUnlink      = "Batch Unlink";
-$lang->release->batchUnlinkStory = "Batch Unlink Story";
-$lang->release->batchUnlinkBug   = "Batch unlink Bug";
+$lang->release->batchUnlink      = "Batch Unrelate";
+$lang->release->batchUnlinkStory = "Batch Unrelate";
+$lang->release->batchUnlinkBug   = "Batch Unrelate";
 
 $lang->release->confirmDelete      = "Do you want to delete this Release?";
 $lang->release->confirmUnlinkStory = "Do you want to remove this Story?";
@@ -41,7 +41,7 @@ $lang->release->unlinkStory           = 'Remove Story';
 $lang->release->unlinkBug             = 'Remove Bug';
 $lang->release->stories               = 'Finished Story';
 $lang->release->bugs                  = 'Solved Bug';
-$lang->release->generatedBugs         = 'Generated Bug';
+$lang->release->generatedBugs         = 'Remained Bug';
 $lang->release->finishStories         = 'Finished %s Story';
 $lang->release->resolvedBugs          = 'Solved %s Bug';
 $lang->release->createdBugs           = 'Generated %s Bug';
@@ -51,9 +51,9 @@ $lang->release->filePath = 'Download : ';
 $lang->release->scmPath  = 'SCM Path : ';
 
 $lang->release->exportTypeList['all']     = 'All';
-$lang->release->exportTypeList['story']   = 'Resolved Story';
-$lang->release->exportTypeList['bug']     = 'Resolved Bug';
-$lang->release->exportTypeList['leftbug'] = 'Generated Bug';
+$lang->release->exportTypeList['story']   = 'Story';
+$lang->release->exportTypeList['bug']     = 'Bug';
+$lang->release->exportTypeList['leftbug'] = 'Unresolved Bug';
 
 $lang->release->statusList['']          = '';
 $lang->release->statusList['normal']    = 'Normal';

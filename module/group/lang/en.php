@@ -10,21 +10,21 @@
  * @link        http://www.zentao.net
  */
 $lang->group->common             = 'Privileges';
-$lang->group->browse             = 'View Group';
+$lang->group->browse             = 'Groups';
 $lang->group->create             = 'Add a Group';
 $lang->group->edit               = 'Edit';
 $lang->group->copy               = 'Copy';
 $lang->group->delete             = 'Delete';
 $lang->group->manageView         = 'View';
 $lang->group->managePriv         = 'Privileges';
-$lang->group->managePrivByGroup  = 'Maintain by Groups';
-$lang->group->managePrivByModule = 'Maintain by Moduls';
+$lang->group->managePrivByGroup  = 'Assign by Groups';
+$lang->group->managePrivByModule = 'Assign by Modules';
 $lang->group->byModuleTips       = '<span class="tips">(Press shift/control to multi select)</span>';
 $lang->group->manageMember       = 'Members';
 $lang->group->confirmDelete      = 'Do you want to delete this User Group?';
 $lang->group->successSaved       = 'Saved!';
 $lang->group->errorNotSaved      = 'Not saved. Please select actions and groups.';
-$lang->group->viewList           = 'Acess List';
+$lang->group->viewList           = 'Access List';
 $lang->group->productList        = 'Access is allowed.' . $lang->productCommon;
 $lang->group->projectList        = 'Access is allowed.' . $lang->projectCommon;
 $lang->group->noticeVisit        = 'N/A means access is not restricted.';
@@ -35,7 +35,7 @@ $lang->group->desc     = 'Description';
 $lang->group->users    = 'Users';
 $lang->group->module   = 'Module';
 $lang->group->method   = 'Method';
-$lang->group->priv     = 'Privilege';
+$lang->group->priv     = 'P';
 $lang->group->option   = 'Option';
 $lang->group->inside   = 'Group Users';
 $lang->group->outside  = 'Other Users';

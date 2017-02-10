@@ -21,6 +21,7 @@ class productplan extends control
     public function commonAction($productID, $branch = 0)
     {
         $this->loadModel('product');
+        $this->app->loadConfig('project');
         $product = $this->product->getById($productID);
         $this->view->product  = $product;
         $this->view->branch   = $branch;
@@ -220,6 +221,11 @@ class productplan extends control
         if(!$plan) die(js::error($this->lang->notFound) . js::locate('back'));
         $this->commonAction($plan->product, $plan->branch);
         $products                = $this->product->getPairs();
+
+        $this->loadModel('datatable');
+        $showModule = !empty($this->config->datatable->productBrowse->showModule) ? $this->config->datatable->productBrowse->showModule : '';
+        $this->view->modulePairs = $showModule ? $this->loadModel('tree')->getModulePairs($plan->product, 'story', $showModule) : array();
+
         $this->view->title       = "PLAN #$plan->id $plan->title/" . $products[$plan->product];
         $this->view->position[]  = $this->lang->productplan->view;
         $this->view->planStories = $this->loadModel('story')->getPlanStories($planID, 'all', $type == 'story' ? $sort : 'id_desc');

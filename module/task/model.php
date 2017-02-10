@@ -22,8 +22,8 @@ class taskModel extends model
      */
     public function create($projectID)
     {
-        $tasksID  = array();
-        $taskFile = '';
+        $tasksID   = array();
+        $taskFiles = array();
         $this->loadModel('file');
         $task = fixer::input('post')
             ->add('project', (int)$projectID)
@@ -71,16 +71,19 @@ class taskModel extends model
                 $taskID = $this->dao->lastInsertID();
                 if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
                 $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-                if(!empty($taskFile))
+                if(!empty($taskFiles))
                 {
-                    $taskFile->objectID = $taskID;
-                    $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
+                    foreach($taskFiles as $taskFile)
+                    {
+                        $taskFile->objectID = $taskID;
+                        $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
+                    }
                 }
                 else
                 {
                     $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                    $taskFile = $this->dao->select('*')->from(TABLE_FILE)->where('id')->eq(key($taskFileTitle))->fetch();
-                    unset($taskFile->id);
+                    $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
+                    foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
                 }
                 $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
             }
@@ -989,12 +992,31 @@ class taskModel extends model
      */
     public function getStoryTasks($storyID, $projectID = 0)
     {
-        return $this->dao->select('id, name, assignedTo, pri, status, estimate, consumed, `left`')
+        $tasks = $this->dao->select('id, name, assignedTo, pri, status, estimate, consumed, `left`')
             ->from(TABLE_TASK)
             ->where('story')->eq((int)$storyID)
             ->andWhere('deleted')->eq(0)
             ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
             ->fetchAll('id');
+
+        foreach($tasks as $task)
+        {
+            /* Compute task progess. */
+            if($task->consumed == 0 and $task->left == 0)
+            {
+                $task->progess = 0;
+            }
+            elseif($task->consumed != 0 and $task->left == 0)
+            {
+                $task->progess = 100;
+            }
+            else
+            {
+                $task->progess = round($task->consumed / ($task->consumed + $task->left), 2) * 100;
+            }
+        }
+
+        return $tasks;
     }
 
     /**
@@ -1716,7 +1738,7 @@ class taskModel extends model
         $action->history = isset($history[$actionID]) ? $history[$actionID] : array();
 
         /* Get mail content. */
-        $modulePath = $this->app->getModulePath();
+        $modulePath = $this->app->getModulePath($appName = '', 'task');
         $oldcwd     = getcwd();
         $viewFile   = $modulePath . 'view/sendmail.html.php';
         chdir($modulePath . 'view');

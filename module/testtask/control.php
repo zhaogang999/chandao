@@ -252,13 +252,8 @@ class testtask extends control
         $sort = $this->loadModel('common')->appendOrder($orderBy, 't2.id');
 
         /* Get test cases. */
-        $this->view->runs = $this->testtask->getTaskCases($productID, $browseType, $queryID, $moduleID, $sort, $pager, $task);
+        $runs = $this->testtask->getTaskCases($productID, $browseType, $queryID, $moduleID, $sort, $pager, $task);
         $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'testcase', false);
-
-        /* Save testcaseIDs session for get the pre and next testcase. */
-        $testcaseIDs = '';
-        foreach($this->view->runs as $run) $testcaseIDs .= ',' . $run->case;
-        $this->session->set('testcaseIDs', $testcaseIDs . ',');
 
         /* Build the search form. */
         $this->loadModel('testcase');
@@ -270,6 +265,9 @@ class testtask extends control
         unset($this->config->testcase->search['params']['branch']);
         $this->loadModel('search')->setSearchParams($this->config->testcase->search);
 
+        /* Append bugs and results. */
+        $runs = $this->testcase->appendBugAndResults($runs, 'run');
+
         $this->view->title      = $this->products[$productID] . $this->lang->colon . $this->lang->testtask->cases;
         $this->view->position[] = html::a($this->createLink('testtask', 'browse', "productID=$productID"), $this->products[$productID]);
         $this->view->position[] = $this->lang->testtask->common;
@@ -278,6 +276,7 @@ class testtask extends control
         $this->view->productID     = $productID;
         $this->view->productName   = $this->products[$productID];
         $this->view->task          = $task;
+        $this->view->runs          = $runs;
         $this->view->users         = $this->loadModel('user')->getPairs('noclosed,qafirst');
         $this->view->assignedTos   = $this->loadModel('user')->getPairs('noclosed,nodeleted,qafirst');
         $this->view->moduleTree    = $this->loadModel('tree')->getTreeMenu($productID, $viewType = 'case', $startModuleID = 0, array('treeModel', 'createTestTaskLink'), $extra = $taskID);
@@ -306,7 +305,7 @@ class testtask extends control
     public function groupCase($taskID, $groupBy = 'story')
     {
         /* Save the session. */
-        $this->app->loadLang('testcase');
+        $this->loadModel('testcase');
         $this->session->set('caseList', $this->app->getURI(true));
 
         /* Get task and product info, set menu. */
@@ -318,6 +317,7 @@ class testtask extends control
 
         $runs = $this->testtask->getRuns($taskID, 0, $groupBy);
         $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'testcase', false);
+        $runs = $this->testcase->appendBugAndResults($runs, 'run');
 
         $groupCases  = array();
         $groupByList = array();
@@ -569,12 +569,15 @@ class testtask extends control
 
         /* Get cases. */
         if($this->session->testcaseQuery == false) $this->session->set('testcaseQuery', ' 1 = 1');
-        $query = str_replace("`product` = 'all'", '1', $this->session->testcaseQuery); // If search all product, replace product = all to 1=1
+        $query = $this->session->testcaseQuery;
+        $allProduct = "`product` = 'all'";
+        if(strpos($query, '`product` =') === false) $query .= " AND `product` = $productID";
+        if(strpos($query, $allProduct) !== false) $query = str_replace($allProduct, '1', $query);
+
         $linkedCases = $this->dao->select('`case`')->from(TABLE_TESTRUN)->where('task')->eq($taskID)->fetchPairs('case');
         if($param == 'all')
         {
             $cases = $this->dao->select('*')->from(TABLE_CASE)->where($query)
-                ->andWhere('product')->eq($productID)
                 ->andWhere('id')->notIN($linkedCases)
                 ->beginIF($task->branch)->andWhere('branch')->in("0,$task->branch")->fi()
                 ->andWhere('deleted')->eq(0)
@@ -654,6 +657,26 @@ class testtask extends control
     }
 
     /**
+     * Batch unlink cases.
+     *
+     * @param  int    $taskID
+     * @access public
+     * @return void
+     */
+    public function batchUnlinkCases($taskID)
+    {
+        if(isset($_POST['caseIDList']))
+        {
+            $this->dao->delete()->from(TABLE_TESTRUN)
+                ->where('task')->eq((int)$taskID)
+                ->andWhere('`case`')->in($this->post->caseIDList)
+                ->exec();
+        }
+
+        die(js::locate($this->createLink('testtask', 'cases', "taskID=$taskID")));
+    }
+
+    /**
      * Run case.
      * 
      * @param  int    $runID 
@@ -663,14 +686,14 @@ class testtask extends control
      */
     public function runCase($runID, $caseID = 0, $version = 0)
     {
-        if($caseID)
+        if($runID)
         {
-            $run = new stdclass();
-            $run->case = $this->loadModel('testcase')->getById($caseID, $version);
+            $run = $this->testtask->getRunById($runID);
         }
         else
         {
-            $run = $this->testtask->getRunById($runID);
+            $run = new stdclass();
+            $run->case = $this->loadModel('testcase')->getById($caseID, $version);
         }
 
         $caseID     = $caseID ? $caseID : $run->case->id;
@@ -714,10 +737,10 @@ class testtask extends control
         $this->view->run      = $run;
         $this->view->preCase  = $preCase;
         $this->view->nextCase = $nextCase;
-        $this->view->results  = $this->testtask->getResults($runID, $caseID);
         $this->view->users    = $this->loadModel('user')->getPairs('noclosed, noletter');
         $this->view->caseID   = $caseID;
         $this->view->version  = $version;
+        $this->view->runID    = $runID;
 
         die($this->display());
     }
@@ -783,12 +806,7 @@ class testtask extends control
      */
     public function results($runID, $caseID = 0, $version = 0)
     {
-        if($caseID)
-        {
-            $case    = $this->loadModel('testcase')->getByID($caseID, $version);
-            $results = $this->testtask->getResults(0, $caseID);
-        }
-        else
+        if($runID)
         {
             $case    = $this->testtask->getRunById($runID)->case;
             $results = $this->testtask->getResults($runID);
@@ -796,6 +814,11 @@ class testtask extends control
             $testtaskID = $this->dao->select('task')->from(TABLE_TESTRUN)->where('id')->eq($runID)->fetch('task');
             $testtask   = $this->dao->select('build, product')->from(TABLE_TESTTASK)->where('id')->eq($testtaskID)->fetch();
             $this->view->build = isset($builds[$testtask->build]) ? $builds[$testtask->build] : '';
+        }
+        else
+        {
+            $case    = $this->loadModel('testcase')->getByID($caseID, $version);
+            $results = $this->testtask->getResults(0, $caseID);
         }
 
         $this->view->case    = $case;

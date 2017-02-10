@@ -447,6 +447,7 @@ class storyModel extends model
             ->add('lastEditedBy', $this->app->user->account)
             ->add('lastEditedDate', $now)
             ->setDefault('status', $oldStory->status)
+            ->setDefault('product', $oldStory->product)
             ->setIF($this->post->assignedTo   != $oldStory->assignedTo, 'assignedDate', $now)
             ->setIF($this->post->closedBy     != false and $oldStory->closedDate == '', 'closedDate', $now)
             ->setIF($this->post->closedReason != false and $oldStory->closedDate == '', 'closedDate', $now)
@@ -466,7 +467,24 @@ class storyModel extends model
             ->checkIF(isset($story->closedReason) and $story->closedReason == 'duplicate',  'duplicateStory', 'notempty')
             ->where('id')->eq((int)$storyID)->exec();
 
-        if(!dao::isError()) return common::createChanges($oldStory, $story);
+        if(!dao::isError())
+        {
+            if($story->product != $oldStory->product)
+            {
+                $this->dao->update(TABLE_PROJECTSTORY)->set('product')->eq($story->product)->where('story')->eq($storyID)->exec();
+                $storyProjects  = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($storyID)->orderBy('project')->fetchPairs('project', 'project');
+                $linkedProjects = $this->dao->select('project')->from(TABLE_PROJECTPRODUCT)->where('project')->eq($storyProjects)->andWhere('product')->eq($story->product)->orderBy('project')->fetchPairs('project','project');
+                $unlinkedProjects = array_diff($storyProjects, $linkedProjects);
+                foreach($unlinkedProjects as $projectID)
+                {
+                    $data = new stdclass();
+                    $data->project = $projectID;
+                    $data->product = $story->product;
+                    $this->dao->insert(TABLE_PROJECTPRODUCT)->data($data)->exec();
+                }
+            }
+            return common::createChanges($oldStory, $story);
+        }
     }
 
     /**
@@ -1184,7 +1202,7 @@ class storyModel extends model
         if($browseType == 'bySearch')
         {
             $story        = $this->getById($storyID);
-            $stories2Link = $this->getBySearch($story->product, $queryID, 'id', null);
+            $stories2Link = $this->getBySearch($story->product, $queryID, 'id', null, '', $story->branch);
             foreach($stories2Link as $key => $story2Link)
             {
                 if($story2Link->id == $storyID) unset($stories2Link[$key]);
@@ -1469,11 +1487,20 @@ class storyModel extends model
             unset($branches[0]);
             $branches = join(',', $branches);
             if($branches) $storyQuery .= " AND `branch`" . helper::dbIN("0,$branches"); 
-            $storyQuery .= " AND `status` NOT IN ('draft', 'closed')"; 
+            if($this->app->moduleName == 'release' or $this->app->moduleName == 'build')
+            {
+                $storyQuery .= " AND `status` NOT IN ('draft')";// Fix bug #990.
+            }
+            else
+            {
+                $storyQuery .= " AND `status` NOT IN ('draft', 'closed')";
+            }
         }
         elseif($branch)
         {
-            $storyQuery .= " AND `branch`" . helper::dbIN("0,$branch"); 
+            $allBranch = "`branch` = 'all'";
+            if($branch and strpos($storyQuery, '`branch` =') === false) $storyQuery .= " AND `branch` in('0','$branch')";
+            if(strpos($storyQuery, $allBranch) !== false) $storyQuery = str_replace($allBranch, '1', $storyQuery);
         }
         $storyQuery = preg_replace("/`plan` +LIKE +'%([0-9]+)%'/i", "CONCAT(',', `plan`, ',') LIKE '%,$1,%'", $storyQuery);
 
@@ -2349,10 +2376,21 @@ class storyModel extends model
         /* Get actions. */
         $action  = $this->loadModel('action')->getById($actionID);
         $history = $this->action->getHistory($actionID);
-        $action->history = isset($history[$actionID]) ? $history[$actionID] : array();
+        $action->history    = isset($history[$actionID]) ? $history[$actionID] : array();
+        $action->appendLink = '';
+        if(strpos($action->extra, ':')!== false)
+        {
+            list($extra, $id) = explode(':', $action->extra);
+            $action->extra    = $extra;
+            if($id)
+            {
+                $name  = $this->dao->select('title')->from(TABLE_STORY)->where('id')->eq($id)->fetch('title');
+                if($name) $action->appendLink = html::a(zget($this->config->mail, 'domain', common::getSysURL()) . helper::createLink($action->objectType, 'view', "id=$id"), "#$id " . $name);
+            }
+        }
 
         /* Get mail content. */
-        $modulePath = $this->app->getModulePath();
+        $modulePath = $this->app->getModulePath($appName = '', 'story');
         $oldcwd     = getcwd();
         $viewFile   = $modulePath . 'view/sendmail.html.php';
         chdir($modulePath . 'view');

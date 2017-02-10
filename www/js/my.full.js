@@ -1434,44 +1434,62 @@ function checkOnlybodyPage()
  */
 function fixedTfootAction(formID)
 {
-    if($(formID).size() == 0) return false;
-    if($(formID).find('table:last').find('tfoot').size() == 0) return false;
+    var $form = $(formID);
+    if(!$form.length) return false;
+    var $table = $form.find('table:last');
+    var $tfoot = $table.find('tfoot');
+    if($table.hasClass('table-datatable'))
+    {
+        $table = $form.find('.datatable-rows');
+        $tfoot = $form.find('.datatable-footer tfoot');
+    }
+    if(!$tfoot.length) return false;
 
-    fixTfootInit();
-    $(window).scroll(fixTfoot).resize(fixTfoot);//Fix table foot when scrolling.
-    $('.side-handle').click(function(){setTimeout(fixTfootInit, 300);});//Fix table foot if module tree is hidden or displayed.
-
-    var $table, $tfoot, $inputGroup, tableWidth, tableOffset, hasFixed;
+    var $tbody = $table.find('tbody'),
+        $inputGroup = $tfoot.find('.table-actions').children('.input-group'),
+        pageFooterHeight = $('#footer').height(),
+        tableWidth,
+        tableOffset,
+        hasFixed;
+    if(!$tbody.length) return false;
     function fixTfoot()
     {
-        $table       = $(formID).find('table:last');
-        $tfoot       = $table.find('tfoot');
         tableWidth   = $table.width();
         hasFixed     = $tfoot.hasClass('fixedTfootAction');
-        offsetHeight = $(window).height() + $(window).scrollTop();
-        tableOffset  = $table.offset().top + $table.height() - $tfoot.height() / 5;
-        $inputGroup  = $tfoot.find('.table-actions').children('.input-group');
+        offsetHeight = $(window).height() + $(window).scrollTop() - pageFooterHeight/2;
+        tableOffset  = $tbody.offset().top + $tbody.height() + $tfoot.height();
 
         if(!hasFixed && offsetHeight <= tableOffset)
         {
-            $tfoot.addClass('fixedTfootAction');
-            $tfoot.width(tableWidth);
-            $tfoot.find('td').width(tableWidth);
+            $tfoot.addClass('fixedTfootAction')
+                  .width(tableWidth)
+                  .find('td').width(tableWidth);
             if($inputGroup.size() > 0) $inputGroup.width($inputGroup.width());
         }
         if(hasFixed && (offsetHeight > tableOffset || $(document).height() == offsetHeight))
         {
-            $tfoot.removeClass('fixedTfootAction');
-            $tfoot.removeAttr('style');
-            $tfoot.find('td').removeAttr('style');
+            $tfoot.removeClass('fixedTfootAction')
+                  .removeAttr('style')
+                  .find('td').removeAttr('style');
         }
     }
     function fixTfootInit()
     {
-        $tfoot = $(formID).find('table:last').find('tfoot')
         if($tfoot.hasClass('fixedTfootAction')) $tfoot.removeClass('fixedTfootAction');
         fixTfoot();
     }
+
+    fixTfootInit();
+    var scrollCallTask;
+    $(window).scroll(function()
+    {
+        // Fix table foot when scrolling.
+        fixTfoot();
+        $tfoot.addClass('scrolling scrolled');
+        clearTimeout(scrollCallTask);
+        scrollCallTask = setTimeout(function(){$tfoot.removeClass('scrolling');}, 200)
+    }).resize(fixTfoot);
+    $('.side-handle').click(function(){setTimeout(fixTfootInit, 300);}); // Fix table foot if module tree is hidden or displayed.
 }
 
 /**
