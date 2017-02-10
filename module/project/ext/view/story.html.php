@@ -74,7 +74,7 @@
         $canBatchEdit  = common::hasPriv('story', 'batchEdit');
         $canBatchClose = common::hasPriv('story', 'batchClose');
         //判断是否有需求批量转项目的权限
-        $canBatchChangeProject = common::hasPriv('story', 'batchChangeProject');
+        $canBatchChangeProject = common::hasPriv('project', 'batchChangeProject');
         
         ?>
         <?php foreach($stories as $key => $story):?>

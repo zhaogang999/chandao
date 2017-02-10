@@ -17,6 +17,13 @@ class myProject extends project
                 ->limit(1)->exec();
            if (!dao::isError())
             {
+                $this->dao->update(TABLE_ACTION)
+                    ->set('project')->eq($projectID)
+                    ->set('extra')->eq($projectID)
+                    ->where('objectID')->eq($storyID)
+                    ->andWhere('project')->eq($oldProjectId)
+                    ->andWhere('action')->eq('linked2project')
+                    ->limit(1)->exec();
                 //项目的版本转换
                 $builds = $this->dao->select('*')->from(TABLE_BUILD)
                     ->where('project')->eq($oldProjectId)

@@ -48,7 +48,7 @@
               <th class='w-40px'><?php echo $lang->task->noType; ?><i class="required required-wrapper"></i></th>
               <th class='w-50px'><?php echo $lang->task->serious; ?><i class="required required-wrapper"></i></th>
               <th class='w-80px'><?php echo $lang->task->cause; ?><i class="required required-wrapper"></i></th>
-              <th class='w-80px'><?php echo $lang->task->action; ?><i class="required required-wrapper"></i></th>
+              <th class='w-80px'><?php echo $lang->task->measures; ?><i class="required required-wrapper"></i></th>
               <th class='w-20px'><?php echo $lang->task->add; ?></th>
               <th class='w-20px'><?php echo $lang->task->del; ?></th>
             </tr>
