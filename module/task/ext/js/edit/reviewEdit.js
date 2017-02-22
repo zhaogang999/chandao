@@ -1,5 +1,24 @@
 //新增，控制增减评审详情
 $(function(){
+    //bugxiugai
+    $('#status').on('change',function () {
+        if($('#status').val() == 'done' && $('#type').val() == 'review')
+        {
+            $('.create').show();
+        }else{
+            $('.create').hide();
+        }
+    });
+    
+    $('#type').on('change',function () {
+        if($('#status').val() == 'done' && $('#type').val() == 'review')
+        {
+            $('.create').show();
+        }else{
+            $('.create').hide();
+        }
+    });
+
     $('.add').live('click',function(){
         var tr = $(this).parent().parent().clone();
          tr.find('input[type="hidden"]').attr('value','');
@@ -66,8 +85,8 @@ $(function(){
             {
                 var _this = $(this);
                 var objectID = $(this).parent().parent().find('input[type="hidden"]').val();
-                $url = createLink('task', 'deleteAudit', 'auditID=' + objectID);
-                $.get($url, function(data) {
+                var url = createLink('task', 'deleteAudit', 'auditID=' + objectID);
+                $.get(url, function(data) {
                     //window.location.reload();
                     _this.parent().parent().remove();
                 },'json');

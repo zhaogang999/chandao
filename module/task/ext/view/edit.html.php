@@ -34,7 +34,7 @@
       <div class='form-group'>
         <div class='input-group'>
           <input type='hidden' id='color' name='color' data-provide='colorpicker' data-wrapper='input-group-btn fix-border-right' data-pull-menu-right='false' data-btn-tip='<?php echo $lang->task->colorTag ?>' value='<?php echo $task->color ?>' data-update-text='.task-title, #name'>
-          <?php echo html::input('name', $task->name, 'class="form-control" placeholder="' . $lang->task->name . '"');?>
+          <?php echo html::input('name', $task->name, 'class="form-control" autocomplete="off" placeholder="' . $lang->task->name . '"');?>
         </div>
       </div>
       <?php if ($task->source == 'QA'):?>
@@ -87,6 +87,121 @@
           </table>
         </fieldset>
       <?php endif;?>
+
+      <!--bugxiugai-->
+      <?php /*if($task->type == 'review' && $task->status == 'done'):*/?>
+      <fieldset class='fieldset-pure create' style="display:none;">
+        <legend><?php echo $lang->task->review;?></legend>
+        <table class='table table-form'>
+          <tr>
+            <th><?php echo $lang->task->fileNO;?></th>
+            <td>
+              <?php echo html::input('fileNO', '', "class='form-control minw-330px'");?>
+              <?php echo html::hidden('reviewID', '');?>
+            </td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->recorder;?></span>
+                <?php echo html::input('recorder', '', "class='form-control minw-330px'");?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->reviewName;?></th>
+            <td><?php echo html::input('reviewName', '', "class='form-control minw-60px'");?></td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->reviewDate;?></span>
+                <?php echo html::input('reviewDate', '', "class='form-control form-date'");?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->doc;?></th>
+            <td><?php echo html::input('doc', '', "class='form-control minw-60px'");?></td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->reviewScope;?></span>
+                <?php echo html::input('reviewScope', '', "class='form-control minw-60px'");?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->referenceDoc;?></th>
+            <td><?php echo html::input('referenceDoc', '', "class='form-control minw-60px'");?></td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->reviewPlace;?></span>
+                <?php echo html::input('reviewPlace', '', "class='form-control minw-60px'");?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->reference;?></th>
+            <td><?php echo html::input('reference', '', "class='form-control minw-60px'");?></td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->effort;?></span>
+                <?php echo html::input('effort', '', "class='form-control minw-60px' placeholder='{$lang->task->minute}'");?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->pages;?></th>
+            <td><?php echo html::input('pages', '', "class='form-control minw-60px'");?></td>
+            <td colspan="2">
+              <div id='mailtoGroup' class='input-group'>
+                <span class="input-group-addon"><?php echo $lang->task->conclusion;?></span>
+                <?php echo html::select('conclusion', $lang->task->conclusionList, '', 'class=form-control');?>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->task->reviewers;?></th>
+            <td colspan="2"><?php echo html::input('reviewers', '', "class='form-control minw-60px'");?></td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class='fieldset-pure create' style="display:none;">
+        <legend><?php echo $lang->task->problem;?></legend>
+        <table class='table table-form table-fixed with-border'>
+          <thead>
+          <tr class='text-center'>
+            <th class='w-20px'><?php echo $lang->task->number;?></th>
+            <th class='w-30px'><?php echo $lang->task->reviewer;?></th>
+            <th class='w-30px'><?php echo $lang->task->item;?></th>
+            <th class='w-20px'><?php echo $lang->task->line;?></th>
+            <th class='w-20px'><?php echo $lang->task->severity;?></th>
+            <th class='w-50px'><?php echo $lang->task->description;?></th>
+            <th class='w-50px'><?php echo $lang->task->proposal;?></th>
+            <th class='w-20px'><?php echo $lang->task->changed;?></th>
+            <th class='w-50px'><?php echo $lang->task->action;?></th>
+            <th class='w-20px'><?php echo $lang->task->chkd;?></th>
+            <th class='w-20px'><?php echo $lang->task->add;?></th>
+            <th class='w-20px'><?php echo $lang->task->del;?></th>
+          </tr>
+          </thead>
+          <tr class='text-center'>
+            <td>
+              <?php echo html::hidden('id[]', '', "class='form-control'");?>
+              <?php echo html::input('number[]', '', "class='form-control'");?>
+            </td>
+            <td><?php echo html::input('reviewer[]', '', "class='form-control'");?></td>
+            <td><?php echo html::input('item[]', '', "class='form-control'");?></td>
+            <td><?php echo html::input('line[]', '', "class='form-control'");?></td>
+            <td><?php echo html::select('severity[]', $lang->task->severityList, $reviewDetail->severity, 'class=form-control');?></td>
+            <td><?php echo html::textarea('description[]', '', "class='form-control' rows= '1'");?></td>
+            <td><?php echo html::textarea('proposal[]', '', "class='form-control' rows= '1'");?></td>
+            <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
+            <td><?php echo html::textarea('action[]', '', "class='form-control' rows= '1'");?></td>
+            <td><?php echo html::select('chkd[]', $lang->task->chkdList, $reviewDetail->chkd, 'class=form-control');?></td>
+            <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
+            <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
+          </tr>
+        </table>
+      </fieldset>
+      <?php /*endif;*/?>
+
       <!--新改-->
       <?php if($task->type == 'review' && $task->status == 'done'):?>
         <fieldset class='fieldset-pure'>
@@ -301,7 +416,7 @@
           </tr>  
           <tr>
             <th><?php echo $lang->task->estimate;?></th>
-            <td><?php echo html::input('estimate', $task->estimate, "class='form-control'");?></td>
+            <td><?php echo html::input('estimate', $task->estimate, "class='form-control' autocomplete='off'");?></td>
           </tr>  
           <tr>
             <th><?php echo $lang->task->consumed;?></th>
@@ -309,7 +424,7 @@
           </tr>  
           <tr>
             <th><?php echo $lang->task->left;?></th>
-            <td><?php echo html::input('left', $task->left, "class='form-control'");?></td>
+            <td><?php echo html::input('left', $task->left, "class='form-control' autocomplete='off'");?></td>
           </tr>
         </table>
       </fieldset>
@@ -326,7 +441,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->finishedDate;?></th>
-            <td><?php echo html::input('finishedDate', $task->finishedDate, 'class="form-control"');?></td>
+            <td><?php echo html::input('finishedDate', $task->finishedDate, 'class="form-control" autocomplete="off"');?></td>
           </tr>
           <tr>
             <th><?php echo $lang->task->canceledBy;?></th>
@@ -334,7 +449,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->canceledDate;?></th>
-            <td><?php echo html::input('canceledDate', $task->canceledDate, 'class="form-control"');?></td>
+            <td><?php echo html::input('canceledDate', $task->canceledDate, 'class="form-control" autocomplete="off"');?></td>
           </tr>
           <tr>
             <th><?php echo $lang->task->closedBy;?></th>
@@ -346,7 +461,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->closedDate;?></th>
-            <td><?php echo html::input('closedDate', $task->closedDate, 'class="form-control"');?></td>
+            <td><?php echo html::input('closedDate', $task->closedDate, 'class="form-control" autocomplete="off"');?></td>
           </tr>
         </table>
       </fieldset>

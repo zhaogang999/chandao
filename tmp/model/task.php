@@ -12,7 +12,7 @@ class exttaskModel extends taskModel
 public function create($projectID)
 {
     $tasksID  = array();
-    $taskFile = '';
+    $taskFiles = array();
     $taskDetail = '';
     $auditDetail = '';
     $this->loadModel('file');
@@ -142,16 +142,19 @@ public function create($projectID)
                 $taskID = $this->dao->lastInsertID();
                 if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
                 $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-                if(!empty($taskFile))
+                if(!empty($taskFiles))
                 {
-                    $taskFile->objectID = $taskID;
-                    $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
+                    foreach($taskFiles as $taskFile)
+                    {
+                        $taskFile->objectID = $taskID;
+                        $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
+                    }
                 }
                 else
                 {
                     $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                    $taskFile = $this->dao->select('*')->from(TABLE_FILE)->where('id')->eq(key($taskFileTitle))->fetch();
-                    unset($taskFile->id);
+                    $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
+                    foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
                 }
                 $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
             }
@@ -409,17 +412,35 @@ public function update($taskID)
             ->where('id')
             ->eq("$task->reviewID")
             ->fetch();
-
         //review
-        $review->id = $task->reviewID;
-        $this->dao->update(TABLE_REVIEW)->data($review)
-            ->autoCheck()
-            ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
-            ->where('id')->eq($review->id)->limit(1)->exec();
-        if(dao::isError())
+        if (!$oldReview)
         {
-            $this->dao->rollback;
-            return false;
+            //附件为空跳出
+            if($_FILES['files']['size']['0'] == '0') die(js::error($this->lang->task->error->fileNotEmpty));
+
+            $this->dao->insert(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheck($this->config->task->finish->requiredFields, 'notempty')
+                ->exec();
+            if (!dao::isError()) {
+                $task->reviewID = $this->dao->lastInsertID();
+            } else {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+        else
+        {
+            $review->id = $task->reviewID;
+            $this->dao->update(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->where('id')->eq($review->id)->limit(1)->exec();
+            if(dao::isError())
+            {
+                $this->dao->rollback;
+                return false;
+            }
         }
 
         //reviewDetail
@@ -449,7 +470,7 @@ public function update($taskID)
                 ->andWhere('deleted')->eq('0')
                 ->fetch();
             //新增评审详情
-            if ($reviewDetail["$i"]->id == '')
+            if (!$oldreViewDetail)
             {
                 unset($reviewDetail["$i"]->id);
 
@@ -484,7 +505,6 @@ public function update($taskID)
             }
         }
         //成功操作
-
         $reviewChange = common::createChanges($oldReview, $review);
         $changes = array_merge($changes,$reviewChange);
 

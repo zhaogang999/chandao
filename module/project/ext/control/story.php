@@ -30,6 +30,7 @@ class myProject extends project
 
         $queryID = ($type == 'bySearch') ? (int)$param : 0;
         $project = $this->commonAction($projectID);
+        $projectID = $project->id;
 
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -40,11 +41,6 @@ class myProject extends project
         $storyTasks = $this->task->getStoryTaskCounts(array_keys($stories), $projectID);
         $users      = $this->user->getPairs('noletter');
 
-        /* Save storyIDs session for get the pre and next story. */
-        $storyIDs = '';
-        foreach($stories as $story) $storyIDs .= ',' . $story->id;
-        $this->session->set('storyIDs', $storyIDs . ',');
-
         /* Get project's product. */
         $productID = 0;
         $productPairs = $this->loadModel('product')->getProductsByProject($projectID);
@@ -52,11 +48,16 @@ class myProject extends project
 
         /* Build the search form. */
         $modules  = array();
+        $projectModules = $this->loadModel('tree')->getTaskTreeModules($projectID, true);
         $products = $this->project->getProducts($projectID);
         foreach($products as $product)
         {
-            $productModules = $this->loadModel('tree')->getOptionMenu($product->id);
-            foreach($productModules as $moduleID => $moduleName) $modules[$moduleID] = $moduleName;
+            $productModules = $this->tree->getOptionMenu($product->id);
+            foreach($productModules as $moduleID => $moduleName)
+            {
+                if($moduleID and !isset($projectModules[$moduleID])) continue;
+                $modules[$moduleID] = ((count($products) >= 2 and $moduleID) ? $product->name : '') . $moduleName;
+            }
         }
         $actionURL    = $this->createLink('project', 'story', "projectID=$projectID&orderBy=$orderBy&type=bySearch&queryID=myQueryID");
         $branchGroups = $this->loadModel('branch')->getByProducts(array_keys($products), 'noempty');

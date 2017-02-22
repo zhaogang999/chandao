@@ -87,6 +87,18 @@
         <div class='article-content'><?php echo $task->storyVerify;?></div>
       </fieldset>
       <?php endif;?>
+
+      <?php if(isset($task->cases) and $task->cases):?>
+              <fieldset>
+                  <legend><?php echo $lang->task->case;?></legend>
+                  <div class='article-content'>
+                      <ul class='list-unstyled'>
+                        <?php foreach($task->cases as $caseID => $case) echo '<li>' . html::a($this->createLink('testcase', 'view', "caseID=$caseID", '', true), "#$caseID " . $case, '', "data-toggle='modal' data-type='iframe' data-width='90%'") . '</li>';?>
+                      </ul>
+                  </div>
+              </fieldset>
+      <?php endif;?>
+
       <?php echo $this->fetch('file', 'printFiles', array('files' => $task->files, 'fieldset' => 'true'));?>
 <!--新增-->
       <?php if($task->source == 'QA'):?>
@@ -356,7 +368,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->pri;?></th>
-            <td><span class='<?php echo 'pri' . zget($lang->task->priList, $task->pri);?>'><?php echo zget($lang->task->priList, $task->pri)?></span></td>
+            <td><span class='<?php echo 'pri' . zget($lang->task->priList, $task->pri);?>'><?php echo $task->pri == '0' ? '' : zget($lang->task->priList, $task->pri)?></span></td>
           </tr>
           <tr>
             <th><?php echo $lang->task->mailto;?></th>

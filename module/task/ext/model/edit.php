@@ -245,17 +245,35 @@ public function update($taskID)
             ->where('id')
             ->eq("$task->reviewID")
             ->fetch();
-
         //review
-        $review->id = $task->reviewID;
-        $this->dao->update(TABLE_REVIEW)->data($review)
-            ->autoCheck()
-            ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
-            ->where('id')->eq($review->id)->limit(1)->exec();
-        if(dao::isError())
+        if (!$oldReview)
         {
-            $this->dao->rollback;
-            return false;
+            //附件为空跳出
+            if($_FILES['files']['size']['0'] == '0') die(js::error($this->lang->task->error->fileNotEmpty));
+
+            $this->dao->insert(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheck($this->config->task->finish->requiredFields, 'notempty')
+                ->exec();
+            if (!dao::isError()) {
+                $task->reviewID = $this->dao->lastInsertID();
+            } else {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+        else
+        {
+            $review->id = $task->reviewID;
+            $this->dao->update(TABLE_REVIEW)->data($review)
+                ->autoCheck()
+                ->batchCheckIF($task->status != 'cancel', $this->config->task->edit->requiredFields, 'notempty')
+                ->where('id')->eq($review->id)->limit(1)->exec();
+            if(dao::isError())
+            {
+                $this->dao->rollback;
+                return false;
+            }
         }
 
         //reviewDetail
@@ -285,7 +303,7 @@ public function update($taskID)
                 ->andWhere('deleted')->eq('0')
                 ->fetch();
             //新增评审详情
-            if ($reviewDetail["$i"]->id == '')
+            if (!$oldreViewDetail)
             {
                 unset($reviewDetail["$i"]->id);
 
@@ -320,7 +338,6 @@ public function update($taskID)
             }
         }
         //成功操作
-
         $reviewChange = common::createChanges($oldReview, $review);
         $changes = array_merge($changes,$reviewChange);
 

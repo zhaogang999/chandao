@@ -12,6 +12,8 @@
 ?>
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/tablesorter.html.php';?>
+<?php js::set('moduleID', ($type == 'byModule' ? $param : 0));?>
+<?php js::set('productID', ($type == 'byProduct' ? $param : 0));?>
 <?php js::set('confirmUnlinkStory', $lang->project->confirmUnlinkStory)?>
 <div id='titlebar'>
   <div class='heading'><?php echo html::icon($lang->icons['story']);?> <?php echo $lang->project->story;?></div>
@@ -97,7 +99,7 @@
           <td><?php echo $users[$story->openedBy];?></td>
           <td><?php echo $users[$story->assignedTo];?></td>
           <td><?php echo $story->estimate;?></td>
-          <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
+          <td class='story-<?php echo $story->status;?>'><?php echo zget($lang->story->statusList, $story->status);?></td>
           <td><?php echo $lang->story->stageList[$story->stage];?></td>
           <td class='linkbox'>
             <?php
@@ -141,7 +143,7 @@
           <td colspan='10'>
             <div class='table-actions clearfix'>
             <?php
-            $storyInfo = sprintf($lang->project->productStories, inlink('linkStory'));
+            $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));
             if(count($stories))
             {
               if($canBatchEdit or $canBatchClose or $canBatchChangeProject) echo html::selectButton();
