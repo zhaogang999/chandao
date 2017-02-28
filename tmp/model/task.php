@@ -78,7 +78,7 @@ public function create($projectID)
             $this->dao->begin();
             $this->dao->insert(TABLE_TASK)->data($taskDetail)
                 ->autoCheck()
-                ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
                 ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
                 ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $taskDetail->estStarted)
                 ->exec();
@@ -102,7 +102,7 @@ public function create($projectID)
 
                 $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
                     ->autoCheck()
-                    ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                    ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
                     ->exec();
                 if (!dao::isError()) {
                     $auditDetail["$i"]->id = $this->dao->lastInsertID();
@@ -132,7 +132,7 @@ public function create($projectID)
             //源代码
             $this->dao->insert(TABLE_TASK)->data($taskDetail)
                 ->autoCheck()
-                ->batchCheck($this->config->task->create->requiredFields, 'notempty')
+                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
                 ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
                 ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
                 ->exec();
