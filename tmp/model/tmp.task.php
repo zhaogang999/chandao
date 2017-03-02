@@ -1,6 +1,6 @@
 <?php
 helper::import('F:\zentao\chandao\module\task\model.php');
-class exttaskModel extends taskModel 
+class tmpExttaskModel extends taskModel 
 {
 /**
  * Create a task.
@@ -734,4 +734,14 @@ public function finish($taskID)
         if(!dao::isError()) return common::createChanges($oldTask, $task);
     }
 }
+public function start($taskID)
+{
+    return $this->loadExtension('gantt')->start($taskID);
+}
+
+public function finish($taskID)
+{
+    return $this->loadExtension('gantt')->finish($taskID);
+}
+//**//
 }

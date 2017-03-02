@@ -1,0 +1,112 @@
+---
+name: Gantt Chart
+code: gantt
+type: extension
+copyright: >
+  QingDao Nature Easy Soft Network
+  Technology Co.,LTD
+site: http://www.zentao.net
+author: 'shiyangyang<shiyangyangwork@yahoo.cn>'
+abstract: Zentao gantt chart extension
+desc: >
+  This extension can view gantt chart, and
+  maintenance relation among tasks.
+install: |
+  1. Install through the buildin extension manager.
+    1.1 Login to zentao system as administrator, visit the admin->extension
+    1.2 Go to the obtain page, search hellozentao.
+    1.3 Click the AutoInstall and begin the installation.
+  2. Manual install. Unzip this package and copy files under module directory to the zentao/module.
+license: |
+  The “software” is developed by Qingdao Nature Easy Soft Network Technology Co., Ltd (hereinafter referred to as Nature Easy Soft ). If you do not accept terms and conditions of this license, you do not have the right to download, install or use the software and its related service. If you continue installing it, it will be deemed as your acceptance of this license and agreed to accept its terms and conditions. You shall not reproduce, duplicate, copy, sell, trade or resell the software for any purpose, if not authorized.
+  
+  The licensed software is provided to users, as well as instructions to install and use the software. Users have the permission to use the software. However, it is not guaranteed that the software is permanently free.
+  Users with licensed software own all data of members, products, orders and related information in the system and bear the related legal obligations.
+  Under one license the user is granted the right to install, use, display and run the software on one computer which means a hardware system with a storage device to run the software.
+  If any unstated rights, they all belong to Nature Easy Soft. If the user want to use those rights, written consent from Nature Easy Soft has to be obtained.
+  Except what have been stated in this license, terms and conditions of other Nature Easy Soft service are not specified. Please contact us to know about the terms and conditions of service mentioned above, for there are separate licenses concerning it.
+  
+  Nature Easy Soft reserved the right of the final interpretation of this license.
+releases:
+  2.6:
+    charge: business
+    changelog: 修复Bug
+    date: 2016-11-14
+    zentao:
+      compatible: 8.3,8.3.1,8.4,8.4.1,9.0.beta,9.0,9.0.1
+      incompatible:
+    depends: null
+    conflicts: null
+  2.5:
+    zentaoversion: 8.2.3
+    charge: business
+    changelog: 调整甘特图显示。
+    date: 2016-06-24
+  2.4:
+    zentaoversion: 8.2
+    charge: business
+    changelog: 修复下拉菜单选中错误。
+    date: 2016-05-18
+  2.3:
+    zentaoversion: 8.1
+    charge: business
+    changelog: 增加表索引，适应开源版8.1。
+    date: 2016-03-15
+  2.2:
+    zentaoversion: 7.1
+    charge: business
+    changelog: 兼容7.1的二次开发功能。
+    date: 2015-03-17
+  2.1:
+    zentaoversion: 7.0
+    charge: business
+    changelog: 修复Bug
+    date: 2015-02-06
+  2.0:
+    zentaoversion: 6.0,6.1
+    charge: business
+    changelog: 增加颜色说明。
+    date: 2014-08-06
+  1.9:
+    zentaoversion: 6.0
+    charge: business
+    changelog: 将表名改为小写。
+    date: 2014-06-20
+  1.8:
+    zentaoversion: 5.1,5.2.1,5.3
+    charge: business
+    changelog: 修复图标问题。
+    date: 2013-03-26
+  1.7:
+    zentaoversion: 5.1
+    charge: business
+    changelog: >
+      将input替换hidden，不用样式隐藏。
+    date: 2013-10-10
+  1.6:
+    zentaoversion: 4.2.beta,5.0.beta1,5.0.beta2,5.0
+    charge: business
+    changelog: >
+      适用开源版4.2，去除company字段。
+    date: 2013-09-03
+  1.5:
+    zentaoversion: 4.0,4.0.1,4.1
+    charge: business
+    changelog: >
+      甘特图的宽度控制下，和页面的宽度一样宽。
+    date: 2013-05-07
+  1.4:
+    zentaoversion: 4.0
+    charge: business
+    changelog: 兼容4.0.beta1.
+    date: 2013-01-05
+  1.3:
+    zentaoversion: 3.3
+    charge: business
+    changelog: 添加默认权限。
+    date: 2012-09-02
+  1.2:
+    zentaoversion: 3.2,3.2.1,3.3
+    charge: business
+    changelog: Fix a bug.
+    date: 2012-07-12
