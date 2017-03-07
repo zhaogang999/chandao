@@ -189,12 +189,12 @@
             <td><?php echo html::input('reviewer[]', '', "class='form-control'");?></td>
             <td><?php echo html::input('item[]', '', "class='form-control'");?></td>
             <td><?php echo html::input('line[]', '', "class='form-control'");?></td>
-            <td><?php echo html::select('severity[]', $lang->task->severityList, $reviewDetail->severity, 'class=form-control');?></td>
+            <td><?php echo html::select('severity[]', $lang->task->severityList, '', 'class=form-control');?></td>
             <td><?php echo html::textarea('description[]', '', "class='form-control' rows= '1'");?></td>
             <td><?php echo html::textarea('proposal[]', '', "class='form-control' rows= '1'");?></td>
-            <td><?php echo html::select('changed[]', $lang->task->changedList, $reviewDetail->changed, 'class=form-control');?></td>
+            <td><?php echo html::select('changed[]', $lang->task->changedList, '', 'class=form-control');?></td>
             <td><?php echo html::textarea('action[]', '', "class='form-control' rows= '1'");?></td>
-            <td><?php echo html::select('chkd[]', $lang->task->chkdList, $reviewDetail->chkd, 'class=form-control');?></td>
+            <td><?php echo html::select('chkd[]', $lang->task->chkdList, '', 'class=form-control');?></td>
             <td><a href='javascript:;' class='add'><i class='icon-plus'></i></a></td>
             <td><a href='javascript:;' class='del'><i class='icon icon-remove'></i></a></td>
           </tr>

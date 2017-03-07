@@ -527,70 +527,71 @@ public function createFromImport($productID)
 {
     return $this->loadExtension('excel')->createFromImport($productID);
 }
-/**
- * Finish a task.
- *
- * @param  int      $taskID
- * @access public
- * @return void
- */
+public function start($taskID)
+{
+    return $this->loadExtension('gantt')->start($taskID);
+}
+
 public function finish($taskID)
 {
-    $emptyReviewDetail  = '';
-    $reviewDetail       = array();
-    $emptyReview        = '';
-    $review             = '';
-    $taskDetail         = '';
-    $estimate           = '';
-
-    $emptyReviewDetail->reviewID = '';
-    $emptyReviewDetail->number = '';
-    $emptyReviewDetail->reviewer = '';
-    $emptyReviewDetail->item = '';
-    $emptyReviewDetail->line = '';
-    $emptyReviewDetail->severity = '';
-    $emptyReviewDetail->description = '';
-    $emptyReviewDetail->proposal = '';
-    $emptyReviewDetail->changed = '';
-    $emptyReviewDetail->action = '';
-    $emptyReviewDetail->chkd = '';
-
-    $oldTask = $this->getById($taskID);
-    $now  = helper::now();
-    $task = fixer::input('post')
-        ->setDefault('left', 0)
-        ->setDefault('assignedTo',   $oldTask->openedBy)
-        ->setDefault('assignedDate', $now)
-        ->setDefault('status', 'done')
-        ->setDefault('finishedBy, lastEditedBy', $this->app->user->account)
-        ->setDefault('finishedDate, lastEditedDate', $now)
-        ->remove('comment,files,labels')
-        ->get();
-
-    if($task->finishedDate == substr($now, 0, 10)) $task->finishedDate = $now;
-    if(!is_numeric($task->consumed)) die(js::error($this->lang->task->error->consumedNumber));
-
-    /* Record consumed and left. */
-    $consumed = $task->consumed - $oldTask->consumed;
-    if($consumed < 0) die(js::error($this->lang->task->error->consumedSmall));
-    /*$estimate = fixer::input('post')
-        ->setDefault('account', $this->app->user->account)
-        ->setDefault('task', $taskID)
-        ->setDefault('date', date(DT_DATE1))
-        ->setDefault('left', 0)
-        ->remove('finishedDate,comment,assignedTo,files,labels,consumed')
-        ->get();*/
-    $estimate->uid = $task->uid;
-    $estimate->account = $this->app->user->account;
-    $estimate->task = $taskID;
-    $estimate->date = date(DT_DATE1);
-    $estimate->left = 0;
-    $estimate->consumed = $consumed;
-    if($estimate->consumed) $this->addTaskEstimate($estimate);
-
     $taskInfo = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq("$taskID")->fetch();
+
     if ($taskInfo->type == 'review')
     {
+        $emptyReviewDetail  = '';
+        $reviewDetail       = array();
+        $emptyReview        = '';
+        $review             = '';
+        $taskDetail         = '';
+        $estimate           = '';
+    
+        $emptyReviewDetail->reviewID = '';
+        $emptyReviewDetail->number = '';
+        $emptyReviewDetail->reviewer = '';
+        $emptyReviewDetail->item = '';
+        $emptyReviewDetail->line = '';
+        $emptyReviewDetail->severity = '';
+        $emptyReviewDetail->description = '';
+        $emptyReviewDetail->proposal = '';
+        $emptyReviewDetail->changed = '';
+        $emptyReviewDetail->action = '';
+        $emptyReviewDetail->chkd = '';
+    
+        $oldTask = $this->getById($taskID);
+        $now  = helper::now();
+        $task = fixer::input('post')
+            ->setDefault('left', 0)
+            ->setDefault('assignedTo',   $oldTask->openedBy)
+            ->setDefault('assignedDate', $now)
+            ->setDefault('status', 'done')
+            ->setDefault('finishedBy, lastEditedBy', $this->app->user->account)
+            ->setDefault('finishedDate, lastEditedDate', $now)
+            ->remove('comment,files,labels')
+            ->get();
+    
+        if($task->finishedDate == substr($now, 0, 10)) $task->finishedDate = $now;
+        if(!is_numeric($task->consumed)) die(js::error($this->lang->task->error->consumedNumber));
+    
+        /* Record consumed and left. */
+        $consumed = $task->consumed - $oldTask->consumed;
+        if($consumed < 0) die(js::error($this->lang->task->error->consumedSmall));
+        /*$estimate = fixer::input('post')
+            ->setDefault('account', $this->app->user->account)
+            ->setDefault('task', $taskID)
+            ->setDefault('date', date(DT_DATE1))
+            ->setDefault('left', 0)
+            ->remove('finishedDate,comment,assignedTo,files,labels,consumed')
+            ->get();*/
+        $estimate->uid = $task->uid;
+        $estimate->account = $this->app->user->account;
+        $estimate->task = $taskID;
+        $estimate->date = date(DT_DATE1);
+        $estimate->left = 0;
+        $estimate->consumed = $consumed;
+        if($estimate->consumed) $this->addTaskEstimate($estimate);
+    
+
+        
         $taskDetail->consumed = $task->consumed;
         $taskDetail->assignedTo = $task->assignedTo;
         $taskDetail->finishedDate = $task->finishedDate;
@@ -635,7 +636,7 @@ public function finish($taskID)
 
         if(!is_numeric($task->effort)) die(js::error($this->lang->task->error->effortNumber));
         if(!is_numeric($task->pages)) die(js::error($this->lang->task->error->pagesNumber));
-        
+
         //添加评审
         //1.task
         $this->dao->begin();
@@ -724,14 +725,8 @@ public function finish($taskID)
     }
     else
     {
-        //源代码，非评审
-        $this->dao->update(TABLE_TASK)->data($task)
-            ->autoCheck()
-            ->check('consumed', 'notempty')
-            ->where('id')->eq((int)$taskID)->exec();
-
-        if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
-        if(!dao::isError()) return common::createChanges($oldTask, $task);
+        return $this->loadExtension('gantt')->finish($taskID);
     }
 }
+//**//
 }

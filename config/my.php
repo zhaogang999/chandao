@@ -11,12 +11,8 @@ $config->db->prefix      = 'zt_';
 $config->webRoot         = getWebRoot();
 $config->default->lang   = 'zh-cn';
 
-define('TABLE_REVIEW',         '`' . $config->db->prefix . 'review`');
-define('TABLE_REVIEWDETAIL',    '`' . $config->db->prefix . 'reviewDetail`');
-define('TABLE_QAAUDIT',    '`' . $config->db->prefix . 'qaaudit`');
-
-$config->objectTables['review']         = TABLE_REVIEW;
-$config->objectTables['reviewDetail']   = TABLE_REVIEWDETAIL;
-$config->objectTables['qaaudit']   = TABLE_QAAUDIT;
+if(!defined('TABLE_REVIEW')) define('TABLE_REVIEW', '`' . $config->db->prefix . 'review`');
+if(!defined('TABLE_REVIEWDETAIL')) define('TABLE_REVIEWDETAIL', '`' . $config->db->prefix . 'reviewDetail`');
+if(!defined('TABLE_QAAUDIT')) define('TABLE_QAAUDIT', '`' . $config->db->prefix . 'qaaudit`');
 
 $config->timeout       = 60000;
