@@ -178,10 +178,10 @@ public function update($taskID)
     //新增
     $reviewDetail = array();
     $auditDetail = array();
-    $taskDetail = '';
+    $taskDetail = new stdclass();
     $review = '';
-    $emptyReviewDetail = '';
-    $emptyAuditDetail = '';
+    $emptyReviewDetail = new stdclass();
+    $emptyAuditDetail = new stdclass();
     $reviewDetailChanges = array();
     $changes = array();
 

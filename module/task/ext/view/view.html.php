@@ -144,7 +144,7 @@
           <?php endif;?>
         </fieldset>
       <?php endif;?>
-      <?php if($review != ''):?>
+      <?php if(isset($review)):?>
         <fieldset>
           <legend><?php echo $lang->task->review;?></legend>
           <table class='table table-form with-border'>

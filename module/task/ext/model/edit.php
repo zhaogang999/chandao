@@ -13,10 +13,11 @@ public function update($taskID)
     $auditDetail = array();
     $taskDetail = '';
     $review = '';
-    $emptyReviewDetail = '';
-    $emptyAuditDetail = '';
+    $emptyReviewDetail = new stdclass();
+    $emptyAuditDetail = new stdclass();
     $reviewDetailChanges = array();
     $changes = array();
+    $now  = helper::now();
 
     $emptyReviewDetail->reviewID = '';
     $emptyReviewDetail->number = '';
@@ -99,7 +100,7 @@ public function update($taskID)
     $taskDetail->project = $task->project;
     $taskDetail->left = $task->left;
     $taskDetail->status = $task->status;
-
+var_dump($task);die;
     if ($this->post->story != false and $this->post->story != $oldTask->story)
     {
         $taskDetail->storyVersion = $task->storyVersion;
