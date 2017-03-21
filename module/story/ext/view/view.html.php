@@ -361,6 +361,12 @@
                 <td class='pd-0'>
                   <ul class='list-unstyled'>
                     <?php
+                    /*细分需求双向关联*/
+                    if ($parentStory)
+                    {
+                        echo '<li>' . html::a(inlink('view', "storyID=$parentStory->id"), $lang->story->parentStory. " #$parentStory->id " . $parentStory->title) . '</li>';
+                    }
+
                     $childStories = explode(',', $story->childStories) ;    
                     foreach($childStories as $childStoryID)
                     {

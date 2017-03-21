@@ -14,6 +14,8 @@ class myStory extends story
     {
         $storyID = (int)$storyID;
         $story   = $this->story->getById($storyID, $version, true);
+        //细分需求相互关联 
+        $parentStory = $this->dao->select('id,title')->from(TABLE_STORY)->where('childStories')->like("%$storyID%")->fetch();
         //新增
         unset($story->tasks);
         $story->tasks  = $this->dao->select('id, name, assignedTo, project, type, status, consumed, `left`')->from(TABLE_TASK)->where('story')->eq($storyID)->andWhere('deleted')->eq(0)->orderBy('id DESC')->fetchGroup('project');
@@ -42,6 +44,11 @@ class myStory extends story
         $position[] = html::a($this->createLink('product', 'browse', "product=$product->id&branch=$story->branch"), $product->name);
         $position[] = $this->lang->story->common;
         $position[] = $this->lang->story->view;
+        //细分需求相互关联
+        if ($parentStory)
+        {
+            $this->view->parentStory = $parentStory;
+        }
 
         $this->view->title      = $title;
         $this->view->position   = $position;

@@ -48,6 +48,11 @@ class excelTask extends taskModel
             $taskData->estStarted   = empty($data->estStarted[$key]) ? '0000-00-00' : $data->estStarted[$key];
             $taskData->deadline     = empty($data->deadline[$key]) ? '0000-00-00' : $data->deadline[$key];
 
+            //完善任务导入功能，增加指派给
+            $assingedToAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->assignedTo[$key]))->fetch();
+            $taskData->assignedTo  =  empty($assingedToAccount)?'':$assingedToAccount->account;
+            $taskData->assignedDate  = $now;
+
             if(isset($this->config->task->create->requiredFields))
             {
                 $requiredFields = explode(',', $this->config->task->create->requiredFields);
@@ -109,8 +114,10 @@ class excelTask extends taskModel
                 if(!dao::isError())
                 {
                     $taskID = $this->dao->lastInsertID();
-                    $this->loadModel('action')->create('task', $taskID, 'Opened', '');
+                    $actionID = $this->loadModel('action')->create('task', $taskID, 'opened', '');
                     $tasksID[$key] = $taskID;
+                    //发信
+                    $this->sendmail($taskID, $actionID);
                 }
                 else
                 {

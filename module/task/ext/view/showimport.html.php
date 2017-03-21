@@ -44,6 +44,8 @@
     <td><?php echo html::input("estStarted[$key]", !empty($task->estStarted) ? $task->estStarted : ((!empty($task->id) and isset($tasks[$task->id])) ? $tasks[$task->id]->estStarted : ''), "class='form-control date'")?></td>
     <td><?php echo html::input("deadline[$key]", !empty($task->deadline) ? $task->deadline : ((!empty($task->id) and isset($tasks[$task->id])) ? $tasks[$task->id]->deadline : ''), "class='form-control date'")?></td>
     <td><?php echo html::textarea("desc[$key]", $task->desc, "class='form-control' cols='50' rows='1'")?></td>
+    <!--新增隐藏域-->
+    <?php echo html::hidden("assignedTo[$key]", !empty($task->assignedTo) ? $task->assignedTo : ((!empty($task->id) and isset($tasks[$task->id])) ? $tasks[$task->id]->assignedTo : ''), "class='form-control date'")?>
   </tr>
   <?php endforeach;?>
 </tbody>
