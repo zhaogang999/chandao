@@ -531,7 +531,6 @@ class project extends control
         /* Load these models. */
         $this->loadModel('story');
         $this->loadModel('user');
-        $this->loadModel('task');
         $this->app->loadLang('testcase');
 
         /* Save session. */
@@ -554,7 +553,6 @@ class project extends control
 
         $stories = $this->story->getProjectStories($projectID, $sort, $type, $param, $pager);
         $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story', false);
-        $storyTasks = $this->task->getStoryTaskCounts(array_keys($stories), $projectID);
         $users      = $this->user->getPairs('noletter');
 
         /* Get project's product. */
@@ -584,6 +582,12 @@ class project extends control
         $position[] = html::a($this->createLink('project', 'browse', "projectID=$projectID"), $project->name);
         $position[] = $this->lang->project->story;
 
+        /* Count T B C */
+        $storyIdList = array_keys($stories);;
+        $storyTasks = $this->loadModel('task')->getStoryTaskCounts($storyIdList,$projectID);
+        $storyBugs  = $this->loadModel('bug')->getStoryBugCounts($storyIdList,$projectID);
+        $storyCases = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
+
         /* Assign. */
         $this->view->title        = $title;
         $this->view->position     = $position;
@@ -593,9 +597,11 @@ class project extends control
         $this->view->orderBy      = $orderBy;
         $this->view->type         = $type;
         $this->view->param        = $param;
-        $this->view->storyTasks   = $storyTasks;
         $this->view->moduleTree   = $this->loadModel('tree')->getProjectStoryTreeMenu($projectID, $startModuleID = 0, array('treeModel', 'createProjectStoryLink'));
         $this->view->tabID        = 'story';
+        $this->view->storyTasks   = $storyTasks;
+        $this->view->storyBugs    = $storyBugs;
+        $this->view->storyCases   = $storyCases;
         $this->view->users        = $users;
         $this->view->pager        = $pager;
         $this->view->branchGroups = $branchGroups;
@@ -1873,31 +1879,14 @@ class project extends control
         $this->view->module    = $module;
         $this->view->method    = $method;
         $this->view->extra     = $extra;
-        $this->view->projects  = $this->dao->select('*')->from(TABLE_PROJECT)->where('id')->in(array_keys($this->projects))->orderBy('order desc')->fetchAll();
-        $this->display();
-    }
 
-    /**
-     * The results page of search.
-     *
-     * @param  string  $keywords
-     * @param  string  $module
-     * @param  string  $method
-     * @param  mix     $extra
-     * @access public
-     * @return void
-     */
-    public function ajaxGetMatchedItems($keywords, $module, $method, $extra)
-    {
-        $projects = $this->dao->select('*')->from(TABLE_PROJECT)->where('deleted')->eq(0)->andWhere('name')->like("%$keywords%")->orderBy('order desc')->fetchAll();
-        foreach($projects as $key => $project)
-        {
-            if(!$this->project->checkPriv($project)) unset($projects[$key]);
-        }
+        $projects = $this->dao->select('*')->from(TABLE_PROJECT)->where('id')->in(array_keys($this->projects))->orderBy('order desc')->fetchAll();
+        $projectPairs = array();
+        foreach($projects as $project) $projectPairs[$project->id] = $project->name;
+        $projectsPinyin = common::convert2Pinyin($projectPairs);
+        foreach($projects as $key => $project) $project->key = $projectsPinyin[$project->name];
 
-        $this->view->link     = $this->project->getProjectLink($module, $method, $extra);
         $this->view->projects = $projects;
-        $this->view->keywords = $keywords;
         $this->display();
     }
 
@@ -1961,5 +1950,17 @@ class project extends control
         $this->view->status        = $status;
 
         $this->display();
+    }
+
+    /**
+     * Doc for compatible.
+     * 
+     * @param  int    $projectID 
+     * @access public
+     * @return void
+     */
+    public function doc($projectID)
+    {
+        $this->locate($this->createLink('doc', 'objectLibs', "type=project&objectID=$projectID&from=project"));
     }
 }

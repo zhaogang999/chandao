@@ -290,6 +290,11 @@ class actionModel extends model
                 $name = $this->dao->select('name')->from(TABLE_TESTTASK)->where('id')->eq($action->objectID)->fetch('name');
                 if($name) $action->extra = html::a(helper::createLink('testtask', 'view', "testtaskID=$action->objectID"), "#$action->objectID " . $name);
             }
+            elseif($actionName == 'fromlib' and $action->objectType == 'case')
+            {
+                $name = $this->dao->select('name')->from(TABLE_TESTSUITE)->where('id')->eq($action->extra)->fetch('name');
+                if($name) $action->extra = html::a(helper::createLink('testsuite', 'library', "libID=$action->extra"), $name);
+            }
             elseif(($actionName == 'closed' and $action->objectType == 'story') or ($actionName == 'resolved' and $action->objectType == 'bug'))
             {
                 $action->appendLink = '';
@@ -368,7 +373,7 @@ class actionModel extends model
             ->andWhere('extra')->eq($extra)
             ->orderBy($orderBy)->page($pager)->fetchAll();
         if(!$trashes) return array();
-        
+
         /* Group trashes by objectType, and get there name field. */
         foreach($trashes as $object) 
         {
@@ -413,6 +418,7 @@ class actionModel extends model
      */
     public function logHistory($actionID, $changes)
     {
+        if(empty($actionID)) return false;
         foreach($changes as $change) 
         {
             $change['action'] = $actionID;
@@ -429,6 +435,8 @@ class actionModel extends model
      */
     public function printAction($action)
     {
+        if(!isset($action->objectType) or !isset($action->action)) return false;
+
         $objectType = $action->objectType;
         $actionType = strtolower($action->action);
 
@@ -524,7 +532,7 @@ class actionModel extends model
             $condition = "(product =',0,' AND project = '0')";
             if($projectCondition) $condition .= ' OR ' . $projectCondition;
             if($productCondition) $condition .= ' OR ' . $productCondition;
-            if(strpos($this->app->company->admins, ',' . $this->app->user->account . ',') !== false) $condition = 1; 
+            if($this->app->user->admin) $condition = 1; 
         }
 
         $this->loadModel('doc');
@@ -622,7 +630,7 @@ class actionModel extends model
      */
     public function getBySQL($sql, $orderBy, $pager = null)
     {
-         return $actions = $this->dao->select('*')->from(TABLE_ACTION)
+        return $actions = $this->dao->select('*')->from(TABLE_ACTION)
             ->where($sql)
             ->orderBy($orderBy)
             ->page($pager)
@@ -664,11 +672,11 @@ class actionModel extends model
                     if($todo->type == 'bug')  $todo->name = $this->dao->findById($todo->idvalue)->from(TABLE_BUG)->fetch('title');
                     if($todo->private == 1 and $todo->account != $this->app->user->account) 
                     {
-                       $objectNames[$objectType][$id] = $this->lang->todo->thisIsPrivate;
+                        $objectNames[$objectType][$id] = $this->lang->todo->thisIsPrivate;
                     }
                     else
                     {
-                       $objectNames[$objectType][$id] = $todo->name;
+                        $objectNames[$objectType][$id] = $todo->name;
                     }
                 }
             } 

@@ -145,8 +145,7 @@ class product extends control
         setcookie('productStoryOrder', $orderBy, $this->config->cookieLife, $this->config->webRoot);
 
         /* Append id for secend sort. */
-        /* set rule to number when order by plan. */
-        $sort = $this->loadModel('common')->appendOrder(strpos($orderBy, 'plan') !== false ? str_replace('plan', '`plan`+0', $orderBy) : $orderBy);
+        $sort = $this->loadModel('common')->appendOrder($orderBy);
 
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -202,6 +201,7 @@ class product extends control
         $this->view->storyBugs     = $storyBugs;
         $this->view->storyCases    = $storyCases;
         $this->view->param         = $param;
+        $this->view->products      = $this->products;
         $this->display();
     }
 
@@ -558,31 +558,14 @@ class product extends control
         $this->view->module    = $module;
         $this->view->method    = $method;
         $this->view->extra     = $extra;
-        $this->view->products  = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in(array_keys($this->products))->orderBy('`order` desc')->fetchAll();
-        $this->display();
-    }
 
-    /**
-     * The results page of search.
-     * 
-     * @param  string  $keywords 
-     * @param  string  $module 
-     * @param  string  $method 
-     * @param  mix     $extra 
-     * @access public
-     * @return void
-     */
-    public function ajaxGetMatchedItems($keywords, $module, $method, $extra)
-    {
-        $products = $this->dao->select('*')->from(TABLE_PRODUCT)->where('deleted')->eq(0)->andWhere('name')->like("%$keywords%")->orderBy('`order` desc')->fetchAll();
-        foreach($products as $key => $product)
-        {
-            if(!$this->product->checkPriv($product)) unset($products[$key]);
-        }
+        $products = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in(array_keys($this->products))->orderBy('`order` desc')->fetchAll();
+        $productPairs = array();
+        foreach($products as $product) $productPairs[$product->id] = $product->name;
+        $productsPinyin = common::convert2Pinyin($productPairs);
 
-        $this->view->link     = $this->product->getProductLink($module, $method, $extra);
-        $this->view->products = $products;
-        $this->view->keywords = $keywords;
+        foreach($products as $key => $product) $product->key = $productsPinyin[$product->name];
+        $this->view->products  = $products;
         $this->display();
     }
 
@@ -658,5 +641,17 @@ class product extends control
         $this->view->orderBy      = $orderBy;
         $this->view->status       = $status;
         $this->display();
+    }
+
+    /**
+     * Doc for compatible.
+     * 
+     * @param  int    $productID 
+     * @access public
+     * @return void
+     */
+    public function doc($productID)
+    {
+        $this->locate($this->createLink('doc', 'objectLibs', "type=product&objectID=$productID&from=product"));
     }
 }

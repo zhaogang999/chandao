@@ -30,7 +30,7 @@
           <th class='w-30px' title='<?php echo $lang->testcase->bugs?>'> <?php echo $lang->testcase->bugsAB;?></th>
           <th class='w-30px' title='<?php echo $lang->testcase->results?>'> <?php echo $lang->testcase->resultsAB;?></th>
           <th class='w-30px' title='<?php echo $lang->testcase->stepNumber?>'> <?php echo $lang->testcase->stepNumberAB;?></th>
-          <th class='w-150px {sorter:false}'><?php echo $lang->actions;?></th>
+          <th class='<?php echo $config->testcase->needReview ? 'w-170px' : 'w-150px'?> {sorter:false}'><?php echo $lang->actions;?></th>
           <?php endif;?>
         </tr>
       </thead>
@@ -38,7 +38,7 @@
       <tbody>
       <?php foreach($cases as $case):?>
       <tr class='text-center'>
-        <?php $viewLink = inlink('view', "caseID=$case->id");?>
+        <?php $viewLink = inlink('view', "caseID=$case->id&version=$case->version");?>
         <td class='cell-id'>
           <input type='checkbox' name='caseIDList[]'  value='<?php echo $case->id;?>'/> 
           <?php echo html::a($viewLink, sprintf('%03d', $case->id));?>
@@ -77,8 +77,9 @@
         <td><?php echo $case->stepNumber;?></td>
         <td class='text-right'>
           <?php
-          common::printIcon('testtask', 'runCase', "runID=0&caseID=$case->id&version=$case->version", '', 'list', 'play', '', 'runCase iframe');
-          common::printIcon('testtask', 'results', "runID=0&caseID=$case->id", '', 'list', 'list-alt', '', 'results iframe');
+          common::printIcon('testtask', 'runCase', "runID=0&caseID=$case->id&version=$case->version", '', 'list', 'play', '', 'runCase iframe', false, "data-width='95%'");
+          common::printIcon('testtask', 'results', "runID=0&caseID=$case->id", '', 'list', 'list-alt', '', 'results iframe', false, "data-width='95%'");
+          if($config->testcase->needReview) common::printIcon('testcase', 'review',  "caseID=$case->id", $case, 'list', 'review', '', 'iframe');
           common::printIcon('testcase', 'edit',    "caseID=$case->id", $case, 'list');
           common::printIcon('testcase', 'create',  "productID=$case->product&branch=$case->branch&moduleID=$case->module&from=testcase&param=$case->id", $case, 'list', 'copy');
 
@@ -88,7 +89,7 @@
               echo html::a("javascript:ajaxDelete(\"$deleteURL\",\"caseList\",confirmDelete)", '<i class="icon-remove"></i>', '', "title='{$lang->testcase->delete}' class='btn-icon'");
           }
 
-          common::printIcon('testcase', 'createBug', "product=$case->product&branch=$case->branch&extra=caseID=$case->id,version=$case->version,runID=", $case, 'list', 'bug', '', 'iframe');
+          common::printIcon('testcase', 'createBug', "product=$case->product&branch=$case->branch&extra=caseID=$case->id,version=$case->version,runID=", $case, 'list', 'bug', '', 'iframe',false,"data-width='95%'");
           ?>
         </td>
         <?php endif;?>

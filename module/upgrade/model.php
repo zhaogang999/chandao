@@ -164,6 +164,12 @@ class upgradeModel extends model
             case '9_0_beta':
                 $this->execSQL($this->getUpgradeFile('9.0.beta'));
                 $this->adjustPriv9_0();
+            case '9_0':
+                $this->fixProjectProductData();
+            case '9_0_1':
+                $this->execSQL($this->getUpgradeFile('9.0.1'));
+                $this->addBugDeadlineToCustomFields();
+                $this->adjustPriv9_0_1();
         }
 
         $this->deletePatch();
@@ -251,6 +257,8 @@ class upgradeModel extends model
         case '8_4':
         case '8_4_1':     $confirmContent .= file_get_contents($this->getUpgradeFile('8.4.1'));
         case '9_0_beta':  $confirmContent .= file_get_contents($this->getUpgradeFile('9.0.beta'));
+        case '9_0':
+        case '9_0_1':     $confirmContent .= file_get_contents($this->getUpgradeFile('9.0.1'));
         }
         return str_replace('zt_', $this->config->db->prefix, $confirmContent);
     }
@@ -1212,8 +1220,7 @@ class upgradeModel extends model
                 }
 
                 $newPaths = join(',', $newPaths);
-                $newPaths = ",$newPaths,";
-                $this->dao->update(TABLE_MODULE)->set('path')->eq($newPaths)->where('id')->eq($newModuleID)->exec();
+                $this->dao->update(TABLE_MODULE)->set('path')->eq($newPaths)->set('parent')->eq($relation[$module->parent])->where('id')->eq($newModuleID)->exec();
                 $this->dao->update(TABLE_DOC)->set('module')->eq($newModuleID)->where('product')->eq($productID)->andWhere('module')->eq($moduleID)->andWhere('lib')->eq('product')->exec();
             }
             $this->dao->update(TABLE_DOC)->set('lib')->eq($libID)->where('product')->eq($productID)->exec();
@@ -1520,6 +1527,111 @@ class upgradeModel extends model
             $data->module = 'mail';
             $data->method = 'resend';
             $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+        }
+        return true;
+    }
+
+    /**
+     * Fix projectproduct data.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function fixProjectProductData()
+    {
+        $this->dao->delete()->from(TABLE_PROJECTPRODUCT)->where('product')->eq(0)->exec();
+        return true;
+    }
+
+    /**
+     * Add bug deadline for custom fields.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function addBugDeadlineToCustomFields()
+    {
+        $createFieldsItems = $this->dao->select('id, value')->from(TABLE_CONFIG)
+            ->where('module')->eq('bug')
+            ->andWhere('section')->eq('custom')
+            ->andWhere('`key`')->eq('createFields')
+            ->fetchAll();
+        $batchEditFieldsItems = $this->dao->select('id, value')->from(TABLE_CONFIG)
+            ->where('module')->eq('bug')
+            ->andWhere('section')->eq('custom')
+            ->andWhere('`key`')->eq('batchEditFields')
+            ->fetchAll();
+
+        foreach($createFieldsItems as $createFieldsItem)
+        {
+            $value = empty($createFieldsItem->value) ? 'deadline' : $createFieldsItem->value . ",deadline";
+            $this->dao->update(TABLE_CONFIG)->set('value')->eq($value)->where('id')->eq($createFieldsItem->id)->exec();
+        }
+        foreach($batchEditFieldsItems as $batchEditFieldsItem)
+        {
+            $value = empty($batchEditFieldsItem->value) ? 'deadline' : $batchEditFieldsItem->value . ",deadline";
+            $this->dao->update(TABLE_CONFIG)->set('value')->eq($value)->where('id')->eq($batchEditFieldsItem->id)->exec();
+        }
+
+        return true;
+    }
+
+    /**
+     * Adjust priv for 9.0.1. 
+     * 
+     * @access public
+     * @return bool
+     */
+    public function adjustPriv9_0_1()
+    {
+        $groups = $this->dao->select('`group`')->from(TABLE_GROUPPRIV)->where('module')->eq('testcase')->andWhere('method')->eq('edit')->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group  = $groupID;
+            $data->module = 'testcase';
+            $newMethods   = array('review', 'batchReview', 'batchCaseTypeChange', 'batchConfirmStoryChange');
+            foreach($newMethods as $method)
+            {
+                $data->method = $method;
+                $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+            }
+
+            $data->module = 'testsuite';
+            $newMethods   = array('create', 'edit', 'delete', 'linkCase', 'unlinkCase', 'batchUnlinkCases');
+            foreach($newMethods as $method)
+            {
+                $data->method = $method;
+                $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+            }
+        }
+
+        $groups = $this->dao->select('`group`')->from(TABLE_GROUPPRIV)->where('module')->eq('testtask')->andWhere('method')->eq('start')->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group  = $groupID;
+            $data->module = 'testtask';
+            $newMethods   = array('activate', 'block', 'report');
+            foreach($newMethods as $method)
+            {
+                $data->method = $method;
+                $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+            }
+        }
+
+        $groups = $this->dao->select('distinct `group`')->from(TABLE_GROUPPRIV)->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group  = $groupID;
+            $data->module = 'testsuite';
+            $newMethods   = array('index', 'browse', 'view');
+            foreach($newMethods as $method)
+            {
+                $data->method = $method;
+                $this->dao->replace(TABLE_GROUPPRIV)->data($data)->exec();
+            }
         }
         return true;
     }

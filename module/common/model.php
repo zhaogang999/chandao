@@ -104,6 +104,7 @@ class commonModel extends model
             $user->account    = 'guest';
             $user->realname   = 'guest';
             $user->role       = 'guest';
+            $user->admin      = false;
             $user->rights     = $this->loadModel('user')->authorize('guest');
             $user->groups     = array('group');
             $this->session->set('user', $user);
@@ -412,7 +413,7 @@ class commonModel extends model
             echo "<li $active data-id='$menuItem->name'><a href='$link' $active>$menuItem->text</a></li>\n";
         }
         $customLink = helper::createLink('custom', 'ajaxMenu', "module={$app->getModuleName()}&method={$app->getMethodName()}", '', true);
-        if(!commonModel::isTutorialMode() and $app->viewType != 'mhtml') echo "<li class='custom-item'><a href='$customLink' data-toggle='modal' data-type='iframe' title='$lang->customMenu' data-icon='cog' data-width='80%'><i class='icon icon-cog'></i></a></li>";
+        if(!commonModel::isTutorialMode() and $app->viewType != 'mhtml' and $app->user->account != 'guest') echo "<li class='custom-item'><a href='$customLink' data-toggle='modal' data-type='iframe' title='$lang->customMenu' data-icon='cog' data-width='80%'><i class='icon icon-cog'></i></a></li>";
         echo "</ul>\n";
     }
 
@@ -749,7 +750,7 @@ class commonModel extends model
         /* set the class. */
         if(!$icon)
         {
-            $icon = $lang->icons[$method] ? $lang->icons[$method] : $method;
+            $icon = isset($lang->icons[$method]) ? $lang->icons[$method] : $method;
         }
         if(strpos(',edit,copy,report,export,delete,', ",$method,") !== false) $module = 'common';
         $class = "icon-$module-$method";
@@ -913,18 +914,23 @@ class commonModel extends model
     /**
      * Judge Suhosin Setting whether the actual size of post data is large than the setting size.
      * 
-     * @param  int    $numberOfItems 
-     * @param  int    $columns 
+     * @param  int    $countInputVars 
+     * @static
      * @access public
-     * @return void
+     * @return bool
      */
-    public function judgeSuhosinSetting($numberOfItems, $columns)
+    public static function judgeSuhosinSetting($countInputVars)
     {
         if(extension_loaded('suhosin'))
         {
             $maxPostVars    = ini_get('suhosin.post.max_vars');
             $maxRequestVars = ini_get('suhosin.request.max_vars');
-            if($numberOfItems * $columns > $maxPostVars or $numberOfItems * $columns > $maxRequestVars) return true;
+            if($countInputVars > $maxPostVars or $countInputVars > $maxRequestVars) return true;
+        }
+        else
+        {
+            $maxInputVars = ini_get('max_input_vars');
+            if($maxInputVars and $countInputVars > (int)$maxInputVars) return true;
         }
 
         return false;
@@ -1177,8 +1183,7 @@ class commonModel extends model
         global $app, $lang;
 
         /* Check is the super admin or not. */
-        $account = ',' . $app->user->account . ',';
-        if(strpos($app->company->admins, $account) !== false) return true; 
+        if($app->user->admin) return true; 
 
         /* If not super admin, check the rights. */
         $rights  = $app->user->rights['rights'];
@@ -1306,6 +1311,49 @@ class commonModel extends model
     public static function isTutorialMode()
     {
         return (isset($_SESSION['tutorialMode']) and $_SESSION['tutorialMode']);
+    }
+
+    /**
+     * Convert items to Pinyin.
+     * 
+     * @param  array    $items 
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function convert2Pinyin($items)
+    {
+        global $app;
+        static $allConverted = array();
+        static $pinyin;
+        if(empty($pinyin)) $pinyin = $app->loadClass('pinyin');
+
+        $sign = ' aNdAnD ';
+        $notConvertedItems = array_diff($items, array_keys($allConverted));
+
+        if($notConvertedItems)
+        {
+            $convertedPinYin = $pinyin->romanize(join($sign, $notConvertedItems));
+            $itemsPinYin     = explode(trim($sign), $convertedPinYin);
+            foreach($notConvertedItems as $item)
+            {
+                $itemPinYin  = array_shift($itemsPinYin);
+                $wordsPinYin = explode("\t", trim($itemPinYin));
+
+                $abbr = '';
+                foreach($wordsPinYin as $i => $wordPinyin)
+                {
+                    if($wordPinyin) $abbr .= $wordPinyin[0];
+                }
+
+                $allConverted[$item] = strtolower(join($wordsPinYin) . ' ' . $abbr);
+            }
+        }
+
+        $convertedItems = array();
+        foreach($items as $item) $convertedItems[$item] = zget($allConverted, $item, null);
+
+        return $convertedItems;
     }
 }
 
