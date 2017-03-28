@@ -1,5 +1,5 @@
 <?php
-helper::import('F:\zentao\chandao\module\story\model.php');
+helper::import('H:\zentao\chandao\module\story\model.php');
 class extstoryModel extends storyModel 
 {
 public function setListValue($productID, $branch = 0)

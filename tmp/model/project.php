@@ -1,5 +1,5 @@
 <?php
-helper::import('F:\zentao\chandao\module\project\model.php');
+helper::import('H:\zentao\chandao\module\project\model.php');
 class extprojectModel extends projectModel 
 {
 /**

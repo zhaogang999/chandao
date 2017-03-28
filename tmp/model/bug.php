@@ -1,5 +1,5 @@
 <?php
-helper::import('F:\zentao\chandao\module\bug\model.php');
+helper::import('H:\zentao\chandao\module\bug\model.php');
 class extbugModel extends bugModel 
 {
 public function setListValue($productID, $branch = 0)
