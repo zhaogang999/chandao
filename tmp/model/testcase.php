@@ -15,16 +15,19 @@ function create($bugID)
     $case = fixer::input('post')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)
-        ->add('status', 'normal')
+        ->add('status', $this->forceReview() ? 'wait' : 'normal')
         ->add('version', 1)
         ->add('fromBug', $bugID)
         ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion((int)$this->post->story))
-        ->remove('steps,expects,files,labels')
+        ->remove('steps,expects,files,labels,stepType')
         ->setDefault('story', 0)
         ->join('stage', ',')
         ->get();
 
-    $result = $this->loadModel('common')->removeDuplicate('case', $case, "product={$case->product}");
+    $param = '';
+    if(!empty($case->lib))$param = "lib={$case->lib}";
+    if(!empty($case->product))$param = "product={$case->product}";
+    $result = $this->loadModel('common')->removeDuplicate('case', $case, $param);
     if($result['stop']) return array('status' => 'exists', 'id' => $result['duplicate']);
 
     /* value of story may be showmore. */
@@ -34,10 +37,14 @@ function create($bugID)
     {
         $caseID = $this->dao->lastInsertID();
         $this->loadModel('file')->saveUpload('testcase', $caseID);
+        $parentStepID = 0;
         foreach($this->post->steps as $stepID => $stepDesc)
         {
             if(empty($stepDesc)) continue;
+            $stepType      = $this->post->stepType;
             $step          = new stdClass();
+            $step->type    = ($stepType[$stepID] == 'item' and $parentStepID == 0) ? 'step' : $stepType[$stepID];
+            $step->parent  = ($step->type == 'item') ? $parentStepID : 0;
             $step->case    = $caseID;
             $step->version = 1;
             $step->desc    = htmlspecialchars($stepDesc);
@@ -46,6 +53,8 @@ function create($bugID)
             $step->expect  = $this->post->expects[$stepID];
 
             $this->dao->insert(TABLE_CASESTEP)->data($step)->autoCheck()->exec();
+            if($step->type == 'group') $parentStepID = $this->dao->lastInsertID();
+            if($step->type == 'step')  $parentStepID = 0;
         }
         return array('status' => 'created', 'id' => $caseID);
     }
@@ -112,19 +121,24 @@ public function update($caseID)
         ->add('lastEditedDate', $now)
         ->add('version', $version)
         ->setIF($this->post->story != false and $this->post->story != $oldCase->story, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
-        ->setDefault('story', 0)
+        ->setDefault('story,branch', 0)
         ->join('stage', ',')
-        ->remove('comment,steps,expects,files,labels')
+        ->remove('comment,steps,expects,files,labels,stepType')
         ->get();
+    if($this->forceReview() and $stepChanged) $case->status = 'wait';
     $this->dao->update(TABLE_CASE)->data($case)->autoCheck()->batchCheck($this->config->testcase->edit->requiredFields, 'notempty')->where('id')->eq((int)$caseID)->exec();
     if(!$this->dao->isError())
     {
         if($stepChanged)
         {
+            $parentStepID = 0;
             foreach($this->post->steps as $stepID => $stepDesc)
             {
                 if(empty($stepDesc)) continue;
+                $stepType = $this->post->stepType;
                 $step = new stdclass();
+                $step->type    = ($stepType[$stepID] == 'item' and $parentStepID == 0) ? 'step' : $stepType[$stepID];
+                $step->parent  = ($step->type == 'item') ? $parentStepID : 0;
                 $step->case    = $caseID;
                 $step->version = $version;
                 $step->desc    = htmlspecialchars($stepDesc);
@@ -133,6 +147,8 @@ public function update($caseID)
                 $step->expect  = $this->post->expects[$stepID];
 
                 $this->dao->insert(TABLE_CASESTEP)->data($step)->autoCheck()->exec();
+                if($step->type == 'group') $parentStepID = $this->dao->lastInsertID();
+                if($step->type == 'step')  $parentStepID = 0;
             }
         }
 

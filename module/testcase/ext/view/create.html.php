@@ -126,39 +126,84 @@
       <tr>
         <th><?php echo $lang->testcase->precondition;?></th>
         <td colspan='2'><?php echo html::textarea('precondition', $precondition, " rows='2' class='form-control'");?></td>
-      </tr>
+      </tr>  
       <tr>
         <th><?php echo $lang->testcase->steps;?></th>
         <td colspan='2'>
-          <table class='table table-form mg-0' style='border: 1px solid #ddd'>
+          <table class='table table-form mg-0 table-bordered' style='border: 1px solid #ddd'>
             <thead>
               <tr>
-                <th class='w-40px'><?php echo $lang->testcase->stepID;?></th>
+                <th class='w-40px text-right'><?php echo $lang->testcase->stepID;?></th>
                 <th width="45%"><?php echo $lang->testcase->stepDesc;?></th>
                 <th><?php echo $lang->testcase->stepExpect;?></th>
-                <th class='w-140px'><?php echo $lang->actions;?></th>
+                <th class='step-actions'><?php echo $lang->actions;?></th>
               </tr>
             </thead>
-            <?php
-            foreach($steps as $stepID => $step)
-            {
-                $stepID += 1;
-                echo "<tr id='row$stepID' class='text-center'>";
-                echo "<td class='stepID strong'>$stepID</td>";
-              /*row='1'改为row='8'*/
-                echo '<td>' . html::textarea('steps[]', $step->desc, "rows='8' class='form-control'") . '</td>';
-                /*echo '<td>' . html::textarea('expects[]', $step->expect, "rows='1' class='form-control'") . '</td>';*/
-              /*文本框加了id*/
-                echo "<td><textarea id='expects" . $stepID . "' class='form-control' name='expects[]' rows='1'>" . $step->expect . "</textarea></td>";
-
-                echo "<td class='text-left text-top'>";
-                echo "<button type='button' tabindex='-1' class='addbutton btn btn-xs' onclick='preInsert($stepID)'  title='{$lang->testcase->insertBefore}'><i class=\"icon icon-double-angle-up\"></i></button>";
-                echo "<button type='button' tabindex='-1' class='addbutton btn btn-xs' onclick='postInsert($stepID)' title='{$lang->testcase->insertAfter}'><i class=\"icon icon-double-angle-down\"></i></button>";
-                echo "<button type='button' tabindex='-1' class='delbutton btn btn-xs' onclick='deleteRow($stepID)'  title='{$lang->testcase->deleteStep}'><i class=\"icon icon-remove\"></i></button>";
-                echo "</td>";
-                echo '</tr>';
-            }
-            ?>
+            <tbody id='steps' class='sortable' data-group-name='<?php echo $lang->testcase->groupName ?>'>
+              <tr class='template step' id='stepTemplate'>
+                <td class='step-id'></td>
+                <td>
+                  <div class='input-group'>
+                    <span class='input-group-addon step-item-id'></span>
+                    <textarea rows='1' class='form-control autosize step-steps' name='steps[]'></textarea>
+                    <span class="input-group-addon step-type-toggle">
+                      <input type='hidden' name='stepType[]' value='item' class='step-type'>
+                      <div class='step-type-menu-box'>
+                        <div class='step-type-current'><span></span> <i class='caret'></i></div>
+                        <div class='step-type-menu'>
+                          <a href='javascript:;' href='step-type-option' data-value='step'><?php echo $lang->testcase->step ?></a>
+                          <a href='javascript:;' href='step-type-option' data-value='group'><?php echo $lang->testcase->group ?></a>
+                          <a href='javascript:;' href='step-type-option' data-value='item'><?php echo $lang->testcase->stepChild ?></a>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </td>
+                <td><textarea rows='1' class='form-control autosize step-expects' name='expects[]'></textarea></td>
+                <td class='step-actions'>
+                  <div class='btn-group'>
+                    <button type='button' class='btn btn-step-add'><i class='icon icon-plus'></i></button>
+                    <button type='button' class='btn btn-step-move'><i class='icon icon-move'></i></button>
+                    <button type='button' class='btn btn-step-delete'><i class='icon icon-remove'></i></button>
+                  </div>
+                </td>
+              </tr>
+              <?php foreach($steps as $stepID => $step):?>
+              <tr class='step'>
+                <td class='step-id'></td>
+                <td>
+                  <div class='input-group'>
+                    <span class='input-group-addon step-item-id'></span>
+                    <?php echo html::textarea('steps[]', $step->desc, "rows='8' class='form-control autosize step-steps'") ?>
+                    <span class='input-group-addon step-type-toggle'>
+                      <?php if(!isset($step->type)) $step->type = 'step';?>
+                      <input type='hidden' name='stepType[]' value='<?php echo $step->type;?>' class='step-type'>
+                      <div class='step-type-menu-box'>
+                        <div class='step-type-current'><span></span> <i class='caret'></i></div>
+                        <div class='step-type-menu'>
+                          <a href='javascript:;' href='step-type-option' data-value='step'><?php echo $lang->testcase->step ?></a>
+                          <a href='javascript:;' href='step-type-option' data-value='group'><?php echo $lang->testcase->group ?></a>
+                          <a href='javascript:;' href='step-type-option' data-value='item'><?php echo $lang->testcase->stepChild ?></a>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <!--增加富文本编辑器-->
+                  <textarea id="expects<?php echo $stepID;?>" class='form-control' name='expects[]' rows='1'><?php echo $step->expect;?></textarea>
+                  
+                </td>
+                <td class='step-actions'>
+                  <div class='btn-group'>
+                    <button type='button' class='btn btn-step-add'><i class='icon icon-plus'></i></button>
+                    <button type='button' class='btn btn-step-move'><i class='icon icon-move'></i></button>
+                    <button type='button' class='btn btn-step-delete'><i class='icon icon-remove'></i></button>
+                  </div>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
           </table>
         </td> 
       </tr>

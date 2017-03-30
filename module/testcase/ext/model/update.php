@@ -52,19 +52,24 @@ public function update($caseID)
         ->add('lastEditedDate', $now)
         ->add('version', $version)
         ->setIF($this->post->story != false and $this->post->story != $oldCase->story, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
-        ->setDefault('story', 0)
+        ->setDefault('story,branch', 0)
         ->join('stage', ',')
-        ->remove('comment,steps,expects,files,labels')
+        ->remove('comment,steps,expects,files,labels,stepType')
         ->get();
+    if($this->forceReview() and $stepChanged) $case->status = 'wait';
     $this->dao->update(TABLE_CASE)->data($case)->autoCheck()->batchCheck($this->config->testcase->edit->requiredFields, 'notempty')->where('id')->eq((int)$caseID)->exec();
     if(!$this->dao->isError())
     {
         if($stepChanged)
         {
+            $parentStepID = 0;
             foreach($this->post->steps as $stepID => $stepDesc)
             {
                 if(empty($stepDesc)) continue;
+                $stepType = $this->post->stepType;
                 $step = new stdclass();
+                $step->type    = ($stepType[$stepID] == 'item' and $parentStepID == 0) ? 'step' : $stepType[$stepID];
+                $step->parent  = ($step->type == 'item') ? $parentStepID : 0;
                 $step->case    = $caseID;
                 $step->version = $version;
                 $step->desc    = htmlspecialchars($stepDesc);
@@ -73,6 +78,8 @@ public function update($caseID)
                 $step->expect  = $this->post->expects[$stepID];
 
                 $this->dao->insert(TABLE_CASESTEP)->data($step)->autoCheck()->exec();
+                if($step->type == 'group') $parentStepID = $this->dao->lastInsertID();
+                if($step->type == 'step')  $parentStepID = 0;
             }
         }
 

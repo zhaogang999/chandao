@@ -609,6 +609,7 @@ class testcase extends control
         $this->view->currentModuleID  = $case->module;
         $this->view->users            = $this->user->getPairs('noletter');
         $this->view->case             = $case;
+        //var_dump($case->steps);die;
         $this->view->actions          = $this->loadModel('action')->getList('case', $caseID);
         $this->view->isLibCase        = $isLibCase;
 

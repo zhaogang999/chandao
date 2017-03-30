@@ -15,7 +15,6 @@ class myProject extends project
         /* Load these models. */
         $this->loadModel('story');
         $this->loadModel('user');
-        $this->loadModel('task');
         $this->app->loadLang('testcase');
 
         /* Save session. */
@@ -38,7 +37,6 @@ class myProject extends project
 
         $stories = $this->story->getProjectStories($projectID, $sort, $type, $param, $pager);
         $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story', false);
-        $storyTasks = $this->task->getStoryTaskCounts(array_keys($stories), $projectID);
         $users      = $this->user->getPairs('noletter');
 
         /* Get project's product. */
@@ -68,6 +66,12 @@ class myProject extends project
         $position[] = html::a($this->createLink('project', 'browse', "projectID=$projectID"), $project->name);
         $position[] = $this->lang->project->story;
 
+        /* Count T B C */
+        $storyIdList = array_keys($stories);;
+        $storyTasks = $this->loadModel('task')->getStoryTaskCounts($storyIdList,$projectID);
+        $storyBugs  = $this->loadModel('bug')->getStoryBugCounts($storyIdList,$projectID);
+        $storyCases = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
+
         //同产品的项目
         $proID = $this->dao->select('product')
             ->from(TABLE_PROJECTPRODUCT)
@@ -82,7 +86,7 @@ class myProject extends project
             ->andWhere('t1.product')->eq($proID->product)
             ->andWhere('t1.project')->ne($projectID)
             ->fetchAll();
-        //var_dump($projects);die;
+        
         $this->view->projects      = $projects;
         $this->view->oldProjectID      = $projectID;
 
@@ -95,9 +99,11 @@ class myProject extends project
         $this->view->orderBy      = $orderBy;
         $this->view->type         = $type;
         $this->view->param        = $param;
-        $this->view->storyTasks   = $storyTasks;
         $this->view->moduleTree   = $this->loadModel('tree')->getProjectStoryTreeMenu($projectID, $startModuleID = 0, array('treeModel', 'createProjectStoryLink'));
         $this->view->tabID        = 'story';
+        $this->view->storyTasks   = $storyTasks;
+        $this->view->storyBugs    = $storyBugs;
+        $this->view->storyCases   = $storyCases;
         $this->view->users        = $users;
         $this->view->pager        = $pager;
         $this->view->branchGroups = $branchGroups;
