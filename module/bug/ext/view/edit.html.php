@@ -11,9 +11,9 @@
  */
 ?>
 <?php
-include '../../common/view/header.html.php';
-include '../../common/view/datepicker.html.php';
-include '../../common/view/kindeditor.html.php';
+include '../../../common/view/header.html.php';
+include '../../../common/view/datepicker.html.php';
+include '../../../common/view/kindeditor.html.php';
 js::set('page'                   , 'edit');
 js::set('changeProductConfirmed' , false);
 js::set('changeProjectConfirmed' , false);
@@ -67,7 +67,7 @@ js::set('oldResolvedBuild'       , $bug->resolvedBuild);
         echo html::linkButton($lang->goback, $browseLink);
         ?>
       </div>
-      <?php include '../../common/view/action.html.php';?>
+      <?php include '../../../common/view/action.html.php';?>
     </div>
   </div>
   <div class='col-side'>
@@ -271,4 +271,4 @@ js::set('oldResolvedBuild'       , $bug->resolvedBuild);
   </div>
 </div>
 </form>
-<?php include '../../common/view/footer.html.php';?>
+<?php include '../../../common/view/footer.html.php';?>
