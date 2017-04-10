@@ -100,7 +100,7 @@ public function update($taskID)
     $taskDetail->project = $task->project;
     $taskDetail->left = $task->left;
     $taskDetail->status = $task->status;
-var_dump($task);die;
+
     if ($this->post->story != false and $this->post->story != $oldTask->story)
     {
         $taskDetail->storyVersion = $task->storyVersion;
