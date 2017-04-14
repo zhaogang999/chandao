@@ -362,7 +362,7 @@
                   <ul class='list-unstyled'>
                     <?php
                     /*细分需求双向关联*/
-                    if ($parentStory)
+                    if (isset($parentStory))
                     {
                         echo '<li>' . html::a(inlink('view', "storyID=$parentStory->id"), $lang->story->parentStory. " #$parentStory->id " . $parentStory->title) . '</li>';
                     }

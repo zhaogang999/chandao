@@ -15,7 +15,7 @@ class myTask extends task
         //xinzeng
         if ($task->source == 'QA')
         {
-            $this->view->auditDetails = $this->dao->select('*')
+            $auditDetails = $this->dao->select('*')
                 ->from(TABLE_QAAUDIT)
                 ->where('task')->eq($taskID)
                 ->andWhere('deleted')->eq('0')
@@ -23,14 +23,14 @@ class myTask extends task
         }
         if ($task->type == 'review')
         {
-            $this->view->review = $this->dao->select('*')
+            $review = $this->dao->select('*')
                 ->from(TABLE_REVIEW)
                 ->where('task')
                 ->eq($taskID)
                 ->fetch();
-            $this->view->reviewDetails = $this->dao->select('*')
+            $reviewDetails = $this->dao->select('*')
                 ->from(TABLE_REVIEWDETAIL)
-                ->where('reviewID')->eq($this->view->review->id)
+                ->where('reviewID')->eq($review->id)
                 ->andWhere('deleted')->eq('0')
                 ->fetchAll();
         }
@@ -67,6 +67,16 @@ class myTask extends task
         $position[] = html::a($this->createLink('project', 'browse', "projectID=$task->project"), $project->name);
         $position[] = $this->lang->task->common;
         $position[] = $this->lang->task->view;
+
+        if ($task->source == 'QA')
+        {
+            $this->view->auditDetails = $auditDetails;
+        }
+        if ($task->type == 'review')
+        {
+            $this->view->review      = $review;
+            $this->view->reviewDetails = $reviewDetails;
+        }
 
         $this->view->title       = $title;
         $this->view->position    = $position;
