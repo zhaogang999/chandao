@@ -1,5 +1,6 @@
 <?php
 $lang->task->typeList['review']    = '评审';
+$lang->task->deleteReview    = '删除评审问题';
 
 $lang->task->conclusionList['']          = '';
 $lang->task->conclusionList['通过']      = '通过';

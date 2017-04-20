@@ -28,7 +28,7 @@
     <table class='table table-form'> 
       <tr>
         <th class='w-100px'><?php echo $lang->task->source;?></th>
-        <td><?php echo html::select('source', $lang->task->sourceList, $task->source, 'class=form-control id="qa"');?></td>
+        <td><?php echo html::select('source', $lang->task->sourceList, '', 'class=form-control id="qa"');?></td>
         <td></td><td></td><td></td><td></td>
       </tr>
       <tr>

@@ -1,4 +1,7 @@
 <?php
+helper::import('H:\zentao\chandao\module\report\model.php');
+class extreportModel extends reportModel 
+{
 /**
 * get info of projects
 *
@@ -73,4 +76,6 @@ public function transform($arr)
 		$result[$value->project] = $value->taskSum;
 	}
 	return $result;
+}
+//**//
 }

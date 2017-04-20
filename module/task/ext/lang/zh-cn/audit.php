@@ -6,8 +6,8 @@ $lang->task->noDec     = '不符合描述';
 $lang->task->noType    = '不符合类型';
 $lang->task->serious   = '严重度';
 $lang->task->cause     = '原因分析';
-$lang->task->measures   = '纠正预防措施
-';
+$lang->task->measures   = '纠正预防措施';
+$lang->task->deleteAudit   = '删除审计不符合项';
 
 $lang->task->sourceList['notQA']    = '非QA审计';
 $lang->task->sourceList['QA']       = 'QA审计';
