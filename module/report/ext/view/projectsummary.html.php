@@ -35,13 +35,13 @@
       <tr class="a-center">
         <td align="center"><?php echo $id;?></td>
         <td><?php echo $project->projectInfo->name;?></td>
-        <td><?php echo $project->storySum;?></td>
-        <td><?php echo $project->taskSum;?></td>
-        <td><?php echo $project->develTaskSum;?></td>
-        <td><?php echo $project->develTaskDoneSum;?></td>
-        <td><?php echo $project->testSum;?></td>
-        <td><?php echo $project->testDoneSum;?></td>
-        <td><?php echo $project->delayedTaskSum;?></td>
+        <td align="center"><?php echo $project->storySum;?></td>
+        <td align="center"><?php echo $project->taskSum;?></td>
+        <td align="center"><?php echo $project->develTaskSum;?></td>
+        <td align="center"><?php echo $project->develTaskDoneSum;?></td>
+        <td align="center"><?php echo $project->testSum;?></td>
+        <td align="center"><?php echo $project->testDoneSum;?></td>
+        <td align="center"><?php echo $project->delayedTaskSum;?></td>
         <td><?php echo $project->delayedTasks;?></td>
       </tr>
     <?php endforeach;?>

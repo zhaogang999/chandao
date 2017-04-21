@@ -15,13 +15,13 @@ public function projectSummary()
     $projects = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetch();
 
     $storySumSql = "SELECT `project`,COUNT(`story`) AS taskSum FROM zt_projectstory WHERE `project` IN(" .$projects->ids . ") GROUP BY `project`";
-    $taskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN(" .$projects->ids . ") AND deleted='0' AND `status` != 'cancel' GROUP BY `project`";
-    $develTaskSumSql = "SELECT `project`,COUNT( `id` ) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND `type` IN ('service', 'devel', 'sdk', 'web', 'ios', 'android') AND `status` != 'cancel' AND deleted = '0' GROUP BY `project`";
-    $develTaskDoneSumSql = "SELECT `project`,COUNT( `id` ) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND `type` IN ('service', 'devel', 'sdk', 'web', 'ios', 'android') AND deleted = '0' AND `status` IN ('done','closed') GROUP BY `project`";
+    $taskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN(" .$projects->ids . ") AND deleted='0' AND `status` != 'cancel' AND `type` IN ('fos', 'devel', 'sdk', 'web', 'ios', 'android', 'test') GROUP BY `project`";
+    $develTaskSumSql = "SELECT `project`,COUNT( `id` ) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND `type` IN ('fos', 'devel', 'sdk', 'web', 'ios', 'android') AND `status` != 'cancel' AND deleted = '0' GROUP BY `project`";
+    $develTaskDoneSumSql = "SELECT `project`,COUNT( `id` ) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND `type` IN ('fos', 'devel', 'sdk', 'web', 'ios', 'android') AND deleted = '0' AND `status` IN ('done','closed') GROUP BY `project`";
     $testSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND deleted='0' AND `type`='test' AND `status` != 'cancel' GROUP BY `project`";
     $testDoneSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND deleted='0' AND `type`='test' AND `status` IN ('done','closed') GROUP BY `project`";
-    $delayedTaskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND NOW()>deadline AND `status` not IN ('done','closed') AND `status` != 'cancel' AND deadline != '0000-00-00' AND deleted='0' GROUP BY project";
-    $delayedTaskSql = "SELECT project,GROUP_CONCAT(`id`) AS taskSum FROM zt_task WHERE project IN (" .$projects->ids . ") AND NOW()>deadline AND deleted='0' AND `status` not IN ('done','closed','cancel') AND deadline != '0000-00-00' GROUP BY project";
+    $delayedTaskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND curdate()>deadline AND `status` not IN ('done','closed') AND `status` != 'cancel' AND deadline != '0000-00-00' AND deleted='0' GROUP BY project";
+    $delayedTaskSql = "SELECT project,GROUP_CONCAT(`id`) AS taskSum FROM zt_task WHERE project IN (" .$projects->ids . ") AND curdate()>deadline AND deleted='0' AND `status` not IN ('done','closed','cancel') AND deadline != '0000-00-00' GROUP BY project";
 
     $storySum = $this->dao->query($storySumSql)->fetchAll();
     $taskSum = $this->dao->query($taskSumSql)->fetchAll();

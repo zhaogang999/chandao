@@ -1,6 +1,6 @@
 <?php
-$lang->reportList->project->lists[13] = $lang->projectCommon . '任务统计|report|projectSummary';
-$lang->report->projectSummary = $lang->projectCommon . '任务统计';
+$lang->reportList->project->lists[13] = $lang->projectCommon . '统计报表|report|projectSummary';
+$lang->report->projectSummary = $lang->projectCommon . '统计报表';
 $lang->report->projectID = '项目ID';
 $lang->report->projectName = '项目名称';
 $lang->report->storySum = '需求数量';

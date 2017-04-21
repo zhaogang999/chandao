@@ -1,16 +1,16 @@
-<?php 
-include '../config/config.php';
-session_name($config->sessionVar);
-session_start();
-if(!isset($_SESSION['user']) or $_SESSION['user']->account == 'guest' or $_SESSION['company']->supers != $_SESSION['user']->account) die(header('location:index.php'));
+<?php // -*- c++ -*-
 
 /** 
  * ionCube Loader install Wizard
  *
  * ionCube is a registered trademark of ionCube Ltd. 
  *
- * Copyright (c) ionCube Ltd. 2002-2011
+ * Copyright (c) ionCube Ltd. 2002-2015
  */
+
+
+ 
+
 define ('ERROR_UNKNOWN_OS',1);
 define ('ERROR_UNSUPPORTED_OS',2);
 define ('ERROR_UNKNOWN_ARCH',3);
@@ -56,10 +56,16 @@ define ('SERVER_VPS',5);
 define ('SERVER_DEDICATED',7); 
 define ('SERVER_LOCAL',9);
 
+define ('IONCUBE_IP_ADDRESS',
+			'94.101.154.134');
+define  ('IONCUBE_ACCESS_ADDRESS',
+			'lwaccess.ioncube.com');
 define ('LOADERS_PAGE',
-            'http://loaders.ioncube.com/');                                 
+            'http://loaders.ioncube.com/'); 
 define ('SUPPORT_SITE',
             'http://support.ioncube.com/');                                 
+define ('WIZARD_SUPPORT_TICKET_DEPARTMENT',
+			'3');
 define ('LOADER_FORUM_URL',
             'http://forum.ioncube.com/viewforum.php?f=4');                  
 define ('LOADERS_FAQ_URL',
@@ -77,13 +83,17 @@ define ('WIZARD_LATEST_VERSION_URL',
 define ('PHP_COMPILERS_URL',
             LOADER_VERSION_URL . '?item=php-compilers');
 define ('LOADER_PLATFORM_URL',
-            LOADER_VERSION_URL . '?item=loader-platforms');   
+            LOADER_VERSION_URL . '?item=loader-platforms-all');   
 define ('LOADER_LATEST_VERSIONS_URL',
             LOADER_VERSION_URL . '?item=loader-versions'); 
+define ('LOADER_PHP_VERSION_URL',
+            LOADER_VERSION_URL . '?item=loader-php-support'); 
 define ('WIZARD_STATS_URL',
             'http://www.ioncube.com/feeds/stats/wizard.php');    
 define ('IONCUBE_DOWNLOADS_SERVER',
-            'http://downloads2.ioncube.com/loader_downloads');          
+            'http://downloads3.ioncube.com/loader_downloads');          
+define ('IONCUBE24_URL',
+			'https://ioncube24.com');
 define ('IONCUBE_CONNECT_TIMEOUT',4);
 
 define ('DEFAULT_SELF','/ioncube/loader-wizard.php');
@@ -91,14 +101,16 @@ define ('LOADER_NAME_CHECK',true);
 define ('LOADER_EXTENSION_NAME','ionCube Loader');
 define ('LOADER_SUBDIR','ioncube');
 define ('WINDOWS_IIS_LOADER_DIR', 'system32');
-define ('ADDITIONAL_INI_FILE_NAME','20ioncube.ini');
+define ('ADDITIONAL_INI_FILE_NAME','00-ioncube.ini');
 define ('UNIX_SYSTEM_LOADER_DIR','/usr/local/ioncube');
 define ('RECENT_LOADER_VERSION','3.1.24');
-define ('LATEST_LOADER_MAJOR_VERSION',4);
+define ('LATEST_LOADER_MAJOR_VERSION',5);
 define ('LOADERS_PACKAGE_PREFIX','ioncube_loaders_');
 define ('SESSION_LIFETIME_MINUTES',360);
-define ('WIZARD_EXPIRY_MINUTES',10080);
+define ('WIZARD_EXPIRY_MINUTES',2880);
+define ('IONCUBE_WIZARD_EXPIRY_MINUTES',10080);
 define ('MIN_INITIALISE_TIME',4);
+define ('IC24_ENABLED_INI_PROPERTY',"ic24.enable");
 
     run();
 
@@ -121,7 +133,7 @@ function php4_http_build_query($formdata, $numeric_prefix = null, $key = null ) 
 
 function script_version()
 {
-    return "2.36";
+    return "2.53";
 }
 
 function retrieve_latest_wizard_version()
@@ -162,7 +174,7 @@ function check_for_wizard_update($echo_message = false)
 
     if ($update_available) {
         if ($echo_message) {
-            echo '<p class="alert">该文件有一个新的版本，点击<a href="' . LOADER_WIZARD_URL . '">这里</a>查看.</p>';
+            echo '<p class="alert">An updated version of this Wizard script is available <a href="' . LOADER_WIZARD_URL . '">here</a>.</p>';
         }
         return $latest_version;
     } else {
@@ -186,7 +198,7 @@ function remote_file_contents($url)
             stream_set_blocking($fh,0);
             stream_set_timeout($fh,IONCUBE_CONNECT_TIMEOUT);
             while (!feof($fh)) {
-                $result = fgets($fh, 4096);
+                $result = fread($fh, 8192);
                 $info = stream_get_meta_data($fh);
                 $timing_out = $info['timed_out']?1:0;
                 if ($timing_out) {
@@ -246,7 +258,8 @@ function is_supported_php_version()
     $v = php_version(); 
 
     return ((($v['major'] == 4) && ($v['minor'] >= 1)) ||
-      (($v['major'] == 5) && (($v['minor'] >= 1) || ($v['release'] >= 3))));
+      (($v['major'] == 5) && (($v['minor'] >= 1) || ($v['release'] >= 3))) ||
+	  $v['major'] == 7);
 }
 
 function is_php_version_or_greater($major,$minor,$release = 0)
@@ -270,7 +283,9 @@ function get_remote_session_value($session_var,$remote_url,$default_function)
         $unserialised_res = @unserialize($serialised_res);
         if (empty($unserialised_res)) {
             $unserialised_res = call_user_func($default_function);
-        }
+        } else {
+			$_SESSION['remote_access_successful'] = 1;
+		}
         if (false === $unserialised_res) {
             $unserialised_res = '';
         }
@@ -295,20 +310,31 @@ function default_platform_list()
     $platforms = array();
 
 
-    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC6',        'os_mod' => '_vc6',     'arch'=>'x86',  'dirname'=>'win32', 'us1-dir'=>'windows_vc6/x86' );
-    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC6 (Non-TS)',   'os_mod' => '_nonts_vc6',   'arch'=>'x86',  'dirname'=>'win32-nonts', 'us1-dir'=>'windows_vc6/x86-nonts' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC6', 'is_legacy' => 1,       'os_mod' => '_vc6',     'arch'=>'x86',  'dirname'=>'win32', 'us1-dir'=>'windows_vc6/x86' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC6 (Non-TS)',   'is_legacy' => 1,  'os_mod' => '_nonts_vc6',   'arch'=>'x86',  'dirname'=>'win32-nonts', 'us1-dir'=>'windows_vc6/x86-nonts' );
 
     $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC9',        'os_mod' => '_vc9',     'arch'=>'x86',  'dirname'=>'win32_vc9', 'us1-dir'=>'windows_vc9/x86' );
     $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC9 (Non-TS)',   'os_mod' => '_nonts_vc9',   'arch'=>'x86',  'dirname'=>'win32-nonts_vc9', 'us1-dir'=>'windows_vc9/x86-nonts' );
+	
+	 $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC11',        'os_mod' => '_vc11',     'arch'=>'x86',  'dirname'=>'win32_vc11', 'us1-dir'=>'windows_vc11/x86' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC11 (Non-TS)',   'os_mod' => '_nonts_vc11',   'arch'=>'x86',  'dirname'=>'win32-nonts_vc11', 'us1-dir'=>'windows_vc11/x86-nonts' );
+	
+	$platforms[] = array('os'=>'win', 'os_human'=>'Windows VC11',        'os_mod' => '_vc11',     'arch'=>'x86-64',  'dirname'=>'win64_vc11', 'us1-dir'=>'windows_vc11/amd64' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC11 (Non-TS)',   'os_mod' => '_nonts_vc11',   'arch'=>'x86-64',  'dirname'=>'win64-nonts_vc11', 'us1-dir'=>'windows_vc11/amd64-nonts' );
+	
+	 $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC14',        'os_mod' => '_vc14',     'arch'=>'x86',  'dirname'=>'win32_vc14', 'us1-dir'=>'windows_vc14/x86' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC14 (Non-TS)',   'os_mod' => '_nonts_vc14',   'arch'=>'x86',  'dirname'=>'win32-nonts_vc14', 'us1-dir'=>'windows_vc14/x86-nonts' );
+	
+		$platforms[] = array('os'=>'win', 'os_human'=>'Windows VC14',        'os_mod' => '_vc14',     'arch'=>'x86-64',  'dirname'=>'win64_vc14', 'us1-dir'=>'windows_vc14/amd64' );
+    $platforms[] = array('os'=>'win', 'os_human'=>'Windows VC14 (Non-TS)',   'os_mod' => '_nonts_vc14',   'arch'=>'x86-64',  'dirname'=>'win64-nonts_vc14', 'us1-dir'=>'windows_vc14/amd64-nonts' );
 
-    $platforms[] = array('os'=>'lin', 'os_human'=>'Linux',              'arch'=>'x86',      'dirname'=>'linux_i686-glibc2.1.3', 'us1-dir'=>'linux/x86');
+    $platforms[] = array('os'=>'lin', 'os_human'=>'Linux',              'arch'=>'x86',      'dirname'=>'linux_i686-glibc2.3.4', 'us1-dir'=>'linux/x86');
     $platforms[] = array('os'=>'lin', 'os_human'=>'Linux',              'arch'=>'x86-64',   'dirname'=>'linux_x86_64-glibc2.3.4', 'us1-dir'=>'linux/x86_64');
 $platforms[] = array('os'=>'lin','os_human'=>'Linux',               'arch'=>'ppc',      'dirname'=>'linux_ppc-glibc2.3.4','us1-dir'=>'linux/ppc');
             $platforms[] = array('os'=>'lin','os_human'=>'Linux',               'arch'=>'ppc64',    'dirname'=>'linux_ppc64-glibc2.5','us1-dir'=>'linux/ppc64');
     
 
-$platforms[] = array('os'=>'dra', 'os_human'=>'DragonFly', 
-    'arch'=>'x86',      'dirname'=>'dragonfly_i386-1.7', 'us1-dir'=>'Dragonfly/x86');
+$platforms[] = array('os'=>'dra', 'os_human'=>'DragonFly', 'arch'=>'x86',      'dirname'=>'dragonfly_i386-1.7', 'us1-dir'=>'Dragonfly/x86');
 
 $platforms[] = array('os'=>'fre', 'os_human'=>'FreeBSD 4', 'os_mod'=>'_4',  'arch'=>'x86',      'dirname'=>'freebsd_i386-4.8', 'us1-dir'=>'FreeBSD/v4');
 
@@ -324,7 +350,7 @@ $platforms[] = array('os'=>'fre', 'os_human'=>'FreeBSD 4', 'os_mod'=>'_4',  'arc
     $platforms[] = array('os'=>'fre', 'os_human'=>'FreeBSD 8', 'os_mod'=>'_8',  'arch'=>'x86',      'dirname'=>'freebsd_i386-8.0', 'us1-dir'=>'FreeBSD/v8/x86');
     $platforms[] = array('os'=>'fre', 'os_human'=>'FreeBSD 8', 'os_mod'=>'_8',  'arch'=>'x86-64',   'dirname'=>'freebsd_amd64-8.0', 'us1-dir'=>'FreeBSD/v8/AMD64');
     
-    $platforms[] = array('os'=>'bsd', 'os_human'=>'BSDi',               'arch'=>'x86',      'dirname'=>'bsdi_i386-4.3.1');
+    $platforms[] = array('os'=>'bsd', 'os_human'=>'BSDi',     'is_legacy' => 1,           'arch'=>'x86',      'dirname'=>'bsdi_i386-4.3.1');
     $platforms[] = array('os'=>'net', 'os_human'=>'NetBSD',             'arch'=>'x86',      'dirname'=>'netbsd_i386-2.1','us1-dir'=>'NetBSD/x86');
     $platforms[] = array('os'=>'net', 'os_human'=>'NetBSD',             'arch'=>'x86-64',   'dirname'=>'netbsd_amd64-2.0','us1-dir'=>'NetBSD/x86_64');
     $platforms[] = array('os'=>'ope', 'os_human'=>'OpenBSD 4.2', 'os_mod'=>'_4.2',  'arch'=>'x86',  'dirname'=>'openbsd_i386-4.2', 'us1-dir'=>'OpenBSD/x86');
@@ -334,13 +360,13 @@ $platforms[] = array('os'=>'fre', 'os_human'=>'FreeBSD 4', 'os_mod'=>'_4',  'arc
 
     $platforms[] = array('os'=>'ope', 'os_human'=>'OpenBSD 4.7', 'os_mod'=>'_4.7',  'arch'=>'x86-64', 'dirname'=>'openbsd_amd64-4.7', 'us1-dir' => 'OpenBSD/x86_64');
 
-    $platforms[] = array('os'=>'dar', 'os_human'=>'OS X',               'arch'=>'ppc',      'dirname'=>'osx_powerpc-8.5','us1-dir'=>'OSX/ppc');
+    $platforms[] = array('os'=>'dar', 'os_human'=>'OS X',    'is_legacy' => 1, 'arch'=>'ppc',      'dirname'=>'osx_powerpc-8.5','us1-dir'=>'OSX/ppc');
 
     $platforms[] = array('os'=>'dar', 'os_human'=>'OS X',               'arch'=>'x86',      'dirname'=>'osx_i386-8.11','us1-dir'=>'OSX/x86');
 
     $platforms[] = array('os'=>'dar', 'os_human'=>'OS X',               'arch'=>'x86-64',       'dirname'=>'osx_x86-64-10.2','us1-dir'=>'OSX/x86_64');
 
-    $platforms[] = array('os'=>'sun', 'os_human'=>'Solaris',            'arch'=>'sparc',    'dirname'=>'solaris_sparc-5.9', 'us1-dir'=>'Solaris/sparc');
+    $platforms[] = array('os'=>'sun', 'os_human'=>'Solaris',  'is_legacy' => 1,          'arch'=>'sparc',    'dirname'=>'solaris_sparc-5.9', 'us1-dir'=>'Solaris/sparc');
 
     $platforms[] = array('os'=>'sun', 'os_human'=>'Solaris',            'arch'=>'x86',      'dirname'=>'solaris_i386-5.10','us1-dir'=>'Solaris/x86');
 
@@ -360,6 +386,56 @@ function get_platforminfo()
         $platforminfo = get_loader_platforms();
     }
     return $platforminfo;
+}
+
+function default_php_versions()
+{
+	return array();
+}
+
+function get_php_versions()
+{
+	return get_remote_session_value('php_version_info',LOADER_PHP_VERSION_URL,'default_php_versions');
+}
+
+
+function get_max_php_version_supported()
+{
+	static $max_php_version;
+	
+	if (empty($max_php_version)) {
+		$php_versions = get_php_versions();
+		
+		$dirname = calc_dirname();
+		
+		if (array_key_exists($dirname,$php_versions)) {
+			$max_php_version = $php_versions[$dirname];
+		} else {
+			$max_php_version = NULL;
+		}
+	}
+	
+	return $max_php_version;
+}
+
+function is_after_max_php_version_supported()
+{
+	$is_too_recent_php = false;
+	
+	$supported_php_version = get_max_php_version_supported();
+	
+	if (!is_null($supported_php_version)) {
+		$pversion = php_version();
+		
+		$supported_parts = explode('.',$supported_php_version);
+		$is_too_recent_php = ($supported_parts[0] < $pversion['major'] || ($supported_parts[0] == $pversion['major'] && $supported_parts[1] < $pversion['minor']));
+	}
+	
+	if ($is_too_recent_php) {
+		return $supported_php_version;
+	} else {
+		return false;
+	}
 }
 
 function supported_os_variants($os_code,$arch_code)
@@ -400,7 +476,7 @@ function supported_os_variants($os_code,$arch_code)
 
 function default_win_compilers()
 {
-    return array('VC6','VC9');
+    return array('VC6','VC9','VC11','VC14');
 }
 
 function supported_win_compilers()
@@ -461,9 +537,6 @@ function required_loader_arch($mach_info,$os_code,$wordsize)
 {
     if ($os_code == 'win') {
         $arch = ($wordsize == 32)?'x86':'x86-64';
-        if ($wordsize != 32) {
-            $arch = ERROR_WINDOWS_64_BIT;
-        }
     } elseif (!empty($os_code)) {
         $arch = match_arch_pattern($mach_info);
         if ($wordsize == 64) {
@@ -539,14 +612,22 @@ function calc_word_size($os_code)
         } else {
             $compiler = 'VC6';
         }
-        if ($compiler === 'VC9') {
-            if (isset($_ENV['PROCESSOR_ARCHITECTURE']) && preg_match('~(amd64|x86-64|x86_64)~i',$_ENV['PROCESSOR_ARCHITECTURE'])) {
+        if ($compiler === 'VC9' || $compiler === 'VC11' || $compiler === 'VC14') {
+			if (preg_match('~Architecture.*?(</B></td><TD ALIGN="left">| => |v">)([^<]*)~i',$pinfo,$archmatch)) {
+				if (preg_match("/x64/i",$archmatch[2])) {
+					$wordsize = 64;
+				} else {
+					$wordsize = 32;
+				}
+            } elseif (isset($_ENV['PROCESSOR_ARCHITECTURE']) && preg_match('~(amd64|x86-64|x86_64)~i',$_ENV['PROCESSOR_ARCHITECTURE'])) {
                 if (preg_match('~Configure Command.*?(</B></td><TD ALIGN="left">| => |v">)([^<]*)~i',$pinfo,$confmatch)) {
                     if (preg_match('~(x64|lib64|system64)~i',$confmatch[2])) {
                         $wordsize = 64;
                     }
                 }
-            }
+            } else {
+				$wordsize = 32;
+			}
         }
     }
     if (empty($wordsize)) {
@@ -566,7 +647,11 @@ function required_loader($unamestr = '')
 
     $wordsize = calc_word_size($os_code);
 
-    $arch = required_loader_arch($un,$os_code,$wordsize);
+	if ($os_code == 'win' && $wordsize == 64 && $php_major_version < '5.5') {
+        $arch = ERROR_WINDOWS_64_BIT;
+	} else {
+		$arch = required_loader_arch($un,$os_code,$wordsize);
+	}
     if (!is_string($arch)) {
         return $arch;
     }
@@ -901,20 +986,20 @@ function server_restriction_warnings()
 
     if (find_server_type() == SERVER_SHARED) {
         if (is_restricted_server()) {
-            $warnings[] = "服务器的限制可能影响向导的进行和加密程序的安装。";
+            $warnings[] = "Server restrictions are in place which might affect the operation of this Loader Wizard or prevent the installation of the Loader.";
         }
     } else {
-        $warning_suffix = "这可能会对加密向导产生影响。";
+        $warning_suffix = "This may affect the operation of this Loader Wizard.";
         if (ini_get('safe_mode')) {
-            $warnings[] = "服务器已经开启安全模式(php已设置safe_mode)，" . $warning_suffix;
+            $warnings[] = "Safe mode is in effect on the server. " . $warning_suffix;
         } 
         $disabled_functions = ini_get('disable_functions');
         if (!empty($disabled_functions)) {
-            $warnings[] = "一些php方法不可用(php已设置disable_functions)，" . $warning_suffix;
+            $warnings[] = "Some functions are disabled through disable_functions. " . $warning_suffix;
         }
         $open_basedir = ini_get('open_basedir');
         if (!empty($open_basedir)) {
-            $warnings[] = "php的open_basedir不为空，" . $warning_suffix;
+            $warnings[] = "Open basedir restrictions are in effect. " . $warning_suffix;
         }
     }
     return $warnings;
@@ -1019,12 +1104,12 @@ function get_loader_location_from_ini($php_ini = '')
     }
     if (!@file_exists($php_ini)) {
         if (empty($php_ini)) {
-            $errors[ERROR_INI_NOT_FOUND] = "配置文件没有找到。";
+            $errors[ERROR_INI_NOT_FOUND] = "The configuration file could not be found.";
         } else {
-            $errors[ERROR_INI_NOT_FOUND] = "$php_ini 没有找到。";
+            $errors[ERROR_INI_NOT_FOUND] = "The $php_ini file could not be found.";
         }
     } elseif (!is_readable($php_ini)) {
-        $errors[ERROR_INI_NOT_READABLE] = "$php_ini 没有权限读取。";
+        $errors[ERROR_INI_NOT_READABLE] = "The $php_ini file could not be read.";
     }
     if (!empty($errors)) {
         return array('location' => '', 'errors' => $errors);
@@ -1038,19 +1123,19 @@ function get_loader_location_from_ini($php_ini = '')
         if (preg_match("/^\s*$ext_start\s*=\s*\"?([^\"]+)\"?/i",$l,$corr_matches)) {
             if (preg_match("/$loader_name_match/i",$corr_matches[1])) {
                 if (!empty($loader_path)) {
-                    $errors[ERROR_INI_MULTIPLE_IC_LOADER_LINES] = "配置文件($php_ini)中可能有多行存在$ext_start。";
+                    $errors[ERROR_INI_MULTIPLE_IC_LOADER_LINES] = "It appears that multiple $ext_start lines for the ionCube Loader have been included in the configuration file, $php_ini.";
                 }
                 $loader_path = $corr_matches[1];
             } else {
                 if (empty($loader_path)) {
-                    $errors[ERROR_INI_NOT_FIRST_ZE] = "$php_ini 中的ionCube加密程序配置必须放在Zend扩展之前";
+                    $errors[ERROR_INI_NOT_FIRST_ZE] = "The ionCube Loader must be the first Zend extension listed in the configuration file, $php_ini.";
                 }
             }
         }
         if (empty($loader_path)) {
             if (preg_match("/^\s*$wrong_ext_start\s*=\s*\"?([^\"]+)\"?/i",$l,$bad_start_matches)) {
                 if (preg_match("/$loader_name_match/i",$bad_start_matches[1])) {
-                    $bad_zend_ext_msg = "配置文件$php_ini中的ionCube加密程序所在的行，应该以 $ext_start 开头，<b>而不是</b> $wrong_ext_start.";
+                    $bad_zend_ext_msg = "The line for the ionCube Loader in the configuration file, $php_ini, should start with $ext_start and <b>not</b> $wrong_ext_start.";
                     $errors[ERROR_INI_WRONG_ZE_START] = $bad_zend_ext_msg;
                     $loader_path = $bad_start_matches[1];
                 }
@@ -1059,11 +1144,11 @@ function get_loader_location_from_ini($php_ini = '')
     }
     $loader_path = trim($loader_path);
     if ($loader_path === '') {
-        $errors[ERROR_INI_ZE_LINE_NOT_FOUND] = "配置文件($php_ini)没有Zend扩展。";
+        $errors[ERROR_INI_ZE_LINE_NOT_FOUND] = "The necessary zend_extension line could not be found in the configuration file, $php_ini.";
     } elseif (!@file_exists($loader_path)) {
-        $errors[ERROR_INI_LOADER_FILE_NOT_FOUND] = "配置文件($php_ini)中的加密程序路径($loader_path)错误或不能访问。";
+        $errors[ERROR_INI_LOADER_FILE_NOT_FOUND] = "The loader file  $loader_path, listed in the configuration file, $php_ini, does not exist or is not accessible.";
     } elseif (basename($loader_path) == $loader_path) {
-        $errors[ERROR_INI_NOT_FULL_PATH] = "配置文件($php_ini)中的加密程序路径必须是完整路径。";
+        $errors[ERROR_INI_NOT_FULL_PATH] = "A full path must be specified for the loader file in the configuration file, $php_ini.";
     }
     return array('location' => $loader_path, 'errors' => $errors);
 }
@@ -1144,7 +1229,7 @@ function scan_inis_for_loader()
         } 
         if ($shared_server && array_key_exists(ERROR_INI_NOT_FOUND,$ldloc['errors'])) {
             if (false == user_ini_space_path($f)) {
-                $ldloc['errors'][ERROR_INI_NOT_FOUND] = "安装向导不能找到或读取系统的ini文件，在该共享服务器上不能继续进行安装。";
+                $ldloc['errors'][ERROR_INI_NOT_FOUND] = "A system ini file cannot be found or read by the Wizard - you cannot do anything about this on your shared server.";
             } else {
                 $ldloc['errors'][ERROR_INI_USER_INI_NOT_FOUND] = $ldloc['errors'][ERROR_INI_NOT_FOUND];
             }
@@ -1157,13 +1242,13 @@ function scan_inis_for_loader()
     }
     if (!empty($ini_files_not_found)) {
         $plural = (count($ini_files_not_found) > 1)?"s":"";
-        $ldloc['errors'][ERROR_INI_NOT_FOUND] = "向导没有找到以下配置文件: " . join(',',$ini_files_not_found);
+        $ldloc['errors'][ERROR_INI_NOT_FOUND] = "The following ini file$plural could not be found by the Wizard: " . join(',',$ini_files_not_found);
         if (is_restricted_server()) {
-            $ldloc['errors'][ERROR_INI_NOT_FOUND] .= "<br>可能是服务器进行了限制。";
+            $ldloc['errors'][ERROR_INI_NOT_FOUND] .= "<br> This may be due to server restrictions in place.";
         }
     }
     if (empty($ldloc['location'])) {
-        $ldloc['errors'][ERROR_INI_ZE_LINE_NOT_FOUND] = "配置文件没有找到Zend扩展。";
+        $ldloc['errors'][ERROR_INI_ZE_LINE_NOT_FOUND] = "The necessary zend_extension line could not be found in the configuration.";
     }
     return $ldloc;
 }
@@ -1207,7 +1292,7 @@ function find_loader($search_directories_if_not_ini = false)
         $errors = array(); 
         $location = find_loader_filesystem();
         if (empty($location)) {
-            $errors[ERROR_LOADER_NOT_FOUND] = '加密程序不在php扩展的默认路径。';
+            $errors[ERROR_LOADER_NOT_FOUND] = 'The loader file could not be found in standard locations.';
         }
     }
     if (!empty($errors)) {
@@ -1261,8 +1346,9 @@ function get_loader_version_info()
     return get_remote_session_value('loader_version_info',LOADER_LATEST_VERSIONS_URL,'default_loader_version_info');
 }
 
-function calc_dirname()
+function calc_platform()
 {
+    $platform = array();
     $platform_info = get_platforminfo();
     $loader = get_loaderinfo();
     $multiple_os_versions = false;
@@ -1274,13 +1360,44 @@ function calc_dirname()
         list($osvar,$exact_match) = get_reqd_version($loader['osvariants']);
     } else {
         $osvar = null;
+        if (is_ms_windows()) {
+            $sys = get_sysinfo();
+            $phpc = (empty($sys['PHP_COMPILER']))?'vc6':strtolower($sys['PHP_COMPILER']); 
+            $osvar = ($sys['THREAD_SAFE']?'':'nonts_') . $phpc;
+        }
     }
-    $dirname = '';
     foreach ($platform_info as $p) {
         if ($p['os'] == $loader['oscode'] && $p['arch'] == $loader['arch'] && (empty($osvar) || $p['os_mod'] == "_" . $osvar)) {
-            $dirname = $p['dirname'];
+            $platform = $p;
             break;
         }
+    }
+    return $platform;
+}
+
+function get_platform()
+{
+    static $this_platform;
+
+    if (!isset($this_platform)) {
+        $this_platform = calc_platform();
+    }
+
+    return $this_platform;
+}
+
+function is_legacy_platform()
+{
+    $platform = get_platform();
+    return array_key_exists('is_legacy',$platform);
+}
+
+function calc_dirname()
+{
+    $dirname = '';
+    $platform = get_platform();
+    if (!empty($platform)) {
+        $dirname = $platform['dirname'];
     }
     return $dirname;
 }
@@ -1420,14 +1537,14 @@ function try_runtime_loading_if_applicable()
 function runtime_loading_instructions()
 {
     $default = get_default_address();
-    echo '<h4>”运行时加载程序“说明</h4>';
+    echo '<h4>Runtime Loading Instructions</h4>';
     echo '<div class=panel>';
-    echo '<p>在共享服务器上，加密程序可以通过“运行时加载技术”安装，';
-    echo " (<a href=\"{$default}&amp;manual=1\">如果您的程序<strong>不是</strong>运行在共享服务器，请单击这里</a>.)</p>";
+    echo '<p>On your shared server the Loader can be installed using the runtime loading method.';
+    echo " (<a href=\"{$default}&amp;manual=1\">Please click here if you are <strong>not</strong> on a shared server</a>.)</p>";
 
     if ('.' == extension_dir()) {
         $dirphrase = is_ms_windows()?'folder':'directory';
-        echo "注意：加密程序<em>必须</em>与第一个加密文件在同一个目录下。";
+        echo "Please note that on your system the Loader <em>must</em> be present in the same " . $dirphrase . " as the first encoded file accessed.";
     }
     echo '<ol>';
     loader_download_instructions(); 
@@ -1442,11 +1559,11 @@ function runtime_loading_errors()
     $errors = array();
     $ext_path = extension_dir_path();
     if (false === $ext_path) {
-        $errors[ERROR_RUNTIME_EXT_DIR_NOT_FOUND] = "扩展所在的目录没有找到。";
+        $errors[ERROR_RUNTIME_EXT_DIR_NOT_FOUND] = "Extensions directory cannot be found.";
     } else {
         $expected_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . get_loader_name();
         if (!@file_exists($expected_file)) {
-            $errors[ERROR_RUNTIME_LOADER_FILE_NOT_FOUND] = "加密程序应该放在$expected_file，但是没有发现。";
+            $errors[ERROR_RUNTIME_LOADER_FILE_NOT_FOUND] = "The Loader file was expected to be at $expected_file but could not be found.";
         } else {
             $errors = loader_compatibility_test($expected_file);
         }
@@ -1458,7 +1575,8 @@ function runtime_loading_errors()
 function windows_package_name()
 {
     $sys = get_sysinfo();
-    return (LOADERS_PACKAGE_PREFIX . 'win' . '_' . ($sys['THREAD_SAFE']?'':'nonts_') . strtolower($sys['PHP_COMPILER']) .  '_' . 'x86');
+	$loader = get_loaderinfo();
+    return (LOADERS_PACKAGE_PREFIX . 'win' . '_' . ($sys['THREAD_SAFE']?'':'nonts_') . strtolower($sys['PHP_COMPILER']) .  '_' . $loader['arch']);
 }
 
 function unix_package_name()
@@ -1491,37 +1609,38 @@ function loader_download_instructions()
 
     if (is_ms_windows()) {
         if (is_bool($sysinfo['THREAD_SAFE'])) {
-            $download_str = '<li>下载下列Windows ' . $sysinfo['PHP_COMPILER'];
+            $download_str = '<li>Download one of the following archives of Windows ' . $sysinfo['PHP_COMPILER'];
             if (!$sysinfo['THREAD_SAFE']) {
                 $download_str .= ' non-TS';
             }
-            $download_str .= ' x86 Loaders的一个压缩包:';
+            $download_str .= ' ' . $loader['arch'] . ' Loaders:';
             echo $download_str;
             $basename = windows_package_name();
             echo make_archive_list($basename,array('zip','ipf.zip'));
-            echo "<p>请注意：无论是从本地PC直接安装在Windows机器上，或上传到您的服务器，该MS Windows Installer都是通用的。<br>";
-            echo '也可以从<a href="' . LOADERS_PAGE . '" target="loaders">' . LOADERS_PAGE . '</a>下载一个Loader包。';
+            echo "<p>Please note that the MS Windows installer version is suitable either for direct installation on a Windows machine or for 
+    uploading from a local PC to your server.<br>";
+            echo 'A Loaders archive can also be downloaded from <a href="' . LOADERS_PAGE . '" target="loaders">' . LOADERS_PAGE . '</a>.';
         } else {
-            echo '<li>从<a href="' . LOADERS_PAGE  . '" target=loaders>这里</a>下载一个Windows Loaders包。 如果PHP禁用线程安全模式，使用Windows non-TS Loaders。';
+            echo '<li>Download a Windows Loaders archive from <a href="' . LOADERS_PAGE  . '" target=loaders>here</a>. If PHP is built with thread safety disabled, use the Windows non-TS Loaders.';
         }
     } else {
         list($basename,$multiple_os_versions) = unix_package_name(); 
         if ($basename == "") {
-            echo '<li>从<a href="' . LOADERS_PAGE . '" target="loaders">这里</a>下载一个 ' . $loader['osname'] . ' ' . $loader['arch'] . ' Loaders包.';
-            echo "<br>您的系统可能是${loader['wordsize']}位${loader['osnamequal']}。如果该程序在${loader['osname']}不可用，更早的版本的Loaders应该能够运行。注意：您需要重新安装兼容库。";
-            echo '<br>如果你不能找到一个合适的Loaders，请联系我们 <a href="'. SUPPORT_SITE . '">获得支持和帮助</a>.';
+            echo '<li>Download a ' . $loader['osname'] . ' ' . $loader['arch'] . ' Loaders archive from <a href="' . LOADERS_PAGE . '" target="loaders">here</a>.';
+            echo "<br>Your system appears to be ${loader['osnamequal']} for ${loader['wordsize']} bit. If Loaders are not available for that exact release of ${loader['osname']}, Loaders built for an earlier release should work. Note that you may need to install back compatibility libraries for the operating system.";
+            echo '<br>If you cannot find a suitable loader then please raise a ticket at <a href="'. SUPPORT_SITE . '">our support helpdesk</a>.';
         } else {
-            echo '<li>下载一个' . $loader['osnamequal'] . ' ' . $loader['arch'] . '的Loaders包：'; 
+            echo '<li>Download one of the following archives of Loaders for ' . $loader['osnamequal'] . ' ' . $loader['arch'] . ':'; 
             if (SERVER_SHARED == find_server_type()) {
                 $archives = array('zip','tar.gz','tar.bz2','ipf.zip');
             } else {
                 $archives = array('tar.gz','tar.bz2','ipf.zip');
             }
             echo make_archive_list($basename,$archives);
-            echo "<p>注意：确保Windows installer在远程${loader['osname']}服务器上可用。<br>";
+            echo "<p>Please note that the MS Windows installer version is suitable for uploading from a Windows PC to your ${loader['osname']} server.<br>";
             echo "</p>";
             if ($multiple_os_versions && !$exact_match) {
-                echo "<p>注意：您可能需要重新安装${loader['osname']}兼容库。</p>";
+                echo "<p>Note that you may need to install back compatibility libraries for  ${loader['osname']}.</p>";
             }
         }
     }
@@ -1612,9 +1731,9 @@ function loader_install_instructions($server_type,$loader_dir = '')
         $loader_dir = loader_install_dir($server_type);
     }
     if (SERVER_LOCAL == $server_type) {
-        echo "<li>将Loader文件放到<code>$loader_dir</code></li>";
+        echo "<li>Put the Loader files in <code>$loader_dir</code></li>";
     } else {
-        echo "<li>将Loaders上传到服务器，并在<code>$loader_dir</code>安装</li>";
+        echo "<li>Transfer the Loaders to your web server and install in <code>$loader_dir</code></li>";
     }
     return $loader_dir;
 }
@@ -1726,7 +1845,7 @@ function zend_extension_instructions($server_type,$loader_dir)
                     fwrite($fh,$ini_strs);
                     fclose($fh);
                     $editing_ini = false;
-                    echo "<li>$php_ini_path下的php.ini已经修改，包含了对ionCube loader的引用。";
+                    echo "<li>Your php.ini file at $php_ini_path has been modified to include the necessary line for the ionCube Loader.";
                 } else {
                     echo $edit_line;
                 }
@@ -1734,7 +1853,7 @@ function zend_extension_instructions($server_type,$loader_dir)
                echo $edit_line;
             }
         } else {
-            $download_ini_file = "<li><a href=\"$base&amp;page=phpconfig&amp;ininame=$php_ini_name&amp;stype=$server_type_code&amp;download=1&amp;prepend=1\">保存<code>$php_ini_name</code></a>，并上传到<code>$ini_dir</code> (服务器的完整路径)。";
+            $download_ini_file = "<li><a href=\"$base&amp;page=phpconfig&amp;ininame=$php_ini_name&amp;stype=$server_type_code&amp;download=1&amp;prepend=1\">Save this  <code>$php_ini_name</code> file</a> and upload it to <code>$ini_dir</code> (full path on your server).";
             if (@is_writeable($ini_dir)) {
                 $fh = @fopen($php_ini_path,"wb");
                 if ($fh !== false) {
@@ -1751,7 +1870,7 @@ function zend_extension_instructions($server_type,$loader_dir)
                         fwrite($fh,$ini_strs);
                     }
                     fclose($fh); 
-                    echo "<li><code>$php_ini_name</code>已经在<code>$ini_dir</code>创建。";
+                    echo "<li>A <code>$php_ini_name</code> file has been created for you in <code>$ini_dir</code>.";
                 } else {
                     echo $download_ini_file;
                 }
@@ -1767,24 +1886,24 @@ function zend_extension_instructions($server_type,$loader_dir)
             $php_ini_path = find_additional_ioncube_ini();
             if (empty($php_ini_path)) {
                 $php_ini_name = ADDITIONAL_INI_FILE_NAME;
-                echo "<li><a href=\"$base&amp;page=phpconfig&amp;download=1&amp;newlinesonly=1&amp;ininame=$php_ini_name&amp;stype=$server_type_code\">保存 $php_ini_name</a>，拷贝到ini目录, <code>${sysinfo['PHP_INI_DIR']}</code>";
+                echo "<li><a href=\"$base&amp;page=phpconfig&amp;download=1&amp;newlinesonly=1&amp;ininame=$php_ini_name&amp;stype=$server_type_code\">Save this $php_ini_name file</a> and put it in your ini files directory, <code>${sysinfo['PHP_INI_DIR']}</code>";
                 $editing_ini = false;
             } else {
                 $php_ini_name = basename($php_ini_path);
-                echo "<li>编辑文件<code>$php_ini_path</code>";
+                echo "<li>Edit the file <code>$php_ini_path</code>";
             }
         }
     } else {
-        echo "<li>编辑系统文件<code>$php_ini_name</code>";
+        echo "<li>Edit the system <code>$php_ini_name</code> file";
     }
     if ($editing_ini) {
-        echo " 并且在其它$kwd行<b>之前</b>，确保下面的内容被包含：<br>";
+        echo " and <b>before</b> any other $kwd lines ensure that the following is included:<br>";
         foreach ($zend_extension_lines as $zl) {
             echo "<code>$zl</code><br>";
         }
         if (!empty($php_ini_path)) {
             if (zend_extension_line_missing($php_ini_path)) {
-                echo "<a>另外，下载<a href=\"$base&amp;page=phpconfig&amp;ininame=$php_ini_name&amp;stype=$server_type_code&amp;download=1&amp;prepend=1\">新的 $php_ini_name 文件</a>，替换当前的<code>$php_ini_path</code> 文件。"; 
+                echo "<a>Alternatively, replace your current <code>$php_ini_path</code> file with <a href=\"$base&amp;page=phpconfig&amp;ininame=$php_ini_name&amp;stype=$server_type_code&amp;download=1&amp;prepend=1\">this new $php_ini_name file</a>."; 
             }
         }
     }
@@ -1797,33 +1916,33 @@ function server_restart_instructions()
     $base = get_base_address();
 
     if ($sysinfo['SS']) {
-        echo "<li>重启${sysinfo['SS']} 服务器程序.</li>";
+        echo "<li>Restart the ${sysinfo['SS']} server software.</li>";
     } else {
-        echo "<li>重启服务器程序。</li>";
+        echo "<li>Restart the server software.</li>";
     }
 
-    echo "<li>服务器程序重启完毕后，<a href=\"$base&amp;page=loader_check\" onclick=\"showOverlay();\">点击这里测试Loader</a>。</li>";
+    echo "<li>When the server software has restarted, <a href=\"$base&amp;page=loader_check\" onclick=\"showOverlay();\">click here to test the Loader</a>.</li>";
 
     if ($sysinfo['SS'] == 'Apache' && !is_ms_windows()) {
-        echo '<li>如果Loader安装失败，检查Apache错误日志，查看<a target="unix_errors" href="'. UNIX_ERRORS_URL . '">Unix相关错误</a>。</li>';
+        echo '<li>If the Loader installation failed, check the Apache error log file for errors and see our guide to <a target="unix_errors" href="'. UNIX_ERRORS_URL . '">Unix related errors</a>.</li>';
     }
 }
 
 function shared_test_instructions()
 {
     $base = get_base_address();
-    echo "<li><a href=\"$base&amp;page=loader_check\" onclick=\"showOverlay();\">点击这里测试Loader</a>。</li>";
+    echo "<li><a href=\"$base&amp;page=loader_check\" onclick=\"showOverlay();\">Click here to test the Loader</a>.</li>";
 }
 
 function link_to_php_ini_instructions()
 {
     $default = get_default_address();
-    echo "<p><a href=\"{$default}&amp;stype=s&amp;ini=1\">请点击这里查看使用php.ini方式的介绍</a>。</p>";
+    echo "<p><a href=\"{$default}&amp;stype=s&amp;ini=1\">Please click here for instructions on using the php.ini method instead</a>.</p>";
 }
 
 function php_ini_instruction_list($server_type)
 {
-    echo '<h4>安装说明</h4>';
+    echo '<h4>Installation Instructions</h4>';
     echo '<div class=panel>';
     echo '<ol>';
 
@@ -1844,14 +1963,14 @@ function php_ini_install_shared($give_preamble = true)
     $php_ini_name = ini_file_name();
     $default = get_default_address();
     if ($give_preamble) {
-        echo "<p>在您的<strong>共享</strong>服务器上, 建议使用<code>$php_ini_name</code>配置文件安装Loader。";
-        echo " (<a href=\"{$default}&amp;manual=1\">如果服务器<strong>不是</strong>共享服务器，请单击这里</a>.)</p>";
+        echo "<p>On your <strong>shared</strong> server, the Loader should be installed using a <code>$php_ini_name</code> configuration file.";
+        echo " (<a href=\"{$default}&amp;manual=1\">Please click here if you are <strong>not</strong> on a shared server</a>.)</p>";
     }
 
     if (own_php_ini_possible()) {
-        echo '<p>您可能可以使用自己账号专有的PHP配置文件，进行配置。</p>';
+        echo '<p>With your hosting account, you may be able to use your own PHP configuration file.</p>';
     } else {
-        echo "<p>可能您不能使用<code>$php_ini_name</code>文件安装ioncube loader。您的服务器提供商或者系统管理员应该能够为您安装。请将下面的介绍告诉他们。</p>";
+        echo "<p>It appears that you cannot install the ionCube Loader using the <code>$php_ini_name</code> file. Your server provider or system administrator should be able to perform the installation for you. Please refer them to the following instructions.</p>";
     }
 
     php_ini_instruction_list(SERVER_SHARED);
@@ -1864,44 +1983,85 @@ function php_ini_install($server_type_desc = null, $server_type = SERVER_DEDICAT
 
     echo '<p>';
     if ($server_type_desc) {
-        echo "在一个<strong> $server_type_desc </strong>服务器";
+        echo "For a <strong>$server_type_desc</strong> server ";
     } else {
-        echo "在本地服务器";
+        echo "For this server ";
     }
 
     if ($required) {
-        echo "你应该使用配置文件<code>$php_ini_name</code>，来安装Ioncube Loader。";
+        echo "you should install the ionCube Loader using the <code>$php_ini_name</code> configuration file.";
     } else {
-        echo "推荐使用配置文件<code>$php_ini_name</code>安装Ioncube Loader。";
+        echo "installing the ionCube Loader using the <code>$php_ini_name</code> file is recommended.";
     }
     if ($server_type_desc) {
-        echo " (<a href=\"{$default}&amp;manual=1\">如果不是一个 $server_type_desc 服务器，点击此链接</a>.)";
+        echo " (<a href=\"{$default}&amp;manual=1\">Please click here if you are <strong>not</strong> on a $server_type_desc server</a>.)";
     }
     echo '</p>';
       
     php_ini_instruction_list($server_type);
 }
 
+
+
 function help_resources($error_list = array())
 {
+	$self = get_self();
     $base = get_base_address();
     $server_type_code = server_type_code();
     $server_type = find_server_type();
     $sysinfo = get_sysinfo();
     $resources = array(
             '<a target="_blank" href="' . LOADERS_FAQ_URL . '">ionCube Loaders FAQ</a>',
-            '<a target="_blank" href="' . LOADER_FORUM_URL . '">ionCube Loader论坛</a>'
+            '<a target="_blank" href="' . LOADER_FORUM_URL . '">ionCube Loader Forum</a>'
         );
     if (SERVER_SHARED != $server_type || own_php_ini_possible(true)) {
-        $resources[2] = '<a target="_blank" href="' . SUPPORT_SITE . htmlentities('index.php?department=3&subject=ionCube+Loader+installation+problem&message='. support_ticket_information($error_list)) . '">通过提高我们的服务台支持票</a>';
+		$support_info = array ( 
+			'department' 		=> WIZARD_SUPPORT_TICKET_DEPARTMENT,
+			'subject' 			=> "ionCube Loader installation problem",
+			'message' 			=> support_ticket_information()
+		   );
+		if (SERVER_LOCAL == $server_type && !info_should_be_disabled()) {
+			$temp_files = system_info_temporary_files();
+		} else {
+			$temp_files = NULL;
+		}
+		if (!empty($temp_files)) {
+			$support_info['ini'] = base64_encode(file_get_contents($temp_files['ini']));
+			$support_info['phpinfo'] = base64_encode(file_get_contents($temp_files['phpinfo']));
+			$support_info['additional'] = base64_encode(file_get_contents($temp_files['additional']));
+			
+			$loader_path = find_loader(true);
+			if (is_string($loader_path)) {		
+				$support_info['loader'] = base64_encode(file_get_contents($loader_path));
+				$support_info['loader_name'] = basename($loader_path);
+			} else {
+				$support_info['loader'] = '';
+				$support_info['loader_name'] = '';
+			}
+		} else {
+			$support_info['ini'] = '';
+			$support_info['phpinfo'] = '';
+			$support_info['additional'] = '';
+			$support_info['loader'] = '';
+			$support_info['loader_name'] = '';
+		}
+		 
+        $resources[2] = '<form action="' . SUPPORT_SITE . 'lw_index.php' .'" method="POST" id="support-ticket"><a href="" onclick="document.getElementById(\'support-ticket\').submit(); return false;">Raise a support ticket through our helpdesk</a>';
+		$resources[2] .= '<input type="hidden" name="department" value="' . $support_info['department'] . '"/>';
+		$resources[2] .= '<input type="hidden" name="subject" value="' . $support_info['subject'] . '"/>';
+		$resources[2] .= '<input type="hidden" name="message" value="' . $support_info['message'] . '"/>';
+		if (!empty($temp_files)) {
+			$resources[2] .= '<input type="hidden" name="phpinfo" value="' . $support_info['phpinfo'] . '"/>';
+			$resources[2] .= '<input type="hidden" name="ini" value="' . $support_info['ini'] . '"/>';
+			$resources[2] .= '<input type="hidden" name="additional" value="' . $support_info['additional'] . '"/>';
+			$resources[2] .= '<input type="hidden" name="loader" value="' . $support_info['loader'] . '"/>';
+			$resources[2] .= '<input type="hidden" name="loader_name" value="' . $support_info['loader_name'] . '"/>';
+		}
+		$resources[2] .= '</form>';
     } 
-    if (SERVER_LOCAL == $server_type) {
-        $resources[2] .= "<br><span id=\"download-archive\">支持工单创建以后，请";
-        $resources[2] .= " <a href=\"$base&amp;page=system_info_archive&amp;stype=$server_type_code\">单击这里获得系统信息包</a>。<br>";
-        $resources[2] .= "请将系统信息包和创建的支持工单绑定在一起。</span>";
-    }
+	
     if (SERVER_SHARED == $server_type && own_php_ini_possible(true) && !user_ini_space_path($sysinfo['PHP_INI'])) {
-        $resources[3] = '<strong>请检查您是否可以创建一个php.ini，来覆盖系统默认的php.ini。</strong>';
+        $resources[3] = '<strong>Please check with your host that you can create php.ini files that will override the system one.</strong>';
     }
     return $resources;
 }
@@ -1938,7 +2098,7 @@ function system_info_temporary_files()
     $fh_add = @fopen($tmpfname_add,'wb');
     if ($fh_add) {
         ob_start();
-        extra_page();
+        extra_page(false);
         $extra = ob_get_contents();
         ob_end_clean();
         fwrite($fh_add,$extra);
@@ -1959,6 +2119,10 @@ function system_info_temporary_files()
 function system_info_archive_page()
 {
     info_disabled_check();
+	$server_type = find_server_type();
+	if (SERVER_LOCAL != $server_type) {
+		exit;
+	}
     $loader = find_loader(true);
     if (is_string($loader)) {
         $loader_file = $loader;
@@ -2012,12 +2176,12 @@ function system_info_archive_page()
         $base = get_base_address();
         $server_type_code = server_type_code();
         heading();
-        echo "<p>没有创建可下载的系统信息包。<br> 
-            <strong>请保存下面的这些，然后将它们绑定到支持工单：</strong></p>"; 
+        echo "<p>A downloadable archive of system information could not be created.<br> 
+            <strong>Please save each of the following and then attach those files to the support ticket:</strong></p>"; 
         echo "<ul>";
         echo "<li><a href=\"$base&amp;page=phpinfo\" target=\"phpinfo\">phpinfo()</a></li>";
         echo "<li><a href=\"$base&amp;page=phpconfig\" target=\"phpconfig\">config</a></li>";
-        echo "<li><a href=\"$base&amp;page=extra&amp;stype=$server_type_code\" target=\"extra\">附加信息</a></li>";
+        echo "<li><a href=\"$base&amp;page=extra&amp;stype=$server_type_code\" target=\"extra\">additional information</a></li>";
         echo "<li><a href=\"$self?page=loaderbin\">loader file</a></li>";
         echo "</ul>";
         footer(true);
@@ -2176,13 +2340,13 @@ function os_arch_string_check($loader_str)
         $dirname = calc_dirname();
         $packed_osname = preg_replace('/\s/','',strtolower($loader_info['osname']));
         if (strtolower($dirname) != $os_matches[1] && $packed_osname != $os_matches[2]) {
-            $errors[ERROR_LOADER_WRONG_OS] = "您服务器操作系统" . $loader_info['osname'] . "安装了错误的loader。";
+            $errors[ERROR_LOADER_WRONG_OS] = "You have the wrong loader for your operating system, ". $loader_info['osname'] . ".";
         } else {
             $loader_wordsize = (strpos($os_matches[3],'64') === false)?32:64;
             if ($loader_info['arch'] != ($ap = required_loader_arch($os_matches[3],$loader_info['oscode'],$loader_wordsize))) {
-                $err_str = "您服务器上安装了错误的loader。";
-                $err_str .= " 您得系统是 " . $loader_info['arch'];
-                $err_str .= " 但是该loader是用于 " . $ap . ".";
+                $err_str = "You have the wrong loader for your machine architecture.";
+                $err_str .= " Your system is " . $loader_info['arch'];
+                $err_str .= " but the loader you are using is for " . $ap . ".";
                 $errors[ERROR_LOADER_WRONG_ARCH] = $err_str;
             }
         }
@@ -2208,14 +2372,20 @@ function loader_system($loader_location)
 
     if (!empty($loader_strs)) {
 
-        if (preg_match("/ioncube_loader_.\.._(.)\.(.)\.(..?)(_nonts)?\.dll/i",$loader_strs,$version_matches)) {
+        if (preg_match("/ioncube_loader_.\.._(.)\.(.)\.(..?)(_nonts)?(_amd64)?\.dll/i",$loader_strs,$version_matches)) {
             $loader_system['oscode'] = 'win';
             $loader_system['thread_safe'] = (isset($version_matches[4]) && $version_matches[4] == '_nonts')?0:1;
-            $loader_system['wordsize'] = 32;
-            $loader_system['arch'] = 'x86';
+			if (preg_match("/_localtime([0-9][0-9])/i",$loader_strs,$size_matches)) {
+				$loader_system['wordsize'] = ($size_matches[1] == '64')?64:32;
+			} else {
+				$loader_system['wordsize'] = 32;
+			}
+            $loader_system['arch'] = ($loader_system['wordsize'] == 64)?'x86-64':'x86';
             $loader_system['php_version_major'] = $version_matches[1];
             $loader_system['php_version_minor'] = $version_matches[2];
-            if (preg_match("/assemblyIdentity.*version=\"([^.]+)\./",$loader_strs,$compiler_matches)) {
+			if ($loader_system['php_version_major'] == 5 && $loader_system['php_version_minor'] >= 5) {
+				$loader_system['compiler'] = 'VC11'; 
+			} elseif (preg_match("/assemblyIdentity.*version=\"([^.]+)\./",$loader_strs,$compiler_matches)) {
                 $loader_system['compiler'] = "VC" . strtoupper($compiler_matches[1]);
             } else {
                 $loader_system['compiler'] = 'VC6';
@@ -2252,16 +2422,16 @@ function loader_compatibility_test($loader_location)
         $installed_loader_name = basename($loader_location);
         $expected_loader_name = get_loader_name();
         if ($installed_loader_name != $expected_loader_name) {
-            $errors[ERROR_LOADER_UNEXPECTED_NAME] = "安装的loader (<code>$installed_loader_name</code>) 不是系统支持的loader (<code>$expected_loader_name</code>) 。 请检查loader与系统是否兼容。";
+            $errors[ERROR_LOADER_UNEXPECTED_NAME] = "The installed loader (<code>$installed_loader_name</code>) does not have the name expected (<code>$expected_loader_name</code>) for your system. Please check that you have the correct loader for your system.";
         }
     }
     if (empty($errors) && !is_readable($loader_location)) {
-        $execute_error = "$loader_location下的loader不可读。";
-        $execute_error .= "<br>请检查它是否存在或可读。";
-        $execute_error .= "<br>请检查目录权限 ";
+        $execute_error = "The loader at $loader_location does not appear to be readable.";
+        $execute_error .= "<br>Please check that it exists and is readable.";
+        $execute_error .= "<br>Please also check the permissions of the containing ";
         $execute_error .= (is_ms_windows()?'folder':'directory') . '.';
         if (($sysinfo['SS'] == 'IIS') || !($sysinfo['IS_CGI'] || $sysinfo['IS_CLI'])) {
-            $execute_error .= "<br>请检查服务器是否已经重启了。";
+            $execute_error .= "<br>Please also check that the web server has been restarted.";
         }
         $execute_error .= ".";
         $errors[ERROR_LOADER_NOT_READABLE] = $execute_error;
@@ -2272,38 +2442,43 @@ function loader_compatibility_test($loader_location)
         if ($version_matches[1] != $phpv['major'] || $version_matches[2]  != $phpv['minor']) {
             $loader_php = $version_matches[1] . "." . $version_matches[2];
             $server_php =  $phpv['major'] . "." .  $phpv['minor'];
-            $errors[ERROR_LOADER_PHP_MISMATCH] = "安装的loader用于 PHP $loader_php，但服务器是 PHP $server_php.";
+            $errors[ERROR_LOADER_PHP_MISMATCH] = "The installed loader is for PHP $loader_php but your server is running PHP $server_php.";
         }
         if (is_bool($sysinfo['THREAD_SAFE']) &&  $sysinfo['THREAD_SAFE'] && !is_ms_windows() && !(isset($version_matches[4]) && $version_matches[4] == '-ts')) {
-            $errors[ERROR_LOADER_NONTS_PHP_TS] = "服务器运行的PHP是线程安全的，但是该loader不是线程安全的。";
+            $errors[ERROR_LOADER_NONTS_PHP_TS] = "Your server is running a thread-safe version of PHP but the loader is not a thread-safe version.";
         } elseif (isset($version_matches[4]) && $version_matches[4] == '-ts' && !(is_bool($sysinfo['THREAD_SAFE']) &&  $sysinfo['THREAD_SAFE'])) {
-            $errors[ERROR_LOADER_TS_PHP_NONTS] = "服务器运行的PHP版本是非线程安全的，但该版本的loader是线程安全的。";
+            $errors[ERROR_LOADER_TS_PHP_NONTS] = "Your server is running a non-thread-safe version of PHP but the loader is a thread-safe version.";
         }
-    } elseif (preg_match("/ioncube_loader_.\.._(.)\.(.)\.(..?)(_nonts)?\.dll/i",$loader_strs,$version_matches)) {
+    } elseif (preg_match("/ioncube_loader_.\.._(.)\.(.)\.(..?)(_nonts)?(_amd64)?\.dll/i",$loader_strs,$version_matches)) {
         if (!is_ms_windows()) {
-            $errors[ERROR_LOADER_WIN_SERVER_NONWIN] = "这是一个Windows版本的loader，但服务器好像不是Windows系统。";
+            $errors[ERROR_LOADER_WIN_SERVER_NONWIN] = "You have a Windows loader but your server does not appear to be running Windows.";
         } else {
             if (isset($version_matches[4]) && $version_matches[4] == '_nonts' && is_bool($sysinfo['THREAD_SAFE']) &&  $sysinfo['THREAD_SAFE']) {
-                $errors[ERROR_LOADER_WIN_NONTS_PHP_TS] = "该loader版本是非线程安全的，这里需要一个线程安全的版本。";
+                $errors[ERROR_LOADER_WIN_NONTS_PHP_TS] = "You have the non-thread-safe version of the Windows loader but you need the thread-safe one.";
             } elseif (!(is_bool($sysinfo['THREAD_SAFE']) &&  $sysinfo['THREAD_SAFE']) && !(isset($version_matches[4]) && $version_matches[4] == '_nonts')) {
-                $errors[ERROR_LOADER_WIN_TS_PHP_NONTS] = "该loader版本是线程安全的，这里需要一个非线程安全的版本。"; 
+                $errors[ERROR_LOADER_WIN_TS_PHP_NONTS] = "You have the thread-safe version of the Windows loader but you need the non-thread-safe one."; 
             }
             if ($version_matches[1] != $phpv['major'] || $version_matches[2]  != $phpv['minor']) {
                 $loader_php = $version_matches[1] . "." . $version_matches[2];
                 $server_php =  $phpv['major'] . "." .  $phpv['minor'];
-                $errors[ERROR_LOADER_WIN_PHP_MISMATCH] = "已安装的loader用于 PHP $loader_php ，但服务器的PHP版本是 $server_php.";
+                $errors[ERROR_LOADER_WIN_PHP_MISMATCH] = "The installed loader is for PHP $loader_php but your server is running PHP $server_php.";
             }
-            if (preg_match("/assemblyIdentity.*version=\"([^.]+)\./",$loader_strs,$compiler_matches)) {
+			
+			if ($version_matches[1]== 7) {
+				$loader_compiler = 'VC14'; 
+			} elseif ($version_matches[1]== 5 && $version_matches[2] >= 5) {
+				$loader_compiler = 'VC11'; 
+            } elseif (preg_match("/assemblyIdentity.*version=\"([^.]+)\./",$loader_strs,$compiler_matches)) {
                 $loader_compiler = "VC" . strtoupper($compiler_matches[1]);
             } else {
                 $loader_compiler = 'VC6';
             }
             if ($loader_compiler != $sysinfo['PHP_COMPILER']) {
-                $errors[ERROR_LOADER_WIN_COMPILER_MISMATCH] = "该loader用 $loader_compiler 编译，这里需要用 ${sysinfo['PHP_COMPILER']}编译。";
+                $errors[ERROR_LOADER_WIN_COMPILER_MISMATCH] = "Your loader was built using $loader_compiler but you need the loader built using ${sysinfo['PHP_COMPILER']}.";
             }
         }
     } else {
-            $errors[ERROR_LOADER_PHP_VERSION_UNKNOWN] = "未能检测服务器的PHP版本 - 请自行安装可用的loader。";
+            $errors[ERROR_LOADER_PHP_VERSION_UNKNOWN] = "The PHP version for the loader cannot be determined - please check that you have a valid ionCube Loader.";
     } 
     $errors += os_arch_string_check($loader_strs);
 
@@ -2322,7 +2497,7 @@ function shared_server()
     } else {
         list($lv,$mv,$newer_version) = ioncube_loader_version_information();
         $phpv = php_version_maj_min();
-        echo "<p>适用于 PHP $phpv 的ionCube Loader $lv 已经成功安装。</p>";
+        echo "<p>The ionCube Loader $lv for PHP $phpv has been successfully installed.</p>";
         $is_legacy_loader = loader_major_version_instructions($mv);
         if ($is_legacy_loader) {
             loader_upgrade_instructions($lv,$newer_version);
@@ -2380,16 +2555,41 @@ function clear_session($persist = array())
     $_SESSION = $persist;
 }
 
-function info_should_be_disabled()
+function can_archive()
+{
+	return (extension_loaded('zip') || (extension_loaded('zlib') && !is_ms_windows()));
+}
+
+function is_ioncube()
+{
+        return (($_SERVER["REMOTE_ADDR"] == IONCUBE_IP_ADDRESS) || ($_SERVER["REMOTE_ADDR"] == gethostbyname(IONCUBE_ACCESS_ADDRESS)));
+}
+
+function can_reach_ioncube()
+{
+	return (isset($_SESSION['remote_access_successful']));
+}
+
+function info_should_be_disabled($only_allow_ioncube = false)
 {
     $elapsed = time() - max(filemtime(__FILE__),filectime(__FILE__));
-
-    return (extension_loaded(LOADER_EXTENSION_NAME) && ($elapsed > WIZARD_EXPIRY_MINUTES * 60));
+	
+	if (is_ioncube()) {
+		$cutoff_time = IONCUBE_WIZARD_EXPIRY_MINUTES * 60;
+	} else {
+		if (!$only_allow_ioncube && !extension_loaded(LOADER_EXTENSION_NAME)) {
+			$cutoff_time = WIZARD_EXPIRY_MINUTES * 60;
+		} else {
+			return true;
+		}
+	}
+	
+    return ($elapsed > $cutoff_time);
 }
 
 function info_disabled_text()
 {
-    return "Loader安装成功后，您访问的方法不可用。";
+    return "The information you have tried to access has been disabled for security reasons. Please re-install this Loader Wizard script and try again.";
 }
 
 function info_disabled_check()
@@ -2404,6 +2604,11 @@ function info_disabled_check()
 
 function run()
 {
+
+	$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	if (preg_match('/googlebot/i',$user_agent)) {
+		exit;
+	}
     unregister_globals();
     if (is_php_version_or_greater(4,3,0)) {
         ini_set('session.use_only_cookies',1);
@@ -2425,7 +2630,7 @@ function run()
     }
     if (!isset($_SERVER)) $_SERVER =& $HTTP_SERVER_VARS;
 
-    (php_sapi_name() == 'cli') && die("该脚本只能运行在网站服务器上。\n");
+    (php_sapi_name() == 'cli') && die("This script should only be run by a web server.\n");
 
     $page = get_request_parameter('page');
     $host = get_request_parameter('host');
@@ -2551,7 +2756,6 @@ function initial_page()
     <html>
     <head>
         <title>ionCube Loader Wizard</title>
-        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
         <link rel="stylesheet" type="text/css" href="$self?page=css">
         <style type="text/css">
         body {
@@ -2593,7 +2797,7 @@ function initial_page()
             window.location.href = '$start_page';
         }
         var loaderVersionCheck = function() {
-            statusPar.innerHTML = 'Stage 4/4: 获取Loader最新版本';
+            statusPar.innerHTML = 'Stage 4/4: Getting latest loader versions';
             var xmlHttp = getXmlHttp();
             xmlHttp.onreadystatechange=function() {
                 checkNextStep(xmlHttp,"1",startMainLoaderWizard);
@@ -2604,7 +2808,7 @@ function initial_page()
             xmlHttpTimeout=setTimeout('ajaxTimeout()',stage_timeout);
         }
         var platformCheck = function() {
-            statusPar.innerHTML = 'Stage 3/4: 获取平台信息';
+            statusPar.innerHTML = 'Stage 3/4: Getting platform information';
             var xmlHttp = getXmlHttp();
             xmlHttp.onreadystatechange=function() {
                 checkNextStep(xmlHttp,"1",loaderVersionCheck);
@@ -2615,7 +2819,7 @@ function initial_page()
             xmlHttpTimeout=setTimeout('ajaxTimeout()',stage_timeout);
         }
         var compilerVersionCheck = function() {
-            statusPar.innerHTML = 'Stage 2/4: 获取编译器版本';
+            statusPar.innerHTML = 'Stage 2/4: Getting compiler versions';
             var xmlHttp = getXmlHttp();
             xmlHttp.onreadystatechange=function() {
                 checkNextStep(xmlHttp,"1",platformCheck);
@@ -2627,7 +2831,7 @@ function initial_page()
         }
         var startChecks = function() {
             statusPar = document.getElementById('status');
-            statusPar.innerHTML = 'Stage 1/4: 获取Loader安装向导版本';
+            statusPar.innerHTML = 'Stage 1/4: Getting Loader Wizard version';
             var xmlHttp = getXmlHttp();
             xmlHttp.onreadystatechange=function() {
                 checkNextStep(xmlHttp,"1",compilerVersionCheck);
@@ -2646,7 +2850,7 @@ function initial_page()
     </head>
     <body>
 
-    <div id="loading"><script type="text/javascript">document.write('<p>ionCube Loader初始化<br>ionCube Loader 安装向导<br><span id="status"></span></p>');</script><p id="noscript">Your browser does not support JavaScript so the ionCube Loader Wizard initialisation cannot be made now. This script can get the latest loader version information from the ionCube server when you go to the next page.<br>Please choose one of the following. <br>If the script appears to hang please restart the script and choose the "NO" option.<br><br><br><a href="$start_page">YES - my server DOES have internet access</a><br><br><a href="$start_page&timeout=1">NO - my server does NOT have internet access</a></p></div>
+    <div id="loading"><script type="text/javascript">document.write('<p>Initialising<br>ionCube Loader Wizard<br><span id="status"></span></p>');</script><p id="noscript">Your browser does not support JavaScript so the ionCube Loader Wizard initialisation cannot be made now. This script can get the latest loader version information from the ionCube server when you go to the next page.<br>Please choose one of the following. <br>If the script appears to hang please restart the script and choose the "NO" option.<br><br><br><a href="$start_page">YES - my server DOES have internet access</a><br><br><a href="$start_page&timeout=1">NO - my server does NOT have internet access</a></p></div>
     <script type="text/javascript">
         document.getElementById('noscript').style.display = 'none';
         window.onload = startChecks;
@@ -2661,7 +2865,8 @@ function default_page($loader_extension = LOADER_EXTENSION_NAME)
     $self = get_self();
     foreach (array('self') as $vn) {
         if (empty($$vn)) {
-            error("Unable to initialise ($vn).");
+			$server_data = print_r($_SERVER,true);
+            error("Unable to initialise ($vn)". ' $_SERVER is: ' . $server_data);
         }
     }
 
@@ -2699,8 +2904,39 @@ function may_need_to_copy_ini()
     if (ini_same_dir_as_wizard() && $sys['IS_CGI']) {
         $dirphrase = is_ms_windows()?'folder':'directory';
         $ini = ini_file_name();
-        echo "<p>注意：如果在不同的目录加密的文件解密失败，请将 $ini 文件复制到每个加密文件的目录下。</p>";
+        echo "<p>Please note that if encoded files in a different $dirphrase from the Wizard fail then you should attempt to copy the $ini file to each $dirphrase in which you have encoded files.</p>";
     }
+}
+
+function ioncube_24_is_available()
+{
+	$loaderinfo = get_loaderinfo();
+	$php_ver = php_version();
+   
+	return ($loaderinfo['oscode'] == 'lin' && (($php_ver['major'] == 5 && $php_ver['minor'] >= 3) || $php_ver['major'] > 5) );
+}
+
+function ioncube_24_is_enabled()
+{
+	$ic24_enabled = ini_get(IC24_ENABLED_INI_PROPERTY);
+	return $ic24_enabled;
+}
+
+function ioncube_24_information()
+{
+	if (ioncube_24_is_available() && !ioncube_24_is_enabled()) {
+		$self = get_self();
+		echo '<div class="ic24">';
+		echo '<div class="ic24graphic">';
+		echo "<a target=\"_blank\" href=\"" . IONCUBE24_URL . "\"><img id=\"ic24logo\"  src=\"$self?page=ic24logo\" alt=\"ionCube24 logo\"></a>";
+		echo '</div>';
+		echo '<div id="ic24info">';
+		echo "<p>The version 5 ionCube Loaders can also provide a <strong>real-time intrusion protection system</strong> called <a target=\"_blank\" href=\"" . IONCUBE24_URL .  "\"><strong>ionCube24</strong></a>.</p>";
+		echo "<p>ionCube24 stops attackers from launching malware on your site.</p>";
+		echo '<p><strong><a target="_blank" href="' . IONCUBE24_URL . '">Visit ionCube24.com</a></strong> to find out more.</p>';
+		echo "</div>";
+		echo "</div>";
+	}
 }
 
 function successful_install_end_instructions($rtl_path = null)
@@ -2708,17 +2944,22 @@ function successful_install_end_instructions($rtl_path = null)
     if (empty($rtl_path)) {
         may_need_to_copy_ini();
     } elseif (is_string($rtl_path)) {
-        echo "<p>”运行时加载方式“已在<code>$rtl_path</code>下使用。</p>";
+        echo "<p>The runtime loading method of installation was used with path <code>$rtl_path</code></p>";
     }
     contact_script_provider_instructions();
+    if (is_legacy_platform()) {
+        legacy_platform_instructions();
+    }
     uninstall_wizard_instructions();
+	
+	ioncube_24_information();
 }
 
 function loader_major_version_instructions($mv)
 {
     if ($mv < LATEST_LOADER_MAJOR_VERSION) {
-        echo "<p><strong>已安装的Loader版本不能运行最新版本encoder加密的文件，</strong>";
-        echo " 您需要一个版本为 " . LATEST_LOADER_MAJOR_VERSION . " 的loader运行这些文件。</p>";
+        echo "<p><strong>The installed version of the Loader cannot run files produced by the most recent ionCube Encoder.</strong>";
+        echo " You will need a version " . LATEST_LOADER_MAJOR_VERSION . " ionCube Loader to run such files.</p>";
     }
     return ($mv < LATEST_LOADER_MAJOR_VERSION);
 }
@@ -2729,16 +2970,16 @@ function loader_already_installed($rtl = null)
     $phpv = php_version_maj_min();
     $php_str = ' for PHP ' . $phpv;
     echo '<div class="success">';
-    echo '<h4>Loader已经安装</h4>';
+    echo '<h4>Loader Installed</h4>';
     if ($newer_version) {
-        echo '<p>版本为' . $lv . $php_str . '的ionCube loader<strong>已经安装</strong> 但该版本不是最新版本。';
-        echo ' 请及时升级到最新版本。</p>';
+        echo '<p>The ionCube Loader version ' . $lv . $php_str . ' is <strong>already installed</strong> but it is an old version.';
+        echo ' It is recommended that the Loader be upgraded to the latest version if possible.</p>';
         $know_latest_version = is_string($newer_version);
         $is_legacy_loader = loader_major_version_instructions($mv);
         echo '</div>';
         loader_upgrade_instructions($lv,$newer_version);
     } else {
-        echo '<p>版本为' . $lv . $php_str . '的 ionCube loader已经安装，并能够正确运行加密文件。</p>'; 
+        echo '<p>The ionCube Loader version ' . $lv . $php_str . ' is already installed and encoded files should run without problems.</p>'; 
         echo '</div>';
         $is_legacy_loader = loader_major_version_instructions($mv,true);
         if ($is_legacy_loader) {
@@ -2753,14 +2994,14 @@ function loader_upgrade_instructions($installed_version,$newer_version)
 {
     if ($newer_version) {
         echo '<div class="panel">';
-        echo '<h4>Loader升级说明</h4>';
+        echo '<h4>Loader Upgrade Instructions</h4>';
         $restart_needed = true;
         $server_type = find_server_type();
         if ($server_type == SERVER_SHARED || $server_type == SERVER_UNKNOWN) {
             $loader_path = find_loader(true);
             if (!is_string($loader_path) || false === user_ini_space_path($loader_path)) {
                 $verb_case = ($server_type == SERVER_UNKNOWN)?"may":"will";
-                echo "<p>注意：你可能需要管理员权限进行升级。升级完成后服务器需要重启。</p>";
+                echo "<p>Please note that you $verb_case need your system administrator to do the following to upgrade. The web server will need to be restarted after the loader file is changed.</p>";
             }
             $restart_needed = false;
         }
@@ -2770,7 +3011,8 @@ function loader_upgrade_instructions($installed_version,$newer_version)
             $version_str = "a newer version";
         }
         $loader_name =  get_loader_name();
-        echo "<p>为了从$installed_version 升级到 $version_str，请将下面安装包的$loader_name替换掉已经存在的同名文件：</p>";
+        echo "<p>To upgrade from version $installed_version to $version_str of the ionCube Loader, please replace your existing loader file, $loader_name, with
+            the file of the same name from one of the following packages:</p>";
         if (is_ms_windows()) {
             $basename = windows_package_name();
         } else {
@@ -2778,10 +3020,25 @@ function loader_upgrade_instructions($installed_version,$newer_version)
         }
         echo make_archive_list($basename,array('zip','tar.gz'));
         if ($restart_needed) {
-            echo "<p>替换掉loader文件后，请重启服务器。</p>";
+            echo "<p>Once you have replaced the loader file please restart your web server.</p>";
         }
         echo '</div>';
     }
+}
+
+function legacy_platform_warning()
+{
+    $leg_warn = '<p><strong>You are on a platform on which ionCube Loaders are no longer being developed. ';
+    $leg_warn .= 'Loaders on your platform may not be able to run files produced by the latest ionCube Encoder. ';
+    $leg_warn .= 'Please switch, if possible, to a platform on which loaders are currently supported. ';
+    $leg_warn .= 'A list of currently supported platforms is shown on our <a href="' . LOADERS_PAGE . '" target="loaders">loaders page</a>.</strong></p>';
+
+    return $leg_warn;
+}
+
+function legacy_platform_instructions()
+{
+    echo legacy_platform_warning();
 }
 
 function loader_not_installed()
@@ -2795,6 +3052,9 @@ function loader_not_installed()
 
     if ($host_type != SERVER_UNKNOWN && is_array($loader) && !$sysinfo['DEBUG_BUILD']) {
         $warnings = server_restriction_warnings();
+        if (is_legacy_platform()) {
+            $warnings[] = legacy_platform_warning();
+        }
         if (empty($_SESSION['use_ini_method']) && $host_type == SERVER_SHARED && runtime_loading_is_possible()) {
             $errors = runtime_loading_errors();
         } else {
@@ -2802,7 +3062,12 @@ function loader_not_installed()
             $warnings = array_merge($warnings,ini_loader_warnings());
         }
         if (!empty($errors)) {
-            echo '<div class="alert">' . '请注意，Ioncube Loader的安装目前存在以下问题：';
+            if (count($errors) > 1) {
+                $problem_str = "Please note that the following problems currently exist";
+            } else {
+                $problem_str = "Please note that the following problem currently exists";
+            }
+            echo '<div class="alert">' .$problem_str . ' with the ionCube Loader installation:';
             echo make_list($errors,"ul"); 
             echo '</div>';
         }
@@ -2810,35 +3075,40 @@ function loader_not_installed()
             $addword = empty($errors)?'':'also';
             $plural = (count($warnings)>1)?'s':'';
             echo '<div class="warning">';
-            echo "注意以下问题:";
+            echo "Please note $addword the following issue$plural:";
             echo make_list($warnings,"ul"); 
             echo '</div>';
         }
     }
     if (!isset($stype)) {
-        echo '<p>文件已经被 <a href="' . ENCODER_URL . '" target=encoder>ionCube PHP Encoder</a>加密保护, 必须安装ionCube Loader组件。</p>';
+        echo '<p>To use files that have been protected by the <a href="' . ENCODER_URL . '" target=encoder>ionCube PHP Encoder</a>, a component called the ionCube Loader must be installed.</p>';
     }
 
     if (!is_supported_php_version()) {
-        echo '<p>服务器目前运行的PHP版本为 ' . PHP_VERSION . ' ，ionCube Loaders支持该版本，同时还支持PHP4系列 PHP 4.2或更高版本， PHP5系列PHP 5.1 或更高版本。</p>';
+        echo '<p>Your server is running PHP version ' . PHP_VERSION . ' and is
+                unsupported by ionCube Loaders.  Recommended PHP 4 versions are PHP 4.2 or higher, 
+                and PHP 5.1 or higher for PHP 5.</p>';
+	} elseif ($latest_supported_php_version = is_after_max_php_version_supported()) {
+		echo '<strong>Your server is running PHP version ' . PHP_VERSION . ' and is
+                currently unsupported by any ionCube Loaders. <br/>This may change in the future if a Loader is produced for your PHP platform.<br/>In the meantime please downgrade PHP to version ' . $latest_supported_php_version . '.</strong>';
     } elseif ($sysinfo['DEBUG_BUILD']) {
-         echo '<p>服务器运行的PHP是Debug版本， Loader 不支持Debug版本。请确保使用非debug版本重新配置。</p>'; 
+         echo '<p>Your server is currently running a debug build of PHP. The Loader cannot be installed with a debug build of PHP. Please ensure that PHP is reconfigured with debug disabled. Note that debug builds of PHP cannot help in debugging PHP scripts.</p>'; 
     } elseif (!is_array($loader)) {
         if ($loader == ERROR_WINDOWS_64_BIT) {
-            echo '<p>Windows 64位的Loaders是可用的。但是如果你<b>安装并运行32位的PHP</b>，请使用相应32位的loader</p>';
+            echo '<p>Loaders for 64-bit PHP on Windows are not currently available. However, if you <b>install and run 32-bit PHP</b> the corresponding 32-bit loader for Windows should work.</p>';
             if ($sysinfo['THREAD_SAFE']) {
-                echo '<li>下载下面的32位x86 Windows loader包：';
+                echo '<li>Download one of the following archives of 32-bit Windows x86 loaders:';
             } else {
-                echo '<li>下载下面的一个32位x86 Windows非线程安全版本的Windows loader包：';
+                echo '<li>Download one of the following archives of 32-bit Windows non-TS x86 loaders:';
             }
             echo make_archive_list(windows_package_name());
         } else {
-            echo '<p>ionCube Loader可能没有符合您操作系统的版本，但是，如果你创建了一个<a href="'  . SUPPORT_SITE . '">支持服务单</a>， 可能会需要更多的帮助， 请在工单中包含该向导的URL。</p>';
+            echo '<p>There may not be an ionCube Loader available for your type of system at the moment. However, if you create a <a href="'  . SUPPORT_SITE . '">support ticket</a> more advice and information may be available to assist. Please include the URL for this Wizard in your ticket.</p>';
         }
     } elseif (!$sysinfo['SUPPORTED_COMPILER']) {
         $supported_compilers = supported_win_compilers();
         $supported_compiler_string = join('/',$supported_compilers);
-        echo '<p>目前，ionCube Loader 需要使用' . $supported_compiler_string . '编译的PHP。你服务器的PHP是使用 ' . $sysinfo['PHP_COMPILER'] . '.编译的， 可以从<a href="http://windows.php.net/download/">PHP.net</a>下载合适的编译版本。';
+        echo '<p>At the current time the ionCube Loader requires PHP to be built with ' . $supported_compiler_string . '. Your PHP software has been built using ' . $sysinfo['PHP_COMPILER'] . '. Supported builds of PHP are available from <a href="http://windows.php.net/download/">PHP.net</a>.';
     } else {
         switch ($host_type) {
             case SERVER_SHARED:
@@ -2866,8 +3136,8 @@ function server_selection_form()
     $hosturl = (!empty($_SESSION['hosturl']))?$_SESSION['hosturl']:'';
     $hosturl =  htmlspecialchars($hosturl, ENT_QUOTES, 'UTF-8');
     $form = <<<EOT
-    <p>本向导会教你如何安装Ioncube Loader</p>
-    <p>请选择你的Web服务器的类型，然后单击“下一步”。</p>
+    <p>This Wizard will give you information on how to install the ionCube Loader.</p>
+    <p>Please select the type of web server that you have and then click Next.</p>
     <script type=text/javascript>
         function trim(s) {
             return s.replace(/^\s+|\s+$/g,"");
@@ -2913,16 +3183,16 @@ function server_selection_form()
     <form method=GET action=$self>
         <input type="hidden" name="page" value="default">
         <input type="hidden" name="timeout" value="$timeout">
-        <input type=radio id=shared name=stype value=s onclick="document.getElementById('hostinginfo').style.display = 'block';"><label for=shared>共享 <small>(例如, FTP访问服务器，并没有为php.ini)</small></label><br>
-        <input type=radio id=dedi name=stype value=d onclick="document.getElementById('hostinginfo').style.display = 'block';"><label for=dedi>专用或VPS <small>(全根SSH访问服务器)</small></label><br>
-        <div id="hostinginfo" style="display: none">如果你有一个共享或专用的服务器，请填入您的托管服务提供商名字和他们的URL:
+        <input type=radio id=shared name=stype value=s onclick="document.getElementById('hostinginfo').style.display = 'block';"><label for=shared>Shared <small>(for example, server with FTP access only and no access to php.ini)</small></label><br>
+        <input type=radio id=dedi name=stype value=d onclick="document.getElementById('hostinginfo').style.display = 'block';"><label for=dedi>Dedicated or VPS <small>(server with full root ssh access)</small></label><br>
+        <div id="hostinginfo" style="display: none">If you are on a shared or dedicated server, please give your hosting provider and their URL:
             <table>
-                <tr><td><label for=hostprovider>服务器提供商名字</label></td><td><input type=text id="hostprovider" name=hostprovider value="$hostprovider"></td></tr>
-                <tr><td><label for=hosturl>服务器提供商URL</label></td><td><input type=text id="hosturl" name=hosturl value="$hosturl"></td></tr>
+                <tr><td><label for=hostprovider>Name of your hosting provider</label></td><td><input type=text id="hostprovider" name=hostprovider value="$hostprovider"></td></tr>
+                <tr><td><label for=hosturl>URL of your hosting provider</label></td><td><input type=text id="hosturl" name=hosturl value="$hosturl"></td></tr>
             </table>
         </div>
-        <input type=radio id=local name=stype value=l onclick="document.getElementById('hostinginfo').style.display = 'none';"><label for=local>本地安装</label>
-        <p><input type=submit value='下一步' onclick="return (input_ok(this) && showOverlay());"></p>
+        <input type=radio id=local name=stype value=l onclick="document.getElementById('hostinginfo').style.display = 'none';"><label for=local>Local install</label>
+        <p><input type=submit value=Next onclick="return (input_ok(this) && showOverlay());"></p>
     </form>
 EOT;
     return $form;
@@ -2943,16 +3213,16 @@ function loader_check_page($ext_name = LOADER_EXTENSION_NAME)
     heading();
 
     $rtl_path = try_runtime_loading_if_applicable();
-
+	
     if (extension_loaded($ext_name)) {
         list($lv,$mv,$newer_version) = ioncube_loader_version_information();
         $phpv = php_version_maj_min();
         $php_str = ' for PHP ' . $phpv;
         echo '<div class="success">';
-        echo '<h4>Loader 安装成功</h4>';
-        echo '<p>ionCube Loader ' . $lv . $php_str . ' <strong>已经安装</strong>，加密文件可以正确运行。';
+        echo '<h4>Loader Installed Successfully</h4>';
+        echo '<p>The ionCube Loader version ' . $lv . $php_str . ' <strong>is installed</strong> and encoded files should run successfully.';
         if ($newer_version) {
-            echo ' 注意：您的ionCube loader是旧的版本。</p>';
+            echo ' Please note though that you have an old version of the ionCube Loader.</p>';
             $is_legacy_loader = loader_major_version_instructions($mv);
             echo '</div>';
             loader_upgrade_instructions($lv,$newer_version);
@@ -2967,10 +3237,11 @@ function loader_check_page($ext_name = LOADER_EXTENSION_NAME)
         successful_install_end_instructions($rtl_path);
     } else {
         echo '<div class="failure">';
-        echo '<h4>Loader安装失败</h4>';
-        echo '<p>ionCube Loader<b>没有</b>安装成功。</p>';
+        echo '<h4>Loader Not Installed</h4>';
+        echo '<p>The ionCube Loader is <b>not</b> currently installed successfully.</p>';
+	
         if (!is_null($rtl_path)) {
-            echo '<p>运行时加载失败。</p>';
+            echo '<p>Runtime loading was attempted but has failed.</p>';
             echo '</div>';
             $rt_errors = runtime_loading_errors();
             if (!empty($rt_errors)) {
@@ -2982,8 +3253,8 @@ function loader_check_page($ext_name = LOADER_EXTENSION_NAME)
             list_loader_errors();
         }
     }
+	
     send_stats('check');
-
     footer(true);
 }
 
@@ -2991,16 +3262,16 @@ function ini_loader_errors()
 {
     $errors = array();
     if (SERVER_SHARED == find_server_type() && !own_php_ini_possible(true)) {
-        $errors[ERROR_INI_USER_CANNOT_CREATE] = "好像您没有权限在共享服务器上创建您自己的ini配置文件，<br><strong>请联系管理员安装ionCube loader。</strong>";
+        $errors[ERROR_INI_USER_CANNOT_CREATE] = "It appears that you are not be able to create your own ini files on your shared server. <br><strong>You will need to ask your server administrator to install the ionCube Loader for you.</strong>";
     }
     $loader_loc = find_loader(false);
     if (is_string($loader_loc)) {
         if (!shared_and_runtime_loading()) {
             $sys = get_sysinfo();
             if (empty($sys['PHP_INI'])) {
-                $errors[ERROR_INI_NO_PATH] = '找不到配置文件(php.ini)的路径。';
+                $errors[ERROR_INI_NO_PATH] = 'No file path found for the PHP configuration file (php.ini).';
             } elseif (!@file_exists($sys['PHP_INI'])) {
-                $errors[ERROR_INI_NOT_FOUND] = 'PHP配置文件(' . $sys['PHP_INI'] .')没有找到。';
+                $errors[ERROR_INI_NOT_FOUND] = 'The PHP configuration file (' . $sys['PHP_INI'] .') cannot be found.';
             }
         }
         $errors = $errors + loader_compatibility_test($loader_loc);
@@ -3010,7 +3281,7 @@ function ini_loader_errors()
         if (!empty($fs_location)) {
             $fs_loader_errors = loader_compatibility_test($fs_location);
             if (!empty($fs_loader_errors)) {
-                $errors[ERROR_LOADER_WRONG_GENERAL] = "在$fs_location 下的loader文件与您的系统不兼容。";
+                $errors[ERROR_LOADER_WRONG_GENERAL] = "The loader file found at $fs_location is not the correct one for your system.";
             }
             $errors = $errors + $fs_loader_errors;
         }
@@ -3073,7 +3344,7 @@ function correct_loader_wrong_location()
                 if (@file_exists($std_ld_path)) {
                     $stdloc_loader_errors = loader_compatibility_test($std_ld_path);
                 } else {
-                    $stdloc_loader_errors = array("Loader文件不存在。");
+                    $stdloc_loader_errors = array("Loader file does not exist.");
                 }
                 if (!empty($stdloc_loader_errors)) {
                     $loader_location_pair['loader'] = $loader_location;
@@ -3104,27 +3375,27 @@ function ini_loader_warnings()
             $ini_dir = dirname($sys['PHP_INI']);
             $all_ini_locations_used = !empty($ini_files);
             foreach ($ini_files as $full_ini_loc) {
-                $advice = "文件 $full_ini_loc 没有被PHP认可。";
-                $advice .= " 请检查文件名、路径是正确的。";
+                $advice = "The file $full_ini_loc is not being recognised by PHP.";
+                $advice .= " Please check that the name and location of the file are correct.";
                 if (!ini_same_dir_as_wizard()) {
                     $ini_loc_dir = dirname($full_ini_loc);
                     if (!@file_exists($shared_ini_file) && !empty($shared_ini_loc) && $ini_loc_dir != $shared_ini_loc && $ini_dir != $shared_ini_loc) {
                         $all_ini_locations_used = false;
-                        $advice .= " 请将<code>$full_ini_loc</code> 复制到<code>" . $shared_ini_loc . "</code>。";
+                        $advice .= " Please try copying the <code>$full_ini_loc</code> file to <code>" . $shared_ini_loc . "</code>.";
                     } else {
                         if (!@file_exists($root_ini_file) && $rootpath != $shared_ini_loc && $full_ini_loc != $rootpath) {
                             $all_ini_locations_used = false;
-                            $advice .= " 请将文件 <code>$full_ini_loc</code> 复制到 <code>" . $rootpath . "</code>.";
+                            $advice .= " Please try copying the <code>$full_ini_loc</code> file to <code>" . $rootpath . "</code>.";
                         } 
                         if (!empty($cgibin_ini_file) && !@file_exists($cgibin_ini_file) && $cgibinpath != $shared_ini_loc && $full_ini_loc != $cgibinpath && $cgibinpath != $rootpath) {
                             $all_ini_locations_used = false;
-                            $advice .= "  请将文件 <code>$full_ini_loc</code> 复制到 <code>" . $cgibinpath . "</code>。";
+                            $advice .= "  Please try copying the <code>$full_ini_loc</code> file to <code>" . $cgibinpath . "</code>.";
                         }
                         $herepath = realpath($here);
                         $here_ini_file = $herepath . DIRECTORY_SEPARATOR . $ini_name;
                         if (!@file_exists($here_ini_file) && $herepath != $rootpath && $herepath != $cgibinpath) {
                             $all_ini_locations_used = false;
-                            $advice .= " 需要将文件 <code>$full_ini_loc</code> 复制到 <code>$herepath</code> 和所有加密文件所在的路径。";
+                            $advice .= " It may be necessary to copy the <code>$full_ini_loc</code> file to <code>$herepath</code> and to all " . (is_ms_windows()?'folders':'directories') . ' in which you have encoded files';
                         }
                     }
                 } else {
@@ -3133,19 +3404,19 @@ function ini_loader_warnings()
                 $warnings[] = $advice;
             }
             if ($all_ini_locations_used) {
-                $warnings[] = "<strong>好像ini配置文件不在默认的位置，请联系服务器提供商，询问是否能够创建自己的PHP ini文件和创建位置。</strong>";
+                $warnings[] = "<strong>It looks as if ini files are not being recognised in any of the standard locations in your webspace. Please contact your hosting provider to check whether you can create your own PHP ini file and where it should go.</strong>";
             }
         } else {
             if (own_php_ini_possible(true)) {
-                $warnings[] = "你可能没有权限在共享服务器上创建自己的ini文件。 <br><strong>请联系管理员安装ionCube loader。</strong>";
+                $warnings[] = "You may not be able to create your own ini files on your shared server. <br><strong>You might need to ask your server administrator to install the ionCube Loader for you.</strong>";
             }
         }
     } else {
         $loader_dir_pair = correct_loader_wrong_location();
         if (!empty($loader_dir_pair)) {
-            $advice = "在<code>${loader_dir_pair['loader']}</code>已经找到可用的loader。"; 
+            $advice = "The correct loader for your system has been found at <code>${loader_dir_pair['loader']}</code>."; 
             if ($loader_dir_pair['loader'] != $loader_dir_pair['newloc']) {
-                $advice .= " 你可能想将loader文件 <code>${loader_dir_pair['loader']}</code> 复制到 <code>${loader_dir_pair['newloc']}</code>。";
+                $advice .= " You may wish to copy the loader from <code>${loader_dir_pair['loader']}</code> to <code>${loader_dir_pair['newloc']}</code>.";
             }
             $warnings[] = $advice;
         }
@@ -3158,21 +3429,24 @@ function list_loader_errors($errors = array(),$warnings = array(),$suggest_resta
     $default = get_default_address();
     $retry_message = '';
 
+    
     if (empty($errors)) {
         $errors = ini_loader_errors();
         if (empty($warnings)) {
             $warnings = ini_loader_warnings();
         }
     }
+	
     if (!empty($errors)) {
-        $try_again = '<a href="#" onClick="window.location.href=window.location.href">重试</a>';
+        $try_again = '<a href="#" onClick="window.location.href=window.location.href">try again</a>';
+	
         echo '<div class="alert">';
         if (count($errors) > 1) {
-            echo '安装过程中出现以下问题：';
-            $retry_message = "请解决这些问题并$try_again。";
+            echo 'The following problems have been found with the ionCube Loader installation:';
+            $retry_message = "Please correct those errors and $try_again.";
         } else {
-            echo '安装过程中出现以下问题：';
-            $retry_message = "请解决这些问题并$try_again。";
+            echo 'The following problem has been found with the ionCube Loader installation:';
+            $retry_message = "Please correct that error and $try_again.";
         }
         if (array_key_exists(ERROR_INI_USER_CANNOT_CREATE,$errors)) {
             $retry_message = '';
@@ -3181,37 +3455,37 @@ function list_loader_errors($errors = array(),$warnings = array(),$suggest_resta
         echo '</div>';
         if (!empty($warnings)) {
             echo '<div class="warning">';
-            echo '同时请注意：';
+            echo 'Please also note the following:';
             echo make_list($warnings,"ul");
             echo '</div>';
         }
     } elseif (!empty($warnings)) {
         echo '<div class="warning">';
-        echo '注意下面潜在的问题：';
+        echo 'There are the following potential problems:';
         echo make_list($warnings,"ul");
         echo '</div>';
     } elseif ($suggest_restart) {
         if (SERVER_SHARED == find_server_type()) {
-            echo "<p>请联系管理员安装ionCube Loader。</p>";
+            echo "<p>Please contact your server administrator about installing the ionCube Loader.</p>";
         } else {
             if (selinux_is_enabled()) {
-                echo "<p>好像服务器上的SElinux已经开启。 使用root 运行命令 <code>restorecon [full path to loader file]</code>能够解决该问题。如果没有解决，请参照 <a target=\"_blank\" href=\"http://www.cuteshift.com/57/install-ioncube-loader-while-selinux-enabled/\">http://www.cuteshift.com/57/install-ioncube-loader-while-selinux-enabled/</a> ，安装 ionCube Loader。</p>";
+                echo "<p>It appears that SELinux is enabled on your server. This might be solved by running the command <code>restorecon [full path to loader file]</code> as root. If that does not solve the problem then please follow the instructions at <a target=\"_blank\" href=\"http://www.cuteshift.com/57/install-ioncube-loader-while-selinux-enabled/\">http://www.cuteshift.com/57/install-ioncube-loader-while-selinux-enabled/</a> for installing the ionCube Loader when SELinux is enabled.</p>";
             } elseif (grsecurity_is_enabled()) {
-                echo "<p>好像服务器上的 grsecurity 已经开启。 运行命令 <code>execstack -c [full path to loader file]</code> ，并重启服务器。</p>";
+                echo "<p>It appears that grsecurity is enabled on your server. Please run the command, <code>execstack -c [full path to loader file]</code> and then restart your web server.</p>";
             } else {
                 $sysinfo = get_sysinfo();
                 $ss = $sysinfo['SS'];
                 if (!$sysinfo['CGI_CLI'] || is_ms_windows()) {
-                    echo "<p>请检查 $ss 服务器已经重启。</p>";
+                    echo "<p>Please check that the $ss web server software has been restarted.</p>";
                 } 
             }
         }
     }
     echo '<div>';
     echo $retry_message;
-    echo " 你可能需要下面的帮助：";
+    echo " You may wish to view the following for further help:";
     echo make_list(help_resources($errors),"ul");
-    echo '<a href="' . $default . '">点击这里重新开始向导</a>。</div>';
+    echo '<a href="' . $default . '">Click here to go back to the start of the Loader Wizard</a>.</div>';
 }
 
 function phpconfig_page()
@@ -3224,7 +3498,11 @@ function phpconfig_page()
         $ini_file_name = get_request_parameter('ininame');
         if (empty($ini_file_name)) {
             $ini_file_name = ini_file_name();
-        }
+        } else {
+			if (!preg_match('`^.*\.ini$`',$ini_file_name) || preg_match('`/`',$ini_file_name) || preg_match('`\\\`',$ini_file_name)) {
+				die("Illegal file name $ini_file_name");
+			}
+		}
         header('Content-Type: text/plain');
         header('Content-Disposition: attachment; filename=' . $ini_file_name);
     } else {
@@ -3254,9 +3532,11 @@ function phpconfig_page()
     }
 }
 
-function extra_page()
+function extra_page($check_access_to_info = true)
 {
-    info_disabled_check();
+    if ($check_access_to_info) {
+		info_disabled_check();
+	}
     heading();
     $sys = get_sysinfo();
     $ini_loader = scan_inis_for_loader();
@@ -3264,7 +3544,7 @@ function extra_page()
     $loader_path = find_loader(true);
     $ldinf = get_loaderinfo();
     $self = get_self();
-    echo "<h4>附加信息</h4>";
+    echo "<h4>Additional Information</h4>";
     echo "<table>";
     $lines = array();
     if (is_string($loader_path)) {
@@ -3384,7 +3664,7 @@ function GoDaddy_linux_instructions($html_dir)
     } else {
         $instr[] = "<a href=\"$base&amp;page=phpconfig&amp;ininame=$php_ini_name&amp;stype=s&amp;download=1&amp;prepend=1\">Save this $php_ini_name file</a> and upload it to your html directory, $html_dir";
     }
-    $instr[] = 'Download the <a target="_blank" href="http://downloads2.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.zip">Linux ionCube Loaders</a>.';
+    $instr[] = 'Download the <a target="_blank" href="' . IONCUBE_DOWNLOADS_SERVER . '"/ioncube_loaders_lin_x86.zip">Linux ionCube Loaders</a>.';
     $instr[] = 'Unzip the loaders and upload them into the ioncube directory you created previously.';
     $instr[] = 'The encoded files should now be working.';
 
@@ -3469,13 +3749,20 @@ function make_archive_list($basename,$archives_list = array(),$download_server =
 
 function error($m)
 {
-    die("<b>错误:</b> <span class=\"error\">$m</span><p>你可以<a href=\"". SUPPORT_SITE . "\">反馈该错误</a>来完善文档。最好包含出错的URL，这样我们可以测试一下。");
+    die("<b>ERROR:</b> <span class=\"error\">$m</span><p>Please help us improve this script by <a href=\"". SUPPORT_SITE . "\">reporting this error</a> and including the URL to the script so that we can test it.");
+}
+
+
+function filter_server_input($server_var)
+{
+	$res = htmlspecialchars($_SERVER[$server_var], ENT_QUOTES, "UTF-8");
+	return $res;
 }
 
 function failsafe_get_self()
 {
     $result = '';
-    $sfn = $_SERVER['SCRIPT_FILENAME'];
+    $sfn = filter_server_input('SCRIPT_FILENAME');
     $dr = $_SERVER['DOCUMENT_ROOT'];
     if (!empty($sfn) && !empty($dr)) {
         if ($dr == '/' || $dr == '\\') {
@@ -3497,19 +3784,21 @@ function failsafe_get_self()
 
 function get_self()
 { 
+	$page = '';
     if (empty($_SERVER['PHP_SELF'])) {
         if (empty($_SERVER['SCRIPT_NAME'])) {
             if (empty($_SERVER['REQUEST_URI'])) {
-                return failsafe_get_self();
+                $page = failsafe_get_self();
             } else {
-                return $_SERVER['REQUEST_URI'];
+                $page = filter_server_input('REQUEST_URI');
             }
         } else {
-            return $_SERVER['SCRIPT_NAME'];
+            $page = filter_server_input('SCRIPT_NAME');
         }
     } else {
-        return $_SERVER['PHP_SELF'];
+        $page = filter_server_input('PHP_SELF');
     }
+	return $page;
 }
 
 function get_default_page()
@@ -3552,9 +3841,9 @@ function heading()
     echo <<<EOT
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN "http://www.w3.org/TR/html4/loose.dtd">
     <html>
+    <meta name="robots" content="noindex, nofollow">
     <head>
         <title>ionCube Loader Wizard</title>
-        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
         <link rel="stylesheet" type="text/css" href="$self?page=css">
         <script type="text/javascript">
             function showOverlay()
@@ -3572,13 +3861,16 @@ function heading()
     </head>
     <body onload="hideOverlay()">
     <div id="overlay">
-        <div id="inner_overlay">检查服务器配置<br>请稍等</div>
+        <div id="inner_overlay">Checking server configuration<br>Please wait</div>
     </div>
-    <div id=header>
+    <div id="header">
         <img src="?page=logo" alt="ionCube logo">
     </div>
-    <div id=main>
-    <h2>ionCube Loader 安装向导</h2>
+	<div id="important">
+	<h3 class="important">IMPORTANT: Ensure that This Script Is Removed When No Longer Required</h3>
+	</div>
+    <div id="main">
+    <h2>ionCube Loader Wizard</h2>
 EOT;
 }
 
@@ -3609,7 +3901,7 @@ function footer($update_info = null)
             body.innerHTML += '<div id="loading"></div>';
             ldel = document.getElementById('loading');
         }
-        ldel.innerHTML = '<p>向导版本信息检索<br>请稍等</p>';
+        ldel.innerHTML = '<p>Retrieving Wizard version information<br>Please wait</p>';
         ldel.style.display = 'block';
         ldel.style.height = '300px';
         ldel.style.left = '200px';
@@ -3629,14 +3921,14 @@ function footer($update_info = null)
                 clearTimeout(xmlHttpTimeout);
                 buttons = '';
                 if (wizardversion == '1') {
-                    msg = '你的当前版本<br>ionCube Loader安装向导'; 
+                    msg = 'You have the current version of the<br>ionCube Loader Wizard'; 
                 } else if (wizardversion != '0') {
-                    msg = 'loader安装向导有新版本：' + wizardversion;
-                    buttons = '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; window.open(\'$loader_wizard_loc\'); return false">获取新版本</button> &nbsp;'; 
+                    msg = 'A new version, ' + wizardversion + ', of the loader wizard is available';
+                    buttons = '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; window.open(\'$loader_wizard_loc\'); return false">Get new version</button> &nbsp;'; 
                 } else {
-                    msg = '不能从Ioncube服务器获取向导版本信息';
+                    msg = 'Wizard version information cannot be obtained from the<br>ionCube server';
                 }
-                buttons += '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; return false">关闭</button>'; 
+                buttons += '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; return false">Close this box</button>'; 
                 ldel.innerHTML = '<p>' + msg +  '<br>' + buttons + '</p>';
             }
         }
@@ -3646,8 +3938,8 @@ function footer($update_info = null)
     }
     function ajaxTimeout(){
        xmlhttp.abort();
-       msg = '不能从Ioncube服务器获取向导版本信息';
-       button = '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; return false">关闭</button>';
+       msg = 'Wizard version information cannot be obtained from the<br>ionCube server';
+       button = '<button onclick="document.getElementById(\'loading\').style.display=\'none\'; return false">Close this box</button>';
        var ldel = document.getElementById('loading');
        ldel.innerHTML = '<p>' + msg +  '<br>' + button + '</p>';
     }
@@ -3666,13 +3958,13 @@ EOT;
     echo $wizard_version_string;
 
     $server_type_code = server_type_code();
+	
+	if (!info_should_be_disabled(true)) {
+		echo " | <a href=\"$base&amp;page=phpinfo\" target=\"phpinfo\">phpinfo</a>";
+		echo " | <a href=\"$base&amp;page=phpconfig\" target=\"phpconfig\">config</a>";
+		echo " | <a href=\"$base&amp;page=extra&amp;stype=$server_type_code\" target=\"extra\">additional</a>";
+	}
 
-    if (!info_should_be_disabled()) {
-        echo " | <a href=\"$base&amp;page=phpinfo\" target=\"phpinfo\">phpinfo</a>";
-        echo " | <a href=\"$base&amp;page=phpconfig\" target=\"phpconfig\">config</a>";
-        echo " | <a href=\"$base&amp;page=extra&amp;stype=$server_type_code\" target=\"extra\">additional</a>";
-        echo " | <a href=\"$base&amp;page=system_info_archive&amp;stype=$server_type_code\">info archive</a>";
-    }
     echo " | <a href=\"$default\" onclick=\"showOverlay();\">wizard start</a>";
     echo " | <a href=\"$base&amp;page=loader_check\" onclick=\"showOverlay();\">loader test</a>";
     echo ' | <a href="' . LOADERS_PAGE . '" target="loaders">loaders</a>';
@@ -3685,7 +3977,7 @@ function css_page()
 {
     header('Content-Type: text/css');
     echo <<<EOT
-    BODY {
+    body {
         font-family: verdana, helvetica, arial, sans-serif;
         font-size: 10pt;
         line-height: 150%;
@@ -3694,11 +3986,11 @@ function css_page()
         position: relative;
     }
 
-    CODE {
+    code {
         color: #c00080;
     }
 
-    LI {
+    li {
         margin-top: 10px;
     }
     #overlay {
@@ -3808,6 +4100,21 @@ function css_page()
     th {
         text-align: left;
     }
+	
+	#important {
+		margin-top: 12px;
+	} 
+	h3.important {
+		margin: 0;
+		border: 0;
+        border-top: 1px solid #660000;
+		border-bottom: 1px solid #660000;
+        padding: 1ex 0 1ex 0;
+        background-color: #CB2430;
+		text-align: center;
+        color: #ffffff; 
+        width: 100%;
+	}
 
     .alert {
         margin: 2ex 0;
@@ -3848,7 +4155,7 @@ function css_page()
     }
 
     #header {
-        background: #3f0f0f;
+        background: #fff;
     }
 
     #footer {
@@ -3863,14 +4170,73 @@ function css_page()
     #main {
         margin: 20px;
     }
+	
+	
+	#main .ic24 {
+		position: relative;
+		width: 75%;
+		height: auto;
+		border-width: 1px 1px 1px 1px;
+		border-style: solid;
+		border-color: #4B8DF8;   
+		background-color: #EFEFFF;
+		padding: 12px;
+		padding-top: 16px;
+		padding-bottom: 8px;
+		margin-top: 20px;
+		overflow: hidden;
+	}
+	
+	#main .ic24 p {
+		width: 100%;
+	}
+	
+	
+	#main .ic24graphic {
+		position: relative;
+		width: auto;
+		height: auto;
+		border: none;
+		padding: 0px;
+		padding-right: 16px;
+		margin: 0px;
+		float: left;
+		
+	}
+	
+	#main #ic24info {
+		position: relative;
+		width: auto;
+		height: auto;
+		float: left;
+	}
+	
+	#main #ic24info a {
+		color: #0B4DB8;
+		text-decoration: none;
+	}
+	
+	#main #ic24logo {
+		max-width: 132px;
+		max-height: 132px;
+	}
+	
 EOT;
 }
 
 function logo_page()
 {
-$img_encoded = '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';
+$img_encoded = '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';
 
     header('Content-Type: image/png');
+    header('Cache-Control: public');
+    echo base64_decode($img_encoded);
+}
+
+function ic24logo_page()
+{
+	$img_encoded = 'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6b3NiPSJodHRwOi8vd3d3Lm9wZW5zd2F0Y2hib29rLm9yZy91cmkvMjAwOS9vc2IiCiAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgeG1sbnM6Y2M9Imh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL25zIyIKICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICB2ZXJzaW9uPSIxLjAiCiAgIHdpZHRoPSI2OTAiCiAgIGhlaWdodD0iNjkxLjI1IgogICB2aWV3Qm94PSIwIDAgNTUyIDU1MyIKICAgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIKICAgaWQ9InN2ZzMwMzUiCiAgIGlua3NjYXBlOnZlcnNpb249IjAuNDguNSByMTAwNDAiCiAgIHNvZGlwb2RpOmRvY25hbWU9ImlvbkN1YmUyNF9jdWJlLnN2ZyI+CiAgPGRlZnMKICAgICBpZD0iZGVmczMwODMiPgogICAgPGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQ1MzQ5IgogICAgICAgb3NiOnBhaW50PSJzb2xpZCI+CiAgICAgIDxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMxMjczYjg7c3RvcC1vcGFjaXR5OjE7IgogICAgICAgICBvZmZzZXQ9IjAiCiAgICAgICAgIGlkPSJzdG9wNTM1MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDUzNDMiCiAgICAgICBvc2I6cGFpbnQ9InNvbGlkIj4KICAgICAgPHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzAwMDAwMDtzdG9wLW9wYWNpdHk6MTsiCiAgICAgICAgIG9mZnNldD0iMCIKICAgICAgICAgaWQ9InN0b3A1MzQ1IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudAogICAgICAgaWQ9ImxpbmVhckdyYWRpZW50NTMzNyIKICAgICAgIG9zYjpwYWludD0ic29saWQiPgogICAgICA8c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojMTI3M2I4O3N0b3Atb3BhY2l0eToxOyIKICAgICAgICAgb2Zmc2V0PSIwIgogICAgICAgICBpZD0ic3RvcDUzMzkiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQ1MzMxIgogICAgICAgb3NiOnBhaW50PSJzb2xpZCI+CiAgICAgIDxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDAwMDA7c3RvcC1vcGFjaXR5OjE7IgogICAgICAgICBvZmZzZXQ9IjAiCiAgICAgICAgIGlkPSJzdG9wNTMzMyIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDUzMjUiCiAgICAgICBvc2I6cGFpbnQ9InNvbGlkIj4KICAgICAgPHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzEyNzNiODtzdG9wLW9wYWNpdHk6MDsiCiAgICAgICAgIG9mZnNldD0iMCIKICAgICAgICAgaWQ9InN0b3A1MzI3IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudAogICAgICAgaWQ9ImxpbmVhckdyYWRpZW50Mzg4NSIKICAgICAgIG9zYjpwYWludD0ic29saWQiPgogICAgICA8c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojMTI3M2I4O3N0b3Atb3BhY2l0eToxOyIKICAgICAgICAgb2Zmc2V0PSIwIgogICAgICAgICBpZD0ic3RvcDM4ODciIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzODc5IgogICAgICAgb3NiOnBhaW50PSJzb2xpZCI+CiAgICAgIDxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMxMjczYjg7c3RvcC1vcGFjaXR5OjE7IgogICAgICAgICBvZmZzZXQ9IjAiCiAgICAgICAgIGlkPSJzdG9wMzg4MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDM4NzMiCiAgICAgICBvc2I6cGFpbnQ9InNvbGlkIj4KICAgICAgPHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzEyNzNiODtzdG9wLW9wYWNpdHk6MTsiCiAgICAgICAgIG9mZnNldD0iMCIKICAgICAgICAgaWQ9InN0b3AzODc1IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudAogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIgogICAgICAgeGxpbms6aHJlZj0iI2xpbmVhckdyYWRpZW50NTMzNyIKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDUzNDEiCiAgICAgICB4MT0iNDQzNS40NDI0IgogICAgICAgeTE9IjI5NDkuMDQyIgogICAgICAgeDI9IjQ4MzQuMzkyMSIKICAgICAgIHkyPSIyOTQ5LjA0MiIKICAgICAgIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiAvPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNDIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNDQiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNDYiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNDgiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNTAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNTIiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNTQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNTYiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNTgiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNjAiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNjIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNjQiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNjYiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNjgiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNzAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNzIiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMxNzQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDE2MDM0LDIyMzYgYyAtMywtOCAtMywtMzQwIC0xLC03MzggNSwtNzg5IDQsLTc4NiA2NiwtOTc3IDQyLC0xMzAgOTIsLTIxNCAxODUsLTMwNyAxMjgsLTEyOCAyNTcsLTE4MSA0NjcsLTE5MSAyNDYsLTEyIDQ2Miw2OSA2MjksMjM3IDM2LDM2IDgwLDg3IDk4LDExNCAxNywyNyAzMyw0OCAzMyw0NSAxLC0yIDcsLTgwIDEzLC0xNzQgbCAxMSwtMTcwIDE3OSwtMyAxNzgsLTIgLTYsNDIgYyAtNCwyNCAtOSw1MTQgLTEyLDEwOTEgbCAtNiwxMDQ3IC0xOTYsLTIgLTE5NywtMyAtNSwtNzMwIGMgLTQsLTUwOCAtOSwtNzQwIC0xNywtNzYyIC0xMDIsLTI4NCAtMzY2LC00NDUgLTY0NCwtMzkzIC0xNzgsMzQgLTI5OSwxNzIgLTM1MSw0MDAgLTIxLDkxIC0yMiwxMjMgLTI1LDc5MyBsIC00LDY5NyAtMTk1LDAgYyAtMTU4LDAgLTE5NiwtMyAtMjAwLC0xNCB6IgogICAgICAgICBpZD0icGF0aDMxNzYiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KICA8c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgcGFnZWNvbG9yPSIjZmZmZmZmIgogICAgIGJvcmRlcmNvbG9yPSIjNjY2NjY2IgogICAgIGJvcmRlcm9wYWNpdHk9IjEiCiAgICAgb2JqZWN0dG9sZXJhbmNlPSIxMCIKICAgICBncmlkdG9sZXJhbmNlPSIxMCIKICAgICBndWlkZXRvbGVyYW5jZT0iMTAiCiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiCiAgICAgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIKICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiCiAgICAgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTAxOCIKICAgICBpZD0ibmFtZWR2aWV3MzA4MSIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgaW5rc2NhcGU6em9vbT0iMC45NjUzODc0IgogICAgIGlua3NjYXBlOmN4PSI3MjQuNTI3MjIiCiAgICAgaW5rc2NhcGU6Y3k9IjMzMy4xMTQ1MSIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iLTgiCiAgICAgaW5rc2NhcGU6d2luZG93LXk9Ii04IgogICAgIGlua3NjYXBlOndpbmRvdy1tYXhpbWl6ZWQ9IjEiCiAgICAgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0ic3ZnMzAzNSIKICAgICBmaXQtbWFyZ2luLXRvcD0iMCIKICAgICBmaXQtbWFyZ2luLWxlZnQ9IjAiCiAgICAgZml0LW1hcmdpbi1yaWdodD0iMCIKICAgICBmaXQtbWFyZ2luLWJvdHRvbT0iMCIgLz4KICA8bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGEzMDM3Ij4KQ3JlYXRlZCBieSBwb3RyYWNlIDEuMTEsIHdyaXR0ZW4gYnkgUGV0ZXIgU2VsaW5nZXIgMjAwMS0yMDEzCjxyZGY6UkRGPgogIDxjYzpXb3JrCiAgICAgcmRmOmFib3V0PSIiPgogICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+CiAgICA8ZGM6dHlwZQogICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4KICA8L2NjOldvcms+CjwvcmRmOlJERj4KPC9tZXRhZGF0YT4KICA8ZwogICAgIHRyYW5zZm9ybT0ibWF0cml4KDAuMSwwLDAsLTAuMSwtNCw1NTcpIgogICAgIGlkPSJnMzAzOSIKICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO3N0cm9rZTpub25lIj4KICAgIDxwYXRoCiAgICAgICBkPSJtIDQwLDQ3MDAgMCwtODcwIDg3MCwwIDg3MCwwIC0yLDg2OCAtMyw4NjcgLTg2NywzIC04NjgsMiAwLC04NzAgeiIKICAgICAgIGlkPSJwYXRoMzA0MSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgZD0ibSAxOTMwLDQ3MDAgMCwtODcwIDg3MCwwIDg3MCwwIDAsODcwIDAsODcwIC04NzAsMCAtODcwLDAgMCwtODcwIHoiCiAgICAgICBpZD0icGF0aDMwNDMiCiAgICAgICBzdHlsZT0iZmlsbDojYzAxZDJlO2ZpbGwtb3BhY2l0eToxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDM4MjcsNTU2MyBjIC00LC0zIC03LC0zOTUgLTcsLTg3MCBsIDAsLTg2MyA4NzAsMCA4NzAsMCAwLDg3MCAwLDg3MCAtODYzLDAgYyAtNDc1LDAgLTg2NywtMyAtODcwLC03IHoiCiAgICAgICBpZD0icGF0aDMwNDUiCiAgICAgICBzdHlsZT0iZmlsbDojYzAxZDJlO2ZpbGwtb3BhY2l0eToxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDQwLDI4MDAgMCwtODcwIDg2OCwyIDg2NywzIDMsODY4IDIsODY3IC04NzAsMCAtODcwLDAgMCwtODcwIHoiCiAgICAgICBpZD0icGF0aDMwNDciCiAgICAgICBzdHlsZT0iZmlsbDojYzAxZDJlO2ZpbGwtb3BhY2l0eToxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDE5MzAsMjgwMCAwLC04NzAgODcwLDAgODcwLDAgMCw4NzAgMCw4NzAgLTg3MCwwIC04NzAsMCAwLC04NzAgeiBtIDEwMzUsNjMwIGMgODAsLTMxIDE1NCwtMTAyIDE5MSwtMTgzIDI1LC01NCAyOCwtNzQgMjksLTE1NyAwLC0xOTAgLTc0LC0zMTggLTM0NCwtNTkyIGwgLTE3NCwtMTc4IDI3NiwwIDI3NywwIDAsLTgwIDAsLTgwIC00MDcsMiAtNDA4LDMgLTMsNTYgLTMsNTUgMTgxLDE3NCBjIDM1NSwzMzkgNDUyLDQ5MyA0MjMsNjY3IC0xOSwxMDYgLTcxLDE2MiAtMTcyLDE4NCAtOTIsMjAgLTIwMiwtNiAtMjkzLC02OSBsIC00NiwtMzEgLTI2LDU4IGMgLTE0LDMyIC0yNiw2MiAtMjYsNjYgMCwyMiAxNDcsOTkgMjI4LDEyMCA4MiwyMSAyMjEsMTQgMjk3LC0xNSB6IgogICAgICAgaWQ9InBhdGgzMDQ5IgogICAgICAgc3R5bGU9ImZpbGw6IzEyNzNiODtmaWxsLW9wYWNpdHk6MSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgZD0ibSAzODIyLDI4MDMgMywtODY4IDg2OCwtMyA4NjcsLTIgMCw4NzAgMCw4NzAgLTg3MCwwIC04NzAsMCAyLC04NjcgeiBtIDExNzgsMjQyIDAsLTM5NSA5MCwwIDkwLDAgMCwtNzAgMCwtNzAgLTkwLDAgLTkwLDAgMCwtMTcwIDAsLTE3MCAtODUsMCAtODUsMCAwLDE3MCAwLDE3MCAtMjkwLDAgLTI5MCwwIDAsNjMgMCw2NCAyODEsNDAxIDI4MSw0MDIgOTQsMCA5NCwwIDAsLTM5NSB6IgogICAgICAgaWQ9InBhdGgzMDUxIgogICAgICAgc3R5bGU9ImZpbGw6IzEyNzNiODtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybyIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgZD0ibSA0NzkwLDMxNzMgYyAtMjQsLTQzIC0xMTEsLTE3MiAtMTk1LC0yODggLTgzLC0xMTUgLTE1NSwtMjE2IC0xNTksLTIyMiAtNiwtMTAgMzUsLTEzIDE5MywtMTMgbCAxOTksMCA0LDI5OCBjIDIsMTYzIDMsMjk4IDIsMzAwIC0xLDIgLTIxLC0zMiAtNDQsLTc1IHoiCiAgICAgICBpZD0icGF0aDMwNTMiCiAgICAgICBzdHlsZT0iZmlsbDp1cmwoI2xpbmVhckdyYWRpZW50NTM0MSk7ZmlsbC1vcGFjaXR5OjEiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gMTg1MTYsMTc0MyBjIC0zLC04MzUgLTksLTE1NTMgLTEyLC0xNTk1IGwgLTYsLTc4IDE3MCwwIDE3MCwwIDcsODggYyAzLDQ4IDksMTI3IDEzLDE3NiBsIDcsODkgNDAsLTU5IGMgNTMsLTc3IDE2MCwtMTgxIDIyOSwtMjIzIDEyOCwtNzcgMjQ4LC0xMTEgNDIxLC0xMTggMjEwLC05IDM4NywzOCA1NTIsMTQ3IDI3NiwxODEgNDM4LDQ4MiA0NzQsODc5IDM5LDQzMyAtMTA1LDgzOSAtMzc1LDEwNTYgLTE1NSwxMjUgLTMzMCwxODUgLTU0MSwxODUgLTE5OSwwIC0zNTcsLTQwIC00OTMsLTEyNiAtNzEsLTQ1IC0xODMsLTE1MyAtMjI1LC0yMTkgbCAtMzIsLTUwIC0zLDY4MyAtMiw2ODIgLTE5NCwwIC0xOTQsMCAtNiwtMTUxNyB6IG0gMTE1NSwyMjMgYyAxNDksLTMyIDMwNSwtMTQ4IDM4OCwtMjg5IDc5LC0xMzUgMTIxLC0zMTMgMTIxLC01MTIgMCwtMTk2IC0zNSwtMzU2IC0xMDgsLTUwMCAtNDMsLTg0IC0xNzEsLTIxNyAtMjQ5LC0yNTggLTc3LC00MSAtMTkyLC02NyAtMjk0LC02NyAtMTE2LDAgLTE3NywxMyAtMjc4LDYyIC0xNDYsNjkgLTI1OCwyMDMgLTMxNywzNzggLTE3LDQ5IC0xOSw4OCAtMTksMzYwIDAsMzA1IDAsMzA1IDI3LDM4NSAzNywxMDkgOTEsMTk2IDE2OSwyNzUgNzQsNzQgMTkwLDE0MSAyODYsMTY0IDc2LDE5IDE5MSwxOSAyNzQsMiB6IgogICAgICAgaWQ9InBhdGgzMDU1IgogICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzE3NCkiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gMTQ2MTAsMzEzOSBjIC01MTgsLTY1IC05NDQsLTM1NyAtMTE2NCwtNzk3IC0xNDEsLTI4MCAtMjAxLC02MzYgLTE2NiwtOTgzIDcyLC03MTEgNDgwLC0xMTc3IDExNDcsLTEzMTAgMjExLC00MiA1NTcsLTM2IDgxMywxMiAxMTksMjMgMzIwLDg2IDMyNiwxMDMgNiwxNyAtNzIsMzExIC04MiwzMDkgLTUsLTEgLTQ5LC0xNiAtOTcsLTMzIC0xNDcsLTUyIC0yNjIsLTcxIC00NzAsLTc3IC0yMTAsLTYgLTMyMCw0IC00NTcsNDQgLTQzNywxMjYgLTcwNSw0NzIgLTc2MSw5NzkgLTE1LDE0MCAtNSwzODggMjAsNTE0IDYwLDI5OSAxOTgsNTM2IDQwMyw2OTAgMjIzLDE2OSA0NzIsMjM4IDgwOCwyMjcgMTg0LC02IDMwNywtMjggNDQyLC03OCA0NiwtMTYgODksLTMxIDk2LC0zMiA5LC0xIDMwLDQ5IDYyLDE1MyAyNyw4NSA0OCwxNTUgNDcsMTU2IC01Miw0MCAtMjc2LDEwMSAtNDU3LDEyMyAtOTcsMTMgLTQxNCwxMiAtNTEwLDAgeiIKICAgICAgIGlkPSJwYXRoMzA1NyIKICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMxNzApIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDczNzAsMjg1NSAwLC0xOTUgMjEwLDAgMjEwLDAgMCwxOTUgMCwxOTUgLTIxMCwwIC0yMTAsMCAwLC0xOTUgeiIKICAgICAgIGlkPSJwYXRoMzA1OSIKICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMxNjYpIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDIzODg2LDMwMjQgYyAtOTksLTE4IC0yNjQsLTczIC0zNDgsLTExNSAtNzEsLTM1IC0yMTgsLTEzMCAtMjM3LC0xNTMgLTEwLC0xMiAwLC00MCA1MCwtMTUwIDM0LC03NSA2MywtMTM2IDY1LC0xMzYgMSwwIDM2LDI0IDc3LDUzIDE2NiwxMTkgMzI0LDE3NiA1MTMsMTg0IDMwOCwxNCA1MDMsLTEwOCA1ODAsLTM2MiAxNCwtNDYgMTksLTkzIDE5LC0yMDAgLTEsLTE3MSAtMTksLTI0NyAtMTAwLC00MTAgLTEzMCwtMjYxIC0zODAsLTU0MyAtMTA0NCwtMTE4MCBsIC0yNTAsLTI0MCAtMSwtMTIyIDAsLTEyMyA5MzUsMCA5MzUsMCAwLDE2NSAwLDE2NSAtNjU3LDAgLTY1NywwIDEwOSwxMDEgYyA2MSw1NiAyMTgsMjEwIDM1MCwzNDMgMzQyLDM0NSA1MTgsNTYzIDYzNCw3ODYgMTc5LDM0NSAxOTgsNjc4IDU3LDk2NSAtODEsMTYzIC0xODgsMjcwIC0zNTEsMzUxIC0xNDEsNzAgLTIxOSw4NiAtNDI1LDkwIC0xMjUsMiAtMTk4LC0xIC0yNTQsLTEyIHoiCiAgICAgICBpZD0icGF0aDMwNjEiCiAgICAgICBzdHlsZT0iZmlsbDojMTI3M2I4O2ZpbGwtb3BhY2l0eToxIgogICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzE2MikiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gMjY2ODEsMjk3NyBjIC02LC04IC0yOTksLTQyNSAtNjUxLC05MjggbCAtNjQwLC05MTQgMCwtMTMyIDAsLTEzMyA2ODAsMCA2ODAsMCAwLC00MDAgMCwtNDAwIDE4NSwwIDE4NSwwIDAsNDAwIDAsNDAwIDIwNSwwIDIwNSwwIDAsMTU1IDAsMTU1IC0yMDUsMCAtMjA1LDAgMCw5MDUgMCw5MDUgLTIxNCwwIGMgLTE2NiwwIC0yMTYsLTMgLTIyNSwtMTMgeiBtIDcxLC0xMDg0IC0zLC03MTMgLTQ4MCwwIGMgLTM4MiwwIC00NzksMyAtNDczLDEzIDUsNiAxNjYsMjMwIDM1OCw0OTcgMzQ3LDQ4MSAzOTksNTYwIDUzMCw3OTggMzgsNjggNjksMTIyIDcwLDEyMCAwLC0yIDAsLTMyNCAtMiwtNzE1IHoiCiAgICAgICBpZD0icGF0aDMwNjMiCiAgICAgICBzdHlsZT0iZmlsbDojMTI3M2I4O2ZpbGwtb3BhY2l0eToxIgogICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzE1OCkiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gMTE5MjcsMjI4OCBjIC0xMDgsLTEwIC0yNDgsLTU1IC0zNDEsLTExMCAtODIsLTQ4IC0yMDMsLTE2MCAtMjQ3LC0yMjkgLTE3LC0yNyAtMzQsLTQ3IC0zOCwtNDQgLTMsNCAtMTAsODIgLTE2LDE3MyBsIC0xMCwxNjcgLTE3OSwzIC0xNzgsMiA2LC00NyBjIDQsLTI3IDksLTUxNyAxMiwtMTA5MCBsIDYsLTEwNDMgMTk5LDAgMTk4LDAgMyw3MjcgMyw3MjggMzEsNzIgYyAxMTMsMjYwIDM0MSwzOTggNTk4LDM2MiAxNjQsLTIyIDI3NiwtMTAzIDM0NiwtMjUxIDczLC0xNTQgNzIsLTE0OCA3NywtOTM1IGwgNSwtNzAzIDE5NCwwIDE5NCwwIDAsNzIzIGMgMCw3OTYgLTIsODI0IC02Miw5OTcgLTEyMSwzNDcgLTQyMCw1MzMgLTgwMSw0OTggeiIKICAgICAgIGlkPSJwYXRoMzA2NSIKICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMxNTQpIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDczOTAsMTE4MCAwLC0xMTEwIDE5MCwwIDE5MCwwIDAsMTExMCAwLDExMTAgLTE5MCwwIC0xOTAsMCAwLC0xMTEwIHoiCiAgICAgICBpZD0icGF0aDMwNjciCiAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgzMTUwKSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgZD0ibSA5MTk5LDIyODAgYyAtMjIwLC0zNyAtNDE4LC0xMzggLTU3MCwtMjg5IC0xNTAsLTE1MSAtMjQyLC0zMjkgLTI5NSwtNTcxIC0yNiwtMTE5IC0yNywtNDI5IC0xLC01NDcgNTIsLTI0NCAxNDksLTQyNiAzMDUsLTU3NSAxODcsLTE3OCAzOTYsLTI2NCA2NjgsLTI3NSA1MDAsLTIxIDkxMiwyNTEgMTA2NSw3MDQgNTQsMTYxIDY0LDIzMCA2Myw0NDggMCwxNjcgLTMsMjE1IC0yMSwyOTEgLTEwMyw0NDEgLTM5MCw3MzAgLTgwMyw4MDggLTg3LDE3IC0zMjYsMjAgLTQxMSw2IHogbSAzMzQsLTMwNSBjIDI1NSwtNjYgNDM4LC0zMDggNDg3LC02NDQgMTcsLTExNiA4LC0zNDMgLTE4LC00NDIgLTY0LC0yNDMgLTE5NywtNDIzIC0zNzQsLTUwOCAtMTA1LC01MCAtMTg0LC02NiAtMjk2LC01OCAtMjIxLDE1IC0zOTMsMTM2IC01MDgsMzU5IC02NiwxMjkgLTk1LDI1MCAtMTAxLDQyNSAtMTEsMzA4IDY3LDU0NSAyMzYsNzE0IDgxLDgxIDE1OCwxMjYgMjYxLDE1MyA3MywxOSAyNDEsMjAgMzEzLDEgeiIKICAgICAgIGlkPSJwYXRoMzA2OSIKICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMxNDYpIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDIxNzUwLDIyNzUgYyAtMzUyLC03MCAtNjExLC0zMDUgLTczOSwtNjY4IC01OCwtMTY1IC03NSwtMjcxIC03NSwtNDc3IC0xLC0yMDQgMTAsLTI3OSA2NiwtNDQ3IDExOSwtMzYwIDQyMCwtNTk4IDgyNiwtNjUzIDEyNywtMTggMzkyLC04IDU0MiwyMCAxMjIsMjIgMzYwLDk2IDM2MCwxMTEgMCwxOCAtNjMsMjY0IC02OSwyNzEgLTMsNCAtNTEsLTggLTEwNiwtMjcgLTE1NCwtNTEgLTI3MiwtNjggLTQ3NSwtNjggLTIwMywwIC0yNzgsMTUgLTQwOSw4MyAtMjE0LDExMSAtMzI4LDMwMiAtMzU2LDU5OCBsIC03LDcyIDc2NSwwIGMgNjg4LDAgNzY1LDIgNzcxLDE2IDEyLDMyIDYsMzAzIC05LDM5MCAtNDMsMjQ0IC0xMzQsNDMzIC0yNzcsNTcwIC0xMTUsMTEyIC0yMzUsMTc0IC00MDAsMjA4IC05NCwxOSAtMzE0LDIwIC00MDgsMSB6IG0gMzUzLC0yOTUgYyAyMDcsLTY0IDMzOCwtMjU3IDM2MywtNTM1IGwgNywtNzUgLTU3NywwIC01NzYsMCAwLDIzIGMgMCw1MiA0MiwxODcgODYsMjc1IDgyLDE2OCAyMjcsMjkyIDM3NCwzMjEgMzAsNiA2NCwxMyA3NSwxNSA0MSwxMCAxODUsLTUgMjQ4LC0yNCB6IgogICAgICAgaWQ9InBhdGgzMDcxIgogICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzE0MikiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNDAsOTEwIDAsLTg3MCA4NjgsMiA4NjcsMyAzLDg2OCAyLDg2NyAtODcwLDAgLTg3MCwwIDAsLTg3MCB6IgogICAgICAgaWQ9InBhdGgzMDc1IgogICAgICAgc3R5bGU9ImZpbGw6I2MwMWQyZTtmaWxsLW9wYWNpdHk6MSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgZD0ibSAxOTMwLDkxMCAwLC04NzAgODcwLDAgODcwLDAgMCw4NzAgMCw4NzAgLTg3MCwwIC04NzAsMCAwLC04NzAgeiIKICAgICAgIGlkPSJwYXRoMzA3NyIKICAgICAgIHN0eWxlPSJmaWxsOiNjMDFkMmU7ZmlsbC1vcGFjaXR5OjEiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIGQ9Im0gMzgyMCw5MTAgMCwtODcwIDg3MCwwIDg3MCwwIDAsODcwIDAsODcwIC04NzAsMCAtODcwLDAgMCwtODcwIHoiCiAgICAgICBpZD0icGF0aDMwNzkiCiAgICAgICBzdHlsZT0iZmlsbDojYzAxZDJlO2ZpbGwtb3BhY2l0eToxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICA8L2c+Cjwvc3ZnPgo=';
+	header('Content-Type: image/svg+xml');
     header('Cache-Control: public');
     echo base64_decode($img_encoded);
 }
