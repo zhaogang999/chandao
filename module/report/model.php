@@ -188,6 +188,7 @@ class reportModel extends model
         foreach($unplannedStories as $story)
         {
             $product = $story->product;
+            if (!in_array($products, array_keys($products))) continue;
             if(!isset($products[$product]->plans[0]))
             {
                 $products[$product]->plans[0] = new stdClass();

@@ -48,15 +48,16 @@ public function projectSummary()
 
     for($i=0;$i<$projectSum;$i++)
     {
+        $info[$projects[$i]] = new stdClass();
         $info[$projects[$i]]->projectInfo = $projectInfo[$i];
-        $info[$projects[$i]]->storySum = $storySum[$projects[$i]];
-        $info[$projects[$i]]->taskSum = $taskSum[$projects[$i]];
-        $info[$projects[$i]]->develTaskSum = $develTaskSum[$projects[$i]];
-        $info[$projects[$i]]->develTaskDoneSum = $develTaskDoneSum[$projects[$i]];
-        $info[$projects[$i]]->testSum = $testSum[$projects[$i]];
-        $info[$projects[$i]]->testDoneSum = $testDoneSum[$projects[$i]];
-        $info[$projects[$i]]->delayedTaskSum = $delayedTaskSum[$projects[$i]];
-        $info[$projects[$i]]->delayedTasks = $delayedTasks[$projects[$i]];
+        $info[$projects[$i]]->storySum = isset($storySum[$projects[$i]])?$storySum[$projects[$i]]:'';
+        $info[$projects[$i]]->taskSum = isset($taskSum[$projects[$i]])?$taskSum[$projects[$i]]:'';
+        $info[$projects[$i]]->develTaskSum = isset($develTaskSum[$projects[$i]])?$develTaskSum[$projects[$i]]:'';
+        $info[$projects[$i]]->develTaskDoneSum = isset($develTaskDoneSum[$projects[$i]])?$develTaskDoneSum[$projects[$i]]:'';
+        $info[$projects[$i]]->testSum = isset($testSum[$projects[$i]])?$testSum[$projects[$i]]:'';
+        $info[$projects[$i]]->testDoneSum = isset($testDoneSum[$projects[$i]])?$testDoneSum[$projects[$i]]:'';
+        $info[$projects[$i]]->delayedTaskSum = isset($delayedTaskSum[$projects[$i]])?$delayedTaskSum[$projects[$i]]:'';
+        $info[$projects[$i]]->delayedTasks = isset($delayedTasks[$projects[$i]])?$delayedTasks[$projects[$i]]:'';
     }
 
     krsort($info);

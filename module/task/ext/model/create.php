@@ -10,8 +10,8 @@ public function create($projectID)
 {
     $tasksID  = array();
     $taskFiles = array();
-    $taskDetail = '';
-    $auditDetail = '';
+    $taskDetail = new stdClass();
+
     $this->loadModel('file');
     $task = fixer::input('post')
         ->add('project', (int)$projectID)
@@ -87,6 +87,7 @@ public function create($projectID)
             $num = count($task->auditID);
            
             for ($i = 0; $i < $num; $i++) {
+                $auditDetail["$i"] = new stdClass();
                 $auditDetail["$i"]->task       = $taskID;
                 $auditDetail["$i"]->auditID   = $task->auditID["$i"];
                 $auditDetail["$i"]->noDec     = $task->noDec["$i"];

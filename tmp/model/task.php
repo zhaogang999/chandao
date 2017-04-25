@@ -13,8 +13,8 @@ public function create($projectID)
 {
     $tasksID  = array();
     $taskFiles = array();
-    $taskDetail = '';
-    $auditDetail = '';
+    $taskDetail = new stdClass();
+
     $this->loadModel('file');
     $task = fixer::input('post')
         ->add('project', (int)$projectID)
@@ -90,6 +90,7 @@ public function create($projectID)
             $num = count($task->auditID);
            
             for ($i = 0; $i < $num; $i++) {
+                $auditDetail["$i"] = new stdClass();
                 $auditDetail["$i"]->task       = $taskID;
                 $auditDetail["$i"]->auditID   = $task->auditID["$i"];
                 $auditDetail["$i"]->noDec     = $task->noDec["$i"];
@@ -176,13 +177,10 @@ public function update($taskID)
     //新增
     $reviewDetail = array();
     $auditDetail = array();
-    $taskDetail = '';
-    $review = '';
+    $taskDetail = new stdClass();
     $emptyReviewDetail = new stdclass();
-    $emptyAuditDetail = new stdclass();
     $reviewDetailChanges = array();
     $changes = array();
-    $now  = helper::now();
 
     $emptyReviewDetail->reviewID = '';
     $emptyReviewDetail->number = '';
@@ -271,7 +269,10 @@ public function update($taskID)
         $taskDetail->storyVersion = $task->storyVersion;
     }
     $taskDetail->assignedTo = $task->assignedTo;
-    $taskDetail->assignedDate = $task->assignedDate;
+    if (!empty($task->assignedDate))
+    {
+        $taskDetail->assignedDate = $task->assignedDate;
+    }
     $taskDetail->consumed = $task->consumed;
     $taskDetail->realStarted = $task->realStarted;
     $taskDetail->finishedBy = $task->finishedBy;
@@ -307,7 +308,7 @@ public function update($taskID)
 
     if(dao::isError())
     {
-        $this->dao->rollback;
+        $this->dao->rollback();
         return false;
     }else
     {
@@ -316,7 +317,7 @@ public function update($taskID)
     //QA审计;
     if ($oldTask->source == 'QA')
     {
-
+        $emptyAuditDetail = new stdclass();
         $emptyAuditDetail->auditID = '';
         $emptyAuditDetail->noDec = '';
         $emptyAuditDetail->noType = '';
@@ -327,6 +328,7 @@ public function update($taskID)
         $num = count($task->auditID);
         for ($i = 0; $i < $num; $i++)
         {
+            $auditDetail["$i"] = new stdClass();
             //$auditDetail["$i"]->aid       = $task->aid["$i"];
             $auditDetail["$i"]->auditID  = $task->auditID["$i"];
             $auditDetail["$i"]->noDec    = $task->noDec["$i"];
@@ -390,6 +392,7 @@ public function update($taskID)
 
     if ($task->type == 'review' && $task->status == 'done')
     {
+        $review = new stdClass();
         $review->fileNO = $task->fileNO;
         $review->recorder = $task->recorder;
         $review->reviewName = $task->reviewName;
@@ -437,7 +440,7 @@ public function update($taskID)
                 ->where('id')->eq($review->id)->limit(1)->exec();
             if(dao::isError())
             {
-                $this->dao->rollback;
+                $this->dao->rollback();
                 return false;
             }
         }
@@ -446,6 +449,7 @@ public function update($taskID)
         $num = count($task->number);
         for ($i = 0; $i < $num; $i++)
         {
+            $reviewDetail["$i"] = new stdClass();
             $reviewDetail["$i"]->id = $task->id["$i"];
             $reviewDetail["$i"]->reviewID = $task->reviewID;
             $reviewDetail["$i"]->number = $task->number["$i"];
