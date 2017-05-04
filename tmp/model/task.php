@@ -64,7 +64,10 @@ public function create($projectID)
         $taskDetail->project = $task->project;
         $taskDetail->left = $task->left;
         $taskDetail->status = $task->status;
-        $taskDetail->storyVersion = $task->storyVersion;
+        if ($this->post->story != false)
+        {
+            $taskDetail->storyVersion = $task->storyVersion;
+        }
         $taskDetail->openedBy = $task->openedBy;
         $taskDetail->openedDate = $task->openedDate;
         $taskDetail->assignedTo = $task->assignedTo;

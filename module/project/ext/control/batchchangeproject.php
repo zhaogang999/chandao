@@ -67,6 +67,7 @@ class myProject extends project
                 //任务转项目
                 $this->dao->update(TABLE_TASK)
                     ->set('project')->eq($projectID)
+                    ->set('`module`')->eq(0)
                     ->where('story')->eq($storyID)
                     ->andWhere('project')->eq($oldProjectId)
                     ->andWhere('deleted')->eq('0')

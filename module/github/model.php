@@ -38,6 +38,11 @@ class githubModel extends model
 		return $json_r;
 	}
 
+	public function saveToken($token)
+	{
+		$this->dao->update(TABLE_USER)->set('token')->eq($token)->where('account')->eq($this->session->user->account)->exec();
+	}
+
 	/**
 	//使用refresh token获取新的access token，GitHub暂时不支持
 	public function access_token_refresh($refresh_token){
@@ -101,8 +106,8 @@ class githubModel extends model
 			//$result_str=$this->http($url, http_build_query($params), 'POST');
 			$result_str=$this->http($url, json_encode($params), 'POST');
 		}
-		$result=array();
-		if($result_str!='') $result=json_decode($result_str, true);
+		$result = new stdClass();
+		if($result_str!='') $result=json_decode($result_str);
 		return $result;
 	}
 
@@ -124,12 +129,40 @@ class githubModel extends model
 		//$headers[]='User-Agent: GitHub.PHP(zhaogang999.com)';
 		//$headers[]='{'.'"Authorization":  token '.$this->session->github_t.'}';
 		curl_setopt($ci, CURLOPT_HTTPHEADER, array(
-                 'Authorization: token '. $this->session->github_t,
+                 'Authorization: token '. $this->session->user->token,
             ));
 		//curl_setopt($ci, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ci, CURLOPT_URL, $url);
 		$response=curl_exec($ci);
 		curl_close($ci);
 		return $response;
+	}
+
+	public function linkBug($issue)
+	{
+		$githubID = $issue->issue->number;
+		$bugID = $issue->issue->title;
+		$this->dao->update(TABLE_BUG)->SET('github')->eq($githubID)->where('title')->eq($bugID)->limit(1)->exec();
+	}
+
+	public function edit($old, $bug, $type)
+	{
+		$ip = 'http://' . $_SERVER['HTTP_HOST'];//或https
+		$upliadPath = 'data/upload/1/';
+		$bug->steps = str_replace($upliadPath, $ip . '/' . $upliadPath, $bug->steps);
+		//var_dump($this->session->user->account);die;
+		$issueID = $old->github;
+		
+		$state = $bug->status=='active'?'open':'closed';
+		$data = array(
+			'title'=>$bug->title,
+			'body'=>$bug->steps,
+			'assignee'=>"zhaogang999",
+			'state' => $state,
+			'labels'=>["bug"],
+		);
+		//$data = array();
+		$result = $this->api('repos/zhaogang999/shop/issues/'. $issueID, $data, 'POST');
+		var_dump($result);die;
 	}
 }

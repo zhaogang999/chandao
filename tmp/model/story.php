@@ -94,12 +94,13 @@ public function setStage($storyID)
     //获取任务类型配置信息
     $taskType = $this->config->story->develTask . ',test';
 
-    /* Search related tasks. */
+    /* Search related tasks. 取消统计status为pause的任务 */
     $tasks = $this->dao->select('type,project,status')->from(TABLE_TASK)
         ->where('project')->in(array_keys($projects))
         ->andWhere('story')->eq($storyID)
         ->andWhere('type')->in($taskType)
         ->andWhere('status')->ne('cancel')
+        ->andWhere('status')->ne('pause')
         ->andWhere('closedReason')->ne('cancel')
         ->andWhere('deleted')->eq(0)
         ->fetchGroup('type');
