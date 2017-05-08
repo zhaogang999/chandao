@@ -24,6 +24,9 @@ class branchModel extends model
         {
             if(empty($productID)) $productID = $this->session->product;
             $product = $this->loadModel('product')->getById($productID);
+            //在调用语言项之前需加载语言项
+            $this->app->loadLang('branch');
+            $this->app->loadLang('product');
             return $this->lang->branch->all . $this->lang->product->branchName[$product->type];
         }
         return $this->dao->select('*')->from(TABLE_BRANCH)->where('id')->eq($branchID)->fetch('name');

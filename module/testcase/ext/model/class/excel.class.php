@@ -62,7 +62,8 @@ class excelTestcase extends testcaseModel
             $caseData->status       = $data->status[$key];
             $caseData->stage        = join(',', $data->stage[$key]);
             $caseData->frequency    = 1;
-            $caseData->linkCase     = $data->linkCase[$key];
+            //解决bug，post没传该值
+            //$caseData->linkCase    = $data->linkCase[$key];
             $caseData->keywords     = $data->keywords[$key];
             $caseData->precondition = $data->precondition[$key];
 

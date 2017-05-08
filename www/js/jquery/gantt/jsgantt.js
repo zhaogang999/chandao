@@ -637,6 +637,11 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
                  vLeftTable += '<span style="color: #000000; font-weight:bold; FONT-SIZE: 12px;">&nbsp&nbsp&nbsp</span>';
                }
 
+                if(!vTaskList[i].getGroup()){
+                    vLeftTable +=
+                        '<span style="color:#0000ff; cursor:pointer;" onclick=JSGantt.taskLink("' + config.webRoot + 'task-edit-'+ vID + '.html?onlybody=yes",350,200);>'+  '编辑' +'</span>';
+                }
+
                vLeftTable += 
                   '<span onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200); style="cursor:pointer" title="' + vTaskList[i].getTitle() + '"> ' + vTaskList[i].getName() + '</span></NOBR></TD>' ;
 
