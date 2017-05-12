@@ -69,6 +69,8 @@ public function create($projectID)
         $taskDetail->openedDate = $task->openedDate;
         $taskDetail->assignedTo = $task->assignedTo;
         $taskDetail->assignedDate = $task->assignedDate;
+        //禅道任务增加关键字字段；需求：858；行号：72-73
+        $taskDetail->keywords    = $task->keywords;
 
         if ($task->source == 'QA')
         {

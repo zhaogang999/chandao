@@ -358,6 +358,11 @@
             <th><?php echo $lang->task->assignedTo;?></th>
             <td><?php echo $task->assignedTo ? $task->assignedToRealName . $lang->at . $task->assignedDate : '';?></td> 
           </tr>
+          <!--禅道任务增加关键字字段；需求：858；行号：361-365-->
+          <tr>
+            <th><?php echo $lang->task->keywords;?></th>
+            <td><?php echo $task->keywords;?></td>
+          </tr>
           <tr>
             <th><?php echo $lang->task->type;?></th>
             <td><?php echo $lang->task->typeList[$task->type];?></td>

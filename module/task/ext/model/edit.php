@@ -97,6 +97,8 @@ public function update($taskID)
     $taskDetail->project = $task->project;
     $taskDetail->left = $task->left;
     $taskDetail->status = $task->status;
+    //禅道任务增加关键字字段；需求：858；行号：100-101
+    $taskDetail->keywords    = $task->keywords;
 
     if ($this->post->story != false and $this->post->story != $oldTask->story)
     {

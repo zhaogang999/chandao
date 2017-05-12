@@ -47,6 +47,11 @@
           <button type='button' class='btn btn-link<?php echo $task->type == 'affair' ? '' : ' hidden'?>' id='selectAllUser'><?php echo $lang->task->selectAllUser ?></button>
         </td>
       </tr>
+      <!--禅道任务增加关键字字段；需求：858;行：50-54-->
+      <tr>
+        <th><?php echo $lang->task->keywords;?></th>
+        <td><?php echo html::input('keywords', '', "class='form-control'");?></td>
+      </tr>
       <?php if(strpos(",$showFields,", ',story,') !== false):?>
       <tr>
         <th><?php echo $lang->task->story;?></th>

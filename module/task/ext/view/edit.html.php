@@ -380,7 +380,12 @@
           <tr>
             <th><?php echo $lang->task->assignedTo;?></th>
             <td><span id="assignedToIdBox"><?php echo html::select('assignedTo', $members, $task->assignedTo, "class='form-control chosen'");?></span></td> 
-          </tr>  
+          </tr>
+          <!--禅道任务增加关键字字段；需求：858；行号：384-388-->
+          <tr>
+            <th><?php echo $lang->task->keywords;?></th>
+            <td><?php echo html::input('keywords', $task->keywords, 'class="form-control"');?></td>
+          </tr>
           <tr>
             <th><?php echo $lang->task->type;?></th>
             <td><?php echo html::select('type', $lang->task->typeList, $task->type, 'class=form-control');?></td>
