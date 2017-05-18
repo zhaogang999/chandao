@@ -3,7 +3,7 @@ helper::import('H:\zentao\chandao\module\report\model.php');
 class extreportModel extends reportModel 
 {
 /**
-* get info of projects
+* 获得bug统计数据
 *
 * @access public
 * @return array
@@ -11,27 +11,28 @@ class extreportModel extends reportModel
 public function bugSummary()
 {
 	$info = array();
-
+    //获得要统计的产品及产品标题
     $products = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PRODUCT)->where('status')->eq('normal')->andWhere('deleted')->eq('0')->fetch();
-
+    $productInfo = $this->dao->select("id,name")->from(TABLE_PRODUCT)->where('status')->eq('normal')->andWhere('deleted')->eq('0')->fetchAll();
+    //获得bug总数
     $bugSumSql = "SELECT `product`,COUNT(`id`) AS bugSum FROM zt_bug WHERE `product` IN(" .$products->ids . ") AND deleted='0' GROUP BY `product`";
     $bugSum = $this->dao->query($bugSumSql)->fetchAll();
-
     //对数据进行处理
     $newBugSum = array();
     foreach ($bugSum as $value) {
         $newBugSum[$value->product] = $value->bugSum;
     }
-    //var_dump($bugSum);die;
-    $productInfo = $this->dao->select("id,name")->from(TABLE_PRODUCT)->where('status')->eq('normal')->andWhere('deleted')->eq('0')->fetchAll();
-    //获得bug各分类的统计数据
-    $bugSeveritySum = $this->getBugSum($products->ids,'severity');
-    $bugStatusSum = $this->getBugSum($products->ids,'status');
-    $bugResolutionSum = $this->getBugSum($products->ids,'resolution');
 
+    //获得bug各分类的统计数据
+    //按严重程度统计
+    $bugSeveritySum = $this->getBugSum($products->ids,'severity');
+    //按bug状态统计
+    $bugStatusSum = $this->getBugSum($products->ids,'status');
+    //按解决方案统计
+    $bugResolutionSum = $this->getBugSum($products->ids,'resolution');
+    //对数据进行处理，把得到的数据按产品整合到一起
     $products = explode(',', $products->ids);
     $productSum =count($products);
-
     for($i=0;$i<$productSum;$i++)
     {
         $info[$products[$i]] = new stdClass();
@@ -41,16 +42,23 @@ public function bugSummary()
         $info[$products[$i]]->bugStatusSum = isset($bugStatusSum[$products[$i]]) ? $bugStatusSum[$products[$i]]: 0;
         $info[$products[$i]]->bugResolutionSum = isset($bugResolutionSum[$products[$i]])?$bugResolutionSum[$products[$i]]:0;
     }
-
+    //按产品ID倒序
     krsort($info);
     return $info;
 }
 
+/**
+ * 按bug个分类统计数据
+ *
+ * @param string $productIDs
+ * @param string $sort
+ * @return array
+*/
 public function getBugSum($productIDs,$sort)
 {
     $sql = "SELECT `product`,`" . $sort . "`,COUNT( `id` ) AS bugSum FROM zt_bug WHERE `product` IN (" .$productIDs . ") AND deleted = '0' GROUP BY `product`,`" .$sort . "`";
     $data = $this->dao->query($sql)->fetchAll();
-
+    //对数据进行处理，把得到的数据按产品整合到一起
     $newData = array();
     foreach ($data as $val)
     {
@@ -59,7 +67,7 @@ public function getBugSum($productIDs,$sort)
     return $newData;
 }
 /**
-* get info of projects
+* get info of projectStory
 *
 * @access public
 * @return array
@@ -93,7 +101,7 @@ public function storySummary()
     return $info;
 }
 /**
-* get info of projects
+* get info of storyTask
 *
 * @access public
 * @return array
@@ -130,7 +138,7 @@ public function storyTaskSummary()
     return $info;
 }
 /**
-* get info of projects
+* get info of task
 *
 * @access public
 * @return array
