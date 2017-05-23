@@ -33,7 +33,7 @@
       <tr class="a-center">
         <td align="center"><?php echo $id;?></td>
         <td><?php echo $project->projectInfo->name;?></td>
-        <td align="center"><?php echo isset($project->storySum)?array_sum($project->storySum):0;?></td>
+        <td align="center"><?php echo !empty($project->storySum)?array_sum($project->storySum):0;?></td>
         <td align="center"><?php echo $project->storySum['projected']?$project->storySum['projected']:0;?></td>
         <td align="center"><?php echo $project->storySum['developing']?$project->storySum['developing']:0;?></td>
         <td align="center"><?php echo $project->storySum['developed']?$project->storySum['developed']:0;?></td>

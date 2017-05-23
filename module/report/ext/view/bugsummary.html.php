@@ -53,7 +53,7 @@
         <td align="center"><?php echo isset($product->bugSeveritySum['3'])?$product->bugSeveritySum['3']:0;?></td>
         <td align="center"><?php echo isset($product->bugSeveritySum['4'])?$product->bugSeveritySum['4']:0;?></td>
         <td align="center"><?php echo isset($product->bugStatusSum['active'])?$product->bugStatusSum['active']:0;?></td>
-        <td align="center"><?php echo $product->bugSum-$product->bugStatusSum['active'];?></td>
+        <td align="center"><?php echo isset($product->bugStatusSum['resolved'])?$product->bugStatusSum['resolved']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['bydesign'])?$product->bugResolutionSum['bydesign']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['duplicate'])?$product->bugResolutionSum['duplicate']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['external'])?$product->bugResolutionSum['external']:0;?></td>
@@ -61,7 +61,7 @@
         <td align="center"><?php echo isset($product->bugResolutionSum['notrepro'])?$product->bugResolutionSum['notrepro']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['postponed'])?$product->bugResolutionSum['postponed']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['willnotfix'])?$product->bugResolutionSum['willnotfix']:0;?></td>
-        <td align="center"><?php echo isset($product->bugResolutionSum['tostory'])?$product->bugResolutionSum['tostory']:0;?></td>
+        <td align="center"><?php echo isset($product->bugToStorySum)?$product->bugToStorySum:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['improve'])?$product->bugResolutionSum['improve']:0;?></td>
       </tr>
     <?php endforeach;?>
