@@ -122,7 +122,7 @@ public function storyTaskSummary()
 
     $projects = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetch();
 
-    $storyTaskStatusSumSql = "SELECT `project`,`status`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND deleted='0' AND `type`='ra' GROUP BY `project`,`status`";
+    $storyTaskStatusSumSql = "SELECT `project`,`status`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects->ids . ") AND deleted='0' AND `type` IN ('ra','design','ui') GROUP BY `project`,`status`";
 
     $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
 

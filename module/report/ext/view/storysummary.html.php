@@ -34,12 +34,12 @@
         <td align="center"><?php echo $id;?></td>
         <td><?php echo $project->projectInfo->name;?></td>
         <td align="center"><?php echo !empty($project->storySum)?array_sum($project->storySum):0;?></td>
-        <td align="center"><?php echo $project->storySum['projected']?$project->storySum['projected']:0;?></td>
-        <td align="center"><?php echo $project->storySum['developing']?$project->storySum['developing']:0;?></td>
-        <td align="center"><?php echo $project->storySum['developed']?$project->storySum['developed']:0;?></td>
-        <td align="center"><?php echo $project->storySum['testing']?$project->storySum['testing']:0;?></td>
-        <td align="center"><?php echo $project->storySum['tested']?$project->storySum['tested']:0;?></td>
-        <td align="center"><?php echo $project->storySum['released']?$project->storySum['released']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['projected'])?$project->storySum['projected']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['developing'])?$project->storySum['developing']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['developed'])?$project->storySum['developed']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['testing'])?$project->storySum['testing']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['tested'])?$project->storySum['tested']:0;?></td>
+        <td align="center"><?php echo isset($project->storySum['released'])?$project->storySum['released']:0;?></td>
       </tr>
     <?php endforeach;?>
     </tbody>

@@ -19,8 +19,9 @@
   <div class='heading'><?php echo html::icon($lang->icons['story']);?> <?php echo $lang->project->story;?></div>
   <div class='actions'>
     <div class='btn-group'>
-    <?php 
-    common::printIcon('story', 'export', "productID=$productID&orderBy=id_desc", '', 'button', '', '', 'export');
+    <?php
+    //需求1197 项目需求导出时，增加TBC字段的内容export方法增加projectID参数
+    common::printIcon('story', 'export', "productID=$productID&orderBy=id_desc&project=$project->id", '', 'button', '', '', 'export');
 
     $this->lang->story->create = $this->lang->project->createStory;
     if($productID) common::printIcon('story', 'create', "productID=$productID&branch=&moduleID=0&story=0&project=$project->id");

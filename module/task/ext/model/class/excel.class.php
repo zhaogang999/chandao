@@ -48,6 +48,19 @@ class excelTask extends taskModel
             $taskData->estStarted   = empty($data->estStarted[$key]) ? '0000-00-00' : $data->estStarted[$key];
             $taskData->deadline     = empty($data->deadline[$key]) ? '0000-00-00' : $data->deadline[$key];
 
+            //需求1196 task导入时截止日期和预计开始时间因格式问题无法导入；时间格式转化成数据库要求格式
+            if (substr_count($taskData->estStarted, '-')==0 && substr_count($taskData->estStarted, '/')==0)
+            {
+                //当截止日期的数据格式是date时；条件成立。Excel的默认开始时间是1900-1-1；而PHP默认的开始时间是1970-1-1
+                $time = ($taskData->estStarted-25569)*24*60*60;
+                $taskData->estStarted = date("Y-m-d", $time);
+            }
+            if (substr_count($taskData->deadline, '-')==0 && substr_count($taskData->deadline, '/')==0)
+            {
+                $time = ($taskData->deadline-25569)*24*60*60;
+                $taskData->deadline = date("Y-m-d", $time);
+            }
+
             //完善任务导入功能，增加指派给
             $assingedToAccount = $this->dao->select('account')->from(TABLE_USER)->where('realname')->eq(trim($data->assignedTo[$key]))->fetch();
             $taskData->assignedTo  =  empty($assingedToAccount)?'':$assingedToAccount->account;
