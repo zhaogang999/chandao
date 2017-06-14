@@ -8,3 +8,5 @@ $lang->bug->tplExpectedSolutionVersion = "<p>[预计解决版本]</p>";
 $lang->bug->tplVerificationResults = "<p>[验证结果]</p>";
 $lang->bug->tplVerificationVersion = "<p>[验证版本]</p>";
 $lang->bug->tplVerificationContent = "<p>[验证内容]</p>";
+
+$lang->bug->confirmedList[''] = '';

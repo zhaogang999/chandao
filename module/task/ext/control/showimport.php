@@ -117,6 +117,21 @@ class mytask extends task
             echo js::alert($this->lang->excel->noData);
             die(js::locate($this->createLink('project','task', "projectID=$projectID")));
         }
+        //需求1196 task导入时截止日期和预计开始时间因格式问题无法导入；时间格式转化成数据库要求格式
+        foreach ($taskData as $task)
+        {
+            if (substr_count($task->estStarted, '-')==0 && substr_count($task->estStarted, '/')==0)
+            {
+                //当截止日期的数据格式是date时；条件成立。Excel的默认开始时间是1900-1-1；而PHP默认的开始时间是1970-1-1
+                $time = ($task->estStarted-25569)*24*60*60;
+                $task->estStarted = date("Y-m-d", $time);
+            }
+            if (substr_count($task->deadline, '-')==0 && substr_count($task->deadline, '/')==0)
+            {
+                $time = ($task->deadline-25569)*24*60*60;
+                $task->deadline = date("Y-m-d", $time);
+            }
+        }
 
         $this->view->title      = $this->lang->task->common . $this->lang->colon . $this->lang->task->showImport;
         $this->view->position[] = $this->lang->task->showImport;

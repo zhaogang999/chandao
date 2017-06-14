@@ -906,7 +906,7 @@ public function finish($taskID)
             ->where('id')->eq((int)$taskID)->exec();
         if(dao::isError())
         {
-            $this->dao->rollback;
+            $this->dao->rollback();
             return false;
         }
 

@@ -2,11 +2,13 @@
 $lang->reportList->project->lists[13] = $lang->projectCommon . '需求统计|report|storySummary';
 $lang->reportList->project->lists[15] = $lang->projectCommon . '任务统计|report|taskSummary';
 $lang->reportList->project->lists[14] = '需求任务统计|report|storyTaskSummary';
+$lang->reportList->project->lists[16] = '任务计划调整统计|report|taskPlanSummary';
 $lang->reportList->test->lists[14]    = 'Bug整体情况|report|bugSummary';
 
 $lang->report->taskSummary      = $lang->projectCommon . '任务统计';
 $lang->report->storySummary     = $lang->projectCommon . '需求统计';
 $lang->report->storyTaskSummary = '需求任务统计';
+$lang->report->taskPlanSummary = '任务计划调整统计';
 $lang->report->bugSummary       = 'Bug整体情况';
 
 $lang->report->projectID        = '项目ID';
@@ -52,3 +54,8 @@ $lang->report->bugSum           = 'Bug总数';
 $lang->report->severity         = '按Bug严重度统计';
 $lang->report->bugStatus        = '按Bug状态统计';
 $lang->report->bugResolution    = '按Bug解决方案统计';
+
+$lang->report->adjustTaskCount = '任务计划调整总数';
+$lang->report->taskIDs          = '调整任务的ID号';
+$lang->report->delayTaskCount  = '计划延后任务数';
+$lang->report->planTaskCount   = '安排计划任务数';

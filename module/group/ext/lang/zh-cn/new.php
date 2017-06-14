@@ -7,3 +7,4 @@ $lang->resource->report->bugSummary = 'bugSummary';
 $lang->resource->report->storySummary = 'storySummary';
 $lang->resource->report->storyTaskSummary = 'storyTaskSummary';
 $lang->resource->report->taskSummary = 'taskSummary';
+$lang->resource->report->taskPlanSummary = 'taskPlanSummary';

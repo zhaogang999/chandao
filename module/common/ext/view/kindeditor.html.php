@@ -18,22 +18,22 @@ js::set('kuid', $uid);
 <script src='<?php echo $jsRoot;?>kindeditor/lang/<?php echo $editorLang;?>.js' type='text/javascript'></script>
 <script language='javascript'>
 var editor = <?php echo json_encode($editor);?>;
-
+//增加multiimage配置项
 var bugTools =
 [ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|', 
 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
-
+'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
+//增加multiimage配置项
 var simpleTools = 
 [ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|', 
 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
-
+'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
+//增加multiimage配置项
 var fullTools = 
 [ 'formatblock', 'fontname', 'fontsize', 'lineheight', '|', 'forecolor', 'hilitecolor', '|', 'bold', 'italic','underline', 'strikethrough', '|',
 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
 'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'insertfile', 'hr', '|', 'link', 'unlink', '/',
+'emoticons', 'image', 'multiimage', 'insertfile', 'hr', '|', 'link', 'unlink', '/',
 'undo', 'redo', '|', 'selectall', 'cut', 'copy', 'paste', '|', 'plainpaste', 'wordpaste', '|', 'removeformat', 'clearhtml','quickformat', '|',
 'indent', 'outdent', 'subscript', 'superscript', '|',
 'table', 'code', '|', 'pagebreak', 'anchor', '|', 
