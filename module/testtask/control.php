@@ -263,6 +263,9 @@ class testtask extends control
         $this->config->testcase->search['module']                      = 'testtask';
         $this->config->testcase->search['params']['product']['values'] = array($productID => $this->products[$productID], 'all' => $this->lang->testcase->allProduct);
         $this->config->testcase->search['params']['module']['values']  = $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'case');
+
+        $this->config->testcase->search['fields']['assignedTo'] = $this->lang->testtask->assignedTo;
+        $this->config->testcase->search['params']['assignedTo'] = array('operator' => '=', 'control' => 'select', 'values' => 'users');
         $this->config->testcase->search['actionURL'] = inlink('cases', "taskID=$taskID&browseType=bySearch&queryID=myQueryID");
         if(!$this->config->testcase->needReview) unset($this->config->testcase->search['params']['status']['values']['wait']);
         unset($this->config->testcase->search['fields']['branch']);
@@ -916,10 +919,9 @@ class testtask extends control
             $results = $this->testtask->getResults($runID);
 
             $testtaskID = $this->dao->select('task')->from(TABLE_TESTRUN)->where('id')->eq($runID)->fetch('task');
-            $testtask   = $this->dao->select('build, product')->from(TABLE_TESTTASK)->where('id')->eq($testtaskID)->fetch();
+            $testtask   = $this->dao->select('id, build, project, product')->from(TABLE_TESTTASK)->where('id')->eq($testtaskID)->fetch();
 
-            $this->view->build      = isset($builds[$testtask->build]) ? $builds[$testtask->build] : '';
-            $this->view->testtaskID = $testtaskID;
+            $this->view->testtask = $testtask;
         }
         else
         {
@@ -928,6 +930,7 @@ class testtask extends control
         }
 
         $this->view->case    = $case;
+        $this->view->runID   = $runID;
         $this->view->results = $results;
         $this->view->builds  = $this->loadModel('build')->getProductBuildPairs($case->product, $branch = 0, $params = '');
         $this->view->users   = $this->loadModel('user')->getPairs('noclosed, noletter');

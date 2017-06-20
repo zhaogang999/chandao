@@ -405,6 +405,7 @@ class story extends control
         {
             $this->product->setMenu($this->product->getPairs('nodeleted'), $productID, $branch);
             $product = $this->product->getByID($productID);
+            $branchProduct = $product->type == 'normal' ? false : true;
 
             /* Set modules and productPlans. */
             $modules      = $this->tree->getOptionMenu($productID, $viewType = 'story', 0, $branch);
@@ -412,7 +413,9 @@ class story extends control
             $productPlans = $this->productplan->getPairs($productID, $branch);
             $productPlans = array('' => '', 'ditto' => $this->lang->story->ditto) + $productPlans;
 
+
             $this->view->modules      = $modules;
+            $this->view->branches     = $product->type == 'normal' ? array() : $this->loadModel('branch')->getPairs($product->id);
             $this->view->productPlans = $productPlans;
             $this->view->position[]   = html::a($this->createLink('product', 'browse', "product=$product->id&branch=$branch"), $product->name);
             $this->view->title        = $product->name . $this->lang->colon . $this->lang->story->batchEdit;
@@ -425,7 +428,20 @@ class story extends control
             $this->project->setMenu($this->project->getPairs('nodeleted'), $projectID);
             $this->lang->set('menugroup.story', 'project');
             $this->lang->story->menuOrder = $this->lang->project->menuOrder;
+
             $project = $this->project->getByID($projectID);
+
+            $branchProduct = false;
+            $linkedProducts = $this->project->getProducts($projectID);
+            foreach($linkedProducts as $linkedProduct)
+            {
+                if($linkedProduct->type != 'normal')
+                {
+                    $branchProduct = true;
+                    break;
+                }
+            }
+
             $this->view->position[] = html::a($this->createLink('project', 'story', "project=$project->id"), $project->name);
             $this->view->title      = $project->name . $this->lang->colon . $this->lang->story->batchEdit;
         }
@@ -436,6 +452,20 @@ class story extends control
             $this->lang->set('menugroup.story', 'my');
             $this->lang->story->menuOrder = $this->lang->my->menuOrder;
             $this->loadModel('my')->setMenu();
+
+            $branchProduct = false;
+            $productIdList = array();
+            foreach($stories as $story) $productIdList[$story->product] = $story->product;
+            $products = $this->product->getByIdList($productIdList);
+            foreach($products as $storyProduct)
+            {
+                if($storyProduct->type != 'normal')
+                {
+                    $branchProduct = true;
+                    break;
+                }
+            }
+
             $this->view->position[] = html::a($this->createLink('my', 'story'), $this->lang->my->story);
             $this->view->title      = $this->lang->story->batchEdit;
         }
@@ -462,6 +492,7 @@ class story extends control
         $this->view->reasonList        = array('' => '',  'ditto' => $this->lang->story->ditto) + $this->lang->story->reasonList;
         $this->view->stageList         = array('' => '',  'ditto' => $this->lang->story->ditto) + $this->lang->story->stageList;
         $this->view->productID         = $productID;
+        $this->view->branchProduct     = $branchProduct;
         $this->view->storyIDList       = $storyIDList;
         $this->view->branch            = $branch;
         $this->view->stories           = $stories;
@@ -1113,6 +1144,10 @@ class story extends control
         {
             die(json_encode($stories));
         }
+        elseif($this->app->getViewType() == 'mhtml')
+        {
+            die(html::select('story', empty($stories) ? array('' => '') : $stories, $storyID, 'onchange=setStoryRelated()'));
+        }
         else
         {
             $storyName = $number === '' ? 'story' : "story[$number]";
@@ -1346,7 +1381,7 @@ class story extends control
             $relatedModules = $this->dao->select('id, name')->from(TABLE_MODULE)->where('id')->in($relatedModuleIdList)->fetchPairs();
             $relatedPlans   = $this->dao->select('id, title')->from(TABLE_PRODUCTPLAN)->where('id')->in(join(',', $relatedPlanIdList))->fetchPairs();
             $relatedStories = $this->dao->select('id,title')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchPairs();
-            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->fetchGroup('objectID');
+            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedSpecs   = $this->dao->select('*')->from(TABLE_STORYSPEC)->where('`story`')->in(@array_keys($stories))->orderBy('version desc')->fetchGroup('story');
             $relatedBranch  = array('0' => $this->lang->branch->all) + $this->dao->select('id, name')->from(TABLE_BRANCH)->where('id')->in($relatedBranchIdList)->fetchPairs();
 

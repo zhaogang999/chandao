@@ -28,13 +28,14 @@
       <tbody>
       <?php foreach($allBugs as $bug):?>
       <?php if(strpos(",{$build->bugs},", ",$bug->id,") !== false) continue;?>
+      <?php if($build->product != $bug->product) continue; ?>
       <tr>
         <td class='cell-id'>
           <input type='checkbox' name='bugs[<?php echo $bug->id?>]'  value='<?php echo $bug->id;?>' <?php if($bug->status == 'resolved' or $bug->status == 'closed') echo "checked";?> /> 
           <?php echo html::a($this->createLink('bug', 'view', "bugID=$bug->id"), $bug->id);?>
         </td>
         <td><span class='<?php echo 'pri' . zget($lang->bug->priList, $bug->pri, $bug->pri);?>'><?php echo zget($lang->bug->priList, $bug->pri, $bug->pri)?></span></td>
-        <td class='text-left nobr' title='<?php echo $bug->title?>'><?php echo html::a($this->createLink('bug', 'view', "bugID=$bug->id"), $bug->title);?></td>
+        <td class='text-left nobr' title='<?php echo $bug->title?>'><?php echo html::a($this->createLink('bug', 'view', "bugID=$bug->id", '', true), $bug->title, '', "data-toggle='modal' data-type='iframe' data-width='90%'");?></td>
         <td><?php echo $users[$bug->openedBy];?></td>
         <td style='overflow:visible;padding-top:1px;padding-bottom:1px;'><?php echo ($bug->status == 'resolved' or $bug->status == 'closed') ? $users[$bug->resolvedBy] : html::select("resolvedBy[{$bug->id}]", $users, $this->app->user->account, "class='form-control chosen'");?></td>
         <td class='text-center bug-<?php echo $bug->status?>'><?php echo $lang->bug->statusList[$bug->status];?></td>
@@ -58,4 +59,10 @@
     </table>
   </form>
 </div>
-<script>$(function(){ajaxGetSearchForm('#bugs .linkBox #querybox')})</script>
+<script>
+$(function()
+{
+    ajaxGetSearchForm('#bugs .linkBox #querybox');
+    setModal();
+})
+</script>

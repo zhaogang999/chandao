@@ -146,7 +146,8 @@ class blockModel extends model
      */
     public function initBlock($module)
     {
-        $blocks  = $this->lang->block->default[$module];
+        $flow    = isset($this->config->global->flow) ? $this->config->global->flow : 'full';
+        $blocks  = $module == 'my' ? $this->lang->block->default[$flow][$module] : $this->lang->block->default[$module];
         $account = $this->app->user->account;
 
         /* Mark this app has init. */
@@ -194,15 +195,10 @@ class blockModel extends model
      */
     public function getListParams($module = '')
     {
+        if($module == 'product') return $this->getProductParams($module);
+        if($module == 'project') return $this->getProjectParams($module);
+
         $params = new stdclass();
-
-        if($module == 'project' or $module == 'product')
-        {
-            $params->type['name']    = $this->lang->block->type;
-            $params->type['options'] = $this->lang->block->typeList->$module;
-            $params->type['control'] = 'select';
-        }
-
         $params = $this->onlyNumParams($module, $params);
         return json_encode($params);
     }
@@ -383,7 +379,11 @@ class blockModel extends model
      */
     public function getProductParams($module = '')
     {
-        return $this->getListParams($module);
+        $params->type['name']    = $this->lang->block->type;
+        $params->type['options'] = $this->lang->block->typeList->product;
+        $params->type['control'] = 'select';
+
+        return json_encode($this->onlyNumParams($module, $params));
     }
 
     /**
@@ -394,7 +394,11 @@ class blockModel extends model
      */
     public function getProjectParams($module = '')
     {
-        return $this->getListParams($module);
+        $params->type['name']    = $this->lang->block->type;
+        $params->type['options'] = $this->lang->block->typeList->project;
+        $params->type['control'] = 'select';
+
+        return json_encode($this->onlyNumParams($module, $params));
     }
 
     /**

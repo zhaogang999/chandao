@@ -134,6 +134,7 @@ class customModel extends model
     {
         global $app, $lang, $config;
         $menu            = array();
+        $menuModuleName  = $module;
         $order           = 1;
         $customMenuMap   = array();
         $isTutorialMode  = commonModel::isTutorialMode();
@@ -254,6 +255,9 @@ class customModel extends model
                 if($hidden) $menuItem->hidden  = $hidden;
                 if($isTutorialMode) $menuItem->tutorial = true;
 
+                /* Hidden menu by config in mobile. */
+                if($app->viewType == 'mhtml' and isset($config->custom->moblieHidden[$menuModuleName]) and in_array($name, $config->custom->moblieHidden[$menuModuleName])) $menuItem->hidden = 1;
+
                 while(isset($menu[$menuItem->order])) $menuItem->order++;
                 $menu[$menuItem->order] = $menuItem;
             }
@@ -275,15 +279,14 @@ class customModel extends model
         if(empty($module)) $module = 'main';
 
         global $app, $lang, $config;
-
         $allMenu = $module == 'main' ? $lang->menu : (isset($lang->$module->menu) ? $lang->$module->menu : $lang->my->menu);
         if($module == 'product' and isset($allMenu->branch)) $allMenu->branch = str_replace('@branch@', $lang->custom->branch, $allMenu->branch);
 
         if($module != 'main' and isset($lang->menugroup->$module)) $module = $lang->menugroup->$module;
-        $customMenu = isset($config->customMenu->$module) ? $config->customMenu->$module : array();
+        $flowModule = $config->global->flow . '_' . $module;
+        $customMenu = isset($config->customMenu->$flowModule) ? $config->customMenu->$flowModule : array();
         if(commonModel::isTutorialMode() && $module === 'main')$customMenu = 'my,product,project,qa,company';
         if(!empty($customMenu) && is_string($customMenu) && substr($customMenu, 0, 1) === '[') $customMenu = json_decode($customMenu);
-        if($app->viewType == 'mhtml') $customMenu = array();
 
         $menu = self::setMenuByConfig($allMenu, $customMenu, $module);
 
@@ -314,7 +317,7 @@ class customModel extends model
         $app->loadLang($module);
         customModel::mergeFeatureBar($module, $method);
 
-        $configKey  = 'feature_' . $module . '_' . $method;
+        $configKey  = $config->global->flow . '_feature_' . $module . '_' . $method;
         $allMenu    = isset($lang->$module->featureBar[$method]) ? $lang->$module->featureBar[$method] : null;
         $customMenu = '';
         if(!commonModel::isTutorialMode() && isset($config->customMenu->$configKey)) $customMenu = $config->customMenu->$configKey;
@@ -358,13 +361,14 @@ class customModel extends model
 
         if(!is_string($menu)) $menu = json_encode($menu);
 
+        $flow = $this->config->global->flow;
         if(empty($method))
         {
-            $settingKey = "$account.common.customMenu.$module";
+            $settingKey = "$account.common.customMenu.{$flow}_{$module}";
         }
         else
         {
-            $settingKey = "$account.common.customMenu.feature_{$module}_{$method}";
+            $settingKey = "$account.common.customMenu.{$flow}_feature_{$module}_{$method}";
         }
 
         $this->loadModel('setting')->setItem($settingKey, $menu);

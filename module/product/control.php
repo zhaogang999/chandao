@@ -49,10 +49,12 @@ class product extends control
      */
     public function index($locate = 'auto', $productID = 0, $status = 'noclosed', $orderBy = 'order_desc', $recTotal = 0, $recPerPage = 10, $pageID = 1)
     {
+        if($this->config->global->flow == 'onlyTest') $this->locate($this->createLink($this->moduleName, 'build'));
+
         if($this->app->user->account == 'guest' or commonModel::isTutorialMode()) $this->config->product->homepage = 'index';
         if(!isset($this->config->product->homepage))
         {
-            if($this->products) die($this->fetch('custom', 'ajaxSetHomepage', "module=product"));
+            if($this->products and $this->app->getViewType() != 'mhtml') die($this->fetch('custom', 'ajaxSetHomepage', "module=product"));
 
             $this->config->product->homepage = 'index';
             $this->fetch('custom', 'ajaxSetHomepage', "module=product&page=index");
@@ -63,7 +65,7 @@ class product extends control
 
         if($locate == 'yes') $this->locate($this->createLink($this->moduleName, 'browse'));
 
-        unset($this->lang->product->menu->index);
+        if($this->app->getViewType() != 'mhtml') unset($this->lang->product->menu->index);
         $productID = $this->product->saveState($productID, $this->products);
         $branch    = (int)$this->cookie->preBranch;
         $this->product->setMenu($this->products, $productID, $branch);
@@ -229,6 +231,8 @@ class product extends control
         $this->view->poUsers    = $this->loadModel('user')->getPairs('nodeleted|pofirst|noclosed');
         $this->view->qdUsers    = $this->loadModel('user')->getPairs('nodeleted|qdfirst|noclosed');
         $this->view->rdUsers    = $this->loadModel('user')->getPairs('nodeleted|devfirst|noclosed');
+
+        unset($this->lang->product->typeList['']);
         $this->display();
     }
 
@@ -272,6 +276,7 @@ class product extends control
         $this->view->qdUsers    = $this->loadModel('user')->getPairs('nodeleted|qdfirst',  $product->QD);
         $this->view->rdUsers    = $this->loadModel('user')->getPairs('nodeleted|devfirst', $product->RD);
 
+        unset($this->lang->product->typeList['']);
         $this->display();
     }
 
@@ -316,6 +321,8 @@ class product extends control
         $this->view->poUsers       = $this->loadModel('user')->getPairs('nodeleted|pofirst');
         $this->view->qdUsers       = $this->loadModel('user')->getPairs('nodeleted|qdfirst');
         $this->view->rdUsers       = $this->loadModel('user')->getPairs('nodeleted|devfirst');
+
+        unset($this->lang->product->typeList['']);
         $this->display();
     }
 
@@ -526,10 +533,11 @@ class product extends control
      * @access public
      * @return void
      */
-    public function ajaxGetPlans($productID, $branch = 0, $planID = 0, $needCreate = false)
+    public function ajaxGetPlans($productID, $branch = 0, $planID = 0, $fieldID = '', $needCreate = false)
     {
         $plans = $this->loadModel('productplan')->getPairs($productID, $branch);
-        $output = html::select('plan', $plans, $planID, "class='form-control chosen'");
+        $field = $fieldID ? "plans[$fieldID]" : 'plan';
+        $output = html::select($field, $plans, $planID, "class='form-control chosen'");
         if(count($plans) == 1 and $needCreate) 
         {
             $output .= "<span class='input-group-addon'>";
@@ -559,7 +567,7 @@ class product extends control
         $this->view->method    = $method;
         $this->view->extra     = $extra;
 
-        $products = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in(array_keys($this->products))->orderBy('`order` desc')->fetchAll();
+        $products = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in(array_keys($this->products))->orderBy('`order` desc')->fetchAll('id');
         $productPairs = array();
         foreach($products as $product) $productPairs[$product->id] = $product->name;
         $productsPinyin = common::convert2Pinyin($productPairs);
@@ -624,7 +632,7 @@ class product extends control
     {
         $this->session->set('productList', $this->app->getURI(true));
         $productID = $this->product->saveState($productID, $this->products);
-        if($this->app->getViewType() != 'mhtml') $this->product->setMenu($this->products, $productID);
+        $this->product->setMenu($this->products, $productID);
 
         /* Load pager and get tasks. */
         $this->app->loadClass('pager', $static = true);
@@ -653,5 +661,39 @@ class product extends control
     public function doc($productID)
     {
         $this->locate($this->createLink('doc', 'objectLibs', "type=product&objectID=$productID&from=product"));
+    }
+
+    /**
+     * Build of product.
+     * 
+     * @param  int    $productID 
+     * @access public
+     * @return void
+     */
+    public function build($productID = 0)
+    {
+        $this->app->loadLang('build');
+        $this->session->set('productList', $this->app->getURI(true));
+
+        /* Get all product list. Locate to the create product page if there is no product. */
+        $this->products = $this->product->getPairs();
+        if(empty($this->products) and strpos('create|view', $this->methodName) === false) $this->locate($this->createLink('product', 'create'));
+
+        /* Get current product. */
+        $productID = $this->product->saveState($productID, $this->products);
+        $product   = $this->product->getById($productID);
+        $this->product->setMenu($this->products, $productID);
+
+        /* Set menu.*/
+        $this->session->set('buildList', $this->app->getURI(true));
+
+        $this->view->title      = $product->name . $this->lang->colon . $this->lang->product->build;
+        $this->view->position[] = $this->lang->product->build;
+        $this->view->products   = $this->products;
+        $this->view->product    = $product;
+        $this->view->builds     = $this->dao->select('*')->from(TABLE_BUILD)->where('product')->eq($productID)->andWhere('deleted')->eq(0)->fetchAll();
+        $this->view->users      = $this->loadModel('user')->getPairs('noletter');
+
+        $this->display();
     }
 }

@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\product\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\product\model.php');
+helper::cd();
 class extproductModel extends productModel 
 {
 /**

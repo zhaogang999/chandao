@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\project\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\project\model.php');
+helper::cd();
 class extprojectModel extends projectModel 
 {
 /**

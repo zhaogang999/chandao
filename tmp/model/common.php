@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\common\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\common\model.php');
+helper::cd();
 class extcommonModel extends commonModel 
 {
 /**

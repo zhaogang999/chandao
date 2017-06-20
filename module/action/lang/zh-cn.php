@@ -17,6 +17,7 @@ $lang->action->objectID   = '对象ID';
 $lang->action->objectName = '对象名称';
 $lang->action->actor      = '操作者';
 $lang->action->action     = '动作';
+$lang->action->actionID   = '记录ID';
 $lang->action->date       = '日期';
 
 $lang->action->trash       = '回收站';
@@ -143,6 +144,7 @@ $lang->action->label->changestatus        = '修改状态';
 $lang->action->label->marked              = '编辑了';
 $lang->action->label->linked2project      = "关联{$lang->projectCommon}";
 $lang->action->label->unlinkedfromproject = "移除{$lang->projectCommon}";
+$lang->action->label->unlinkedfrombuild   = "移除版本";
 $lang->action->label->linked2release      = "关联发布";
 $lang->action->label->unlinkedfromrelease = "移除发布";
 $lang->action->label->linkrelatedbug      = "关联了相关Bug";

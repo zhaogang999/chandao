@@ -22,7 +22,7 @@ class productModel extends model
      * @access public
      * @return void
      */
-    public function setMenu($products, $productID, $branch = 0, $extra = '')
+    public function setMenu($products, $productID, $branch = 0, $module = 0, $moduleType = '', $extra = '')
     {
         /* Has access privilege?. */
         if($products and !isset($products[$productID]) and !$this->checkPriv($this->getById($productID)))
@@ -37,10 +37,14 @@ class productModel extends model
         $currentMethod = $this->app->getMethodName();
 
         /* init currentModule and currentMethod for report and story. */
-        if($currentModule == 'story' and $currentMethod != 'create' and $currentMethod != 'batchcreate') $currentModule = 'product';
+        if($currentModule == 'story')
+        {
+            if($currentMethod != 'create' and $currentMethod != 'batchcreate') $currentModule = 'product';
+            if($currentMethod == 'view') $currentMethod = 'browse';
+        }
         if($currentMethod == 'report') $currentMethod = 'browse';
 
-        $selectHtml = $this->select($products, $productID, $currentModule, $currentMethod, $extra, $branch);
+        $selectHtml = $this->select($products, $productID, $currentModule, $currentMethod, $extra, $branch, $module, $moduleType);
         foreach($this->lang->product->menu as $key => $menu)
         {
             $replace = $key == 'list' ? $selectHtml : $productID;
@@ -59,18 +63,20 @@ class productModel extends model
      * @access public
      * @return string
      */
-    public function select($products, $productID, $currentModule, $currentMethod, $extra = '', $branch = 0)
+    public function select($products, $productID, $currentModule, $currentMethod, $extra = '', $branch = 0, $module = 0, $moduleType = '')
     {
         if(!$productID)
         {
             unset($this->lang->product->menu->branch);
             return;
         }
+        $isMobile = $this->app->viewType == 'mhtml';
 
         setCookie("lastProduct", $productID, $this->config->cookieLife, $this->config->webRoot);
         $currentProduct = $this->getById($productID);
         $this->session->set('currentProductType', $currentProduct->type);
         $output  = "<a id='currentItem' href=\"javascript:showSearchMenu('product', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$currentProduct->name} <span class='icon-caret-down'></span></a><div id='dropMenu'><i class='icon icon-spin icon-spinner'></i></div>";
+        if($isMobile) $output  = "<a id='currentItem' href=\"javascript:showSearchMenu('product', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$currentProduct->name} <span class='icon-caret-down'></span></a><div id='currentItemDropMenu' class='hidden affix enter-from-bottom layer'></div>";
         if($currentProduct->type == 'normal') unset($this->lang->product->menu->branch);
         if($currentProduct->type != 'normal')
         {
@@ -78,9 +84,32 @@ class productModel extends model
             $this->lang->product->menu->branch = str_replace('@branch@', $this->lang->product->branchName[$currentProduct->type], $this->lang->product->menu->branch);
             $branches   = $this->loadModel('branch')->getPairs($productID);
             $branchName = isset($branches[$branch]) ? $branches[$branch] : $branches[0];
-            $output    .= '</li><li>';
-            $output    .= "<a id='currentBranch' href=\"javascript:showSearchMenu('branch', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$branchName} <span class='icon-caret-down'></span></a><div id='dropMenu'><i class='icon icon-spin icon-spinner'></i></div>";
+            if(!$isMobile)
+            {
+                $output .= '</li><li>';
+                $output .= "<a id='currentBranch' href=\"javascript:showSearchMenu('branch', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$branchName} <span class='icon-caret-down'></span></a><div id='dropMenu'><i class='icon icon-spin icon-spinner'></i></div>";
+            }
+            else
+            {
+                $output .= "<a id='currentBranch' href=\"javascript:showSearchMenu('branch', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$branchName} <span class='icon-caret-down'></span></a><div id='currentBranchDropMenu' class='hidden affix enter-from-bottom layer'></div>";
+            }
         }
+
+        if($this->config->global->flow == 'onlyTest' and $moduleType)
+        {
+            if($module) $module = $this->loadModel('tree')->getById($module);
+            $moduleName = $module ? $module->name : $this->lang->tree->all;
+            if(!$isMobile)
+            {
+                $output .= '</li><li>';
+                $output .= "<a id='currentModule' href=\"javascript:showSearchMenu('tree', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$moduleName} <span class='icon-caret-down'></span></a><div id='dropMenu'><i class='icon icon-spin icon-spinner'></i></div>";
+            }
+            else
+            {
+                $output .= "<a id='currentModule' href=\"javascript:showSearchMenu('tree', '$productID', '$currentModule', '$currentMethod', '$extra')\">{$moduleName} <span class='icon-caret-down'></span></a><div id='currentBranchDropMenu' class='hidden affix enter-from-bottom layer'></div>";
+            }
+        }
+
         return $output;
     }
 
@@ -220,6 +249,8 @@ class productModel extends model
      */
     public function getProductsByProject($projectID)
     {
+        if($this->config->global->flow == 'onlyTask') return array();
+
         return $this->dao->select('t1.product, t2.name')
             ->from(TABLE_PROJECTPRODUCT)->alias('t1')
             ->leftJoin(TABLE_PRODUCT)->alias('t2')
@@ -274,9 +305,7 @@ class productModel extends model
         $lib->product = $productID;
         $lib->name    = $this->lang->doclib->main['product'];
         $lib->main    = '1';
-        $lib->acl     = $product->acl == 'open' ? 'open' : 'custom';
-        $lib->users   = $this->app->user->account;
-        if($product->acl == 'custom') $lib->groups = $product->whitelist;
+        $lib->acl     = $product->acl == 'open' ? 'open' : 'private';
         $this->dao->insert(TABLE_DOCLIB)->data($lib)->exec();
 
         return $productID;
@@ -308,14 +337,8 @@ class productModel extends model
             ->exec();
         if(!dao::isError())
         {
-            if($product->acl != $oldProduct->acl)
-            {
-                $this->dao->update(TABLE_DOCLIB)->set('acl')->eq($product->acl == 'open' ? 'open' : 'custom')->where('product')->eq($productID)->exec();
-                if($product->acl == 'open')    $this->dao->update(TABLE_DOCLIB)->set('groups')->eq('')->where('product')->eq($productID)->exec();
-                if($product->acl == 'custom')  $this->dao->update(TABLE_DOCLIB)->set('groups')->eq($product->whitelist)->where('product')->eq($productID)->exec();
-                if($product->acl == 'private') $this->dao->update(TABLE_DOCLIB)->set('groups')->eq('')->where('product')->eq($productID)->exec();
-                if($product->acl != 'open')    $this->loadModel('doc')->setLibUsers('product', $productID);
-            }
+            if($product->acl != $oldProduct->acl) $this->dao->update(TABLE_DOCLIB)->set('acl')->eq($product->acl == 'open' ? 'open' : 'private')->where('product')->eq($productID)->exec();
+
             $this->file->updateObjectID($this->post->uid, $productID, 'product');
             return common::createChanges($oldProduct, $product);
         }
@@ -343,7 +366,7 @@ class productModel extends model
             $products[$productID]->RD     = $data->RDs[$productID];
             $products[$productID]->type   = $data->types[$productID];
             $products[$productID]->status = $data->statuses[$productID];
-            $products[$productID]->desc   = $data->descs[$productID];
+            $products[$productID]->desc   = strip_tags($this->post->descs[$productID], $this->config->allowedTags);
             $products[$productID]->order  = $data->orders[$productID];
         }
 
@@ -823,7 +846,7 @@ class productModel extends model
     public function getProductLink($module, $method, $extra, $branch = false)
     {
         $link = '';
-        if(strpos('product,roadmap,bug,testcase,testtask,story,qa,testsuite', $module) !== false)
+        if(strpos('product,roadmap,bug,testcase,testtask,story,qa,testsuite,testreport,build', $module) !== false)
         {
             if($module == 'product' && $method == 'project')
             {

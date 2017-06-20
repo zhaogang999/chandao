@@ -23,7 +23,7 @@ class qa extends control
         if($this->app->user->account == 'guest' or commonModel::isTutorialMode()) $this->config->qa->homepage = 'index';
         if(!isset($this->config->qa->homepage))
         {
-            if($this->products) die($this->fetch('custom', 'ajaxSetHomepage', "module=qa"));
+            if($this->products and $this->app->viewType != 'mhtml') die($this->fetch('custom', 'ajaxSetHomepage', "module=qa"));
 
             $this->config->qa->homepage = 'index';
             $this->fetch('custom', 'ajaxSetHomepage', "module=qa&page=index");
@@ -35,7 +35,7 @@ class qa extends control
         if($homepage == 'browse' and $locate == 'auto') $locate = 'yes';
         if($locate == 'yes') $this->locate($this->createLink('bug', 'browse'));
 
-        unset($this->lang->qa->menu->index);
+        if($this->app->viewType != 'mhtml') unset($this->lang->qa->menu->index);
         $productID = $this->product->saveState($productID, $this->products);
         $branch    = (int)$this->cookie->preBranch;
         $this->qa->setMenu($this->products, $productID, $branch);

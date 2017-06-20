@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\task\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\task\model.php');
+helper::cd();
 class exttaskModel extends taskModel 
 {
 /**

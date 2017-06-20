@@ -23,6 +23,13 @@ class task extends control
         $this->loadModel('project');
         $this->loadModel('story');
         $this->loadModel('tree');
+
+        if($this->config->global->flow == 'onlyTask')
+        {
+            $this->config->task->customCreateFields        = str_replace(array('story,'), '', $this->config->task->customCreateFields);
+            $this->config->task->customBatchCreateFields   = str_replace(array('story,'), '', $this->config->task->customBatchCreateFields);
+            $this->config->task->custom->batchCreateFields = str_replace(array('story,'), '', $this->config->task->custom->batchCreateFields);
+        }
     }
 
     /**
@@ -851,6 +858,40 @@ class task extends control
     }
 
     /**
+     * Batch cancel tasks.
+     * 
+     * @param  string $skipTaskIdList 
+     * @access public
+     * @return void
+     */
+    public function batchCancel()
+    {
+        if($this->post->taskIDList)
+        {
+            $taskIDList = $this->post->taskIDList;
+            unset($_POST['taskIDList']);
+            unset($_POST['assignedTo']);
+            $this->loadModel('action');
+
+            $tasks = $this->task->getByList($taskIDList);
+            foreach($tasks as $taskID => $task)
+            {
+                if($task->status == 'done' or $task->status == 'closed' or $task->status == 'cancel') continue;
+
+                $changes = $this->task->cancel($taskID);
+                if($changes)
+                {
+                    $actionID = $this->action->create('task', $taskID, 'Canceled', '');
+                    $this->action->logHistory($actionID, $changes);
+                    $this->task->sendmail($taskID, $actionID);
+                }
+            }
+        }
+
+        die(js::reload('parent'));
+    }
+
+    /**
      * Batch close tasks.
      * 
      * @access public
@@ -1124,7 +1165,7 @@ class task extends control
 
             /* Get related objects title or names. */
             $relatedStories = $this->dao->select('id,title')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchPairs();
-            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('task')->andWhere('objectID')->in(@array_keys($tasks))->fetchGroup('objectID');
+            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('task')->andWhere('objectID')->in(@array_keys($tasks))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedModules = $this->loadModel('tree')->getTaskOptionMenu($projectID);
 
             foreach($tasks as $task)

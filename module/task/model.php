@@ -42,6 +42,9 @@ class taskModel extends model
 
         foreach($this->post->assignedTo as $assignedTo)
         {
+            /* When type is affair and has assigned then ignore none. */
+            if($task->type == 'affair' and count($this->post->assignedTo) > 1 and empty($assignedTo)) continue;
+
             $task->assignedTo = $assignedTo;
             if($assignedTo) $task->assignedDate = helper::now();
 
@@ -1137,8 +1140,7 @@ class taskModel extends model
         $this->dao->delete()->from(TABLE_TASKESTIMATE)->where('id')->eq($estimateID)->exec();
         $lastEstimate = $this->dao->select('*')->from(TABLE_TASKESTIMATE)->where('task')->eq($estimate->task)->orderBy('date desc,id desc')->fetch();
         $consumed  = $task->consumed - $estimate->consumed;
-        //当$lastEstimate的数据库查询无符合记录时，$lastEstimate为false，$lastEstimate->left不存在，报错。应该用isset()函数判断
-        $left      = isset($lastEstimate->left) ? $lastEstimate->left : $estimate->left;
+        $left      = $lastEstimate->left ? $lastEstimate->left : $estimate->left;
         $oldStatus = $task->status;
         if($left == 0 and $consumed != 0) $task->status = 'done'; 
         $this->dao->update(TABLE_TASK)
@@ -1644,7 +1646,7 @@ class taskModel extends model
                 echo round($task->left, 1);
                 break;
             case 'progess':
-                echo "<div class='progress-pie' title='{$task->progess}%' data-value='{$task->progess}'></div>";
+                echo "{$task->progess}%";
                 break;
             case 'deadline':
                 if(substr($task->deadline, 0, 4) > 0) echo substr($task->deadline, 5, 6);

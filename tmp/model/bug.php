@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\bug\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\bug\model.php');
+helper::cd();
 class extbugModel extends bugModel 
 {
 /**

@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\testcase\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\testcase\model.php');
+helper::cd();
 class exttestcaseModel extends testcaseModel 
 {
 /**

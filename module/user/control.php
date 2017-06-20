@@ -36,6 +36,9 @@ class user extends control
      */
     public function view($account)
     {
+        if($this->config->global->flow == 'onlyStory') $this->locate($this->createLink('user', 'dynamic', "period=today&account=$account"));
+        if($this->config->global->flow == 'onlyTask')  $this->locate($this->createLink('user', 'task', "account=$account"));
+        if($this->config->global->flow == 'onlyTest')  $this->locate($this->createLink('user', 'bug', "account=$account"));
         $this->locate($this->createLink('user', 'todo', "account=$account"));
     }
 
@@ -286,7 +289,7 @@ class user extends control
         {
             $cases = $this->loadModel('testcase')->getByOpenedBy($account, $sort, $pager);
         }
-        $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'testcase', $type == 'assigntome' ? false : true);
+        $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'testcase', $type == 'case2Him' ? false : true);
         
         /* Assign. */
         $this->view->title      = $this->lang->user->common . $this->lang->colon . $this->lang->user->testCase;
@@ -336,8 +339,10 @@ class user extends control
      * @access public
      * @return void
      */
-    public function profile($account)
+    public function profile($account = '')
     {
+        if(empty($account)) $account = $this->app->user->account;
+
         /* Set menu. */
         $this->view->userList = $this->user->setUserList($this->user->getPairs('noempty|noclose|nodeleted'), $account);
 

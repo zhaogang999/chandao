@@ -24,8 +24,11 @@ $lang->todo->import2Today = "Import to Today";
 $lang->todo->import       = "Import";
 $lang->todo->legendBasic  = "Basic Info";
 
+$lang->todo->id          = 'ID';
 $lang->todo->account     = 'Owner';
 $lang->todo->date        = 'Date';
+$lang->todo->begin       = 'Begin';
+$lang->todo->end         = 'End';
 $lang->todo->beginAB     = 'Begin';
 $lang->todo->endAB       = 'End';
 $lang->todo->beginAndEnd = 'Time Frame';
@@ -53,6 +56,10 @@ $lang->todo->priList[4] = '4';
 $lang->todo->typeList['custom'] = 'Custom';
 $lang->todo->typeList['bug']    = 'Bug';
 $lang->todo->typeList['task']   = $lang->projectCommon . 'Task';
+
+global $config;
+if($config->global->flow == 'onlyTest' or $config->global->flow == 'onlyStory') unset($lang->todo->typeList['task']);
+if($config->global->flow == 'onlyTask' or $config->global->flow == 'onlyStory') unset($lang->todo->typeList['bug']);
 
 $lang->todo->confirmDelete  = "Are you sure to delete this To-Do?";
 $lang->todo->thisIsPrivate  = 'This is a private To-Do:)';

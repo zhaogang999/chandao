@@ -1,5 +1,8 @@
 <?php
-helper::import('H:\zentao\chandao\module\report\model.php');
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\report\model.php');
+helper::cd();
 class extreportModel extends reportModel 
 {
 /**

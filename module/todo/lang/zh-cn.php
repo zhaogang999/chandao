@@ -24,8 +24,11 @@ $lang->todo->import2Today = "导入到今天";
 $lang->todo->import       = "导入";
 $lang->todo->legendBasic  = "基本信息";
 
+$lang->todo->id          = '编号';
 $lang->todo->account     = '所有者';
 $lang->todo->date        = '日期';
+$lang->todo->begin       = '开始';
+$lang->todo->end         = '结束';
 $lang->todo->beginAB     = '开始';
 $lang->todo->endAB       = '结束';
 $lang->todo->beginAndEnd = '起止时间';
@@ -53,6 +56,10 @@ $lang->todo->priList[4] = '最低';
 $lang->todo->typeList['custom'] = '自定义';
 $lang->todo->typeList['bug']    = 'Bug';
 $lang->todo->typeList['task']   = $lang->projectCommon . '任务';
+
+global $config;
+if($config->global->flow == 'onlyTest' or $config->global->flow == 'onlyStory') unset($lang->todo->typeList['task']);
+if($config->global->flow == 'onlyTask' or $config->global->flow == 'onlyStory') unset($lang->todo->typeList['bug']);
 
 $lang->todo->confirmDelete  = "您确定要删除这条待办吗？";
 $lang->todo->thisIsPrivate  = '这是一条私人事务。:)';
