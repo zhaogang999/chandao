@@ -487,6 +487,13 @@ public function update($taskID)
         ->remove('comment,files,labels,uid')
         ->get();
 
+    if($task->status == 'done' || $task->status == 'doing')
+    {
+        if ($task->realStarted =='0000-00-00')
+        {
+            die(js::error($this->lang->task->error->doneError));
+        }
+    }
     if($task->consumed < $oldTask->consumed)
     {
         die(js::error($this->lang->task->error->consumedSmall));

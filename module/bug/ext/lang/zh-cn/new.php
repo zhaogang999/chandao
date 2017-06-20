@@ -9,4 +9,6 @@ $lang->bug->tplVerificationResults = "<p>[验证结果]</p>";
 $lang->bug->tplVerificationVersion = "<p>[验证版本]</p>";
 $lang->bug->tplVerificationContent = "<p>[验证内容]</p>";
 
+//优化搜索功能搜索条件增加空选项
 $lang->bug->confirmedList[''] = '';
+$lang->bug->severityList[''] = '';

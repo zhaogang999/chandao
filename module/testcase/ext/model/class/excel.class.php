@@ -27,7 +27,7 @@ class excelTestcase extends testcaseModel
         $this->post->set('product',    $product->name);
     }
 
-    public function createFromImport($productID, $branch)
+    public function createFromImport($productID, $branch = 0)
     {
         $this->loadModel('action');
         $this->loadModel('story');

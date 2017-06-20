@@ -52,9 +52,13 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
 {
     $this->config->bug->search['actionURL'] = $actionURL;
     $this->config->bug->search['queryID']   = $queryID;
+    //优化搜索功能搜索条件增加空选项
     $this->config->bug->search['params']['product']['values']       = array('' => '', $productID => $products[$productID], 'all' => $this->lang->bug->allProduct);
+    
     $this->config->bug->search['params']['plan']['values']          = $this->loadModel('productplan')->getPairs($productID);
-    $this->config->bug->search['params']['module']['values']        = $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'bug', $startModuleID = 0);
+    //优化搜索功能；增加空选项
+    $this->config->bug->search['params']['module']['values']        = array(0 => '') + $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'bug', $startModuleID = 0);
+
     $this->config->bug->search['params']['project']['values']       = $this->product->getProjectPairs($productID);
     $this->config->bug->search['params']['severity']['values']      = array(0 => '') + $this->lang->bug->severityList; //Fix bug #939.
     $this->config->bug->search['params']['openedBuild']['values']   = $this->loadModel('build')->getProductBuildPairs($productID, 0, $params = '');
