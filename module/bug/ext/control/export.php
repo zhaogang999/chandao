@@ -2,6 +2,7 @@
 helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
 class mybug extends bug
 {
+    //本文件未立项；线上项目不存在。
     public function export($productID, $orderBy)
     {
         if($_POST)
@@ -82,7 +83,7 @@ class mybug extends bug
             $relatedCases   = $this->dao->select('id, title')->from(TABLE_CASE)->where('id')->in($relatedCaseIdList)->fetchPairs();
             $relatedBranch  = array('0' => $this->lang->branch->all) + $this->dao->select('id, name')->from(TABLE_BRANCH)->where('id')->in($relatedBranchIdList)->fetchPairs();
             $relatedBuilds  = array('trunk' => $this->lang->trunk) + $this->dao->select('id, name')->from(TABLE_BUILD)->where('id')->in($relatedBuildIdList)->fetchPairs();
-            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('bug')->andWhere('objectID')->in(@array_keys($bugs))->fetchGroup('objectID');
+            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('bug')->andWhere('objectID')->in(@array_keys($bugs))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             //获得bug下的备注信息
             $relatedComments   = $this->dao->select('id,objectID,actor,action,date,comment')->from(TABLE_ACTION)->where('objectType')->eq('bug')->andWhere('objectID')->in(@array_keys($bugs))->andWhere('comment')->ne('')->fetchGroup('objectID');
 
