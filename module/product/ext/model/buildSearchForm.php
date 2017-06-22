@@ -30,7 +30,7 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     {
         $this->config->product->search['fields']['branch'] = $this->lang->product->branch;
         //改为默认为所有平台
-        $this->config->product->search['params']['branch']['values']  =  array('all' => $this->lang->branch->all) + $this->loadModel('branch')->getPairs($productID, 'noempty');
+        $this->config->product->search['params']['branch']['values']  = array('' => '') + $this->loadModel('branch')->getPairs($productID, 'noempty') + array('all' => $this->lang->branch->all);
     }
 
     $this->loadModel('search')->setSearchParams($this->config->product->search);
