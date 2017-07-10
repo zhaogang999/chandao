@@ -17,6 +17,7 @@ class myProject extends project
                 ->limit(1)->exec();
            if (!dao::isError())
             {
+                $this->loadModel('story')->setStage($storyID);
                 $this->dao->update(TABLE_ACTION)
                     ->set('project')->eq($projectID)
                     ->set('extra')->eq($projectID)
@@ -82,7 +83,7 @@ class myProject extends project
                         ->fetchAll();
                     foreach ($tasks as $task)
                     {
-                        if ($task->assignedTo == '') continue;
+                        if ($task->assignedTo == '' || $task->assignedTo == 'closed') continue;
                         $isMember = $this->dao->select('*')->from(TABLE_TEAM)
                                     ->where('project')->eq($projectID)
                                     ->andWhere('account')->eq($task->assignedTo)

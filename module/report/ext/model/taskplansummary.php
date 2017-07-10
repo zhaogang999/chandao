@@ -58,18 +58,48 @@ public function taskPlanSummary()
     $plan = $this->dao->query($planSql)->fetchAll();
 
     $tasksum = array();
-    foreach ($sum as $value) {
+    $IDs = ',';
+    foreach ($sum as $value)
+    {
         $tasksum[$value->project]['taskCount'] = $value->taskCount;
         $tasksum[$value->project]['name'] = $value->name;
-    }
-    foreach ($delay as $value) {
-        $tasksum[$value->project]['delayTaskCount'] = $value->taskCount;
-        $tasksum[$value->project]['delayTaskIDs'] = $value->ids;
-    }
-    foreach ($plan as $value) {
-        $tasksum[$value->project]['planTaskCount'] = $value->taskCount;
-        $tasksum[$value->project]['planTaskIDs'] = $value->ids;
+        $IDs .= $value->ids . ',';
     }
 
+    $IDs = trim($IDs, ',');
+    $dateAjustmentSql = "SELECT GROUP_CONCAT(DISTINCT l.objectID) AS taskID,l.date FROM(
+		SELECT a.objectID,a.date
+        FROM zt_action AS a LEFT JOIN zt_history AS h 
+        ON a.id=h.action 
+        WHERE a.objectID IN ($IDs) AND h.field='deadline'
+        ORDER BY a.date DESC
+        ) l GROUP BY l.objectID";
+    $dateAjustment = $this->dao->query($dateAjustmentSql)->fetchAll();
+    $dateAjustmentAB = array();
+    foreach ($dateAjustment as $value)
+    {
+        $dateAjustmentAB[$value->taskID] = date('Y-m-d', strtotime($value->date));
+    }
+
+    foreach ($delay as $value)
+    {
+        $tasksum[$value->project]['delayTaskCount'] = $value->taskCount;
+        $value->ids = explode( ',', $value->ids);
+        foreach ($value->ids as $val)
+        {
+            $tasksum[$value->project]['delayTaskIDs'][$val] = $dateAjustmentAB[$val];
+        }
+        //arsort($tasksum[$value->project]['delayTaskIDs']);
+    }
+    foreach ($plan as $value)
+    {
+        $tasksum[$value->project]['planTaskCount'] = $value->taskCount;
+        $value->ids = explode( ',', $value->ids);
+        foreach ($value->ids as $val)
+        {
+            $tasksum[$value->project]['planTaskIDs'][$val] = $dateAjustmentAB[$val];
+        }
+    }
+    //var_dump($tasksum);die;
     return $tasksum;
 }

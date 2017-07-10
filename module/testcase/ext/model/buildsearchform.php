@@ -14,7 +14,9 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     $this->config->testcase->search['params']['product']['values'] = array($productID => $products[$productID], 'all' => $this->lang->testcase->allProduct);
     //优化搜索功能搜索条件增加空选项
     $this->config->testcase->search['params']['module']['values']  = array('' => '') + $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'case');
-    
+    //新增相关需求
+    $this->config->testcase->search['params']['story']['values']= $this->loadModel('story')->getProductStoryPairs($productID);
+
     if($this->session->currentProductType == 'normal')
     {
         unset($this->config->testcase->search['fields']['branch']);

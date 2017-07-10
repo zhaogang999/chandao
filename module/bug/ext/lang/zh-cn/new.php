@@ -12,3 +12,10 @@ $lang->bug->tplVerificationContent = "<p>[验证内容]</p>";
 //优化搜索功能搜索条件增加空选项
 $lang->bug->confirmedList[''] = '';
 $lang->bug->severityList[''] = '';
+
+//新增bug截止日期统计
+$lang->bug->report->charts['bugsDeadline']              = 'Bug截止日期统计';
+$lang->bug->report->bugsDeadline                        = new stdclass();
+$lang->bug->report->bugsDeadline->graph                 = new stdclass();
+$lang->bug->report->bugsDeadline->type                  = 'bar';
+$lang->bug->report->bugsDeadline->graph->xAxisName     = '日期';

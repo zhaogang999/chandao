@@ -179,7 +179,7 @@
                 {
                     foreach($story->planTitle as $planID => $planTitle)
                     {
-                        if(!common::printLink('productplan', 'view', "planID=$planID", $planTitle)) echo $lanTitle;
+                        if(!common::printLink('productplan', 'view', "planID=$planID", $planTitle)) echo $planTitle;
                         echo '<br />';
                     }
                 }

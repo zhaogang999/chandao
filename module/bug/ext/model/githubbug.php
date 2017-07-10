@@ -63,7 +63,7 @@ public function update($bugID)
         if ($oldBug->github != 0 and $bug->title != $oldBug->title or $bug->steps != $oldBug->steps or $bug->assignTo != $oldBug->assignTo or $oldBug->status != $bug->status)
         {
             $this->loadModel('github');
-            $this->github->edit($oldBug, $bug, 'bug');
+            //$this->github->edit($oldBug, $bug, 'bug');
         }
         return common::createChanges($oldBug, $bug);
     }

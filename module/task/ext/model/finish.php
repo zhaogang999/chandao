@@ -38,6 +38,11 @@ public function finish($taskID)
         ->setDefault('finishedDate, lastEditedDate', $now)
         ->remove('comment,files,labels')
         ->get();
+    //1340 任务点击完成时，开启时间和完成时间改为必填项。
+    if ($task->realStarted =='0000-00-00')
+    {
+        die(js::error($this->lang->task->error->doneError));
+    }
 
     if($task->finishedDate == substr($now, 0, 10)) $task->finishedDate = $now;
     if(!is_numeric($task->consumed)) die(js::error($this->lang->task->error->consumedNumber));

@@ -61,7 +61,7 @@ public function resolve($bugID)
     if (!dao::isError())
     {
         $this->loadModel('github');
-        $this->github->edit($oldBug, $bug, 'bug');
+        //$this->github->edit($oldBug, $bug, 'bug');
     }
     /* Link bug to build and release. */
     $this->linkBugToBuild($bugID, $bug->resolvedBuild);

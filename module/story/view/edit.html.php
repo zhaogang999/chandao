@@ -63,10 +63,10 @@
         <legend><?php echo $lang->story->legendBasicInfo;?></legend>
         <table class='table table-form'>
           <tr>
-            <th class='w-80px'><?php echo $lang->story->product;?></th>
-            <td>
+            <th class='w-80px' style="table-layout:fixed" ><?php echo $lang->story->product;?></th>
+            <td width="200" style="table-layout:fixed">
               <div class='input-group'>
-                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
+                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen' style='width:65px'");?>
                 <?php if($product->type != 'normal') echo html::select('branch', $branches, $story->branch, "onchange='loadBranch();' class='form-control' style='width:65px'");?>
               </div>
             </td>
