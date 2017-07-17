@@ -1,4 +1,5 @@
 <?php include '../../../common/view/header.html.php';?>
+<?php include '../../../common/view/tablesorter.html.php';?>
 <div id='titlebar'>
   <div class='heading'>
     <span class='prefix'><?php echo html::icon($lang->icons['report-file']);?></span>
@@ -22,8 +23,11 @@
             <th class="w-id"><?php echo $lang->report->adjustTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->delayTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->planTaskCount;?></th>
-            <th width="475"><?php echo $lang->report->delayTaskIDs;?></th>
-            <th width="475"><?php echo $lang->report->planTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->delayTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->planTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->noPlanTaskCount;?></th>
+            <th width="240"><?php echo $lang->report->noPlanTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->abnormalPlanTaskIDs;?></th>
         </tr>
     </thead>
     <tbody>
@@ -35,12 +39,12 @@
         <td align="center"><?php echo isset($project['delayTaskCount'])?$project['delayTaskCount']:0;?></td>
           <td align="center"><?php echo isset($project['planTaskCount'])?$project['planTaskCount']:0;?></td>
           <td>
+          <!--1086 统计项目内任务截止时间是否有修改，并增加链接直接定位任务  #4-->
           <?php if (isset($project['delayTaskIDs']))
           {
               foreach ($project['delayTaskIDs'] as $taskID => $date)
               {
                   if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
-                  echo '[' . $date . ']，';
               }
           }
           ?>
@@ -51,10 +55,10 @@
               foreach ($project['planTaskIDs'] as $taskID => $date)
               {
                   if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
-                  echo '[' . $date . ']，';
               }
           }
           ?>
+
           </td>
       </tr>
     <?php endforeach;?>

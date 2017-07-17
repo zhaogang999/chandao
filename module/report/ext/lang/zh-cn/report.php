@@ -56,7 +56,10 @@ $lang->report->bugStatus        = '按Bug状态统计';
 $lang->report->bugResolution    = '按Bug解决方案统计';
 
 $lang->report->adjustTaskCount = '任务计划调整总数';
-$lang->report->delayTaskIDs    = '计划延后任务的ID号';
-$lang->report->planTaskIDs     = '安排计划任务的ID号';
+$lang->report->delayTaskIDs    = '计划延后任务的ID';
+$lang->report->planTaskIDs     = '安排计划任务的ID';
 $lang->report->delayTaskCount  = '计划延后任务数';
 $lang->report->planTaskCount   = '安排计划任务数';
+$lang->report->noPlanTaskCount   = '无计划任务数';
+$lang->report->noPlanTaskIDs   = '无计划任务ID';
+$lang->report->abnormalPlanTaskIDs   = '任务计划不合理ID';

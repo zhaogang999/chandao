@@ -5,3 +5,5 @@ $lang->task->keywords = '关键字';
 $lang->task->error->doneError = '『实际开始』不能为空';
 $lang->task->error->reviewError = '『评审』类型的任务不能批量完成';
 //$lang->task->error->undoingError = '请先开始/继续任务或通过编辑填写任务『实际开始』时间，再点击关闭';
+//测试类型的任务增加文字模板
+$lang->task->comment = "<p>[测试用例成果]</p><p>[测试执行通过率]</p><p>[遗留问题]</p>";

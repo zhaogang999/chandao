@@ -1,4 +1,5 @@
 <?php include '../../../common/view/header.html.php';?>
+<?php include '../../../common/view/tablesorter.html.php';?>
 <div id='titlebar'>
   <div class='heading'>
     <span class='prefix'><?php echo html::icon($lang->icons['report-file']);?></span>
@@ -64,3 +65,6 @@
   </table> 
 </div>
 <?php include '../../../common/view/footer.html.php';?>
+<script>
+    $('table.datatable').datatable({fixedHeader: true});
+</script>

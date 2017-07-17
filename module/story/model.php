@@ -2259,12 +2259,6 @@ class storyModel extends model
             case 'branch':
                 echo $branches[$story->branch];
                 break;
-            case 'childStories':
-                echo $story->childStories;
-                    break;
-            case 'linkStories':
-                echo $story->linkStories;
-                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
                 break;

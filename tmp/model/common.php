@@ -1,5 +1,11 @@
-<?php  
-    /**
+<?php
+global $app;
+helper::cd($app->getBasePath());
+helper::import('.\module\common\model.php');
+helper::cd();
+class extcommonModel extends commonModel 
+{
+/**
      * Check the user has permission to access this method, if not, locate to the login page or deny page.
      * 
      * @access public
@@ -54,3 +60,5 @@
             die(js::locate(helper::createLink('user', 'login', "referer=$referer")));
         }
     }
+//**//
+}

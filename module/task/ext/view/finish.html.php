@@ -163,7 +163,13 @@
 
     <tr>
       <th width="50"><?php echo $lang->comment;?></th>
-      <td colspan='2' width="800"><?php echo html::textarea('comment', '', "rows='6' class='w-p98'");?></td>
+      <!--测试类型的任务增加文字模板-->
+      <?php if (isset($comment)):?>
+        <td colspan='2' width="800"><?php echo html::textarea('comment', $comment, "rows='6' class='w-p98'");?></td>
+      <?php else:?>
+        <td colspan='2' width="800"><?php echo html::textarea('comment', '', "rows='6' class='w-p98'");?></td>
+      <?php endif;?>
+      
     </tr>
     <tr>
       <th></th><td colspan='2'><?php echo html::submitButton($lang->task->finish);?></td>

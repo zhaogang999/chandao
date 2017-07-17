@@ -161,13 +161,3 @@ $config->story->datatable->fieldList['branch']['title']    = 'branch';
 $config->story->datatable->fieldList['branch']['fixed']    = 'left';
 $config->story->datatable->fieldList['branch']['width']    = '100';
 $config->story->datatable->fieldList['branch']['required'] = 'no';
-
-$config->story->datatable->fieldList['childStories']['title']    = 'childStories';
-$config->story->datatable->fieldList['childStories']['fixed']    = 'left';
-$config->story->datatable->fieldList['childStories']['width']    = '100';
-$config->story->datatable->fieldList['childStories']['required'] = 'no';
-
-$config->story->datatable->fieldList['linkStories']['title']    = 'linkStories';
-$config->story->datatable->fieldList['linkStories']['fixed']    = 'left';
-$config->story->datatable->fieldList['linkStories']['width']    = '100';
-$config->story->datatable->fieldList['linkStories']['required'] = 'no';

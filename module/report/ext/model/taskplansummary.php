@@ -53,10 +53,20 @@ public function taskPlanSummary()
         l GROUP BY l.objectID
         )
         z WHERE z.deadline=z.new AND z.old='0000-00-00'  GROUP BY z.project";
+    $noPlanTask = "";
+    $taskd = $this->dao->select('*')
+        ->from(TABLE_TASK)
+        ->where('id')
+        ->eq('450')
+        ->fetch();
+    var_dump($taskd);die;
+    $new = '2017-07-13';
+    $old = '2017-07-01';
+    var_dump($new-$old);die;
     $sum = $this->dao->query($sumSql)->fetchAll();
     $delay = $this->dao->query($delaySql)->fetchAll();
     $plan = $this->dao->query($planSql)->fetchAll();
-
+    /*1086 统计项目内任务截止时间是否有修改，并增加链接直接定位任务  #4 */
     $tasksum = array();
     $IDs = ',';
     foreach ($sum as $value)
