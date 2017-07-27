@@ -1,5 +1,8 @@
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/tablesorter.html.php';?>
+<?php include '../../../common/view/datepicker.html.php';?>
+<?php js::import($jsRoot . 'echarts/echarts.js');?>
+
 <div id='titlebar'>
   <div class='heading'>
     <span class='prefix'><?php echo html::icon($lang->icons['report-file']);?></span>
@@ -14,9 +17,134 @@
     </div>
   </div>
 </div>
+
 <div class='main'>
-  <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-all;">
-    <thead>
+    <form class='form-condensed' method='post' enctype='multipart/form-data' id='dataform' data-type='ajax'>
+        <div class='row' style='margin-bottom:5px;'>
+            <div class='col-sm-7'>
+                <div class='input-group input-group-sm'>
+                    <span class='input-group-addon'><?php echo $lang->report->project;?></span>
+                    <?php echo html::select('project[]', $projects, str_replace(' ' , '', $project), 'class="form-control chosen" multiple');?>
+                </div>
+            </div>
+            <div class='col-sm-4'>
+                <div class='input-group input-group-sm'>
+                    <span class='input-group-addon'><?php echo $lang->report->taskAssignedDate;?></span>
+                    <div class='datepicker-wrapper datepicker-date'><?php echo html::input('begin', '', "class='w-100px form-control'");?></div>
+                    <span class='input-group-addon fix-border'><?php echo $lang->report->to;?></span>
+                    <div class='datepicker-wrapper datepicker-date'><?php echo html::input('end', '', "class='form-control'");?></div>
+                </div>
+            </div>
+            <div class='col-sm-1'>
+                <div class='input-group'><?php echo html::submitButton('提交');?></div>
+            </div>
+        </div>
+    </form>
+    <?php if (isset($info)):?>
+        <table class='table active-disabled'>
+            <tr style="height: 340px;">
+                <td style="width:350px;">
+                    <div id="main" style="width: 375px;height:250px;"></div>
+                </td>
+                <td style="width:400px;">
+                    <div id="detail" style="width: 375px;height:250px;"></div>
+                </td>
+                <td style="width:400px;">
+                    <div><h3 style="text-align:center">统计数据</h3></div>
+                    <table class='table table-condensed table-hover table-striped table-bordered table-chart'>
+                        <thead>
+                            <tr class='text-center'>
+                                <th>任务类型</th>
+                                <th>已完成</th>
+                                <th>待完成</th>
+                                <th>总数</th>
+                                <th>已完成</th>
+                                <th>待完成</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='text-center'>
+                                <td  class='chart-label'>测试</td>
+                                <td class ='doneTaskCountPercent'><?php echo $echartData['testTaskStatusCount']['doneTaskCountPercent']?></td>
+                                <td class="undoneTaskCountPercent"><?php echo $echartData['testTaskStatusCount']['undoneTaskCountPercent']?></td>
+                                <td class="taskCount"><?php echo $echartData['testTaskStatusCount']['taskCount']?></td>
+                                <td class="doneTaskCount"><?php echo $echartData['testTaskStatusCount']['doneTaskCount']?></td>
+                                <td class="undoneTaskCount"><?php echo $echartData['testTaskStatusCount']['undoneTaskCount']?></td>
+                            </tr>
+                            <tr class='text-center'>
+                                <td class='chart-label'>开发</td>
+                                <td class ='doneTaskCountPercent'><?php echo $echartData['develTaskStatusCount']['doneTaskCountPercent']?></td>
+                                <td class="undoneTaskCountPercent"><?php echo $echartData['develTaskStatusCount']['undoneTaskCountPercent']?></td>
+                                <td class="taskCount"><?php echo $echartData['develTaskStatusCount']['taskCount']?></td>
+                                <td class="doneTaskCount"><?php echo $echartData['develTaskStatusCount']['doneTaskCount']?></td>
+                                <td class="undoneTaskCount"><?php echo $echartData['develTaskStatusCount']['undoneTaskCount']?></td>
+                            </tr>
+                            <tr class='text-center'>
+                                <td class='chart-label'>需求</td>
+                                <td class ='doneTaskCountPercent'><?php echo $echartData['storyTaskStatusCount']['doneTaskCountPercent']?></td>
+                                <td class="undoneTaskCountPercent"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCountPercent']?></td>
+                                <td class="taskCount"><?php echo $echartData['storyTaskStatusCount']['taskCount']?></td>
+                                <td class="doneTaskCount"><?php echo $echartData['storyTaskStatusCount']['doneTaskCount']?></td>
+                                <td class="undoneTaskCount"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCount']?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <!--<tr>
+                <td><div id="zhexiantu" style="width: 375px;height:250px;"></div></td>
+            </tr>-->
+        </table>
+        <table class='table active-disabled'>
+            <tr style="height: 400px;">
+                <td style="width: 600px;"><div id="storyTaskProgress" style="width: 560px;height:320px;"></td>
+                <td style="width: 600px;"><div id="develTaskProgress" style="width: 560px;height:320px;"></td>
+            </tr>
+            <tr style="height: 400px;">
+                <td style="width: 600px;"><div id="testTaskProgress" style="width: 560px;height:320px;"></div></td>
+                <td>
+                    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
+                    <table class='table table-condensed table-hover table-striped table-bordered projectProgress'>
+                        <thead>
+                        <tr class='text-center'>
+                            <th>项目ID</th>
+                            <th>项目名称</th>
+                            <th>需求</th>
+                            <th>已完成</th>
+                            <th>待完成</th>
+                            <th>开发</th>
+                            <th>已完成</th>
+                            <th>待完成</th>
+                            <th>测试</th>
+                            <th>已完成</th>
+                            <th>待完成</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($info as $id  =>$project):?>
+                            <tr class='text-center'>
+                                <td align="center"><?php echo $id;?></td>
+                                <td class='chart-label'><?php echo $project->projectInfo->name;?></td>
+                                <td align="center"><?php echo $project->storyTaskSum;?></td>
+                                <td class="doneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['done'])?$project->newStoryTaskStatusSum['done']:0;?></td>
+                                <td class="undoneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['undone'])?$project->newStoryTaskStatusSum['undone']:0;?></td>
+                                <td align="center"><?php echo $project->develTaskSum;?></td>
+                                <td class="doneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['done'])?$project->newDevelTaskStatusSum['done']:0;?></td>
+                                <td class="undoneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['undone'])?$project->newDevelTaskStatusSum['undone']:0;?></td>
+                                <td align="center"><?php echo $project->testSum;?></td>
+                                <td class="doneTestTask"><?php echo isset($project->newTestStatusSum['done'])?$project->newTestStatusSum['done']:0;?></td>
+                                <td class="undoneTestTask"><?php echo isset($project->newTestStatusSum['undone'])?$project->newTestStatusSum['undone']:0;?></td>
+                            </tr>
+                            <?php endforeach;?>
+                        </tbody>
+                    </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    <?php endif;?>
+    <table class='table table-condensed table-striped table-bordered tablesorter active-disabled taskTable' style="word-break:break-all; word-wrap:break-all;">
+        <thead>
         <tr class='colhead'>
             <th class='w-id'><?php echo $lang->report->projectID;?></th>
             <th class='w-200px'><?php echo $lang->report->projectName;?></th>
@@ -37,34 +165,31 @@
             <th class="w-id"><?php echo $lang->report->taskSum;?></th>
             <th class="w-id"><?php echo $lang->report->delayedTaskSum;?></th>
         </tr>
-    </thead>
-    <tbody>
-    <?php foreach($info as $id  =>$project):?>
-      <tr class="a-center">
-        <td align="center"><?php echo $id;?></td>
-        <td><?php echo $project->projectInfo->name;?></td>
-        <td align="center"><?php echo $project->develTaskSum;?></td>
-        <td align="center"><?php echo isset($project->newDevelTaskStatusSum['wait'])?$project->newDevelTaskStatusSum['wait']:0;?></td>
-          <td align="center"><?php echo isset($project->newDevelTaskStatusSum['doing'])?$project->newDevelTaskStatusSum['doing']:0;?></td>
-          <td align="center"><?php echo isset($project->newDevelTaskStatusSum['done'])?$project->newDevelTaskStatusSum['done']:0;?></td>
-          <td align="center"><?php echo isset($project->newDevelTaskStatusSum['pause'])?$project->newDevelTaskStatusSum['pause']:0;?></td>
-          <td align="center"><?php echo isset($project->newDevelTaskStatusSum['cancel'])?$project->newDevelTaskStatusSum['cancel']:0;?></td>
-          <td align="center"><?php echo isset($project->newDevelTaskStatusSum['closed'])?$project->newDevelTaskStatusSum['closed']:0;?></td>
-        <td align="center"><?php echo $project->testSum;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['wait'])?$project->newTestStatusSum['wait']:0;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['doing'])?$project->newTestStatusSum['doing']:0;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['done'])?$project->newTestStatusSum['done']:0;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['pause'])?$project->newTestStatusSum['pause']:0;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['cancel'])?$project->newTestStatusSum['cancel']:0;?></td>
-          <td align="center"><?php echo isset($project->newTestStatusSum['closed'])?$project->newTestStatusSum['closed']:0;?></td>
-          <td align="center"><?php echo $project->taskSum;?></td>
-          <td align="center"><?php echo $project->delayedTaskSum;?></td>
-      </tr>
-    <?php endforeach;?>
-    </tbody>
-  </table> 
+        </thead>
+        <tbody>
+        <?php foreach($info as $id  =>$project):?>
+            <tr class="a-center">
+                <td align="center"><?php echo $id;?></td>
+                <td><?php echo $project->projectInfo->name;?></td>
+                <td align="center"><?php echo $project->develTaskSum;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['wait'])?$project->newDevelTaskStatusSum['wait']:0;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['doing'])?$project->newDevelTaskStatusSum['doing']:0;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['done'])?$project->newDevelTaskStatusSum['done']:0;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['pause'])?$project->newDevelTaskStatusSum['pause']:0;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['cancel'])?$project->newDevelTaskStatusSum['cancel']:0;?></td>
+                <td align="center"><?php echo isset($project->newDevelTaskStatusSum['closed'])?$project->newDevelTaskStatusSum['closed']:0;?></td>
+                <td align="center"><?php echo $project->testSum;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['wait'])?$project->newTestStatusSum['wait']:0;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['doing'])?$project->newTestStatusSum['doing']:0;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['done'])?$project->newTestStatusSum['done']:0;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['pause'])?$project->newTestStatusSum['pause']:0;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['cancel'])?$project->newTestStatusSum['cancel']:0;?></td>
+                <td align="center"><?php echo isset($project->newTestStatusSum['closed'])?$project->newTestStatusSum['closed']:0;?></td>
+                <td align="center"><?php echo $project->taskSum;?></td>
+                <td align="center"><?php echo $project->delayedTaskSum;?></td>
+            </tr>
+        <?php endforeach;?>
+        </tbody>
+    </table>
 </div>
 <?php include '../../../common/view/footer.html.php';?>
-<script>
-    $('table.datatable').datatable({fixedHeader: true});
-</script>

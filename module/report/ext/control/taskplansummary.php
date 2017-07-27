@@ -12,6 +12,7 @@ class myReport extends report
         $info = $this->report->taskPlanSummary();
         
         $this->view->info       = $info;
+        $this->view->projects = $this->loadModel('project')->getPairs('nocode');
         $this->view->title      = $this->lang->report->taskPlanSummary;
         $this->view->position[] = $this->lang->report->taskPlanSummary;
         $this->view->submenu    = 'project';

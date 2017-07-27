@@ -62,4 +62,5 @@ $lang->report->delayTaskCount  = '计划延后任务数';
 $lang->report->planTaskCount   = '安排计划任务数';
 $lang->report->noPlanTaskCount   = '无计划任务数';
 $lang->report->noPlanTaskIDs   = '无计划任务ID';
-$lang->report->abnormalPlanTaskIDs   = '任务计划不合理ID';
+$lang->report->undoneAbnormalPlanTaskIDs   = '未完成任务计划不合理ID';
+$lang->report->doneAbnormalPlanTaskIDs     = '已完成任务计划不合理ID';

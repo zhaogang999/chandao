@@ -22,23 +22,23 @@
             <th class='w-200px'><?php echo $lang->report->projectName;?></th>
             <th class="w-id"><?php echo $lang->report->adjustTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->delayTaskCount;?></th>
-            <th class="w-id"><?php echo $lang->report->planTaskCount;?></th>
             <th width="240"><?php echo $lang->report->delayTaskIDs;?></th>
+            <th class="w-id"><?php echo $lang->report->planTaskCount;?></th>
             <th width="240"><?php echo $lang->report->planTaskIDs;?></th>
             <th width="240"><?php echo $lang->report->noPlanTaskCount;?></th>
             <th width="240"><?php echo $lang->report->noPlanTaskIDs;?></th>
-            <th width="240"><?php echo $lang->report->abnormalPlanTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->undoneAbnormalPlanTaskIDs;?></th>
+            <th width="240"><?php echo $lang->report->doneAbnormalPlanTaskIDs;?></th>
         </tr>
     </thead>
     <tbody>
     <?php foreach($info as $id  =>$project):?>
       <tr class="a-center">
         <td align="center"><?php echo $id;?></td>
-        <td><?php echo $project['name'];?></td>
-        <td align="center"><?php echo $project['taskCount'];?></td>
+        <td><?php echo $projects[$id];?></td>
+        <td align="center"><?php echo isset($project['taskCount'])?$project['taskCount']:0;?></td>
         <td align="center"><?php echo isset($project['delayTaskCount'])?$project['delayTaskCount']:0;?></td>
-          <td align="center"><?php echo isset($project['planTaskCount'])?$project['planTaskCount']:0;?></td>
-          <td>
+        <td>
           <!--1086 统计项目内任务截止时间是否有修改，并增加链接直接定位任务  #4-->
           <?php if (isset($project['delayTaskIDs']))
           {
@@ -48,8 +48,9 @@
               }
           }
           ?>
-          </td>
-          <td>
+        </td>
+        <td align="center"><?php echo isset($project['planTaskCount'])?$project['planTaskCount']:0;?></td>
+        <td>
           <?php if (isset($project['planTaskIDs']))
           {
               foreach ($project['planTaskIDs'] as $taskID => $date)
@@ -58,7 +59,37 @@
               }
           }
           ?>
-
+        </td>
+        <td align="center"><?php echo isset($project['noPlanTaskCount'])?$project['noPlanTaskCount']:0;?></td>
+        <td>
+          <?php if (isset($project['noPlanTaskCount']))
+          {
+              foreach ($project['noPlanTaskIDs'] as $taskID => $date)
+              {
+                  if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+              }
+          }
+          ?>
+        </td>
+        <td>
+              <?php if (isset($project['undoneAbnormalPlanTaskIDs']))
+              {
+                  foreach ($project['undoneAbnormalPlanTaskIDs'] as $taskID => $date)
+                  {
+                      if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+                  }
+              }
+              ?>
+          </td>
+          <td>
+              <?php if (isset($project['doneAbnormalPlanTaskIDs']))
+              {
+                  foreach ($project['doneAbnormalPlanTaskIDs'] as $taskID => $date)
+                  {
+                      if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+                  }
+              }
+              ?>
           </td>
       </tr>
     <?php endforeach;?>

@@ -14,5 +14,6 @@ $config->default->lang   = 'zh-cn';
 if(!defined('TABLE_REVIEW')) define('TABLE_REVIEW', '`' . $config->db->prefix . 'review`');
 if(!defined('TABLE_REVIEWDETAIL')) define('TABLE_REVIEWDETAIL', '`' . $config->db->prefix . 'reviewDetail`');
 if(!defined('TABLE_QAAUDIT')) define('TABLE_QAAUDIT', '`' . $config->db->prefix . 'qaaudit`');
+if(!defined('TABLE_UNDONETASKREPORT')) define('TABLE_UNDONETASKREPORT', '`' . $config->db->prefix . 'undonetaskreport`');
 
 $config->timeout       = 60000;
