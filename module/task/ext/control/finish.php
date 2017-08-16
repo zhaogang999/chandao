@@ -54,7 +54,13 @@ class myTask extends task
         //测试类型的任务增加文字模板
         if ($this->view->task->type == 'test')
         {
-            $this->view->comment = $this->lang->task->comment;
+            $this->view->testTaskComment = $this->lang->task->testTaskComment;
+        }
+
+        //1754 增加开发任务关闭成果展示内容
+        if ($this->view->task->type == 'fos' || $this->view->task->type == 'devel' || $this->view->task->type == 'sdk' || $this->view->task->type == 'web' || $this->view->task->type == 'ios' || $this->view->task->type == 'android' )
+        {
+            $this->view->develTaskComment = $this->lang->task->develTaskComment;
         }
         
         $this->display();

@@ -23,3 +23,7 @@ $config->bug->list->exportFields = 'id, product, branch, module, project, story,
     case,
     lastEditedBy,
     lastEditedDate, files';
+
+//1747 提bug时，限定某些字段为必填项
+$config->bug->create->requiredFields  = 'module,project,openedBuild,title,severity,pri';
+$config->bug->list->customCreateFields      = 'project,story,task,pri,severity,os,browser,mailto,keywords';

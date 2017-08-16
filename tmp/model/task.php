@@ -1113,9 +1113,11 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
             case 'type':
                 echo $this->lang->task->typeList[$task->type];
                 break;
+            //在任务列表页面增加关键字字段
             case 'keywords':
                 echo $this->lang->task->typeList[$task->keywords];
                 break;
+
             case 'status':
                 $storyChanged = ($task->storyStatus == 'active' and $task->latestStoryVersion > $task->storyVersion);
                 $storyChanged ? print("<span class='warning'>{$this->lang->story->changed}</span> ") : print($this->lang->task->statusList[$task->status]);

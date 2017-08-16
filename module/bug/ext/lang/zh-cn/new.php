@@ -19,3 +19,6 @@ $lang->bug->report->bugsDeadline                        = new stdclass();
 $lang->bug->report->bugsDeadline->graph                 = new stdclass();
 $lang->bug->report->bugsDeadline->type                  = 'bar';
 $lang->bug->report->bugsDeadline->graph->xAxisName     = '日期';
+
+//1747 提bug时，限定某些字段为必填项
+$lang->bug->severityList[''] = '';

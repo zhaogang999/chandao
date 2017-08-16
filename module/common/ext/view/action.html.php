@@ -172,6 +172,11 @@ $(function()
             $action->commentAB = str_replace('<p>[测试执行通过率]','<p class="commentTitle">[测试执行通过率]</p><p>', $action->commentAB);
             $action->commentAB = str_replace('<p>[遗留问题]','<p class="commentTitle">[遗留问题]</p><p>', $action->commentAB);
             
+            //1754 增加开发任务关闭成果展示内容
+            $action->commentAB = str_replace('<p>[开发任务成果]','<p class="commentTitle">[开发任务成果]</p><p>', $action->commentAB);
+            $action->commentAB = str_replace('<p>[开发任务达成率]','<p class="commentTitle">[开发任务达成率]</p><p>', $action->commentAB);
+            $action->commentAB = str_replace('<p>[未开发内容]','<p class="commentTitle">[未开发内容]</p><p>', $action->commentAB);
+            
             $action->commentAB = str_replace('<p></p>', '', $action->commentAB);
             echo strip_tags($action->commentAB) == $action->commentAB ? nl2br($action->commentAB) : $action->commentAB;
             echo "</div>";

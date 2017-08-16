@@ -11,15 +11,20 @@ class myReport extends report
     {
         if ($_POST)
         {
-            var_dump($_POST);die;
-            $projects = $this->post->project;
-            asort($projects);
-            $projects = trim(implode(',', $projects), ',');
-            $result = $this->report->taskSummary($projects);
-            $this->view->info       = $result['info'];
+            $data = $this->post;
+            
+            $result = $this->report->taskSummary($data);
+
+            $this->view->info              = $result['info'];
             $this->view->echartData       = $result['echartData'];
+            $this->view->undoneTaskCount  = $result['undoneTaskCount'];
+            $this->view->undoneTaskByType  = $result['undoneTaskByType'];
+            $this->view->finishedTasksPerDay  = $result['finishedTasksPerDay'];
+            $this->view->data = $data;
+
+            //var_dump($this->view->undoneTaskCount);die;
         }
-        $this->view->projects   = array('' => '') + $this->loadModel('project')->getPairs();
+        $this->view->projects   = $this->loadModel('project')->getPairs();
         $this->view->project    = '';
         $this->view->title      = $this->lang->report->taskSummary;
         $this->view->position[] = $this->lang->report->taskSummary;

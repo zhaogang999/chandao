@@ -267,8 +267,140 @@ fixedTableHead('.table-wrapper');
         //return option;
     }
 
+    jQuery.fn.getUndoneStoryReport = function(idName,type,title)
+    {
+        $(this).each(function() {
+            var $table = $(this);
+            var $xLabel = [];
+            var $groupLabels = [];
+            var $series =[];
+            var $xth = $table.find('thead > tr');
+            $xth.find('.x-label').each(function(idx){
+                var $childXth = $(this);
+                $xLabel.push($childXth.text());
+            });
+            if (!title) {
+                title = $xth.find('.title').text();
+            }
+
+
+            var $rows = $table.find('tbody > tr').each(function(idx)
+            {
+                var $undoneTask = [];
+                var $row = $(this);
+                var $groupLabel = $row.find('.chart-label').text();
+                $groupLabels.push($groupLabel);
+                //$undoneTask.push($row.find('.taskData').text());
+
+                $row.find('.taskData').each(function(idx){
+                    var $childTaskData = $(this);
+                    $undoneTask.push($childTaskData.text());
+                });
+                $series.push({name:$groupLabel,type:type,data:$undoneTask,itemStyle:{normal:{label:{show:true,position: 'top'}}}});
+            });
+            //var myChart = echarts.init(document.getElementById('undoneStoryTasks'));
+            getUndoneTaskCharts (idName, title, $groupLabels, $xLabel, $series);
+            //getUndoneTaskCharts ('undoneDevelTasks', title, $groupLabels, $xLabel, $series);
+            //getUndoneTaskCharts ('undoneTestTasks', title, $groupLabels, $xLabel, $series);
+            
+        });
+    };
+
+    function getUndoneTaskCharts (idName, title, groupLabels, xLabel, series)
+    {
+        //console.log(series);
+        var myChart = echarts.init(document.getElementById(idName));
+        option = {
+            title : {
+                text: title,
+                x: 'center',
+                //垂直安放位置，默认为全图顶端，可选为：'top' | 'bottom' | 'center' | {number}（y坐标，单位px）
+                y: 'top'
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:groupLabels,
+                x: 'right',
+                //垂直安放位置，默认为全图顶端，可选为：'top' | 'bottom' | 'center' | {number}（y坐标，单位px）
+                y: 30
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '5%',
+                y: '30%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    //boundaryGap : false,
+                    data : xLabel,
+                    axisLabel:{
+                        interval:0,//横轴信息全部显示
+                        rotate:-45//-30度角倾斜显示
+                    }
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : series
+        };
+        //console.log(option);
+        // 使用刚指定的配置项和数据显示图表。
+        //option = getOption($title, $doneStoryTask, $undoneStoryTask);
+        myChart.setOption(option);
+        //return option;
+    }
+    jQuery.fn.finishedTasksPerDay = function(idName,type,title)
+    {
+        $(this).each(function() {
+            var $table = $(this);
+            var $xLabel = [];
+            var $groupLabels = [];
+            var $series = [];
+            var tasksPerDay = $table.find('.taskPerDay');
+            //console.log(a.text());
+            $table.find('.x-label').each(function(idx){
+                var $childXth = $(this);
+                $xLabel.push($childXth.text());
+            });
+            $table.find('.groupLabel').each(function(idx){
+                var $childLabel = $(this);
+                $groupLabels.push($childLabel.text());
+            });
+            console.log($groupLabels);
+
+            var cols = $table.find('.groupLabel').length;
+            var rows = $table.find('.x-label').length;
+            var td = $table.find('.taskPerDay');
+            //console.log(td.eq(0).text());
+            for (i=1;i<=cols;i++){
+                var projectTaskCount = [];
+                for (j=1;j<=rows;j++){
+                    projectTaskCount.push(td.eq((j-1)*cols).text());
+                }
+                var $groupLabel = $table.find('.groupLabel').eq(i-1).text();
+                //$series.push(projectTaskCount);
+                console.log($groupLabel);
+                $series.push({name:$groupLabel,type:type,data:projectTaskCount,itemStyle:{normal:{label:{show:true,position: 'top'}}}});
+            }
+            getUndoneTaskCharts (idName, title, $groupLabels, $xLabel, $series);
+        });
+    };
+
     $(function () {
         $('.table-chart').getTaskDate();
         $('.projectProgress').getProjectProgress();
+        $('.unDoneStoryTaskReport').getUndoneStoryReport('undoneStoryTasks','line');
+        $('.unDoneDevelTaskReport').getUndoneStoryReport('undoneDevelTasks','line');
+        $('.unDoneTestTaskReport').getUndoneStoryReport('undoneTestTasks','line');
+        $('.undoneTaskByTypeReport').getUndoneStoryReport('undoneTaskByType','bar','各组开发未完成任务情况');
+        $('.finishedTasksPerDayReport').finishedTasksPerDay('finishedTasksPerDay','line','每日开发完成情况');
     });
 })();
