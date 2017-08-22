@@ -132,6 +132,26 @@ public function storySummary()
     krsort($info);
     return $info;
 }
+
+/**
+ * Get counts of some stories' tasks.
+ *
+ * @param  array  $stories
+ * @param  int    $projectID
+ * @access public
+ * @return int
+ */
+public function getStoryTask($stories)
+{
+    $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
+        ->from(TABLE_TASK)
+        ->where('story')->in($stories)
+        ->andWhere('deleted')->eq(0)
+        ->groupBy('story')
+        ->fetchPairs();
+    foreach($stories as $storyID) if(!isset($taskCounts[$storyID])) $taskCounts[$storyID] = 0;
+    return $taskCounts;
+}
 /**
 * get info of storyTask
 *

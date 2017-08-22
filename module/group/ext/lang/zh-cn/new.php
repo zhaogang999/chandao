@@ -8,3 +8,17 @@ $lang->resource->report->storySummary = 'storySummary';
 $lang->resource->report->storyTaskSummary = 'storyTaskSummary';
 $lang->resource->report->taskSummary = 'taskSummary';
 $lang->resource->report->taskPlanSummary = 'taskPlanSummary';
+$lang->resource->custom->loginDefaultPage = 'loginDefaultPage';
+
+/* patchbuild. */
+$lang->moduleOrder[200] = 'patchBuild';
+$lang->resource->patchbuild = new stdclass();
+$lang->resource->patchbuild->patchBuild = 'patchBuild';
+$lang->resource->patchbuild->createPatchBuild = 'createPatchBuild';
+$lang->resource->patchbuild->editpatchbuild   = 'editpatchbuild';
+$lang->resource->patchbuild->deletePatchBuild = 'deletePatchBuild';
+
+$lang->build->methodOrder[5]  = 'createpatchbuild';
+$lang->build->methodOrder[10] = 'editpatchbuild';
+$lang->build->methodOrder[15] = 'deletePatchBuild';
+$lang->build->methodOrder[20] = 'patchBuild';
