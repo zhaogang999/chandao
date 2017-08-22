@@ -43,6 +43,9 @@
       <th class='w-id'><?php echo $lang->patchbuild->testPass;?></th>
       <th class='w-id'><?php echo $lang->patchbuild->testEnv;?></th>
       <?php endif;?>
+      <th><?php echo $lang->patchbuild->influence;?></th>
+      <th><?php echo $lang->patchbuild->config;?></th>
+      <th><?php echo $lang->patchbuild->notice;?></th>
       <th class='w-80px'><?php echo $lang->actions;?></th>
 
     </tr>
@@ -63,9 +66,12 @@
     <td><?php echo $build->releasedDate?></td>
     <td><?php echo $build->patchDate?></td>
     <?php if ($from == 'qa'):?>
-    <td><?php echo $lang->patchbuild->testPassList[$build->testPass]; ?></td>
-    <td><?php echo $lang->patchbuild->testEnvList[$build->testEnv]; ?></td>
+    <td><?php echo $build->testPass; ?></td>
+    <td><?php echo $build->testEnv; ?></td>
     <?php endif;?>
+    <td class='text-left' title='<?php echo $build->influence?>'><?php echo $build->influence;?></td>
+    <td class='text-left' title='<?php echo $build->config?>'><?php echo $build->config;?></td>
+    <td class='text-left' title='<?php echo $build->notice?>'><?php echo $build->notice;?></td>
     <td>
       <?php
       common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$object->id&type=$from", '','list', 'pencil');

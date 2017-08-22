@@ -91,14 +91,26 @@
         <th><?php echo $lang->patchbuild->patchContent;?></th>
         <td colspan='2'><?php echo html::textarea('patchContent', $build->patchContent, "rows='10' class='form-control'");?></td>
       </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->influence;?></th>
+        <td colspan='2'><?php echo html::textarea('influence', $build->influence, "rows='6' class='form-control'");?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->config;?></th>
+        <td colspan='2'><?php echo html::textarea('config', $build->config, "rows='6' class='form-control'");?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->notice;?></th>
+        <td colspan='2'><?php echo html::textarea('notice', $build->notice, "rows='6' class='form-control'");?></td>
+      </tr>
       <?php if ($from == 'qa'):?>
       <tr>
         <th><?php echo $lang->patchbuild->testPass?></th>
-        <td colspan='2'><?php echo html::select('testPass', $lang->patchbuild->testPassList, $build->testPass, 'class="form-control chosen"');?></td>
+        <td colspan='2'><?php echo html::textarea('testPass', $build->testPass, "rows='6' class='form-control'");?></td>
       </tr>
         <tr>
           <th><?php echo $lang->patchbuild->testEnv?></th>
-          <td colspan='2'><?php echo html::select('testEnv', $lang->patchbuild->testEnvList, $build->testEnv, 'class="form-control chosen"');?></td>
+          <td colspan='2'><?php echo html::textarea('testEnv', $build->testEnv, "rows='6' class='form-control'");?></td>
         </tr>
       <?php endif;?>
       <tr><td></td><td colspan='2'><?php echo html::submitButton() . html::backButton();?></td></tr>

@@ -1,14 +1,14 @@
 <?php
-$lang->patchbuild->common = '补丁版本';
-$lang->patchbuild->patchBuild = '补丁版本';
-$lang->patchbuild->product    = '所属产品';
+$lang->patchbuild->common       = '补丁版本';
+$lang->patchbuild->patchBuild   = '补丁版本';
+$lang->patchbuild->product      = '所属产品';
 
 $lang->patchbuild->createPatchBuild = '创建补丁版本';
-$lang->patchbuild->editpatchbuild = '编辑补丁版本';
+$lang->patchbuild->editpatchbuild   = '编辑补丁版本';
 $lang->patchbuild->deletePatchBuild = '删除补丁版本';
-$lang->patchbuild->confirmDelete = '您确认删除该版本吗？';
+$lang->patchbuild->confirmDelete    = '您确认删除该版本吗？';
 
-$lang->patchbuild->id             =  'ID';
+$lang->patchbuild->id            =  'ID';
 $lang->patchbuild->patchType     = '补丁类型';
 $lang->patchbuild->platform      = '所属平台';
 $lang->patchbuild->version       = '对应版本';
@@ -20,17 +20,12 @@ $lang->patchbuild->group         = '所属组';
 $lang->patchbuild->svnPath       = 'SVN路径';
 $lang->patchbuild->patchProgram  = '补丁程序';
 $lang->patchbuild->patchDate     = '补丁日期';
-$lang->patchbuild->releasedDate     = '发版日期';
+$lang->patchbuild->releasedDate  = '发版日期';
 $lang->patchbuild->testPass      = '测试验收';
 $lang->patchbuild->testEnv       = '发布运维';
-
-$lang->patchbuild->testPassList['']       = '';
-$lang->patchbuild->testPassList['1']      = '是';
-$lang->patchbuild->testPassList['0']      = '否';
-
-$lang->patchbuild->testEnvList['']       = '';
-$lang->patchbuild->testEnvList['1']      = '是';
-$lang->patchbuild->testEnvList['0']      = '否';
+$lang->patchbuild->notice        = '注意事项';
+$lang->patchbuild->config        = '配置要求';
+$lang->patchbuild->influence     = '影响范围';
 
 $lang->patchbuild->patchTypeList['']              = '';
 $lang->patchbuild->patchTypeList['alpha']         = '内测';

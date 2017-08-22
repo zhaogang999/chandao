@@ -90,6 +90,18 @@
         <th><?php echo $lang->patchbuild->patchContent;?></th>
         <td colspan='2'><?php echo html::textarea('patchContent', '', "rows='10' class='form-control'");?></td>
       </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->influence;?></th>
+        <td colspan='2'><?php echo html::textarea('influence', '', "rows='6' class='form-control'");?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->config;?></th>
+        <td colspan='2'><?php echo html::textarea('config', '', "rows='6' class='form-control'");?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->notice;?></th>
+        <td colspan='2'><?php echo html::textarea('notice', '', "rows='6' class='form-control'");?></td>
+      </tr>
       <tr><td></td><td colspan='2'><?php echo html::submitButton() . html::backButton();?></td></tr>
     </table>
   </form>

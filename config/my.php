@@ -18,3 +18,5 @@ if(!defined('TABLE_UNDONETASKREPORT')) define('TABLE_UNDONETASKREPORT', '`' . $c
 if(!defined('TABLE_PATCHBUILD')) define('TABLE_PATCHBUILD', '`' . $config->db->prefix . 'patchbuild`');
 
 $config->timeout       = 60000;
+
+$config->objectTables['patchbuild']       = TABLE_PATCHBUILD;
