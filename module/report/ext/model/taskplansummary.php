@@ -37,7 +37,7 @@ public function taskPlanSummary()
         ) 
         l GROUP BY l.objectID
         )
-        z WHERE z.deadline>z.new OR (z.deadline=z.new AND z.old!='0000-00-00') GROUP BY z.project";
+        z WHERE z.deadline>z.new OR (z.deadline=z.new AND z.old!='0000-00-00' AND z.deadline>z.old) GROUP BY z.project";
     $planSql = "SELECT z.project,COUNT(DISTINCT z.taskID) AS taskCount,GROUP_CONCAT(DISTINCT z.taskID) AS ids FROM(
         SELECT l.project,GROUP_CONCAT(DISTINCT l.objectID) AS taskID,l.old,l.new,l.deadline FROM(
         SELECT a.project,a.objectID,h.old,h.new,t.deadline

@@ -32,6 +32,7 @@ public function bugSummary()
     //获得bug各分类的统计数据
     //按严重程度统计
     $bugSeveritySum = $this->getBugSum($products->ids,'severity');
+    $bugPriSum = $this->getBugSum($products->ids,'pri');
     //按bug状态统计
     $bugStatusSum = $this->getBugSum($products->ids,'status');
     //按解决方案统计
@@ -46,6 +47,7 @@ public function bugSummary()
         $info[$products[$i]]->bugSum = isset($newBugSum[$products[$i]])?$newBugSum[$products[$i]]:0;
         $info[$products[$i]]->bugToStorySum = isset($newBugToStorySum[$products[$i]])?$newBugToStorySum[$products[$i]]:0;
         $info[$products[$i]]->bugSeveritySum = isset($bugSeveritySum[$products[$i]])?$bugSeveritySum[$products[$i]]:0;
+        $info[$products[$i]]->bugPriSum = isset($bugPriSum[$products[$i]])?$bugPriSum[$products[$i]]:0;
         $info[$products[$i]]->bugStatusSum = isset($bugStatusSum[$products[$i]]) ? $bugStatusSum[$products[$i]]: 0;
         $info[$products[$i]]->bugResolutionSum = isset($bugResolutionSum[$products[$i]])?$bugResolutionSum[$products[$i]]:0;
     }

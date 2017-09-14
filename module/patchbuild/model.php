@@ -19,8 +19,9 @@ class patchbuildModel extends model
         $build = fixer::input('post')
             ->setDefault('product', 0)
             ->setDefault('patchDate', helper::today())
+            ->join('mailto', ',')
             ->add('project', (int)$projectID)
-            ->stripTags($this->config->build->editor->createPatchBuild['id'], $this->config->allowedTags)
+            ->stripTags($this->config->patchbuild->editor->createpatchbuild['id'], $this->config->allowedTags)
             //->remove('resolvedBy,allchecker,files,labels,uid')
             ->get();
 
@@ -40,7 +41,7 @@ class patchbuildModel extends model
     }
 
     /**
-     * Update a build.
+     * Update a patchBuild.
      *
      * @param  int    $buildID
      * @access public
@@ -49,7 +50,9 @@ class patchbuildModel extends model
     public function updateBatchBuild($buildID)
     {
         $oldBuild = $this->getPatchBuildById($buildID);
-        $build = fixer::input('post')->stripTags($this->config->build->editor->editBatchBuild['id'], $this->config->allowedTags)
+        $build = fixer::input('post')
+            ->stripTags($this->config->patchbuild->editor->editpatchbuild['id'], $this->config->allowedTags)
+            ->join('mailto', ',')
             ->remove('files,uid')
             ->get();
         //if(!isset($build->branch)) $build->branch = $oldBuild->branch;
@@ -70,13 +73,15 @@ class patchbuildModel extends model
     }
 
     /**
-     * Get bugBuilds of a project.
+     * Get patchBuilds of a project.
      *
      * @param  int    $projectID
+     * @param  string    $orderBy
+     * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProjectPatchBuild($projectID)
+    public function getProjectPatchBuild($projectID, $orderBy = 'id_desc', $pager = null)
     {
         return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
             ->from(TABLE_PATCHBUILD)->alias('t1')
@@ -84,14 +89,15 @@ class patchbuildModel extends model
             ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
             ->where('t1.project')->eq((int)$projectID)
             ->andWhere('t1.deleted')->eq(0)
-            ->orderBy('t1.id desc')
+            ->orderBy($orderBy)
+            ->page($pager)
             ->fetchAll();
     }
 
     /**
-     * Get last build.
+     * Get last patchBuild.
      *
-     * @param  int    $projectID
+     * @param  int    $productID
      * @access public
      * @return bool | object
      */
@@ -128,13 +134,15 @@ class patchbuildModel extends model
     }
 
     /**
-     * Get bugBuilds of a product.
+     * Get patchBuilds of a product.
      *
-     * @param  int    $projectID
+     * @param  int    $productID
+     * @param  string    $orderBy
+     * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProductPatchBuild($productID)
+    public function getProductPatchBuild($productID, $orderBy = 'id_desc', $pager = null)
     {
         return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
             ->from(TABLE_PATCHBUILD)->alias('t1')
@@ -142,7 +150,8 @@ class patchbuildModel extends model
             ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
             ->where('t1.product')->eq((int)$productID)
             ->andWhere('t1.deleted')->eq(0)
-            ->orderBy('t1.id desc')
+            ->orderBy($orderBy)
+            ->page($pager)
             ->fetchAll();
     }
 
@@ -164,5 +173,80 @@ class patchbuildModel extends model
             $replace = ($key == 'product') ? $selectHtml : $productID;
             common::setMenuVars($this->lang->qa->menu, $key, $replace);
         }
+    }
+
+    /**
+     * Send mail.
+     *
+     * @param  int    $buildID
+     * @param  int    $actionID
+     * @access public
+     * @return void
+     */
+    public function sendmail($buildID, $actionID)
+    {
+        $this->loadModel('mail');
+        $patchBuild = $this->getPatchBuildById($buildID);
+        $users    = $this->loadModel('user')->getPairs('noletter');
+
+        /* Get action info. */
+        $action          = $this->loadModel('action')->getById($actionID);
+        $history         = $this->action->getHistory($actionID);
+        $action->history = isset($history[$actionID]) ? $history[$actionID] : array();
+
+        /* Get mail content. */
+        $modulePath = $this->app->getModulePath($appName = '', 'patchbuild');
+        $oldcwd     = getcwd();
+        $viewFile   = $modulePath . 'view/sendmail.html.php';
+        chdir($modulePath . 'view');
+        if(file_exists($modulePath . 'ext/view/sendmail.html.php'))
+        {
+            $viewFile = $modulePath . 'ext/view/sendmail.html.php';
+            chdir($modulePath . 'ext/view');
+        }
+        ob_start();
+        include $viewFile;
+        foreach(glob($modulePath . 'ext/view/sendmail.*.html.hook.php') as $hookFile) include $hookFile;
+        $mailContent = ob_get_contents();
+        ob_end_clean();
+        chdir($oldcwd);
+
+        /* Set toList and ccList. */
+        $toList   = $patchBuild->assignedTo . ',' . $patchBuild->submitter;
+        $toList = trim($toList, ',');
+        $ccList   = str_replace(' ', '', trim($patchBuild->mailto, ','));
+        if(empty($toList))
+        {
+            if(empty($ccList)) return;
+            if(strpos($ccList, ',') === false)
+            {
+                $toList = $ccList;
+                $ccList = '';
+            }
+            else
+            {
+                $commaPos = strpos($ccList, ',');
+                $toList   = substr($ccList, 0, $commaPos);
+                $ccList   = substr($ccList, $commaPos + 1);
+            }
+        }
+
+        /* Set email title. */
+        if($action->action == 'opened')
+        {
+            $mailTitle = sprintf($this->lang->patchbuild->mail->create->title, $this->app->user->realname, $buildID, $this->post->version);
+        }
+        elseif($action->action == 'closed')
+        {
+            $mailTitle = sprintf($this->lang->patchbuild->mail->close->title, $this->app->user->realname, $buildID, $patchBuild->version);
+        }
+        else
+        {
+            $mailTitle = sprintf($this->lang->patchbuild->mail->edit->title, $this->app->user->realname, $buildID, $this->post->version);
+        }
+
+        /* Send mail. */
+        $this->mail->send($toList, $mailTitle, $mailContent, $ccList);
+        if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
     }
 }

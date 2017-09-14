@@ -56,11 +56,6 @@
         <td class='w-p25-f'>
           <?php echo html::input('version', $build->version, "class='form-control' autocomplete='off'");?>
         </td>
-        <td>
-          <?php if($lastPatchBuild):?>
-          <div class='help-block'> &nbsp; <?php echo $lang->patchbuild->last . ': <strong>' . $lastPatchBuild->version . '</strong>';?></div>
-          <?php endif;?>
-        </td>
       </tr>
 
       <tr>
@@ -78,6 +73,23 @@
       <tr>
         <th><?php echo $lang->patchbuild->releasedDate;?></th>
         <td><?php echo html::input('releasedDate', $build->releasedDate, "class='form-control form-date'");?></td>
+      </tr>
+      <?php if ($from == 'qa'):?>
+      <tr>
+        <th><?php echo $lang->patchbuild->assignedTo;?></th>
+        <td><?php echo html::select('assignedTo', $users, $build->assignedTo, 'class="form-control chosen"');?></td>
+      </tr>
+      <?php endif; ?>
+      <tr>
+        <th><?php echo $lang->patchbuild->mailto;?></th>
+        <td colspan='2'>
+          <div id='mailtoGroup' class='input-group'>
+            <?php
+            echo html::select('mailto[]', $users, str_replace(' ' , '', $build->mailto), "multiple class='form-control'");
+            echo $this->fetch('my', 'buildContactLists');
+            ?>
+          </div>
+        </td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->svnPath;?></th>
@@ -106,11 +118,19 @@
       <?php if ($from == 'qa'):?>
       <tr>
         <th><?php echo $lang->patchbuild->testPass?></th>
-        <td colspan='2'><?php echo html::textarea('testPass', $build->testPass, "rows='6' class='form-control'");?></td>
+        <td colspan='2'><?php echo html::select('testPass', $lang->patchbuild->testPassList, $build->testPass, 'class="form-control chosen"');?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->testComment?></th>
+        <td colspan='2'><?php echo html::textarea('testComment', $build->testComment, "rows='6' class='form-control'");?></td>
       </tr>
         <tr>
           <th><?php echo $lang->patchbuild->testEnv?></th>
-          <td colspan='2'><?php echo html::textarea('testEnv', $build->testEnv, "rows='6' class='form-control'");?></td>
+          <td colspan='2'><?php echo html::select('testEnv', $lang->patchbuild->testEnvList, $build->testEnv, 'class="form-control chosen"');?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->patchbuild->testEnvComment?></th>
+          <td colspan='2'><?php echo html::textarea('testEnvComment', $build->testEnvComment, "rows='6' class='form-control'");?></td>
         </tr>
       <?php endif;?>
       <tr><td></td><td colspan='2'><?php echo html::submitButton() . html::backButton();?></td></tr>

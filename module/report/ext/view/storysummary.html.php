@@ -15,25 +15,34 @@
   </div>
 </div>
 <div class='main'>
-  <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-all;">
+
+  <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' id="storyList" style="word-break:break-all; word-wrap:break-word;">
     <thead>
         <tr class='colhead'>
-          <th class='w-id'><?php echo $lang->report->projectID;?></th>
-          <th class='w-200px'><?php echo $lang->report->projectName;?></th>
-          <th class="w-id"><?php echo $lang->report->storySum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyWaitSum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyDevelopingSum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyDevelopedSum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyTestingSum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyTestedSum;?></th>
-          <th class="w-id"><?php echo $lang->report->storyReleasedSum;?></th>
+          <th width="35"><?php echo $lang->report->projectID;?></th>
+          <th width="200"><?php echo $lang->report->projectName;?></th>
+          <th class="w-55px"><?php echo $lang->report->storySum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyWaitSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyDevelopingSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyDevelopedSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyTestingSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyTestedSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyReleasedSum;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyCountBeforProject;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyCountOneWeek;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyCountTwoWeek;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyChangeCount;?></th>
+          <th class="w-55px"><?php echo $lang->report->storyChangeRate;?></th>
+          <th class="w-100px"><?php echo $lang->report->zeroTaskStoryCount;?></th>
+          <th class="w-100px"><?php echo $lang->report->zeroDevelTaskStories;?></th>
+          <th class="w-100px"><?php echo $lang->report->zeroTestTaskStories;?></th>
         </tr>
     </thead>
     <tbody>
     <?php foreach($info as $id  =>$project):?>
       <tr class="a-center">
         <td align="center"><?php echo $id;?></td>
-        <td><?php echo $project->projectInfo->name;?></td>
+        <td><?php echo $project->projectInfo;?></td>
         <td align="center"><?php echo !empty($project->storySum)?array_sum($project->storySum):0;?></td>
         <td align="center"><?php echo isset($project->storySum['projected'])?$project->storySum['projected']:0;?></td>
         <td align="center"><?php echo isset($project->storySum['developing'])?$project->storySum['developing']:0;?></td>
@@ -41,6 +50,14 @@
         <td align="center"><?php echo isset($project->storySum['testing'])?$project->storySum['testing']:0;?></td>
         <td align="center"><?php echo isset($project->storySum['tested'])?$project->storySum['tested']:0;?></td>
         <td align="center"><?php echo isset($project->storySum['released'])?$project->storySum['released']:0;?></td>
+        <td align="center"><?php echo $project->storyCountByTime['before'];?></td>
+        <td align="center"><?php echo $project->storyCountByTime['oneWeek'];?></td>
+        <td align="center"><?php echo $project->storyCountByTime['twoWeek'];?></td>
+        <td align="center"><?php echo $project->storyChange['count'];?></td>
+        <td align="center"><?php echo $project->storyChange['rate'];?></td>
+        <td align="center"><?php echo $project->zeroTaskStoryCount;?></td>
+        <td align="center"><?php echo $project->zeroDevelTaskStories;?></td>
+        <td align="center"><?php echo $project->zeroTestTaskStories;?></td>
       </tr>
     <?php endforeach;?>
     </tbody>

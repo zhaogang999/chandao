@@ -6,6 +6,12 @@ include 'chosen.html.php';
 ?>
 <?php if(empty($_GET['onlybody']) or $_GET['onlybody'] != 'yes'):?>
 <?php $this->app->loadConfig('sso');?>
+<style>
+  .nav li,.nav a{
+         border:0px solid;
+         border-radius:5px;
+       }
+</style>
 <header id='header'>
 <?php if(empty($this->config->sso->turnon)):?>
   <div id='topbar'>

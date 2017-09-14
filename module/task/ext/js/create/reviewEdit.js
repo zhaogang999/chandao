@@ -64,3 +64,32 @@ $(function(){
         }
     })
 });
+
+//1923 针对测试类型的任务，设计任务描述模板
+/* Set the assignedTos field. */
+function setOwners(result)
+{
+    if(result == 'test')
+    {
+        $(document.getElementsByTagName("iframe")[0].contentWindow.document.body).html("<p>[测试范围]</p><p>[测试策略]</p><p>[测试验证]</p><p>[测试风险]</p>");
+    }
+    else
+    {
+        $(document.getElementsByTagName("iframe")[0].contentWindow.document.body).html("");
+    }
+
+    if(result == 'affair')
+    {
+        $('#assignedTo').attr('multiple', 'multiple');
+        $('#assignedTo').chosen('destroy');
+        $('#assignedTo').chosen(defaultChosenOptions);
+        $('#selectAllUser').removeClass('hidden');
+    }
+    else if($('#assignedTo').attr('multiple') == 'multiple')
+    {
+        $('#assignedTo').removeAttr('multiple');
+        $('#assignedTo').chosen('destroy');
+        $('#assignedTo').chosen(defaultChosenOptions);
+        $('#selectAllUser').addClass('hidden');
+    }
+}

@@ -22,6 +22,7 @@
           <th class='w-200px' rowspan="2"><?php echo $lang->report->product;?></th>
           <th class='w-id' rowspan="2"><?php echo $lang->report->bugSum;?></th>
           <th colspan='4'><?php echo $lang->report->severity;?></th>
+          <th colspan='5'><?php echo $lang->report->pri;?></th>
           <th colspan='2'><?php echo $lang->report->bugStatus;?></th>
           <th colspan='10'><?php echo $lang->report->bugResolution;?></th>
         </tr>
@@ -30,6 +31,11 @@
           <th class="w-id"><?php echo $lang->report->bugSeverity['2'];?></th>
           <th class="w-id"><?php echo $lang->report->bugSeverity['3'];?></th>
           <th class="w-id"><?php echo $lang->report->bugSeverity['4'];?></th>
+          <th class="w-id"><?php echo $lang->report->bugPri['4'];?></th>
+          <th class="w-id"><?php echo $lang->report->bugPri['1'];?></th>
+          <th class="w-id"><?php echo $lang->report->bugPri['2'];?></th>
+          <th class="w-id"><?php echo $lang->report->bugPri['3'];?></th>
+          <th class="w-id"><?php echo $lang->report->bugPri['0'];?></th>
           <th class="w-id"><?php echo $lang->report->bugOpen;?></th>
           <th class="w-id"><?php echo $lang->report->bugClosed;?></th>
           <th class="w-id"><?php echo $lang->report->bydesign;?></th>
@@ -53,6 +59,11 @@
         <td align="center"><?php echo isset($product->bugSeveritySum['2'])?$product->bugSeveritySum['2']:0;?></td>
         <td align="center"><?php echo isset($product->bugSeveritySum['3'])?$product->bugSeveritySum['3']:0;?></td>
         <td align="center"><?php echo isset($product->bugSeveritySum['4'])?$product->bugSeveritySum['4']:0;?></td>
+        <td align="center"><?php echo isset($product->bugPriSum['4'])?$product->bugPriSum['4']:0;?></td>
+        <td align="center"><?php echo isset($product->bugPriSum['1'])?$product->bugPriSum['1']:0;?></td>
+        <td align="center"><?php echo isset($product->bugPriSum['2'])?$product->bugPriSum['2']:0;?></td>
+        <td align="center"><?php echo isset($product->bugPriSum['3'])?$product->bugPriSum['3']:0;?></td>
+        <td align="center"><?php echo isset($product->bugPriSum['0'])?$product->bugPriSum['0']:0;?></td>
         <td align="center"><?php echo isset($product->bugStatusSum['active'])?$product->bugStatusSum['active']:0;?></td>
         <td align="center"><?php echo isset($product->bugStatusSum['resolved'])?$product->bugStatusSum['resolved']:0;?></td>
         <td align="center"><?php echo isset($product->bugResolutionSum['bydesign'])?$product->bugResolutionSum['bydesign']:0;?></td>

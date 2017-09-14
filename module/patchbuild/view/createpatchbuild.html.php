@@ -79,6 +79,17 @@
         <td><?php echo html::input('releasedDate', '', "class='form-control form-date'");?></td>
       </tr>
       <tr>
+        <th><?php echo $lang->patchbuild->mailto;?></th>
+        <td colspan='2'>
+          <div id='mailtoGroup' class='input-group'>
+            <?php
+            echo html::select('mailto[]', $users, '', "multiple class='form-control'");
+            echo $this->fetch('my', 'buildContactLists');
+            ?>
+          </div>
+        </td>
+      </tr>
+      <tr>
         <th><?php echo $lang->patchbuild->svnPath;?></th>
         <td colspan='2'><?php echo html::input('svnPath', '', "class='form-control' autocomplete='off'");?></td>
       </tr>

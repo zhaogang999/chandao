@@ -11,11 +11,10 @@
  */
 ?>
 <?php include '../../common/view/header.html.php';?>
-<?php include '../../common/view/tablesorter.html.php';?>
 <?php js::set('confirmDelete', $lang->patchbuild->confirmDelete)?>
 <div id='titlebar'>
   <div class='heading'>
-    <?php echo html::icon($lang->icons['patchbuild']);?> <?php echo $lang->patchbuild->patchBuild;?>
+    <?php echo html::icon($lang->icons['patchbuild']);?> <?php echo $this->lang->patchbuild->patchBuild;?>
   </div>
   <?php if ($from == 'project'):?>
   <div class='actions'>
@@ -26,26 +25,25 @@
 
 <table class='table tablesorter table-fixed' id='buildList'>
   <thead>
+  <?php
+
+  $vars = "objectID=$objectID&from=$from&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
+  ?>
     <tr class='colhead'>
-      <th class='w-id'><?php echo $lang->patchbuild->id;?></th>
-      <th class='w-id'><?php echo $lang->patchbuild->patchType;?></th>
-      <th class='w-id'><?php echo $lang->patchbuild->platform;?></th>
-      <th class='w-120px'><?php echo $lang->patchbuild->version;?></th>
-      <th class='w-200px'><?php echo $lang->patchbuild->patchContent;?></th>
-      <th class='w-id'><?php echo $lang->patchbuild->reason;?></th>
-      <th class='w-user'><?php echo $lang->patchbuild->submitter;?></th>
-      <th class='w-id'><?php echo $lang->patchbuild->group;?></th>
-      <th><?php echo $lang->patchbuild->svnPath;?></th>
-      <th><?php echo $lang->patchbuild->patchProgram;?></th>
-      <th class='w-date'><?php echo $lang->patchbuild->releasedDate;?></th>
-      <th class='w-date'><?php echo $lang->patchbuild->patchDate;?></th>
+      <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>
+      <th class='w-id'><?php common::printOrderLink('patchType', $orderBy, $vars, $lang->patchbuild->patchType);?></th>
+      <th class='w-id'><?php common::printOrderLink('platform', $orderBy, $vars, $lang->patchbuild->platform);?></th>
+      <th class='w-200px'><?php common::printOrderLink('version', $orderBy, $vars, $lang->patchbuild->version);?></th>
+      <th class='w-id'><?php common::printOrderLink('reason', $orderBy, $vars, $lang->patchbuild->reason);?></th>
+      <th class='w-user'><?php common::printOrderLink('submitter', $orderBy, $vars, $lang->patchbuild->submitter);?></th>
+      <th class='w-id'><?php common::printOrderLink('group', $orderBy, $vars, $lang->patchbuild->group);?></th>
+      <th class='w-date'><?php common::printOrderLink('releasedDate', $orderBy, $vars, $lang->patchbuild->releasedDate);?></th>
+      <th class='w-date'><?php common::printOrderLink('patchDate', $orderBy, $vars, $lang->patchbuild->patchDate);?></th>
       <?php if ($from == 'qa'):?>
-      <th class='w-id'><?php echo $lang->patchbuild->testPass;?></th>
-      <th class='w-id'><?php echo $lang->patchbuild->testEnv;?></th>
+      <th class='w-user'><?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->patchbuild->assignedTo);?></th>
+      <th class='w-id'><?php common::printOrderLink('testPass', $orderBy, $vars, $lang->patchbuild->testPass);?></th>
+      <th class='w-id'><?php common::printOrderLink('testEnv', $orderBy, $vars, $lang->patchbuild->testEnv);?></th>
       <?php endif;?>
-      <th><?php echo $lang->patchbuild->influence;?></th>
-      <th><?php echo $lang->patchbuild->config;?></th>
-      <th><?php echo $lang->patchbuild->notice;?></th>
       <th class='w-80px'><?php echo $lang->actions;?></th>
 
     </tr>
@@ -56,31 +54,26 @@
     <td><?php echo $build->id;?></td>
     <td><?php echo $lang->patchbuild->patchTypeList[$build->patchType]; ?></td>
     <td><?php echo $lang->patchbuild->platformList[$build->platform]; ?></td>
-    <td class='text-left' title='<?php echo $build->version?>'><?php echo $build->version; ?></td>
-    <td class='text-left' title='<?php echo $build->patchContent?>'><?php echo $build->patchContent; ?></td>
+    <td class='text-left' title='<?php echo $build->version?>'><?php echo html::a($this->createLink('patchbuild', 'view', "build=$build->id&from=$from"), $build->version);?></td>
     <td><?php echo $lang->patchbuild->reasonList[$build->reason]; ?></td>
     <td><?php echo $users[$build->submitter]?></td>
     <td><?php echo $lang->patchbuild->groupList[$build->group]; ?></td>
-    <td class='text-left' title="<?php echo $build->svnPath?>"><?php strpos($build->svnPath,  'http') === 0 ? printf(html::a($build->svnPath))  : printf($build->svnPath);?></td>
-    <td class='text-left' title='<?php echo $build->patchProgram?>'><?php echo $build->patchProgram;?></td>
     <td><?php echo $build->releasedDate?></td>
     <td><?php echo $build->patchDate?></td>
     <?php if ($from == 'qa'):?>
-    <td><?php echo $build->testPass; ?></td>
-    <td><?php echo $build->testEnv; ?></td>
+    <td><?php echo $users[$build->assignedTo]?></td>
+    <td title='<?php echo strip_tags($build->testComment);?>'><?php echo $lang->patchbuild->testPassList[$build->testPass]; ?></td>
+    <td title='<?php echo strip_tags($build->testEnvComment)?>'><?php echo $lang->patchbuild->testEnvList[$build->testEnv]; ?></td>
     <?php endif;?>
-    <td class='text-left' title='<?php echo $build->influence?>'><?php echo $build->influence;?></td>
-    <td class='text-left' title='<?php echo $build->config?>'><?php echo $build->config;?></td>
-    <td class='text-left' title='<?php echo $build->notice?>'><?php echo $build->notice;?></td>
     <td>
       <?php
-      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$object->id&type=$from", '','list', 'pencil');
+      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$object->id&type=$from", '','list', 'pencil', '', '', false, '', $lang->patchbuild->editpatchbuild);
       if ($from == 'project')
       {
         if(common::hasPriv('patchbuild', 'deletePatchBuild'))
         {
           $deleteURL = $this->createLink('patchbuild', 'deletePatchBuild', "buildID=$build->id&confirm=yes");
-          echo html::a("javascript:ajaxDelete(\"$deleteURL\",\"buildList\",confirmDelete)", '<i class="icon-remove"></i>', '', "class='btn-icon' title='{$lang->build->delete}'");
+          echo html::a("javascript:ajaxDelete(\"$deleteURL\",\"buildList\",confirmDelete)", '<i class="icon-remove"></i>', '', "class='btn-icon' title='{$lang->patchbuild->deletePatchBuild}'");
         }
       }
       ?>
@@ -88,5 +81,12 @@
   </tr>
   <?php endforeach;?>
   </tbody>
+  <tfoot><tr><td colspan='<?php echo $from == 'qa' ? 13 : 10;?>'><?php $pager->show();?></td></tr></tfoot>
 </table>
+<script language="JavaScript">
+  $(function()
+  {
+    setTimeout(function(){fixedTheadOfList('#buildList')}, '100');
+  })
+</script>
 <?php include '../../common/view/footer.html.php';?>

@@ -15,17 +15,17 @@
   </div>
 </div>
 <div class='main'>
-  <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-all;">
+  <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-word;" id="taskPlanList">
     <thead>
         <tr class='colhead'>
-            <th class='w-id'><?php echo $lang->report->projectID;?></th>
-            <th class='w-200px'><?php echo $lang->report->projectName;?></th>
+            <th class='w-45px'><?php echo $lang->report->projectID;?></th>
+            <th width="240"><?php echo $lang->report->projectName;?></th>
             <th class="w-id"><?php echo $lang->report->adjustTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->delayTaskCount;?></th>
             <th width="240"><?php echo $lang->report->delayTaskIDs;?></th>
             <th class="w-id"><?php echo $lang->report->planTaskCount;?></th>
             <th width="240"><?php echo $lang->report->planTaskIDs;?></th>
-            <th width="240"><?php echo $lang->report->noPlanTaskCount;?></th>
+            <th class="w-id"><?php echo $lang->report->noPlanTaskCount;?></th>
             <th width="240"><?php echo $lang->report->noPlanTaskIDs;?></th>
             <th width="240"><?php echo $lang->report->undoneAbnormalPlanTaskIDs;?></th>
             <th width="240"><?php echo $lang->report->doneAbnormalPlanTaskIDs;?></th>
@@ -96,4 +96,10 @@
     </tbody>
   </table> 
 </div>
+<script language="JavaScript">
+    $(function()
+    {
+        setTimeout(function(){fixedTheadOfList('#taskPlanList')}, '100');
+    })
+</script>
 <?php include '../../../common/view/footer.html.php';?>

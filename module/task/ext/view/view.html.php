@@ -12,6 +12,9 @@
 ?>
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/kindeditor.html.php';?>
+<style>
+  .commentTitle{display:block; color: green; margin: 0px;}
+</style>
 <div id='titlebar'>
   <div class='heading'>
     <span class='prefix'><?php echo html::icon($lang->icons['task']);?> <strong><?php echo $task->id;?></strong></span>
@@ -69,7 +72,18 @@
     <div class='main'>
       <fieldset>
         <legend><?php echo $lang->task->legendDesc;?></legend>
-        <div class='article-content'><?php echo $task->desc;?></div>
+        <!--1923 针对测试类型的任务，设计任务描述模板-->
+          <?php 
+          echo "<div>";
+          $task->descAB = str_replace('<p>[测试范围]','<p class="commentTitle">[测试范围]</p><p>', $task->desc);
+          $task->descAB = str_replace('<p>[测试策略]','<p class="commentTitle">[测试策略]</p><p>', $task->descAB);
+          $task->descAB = str_replace('<p>[测试验证]','<p class="commentTitle">[测试验证]</p><p>', $task->descAB);
+          $task->descAB = str_replace('<p>[测试风险]','<p class="commentTitle">[测试风险]</p><p>', $task->descAB);
+
+          $task->descAB = str_replace('<p></p>', '', $task->descAB);
+          echo strip_tags($task->descAB) == $task->descAB ? nl2br($task->descAB) : $task->descAB;
+          echo "</div>";
+          ?>
       </fieldset>
       <?php if($task->fromBug != 0):?>
       <fieldset>

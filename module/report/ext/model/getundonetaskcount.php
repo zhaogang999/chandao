@@ -1,4 +1,9 @@
 <?php
+/**
+ * 获取未完成任务的统计数据
+ * 
+ * @return void
+ */
 public function getUndoneTaskCount()
 {
     $projects = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetch();

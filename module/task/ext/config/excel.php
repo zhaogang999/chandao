@@ -8,7 +8,7 @@ $config->task->export->templateFields = explode(',', "project,module,name,desc,a
 $config->task->import->ignoreFields   = explode(',', "mailto,openedBy,openedDate,assignedDate,finishedBy,finishedDate,canceledBy,canceledDate,closedBy,closedDate,closedReason,lastEditedBy,lastEditedDate,files");
 $config->task->exportFields = '
     id, project, module, story,
-    name, desc,
+    name, keywords, desc,
     type, pri, estStarted, realStarted, deadline, status,estimate, consumed, left,
     mailto,
     openedBy, openedDate, assignedTo, assignedDate,

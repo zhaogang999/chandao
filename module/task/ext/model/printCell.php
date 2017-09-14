@@ -44,7 +44,7 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 break;
             //在任务列表页面增加关键字字段
             case 'keywords':
-                echo $this->lang->task->typeList[$task->keywords];
+                echo $task->keywords;
                 break;
 
             case 'status':

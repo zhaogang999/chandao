@@ -1,7 +1,7 @@
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/tablesorter.html.php';?>
 <?php include '../../../common/view/datepicker.html.php';?>
-<?php js::import($jsRoot . 'echarts/echarts.js');?>
+<?php js::import($jsRoot . 'echarts/echarts.min.js');?>
 
 <div id='titlebar'>
   <div class='heading'>
@@ -41,265 +41,237 @@
         </div>
     </form>
     <?php if (isset($info)):?>
-        <table class='table active-disabled'>
-            <tr style="height: 340px;">
-                <td style="width:350px;">
-                    <div id="main" style="width: 375px;height:250px;"></div>
-                </td>
-                <td style="width:400px;">
-                    <div id="detail" style="width: 375px;height:250px;"></div>
-                </td>
-                <td style="width:400px;">
-                    <div><h3 style="text-align:center">统计数据</h3></div>
-                    <table class='table table-condensed table-hover table-striped table-bordered table-chart'>
-                        <thead>
-                            <tr class='text-center'>
-                                <th>任务类型</th>
-                                <th>已完成</th>
-                                <th>待完成</th>
-                                <th>总数</th>
-                                <th>已完成</th>
-                                <th>待完成</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class='text-center'>
-                                <td  class='chart-label'>测试</td>
-                                <td class ='doneTaskCountPercent'><?php echo $echartData['testTaskStatusCount']['doneTaskCountPercent']?></td>
-                                <td class="undoneTaskCountPercent"><?php echo $echartData['testTaskStatusCount']['undoneTaskCountPercent']?></td>
-                                <td class="taskCount"><?php echo $echartData['testTaskStatusCount']['taskCount']?></td>
-                                <td class="doneTaskCount"><?php echo $echartData['testTaskStatusCount']['doneTaskCount']?></td>
-                                <td class="undoneTaskCount"><?php echo $echartData['testTaskStatusCount']['undoneTaskCount']?></td>
-                            </tr>
-                            <tr class='text-center'>
-                                <td class='chart-label'>开发</td>
-                                <td class ='doneTaskCountPercent'><?php echo $echartData['develTaskStatusCount']['doneTaskCountPercent']?></td>
-                                <td class="undoneTaskCountPercent"><?php echo $echartData['develTaskStatusCount']['undoneTaskCountPercent']?></td>
-                                <td class="taskCount"><?php echo $echartData['develTaskStatusCount']['taskCount']?></td>
-                                <td class="doneTaskCount"><?php echo $echartData['develTaskStatusCount']['doneTaskCount']?></td>
-                                <td class="undoneTaskCount"><?php echo $echartData['develTaskStatusCount']['undoneTaskCount']?></td>
-                            </tr>
-                            <tr class='text-center'>
-                                <td class='chart-label'>需求</td>
-                                <td class ='doneTaskCountPercent'><?php echo $echartData['storyTaskStatusCount']['doneTaskCountPercent']?></td>
-                                <td class="undoneTaskCountPercent"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCountPercent']?></td>
-                                <td class="taskCount"><?php echo $echartData['storyTaskStatusCount']['taskCount']?></td>
-                                <td class="doneTaskCount"><?php echo $echartData['storyTaskStatusCount']['doneTaskCount']?></td>
-                                <td class="undoneTaskCount"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCount']?></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        </table>
-        <table class='table active-disabled'>
-            <tr style="height: 400px;">
-                <td style="width: 600px;"><div id="storyTaskProgress" style="width: 560px;height:320px;"></td>
-                <td style="width: 600px;"><div id="develTaskProgress" style="width: 560px;height:320px;"></td>
-            </tr>
-            <tr style="height: 400px;">
-                <td style="width: 600px;"><div id="testTaskProgress" style="width: 560px;height:320px;"></div></td>
-                <td><div id="undoneStoryTasks" style="width: 560px;height:320px;"></td>
-
-            </tr>
-            <tr style="height: 400px;">
-                <td><div id="undoneDevelTasks" style="width: 560px;height:320px;"></td>
-                <td><div id="undoneTestTasks" style="width: 560px;height:320px;"></td>
-
-            </tr>
-            <tr style="height: 400px;">
-                <td><div id="undoneTaskByType" style="width: 560px;height:320px;"></td>
-                <td><div id="finishedTasksPerDay" style="width: 560px;height:320px;"></td>
-            </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div><h3 class="title" style="text-align:center">各项目分类型任务进展</h3></div>
-                    <div style="overflow: auto; position:relative; top:0;" class='table-wrapper'>
-                    <table class='table table-condensed table-hover table-striped table-bordered projectProgress'>
-                        <thead>
-                        <tr class='text-center'>
-                            <th>项目ID</th>
-                            <th>项目名称</th>
-                            <th>需求</th>
+    <table class='table active-disabled table-borderless' style="100%">
+        <tr style="height: 340px;">
+            <td>
+                <div id="main" style="width: 350px;height:280px;"></div>
+            </td>
+            <td>
+                <div id="detail" style="width: 350px;height:280px;"></div>
+            </td>
+            <td>
+                <div><h3 style="text-align:center">统计数据</h3></div>
+                <table class='table table-condensed table-hover table-striped table-bordered table-chart'>
+                    <thead>
+                        <tr class='table-bordered text-center'>
+                            <th>任务类型</th>
                             <th>已完成</th>
                             <th>待完成</th>
-                            <th>开发</th>
-                            <th>已完成</th>
-                            <th>待完成</th>
-                            <th>测试</th>
+                            <th>总数</th>
                             <th>已完成</th>
                             <th>待完成</th>
                         </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($info as $id  =>$project):?>
-                            <tr class='text-center'>
-                                <td align="center"><?php echo $id;?></td>
-                                <td class='chart-label'><?php echo $project->projectInfo->name;?></td>
-                                <td align="center"><?php echo $project->storyTaskSum;?></td>
-                                <td class="doneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['doneTask'])?$project->newStoryTaskStatusSum['doneTask']:0;?></td>
-                                <td class="undoneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['undone'])?$project->newStoryTaskStatusSum['undone']:0;?></td>
-                                <td align="center"><?php echo $project->develTaskSum;?></td>
-                                <td class="doneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['doneTask'])?$project->newDevelTaskStatusSum['doneTask']:0;?></td>
-                                <td class="undoneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['undone'])?$project->newDevelTaskStatusSum['undone']:0;?></td>
-                                <td align="center"><?php echo $project->testSum;?></td>
-                                <td class="doneTestTask"><?php echo isset($project->newTestStatusSum['doneTask'])?$project->newTestStatusSum['doneTask']:0;?></td>
-                                <td class="undoneTestTask"><?php echo isset($project->newTestStatusSum['undone'])?$project->newTestStatusSum['undone']:0;?></td>
-                            </tr>
-                            <?php endforeach;?>
-                        </tbody>
-                    </table>
-                    </div>
-                </td>
+                    </thead>
+                    <tbody>
+                        <tr class='text-center'>
+                            <td  class='chart-label'>测试</td>
+                            <td class ='doneTaskCountPercent'><?php echo $echartData['testTaskStatusCount']['doneTaskCountPercent']?></td>
+                            <td class="undoneTaskCountPercent"><?php echo $echartData['testTaskStatusCount']['undoneTaskCountPercent']?></td>
+                            <td class="taskCount"><?php echo $echartData['testTaskStatusCount']['taskCount']?></td>
+                            <td class="doneTaskCount"><?php echo $echartData['testTaskStatusCount']['doneTaskCount']?></td>
+                            <td class="undoneTaskCount"><?php echo $echartData['testTaskStatusCount']['undoneTaskCount']?></td>
+                        </tr>
+                        <tr class='text-center'>
+                            <td class='chart-label'>开发</td>
+                            <td class ='doneTaskCountPercent'><?php echo $echartData['develTaskStatusCount']['doneTaskCountPercent']?></td>
+                            <td class="undoneTaskCountPercent"><?php echo $echartData['develTaskStatusCount']['undoneTaskCountPercent']?></td>
+                            <td class="taskCount"><?php echo $echartData['develTaskStatusCount']['taskCount']?></td>
+                            <td class="doneTaskCount"><?php echo $echartData['develTaskStatusCount']['doneTaskCount']?></td>
+                            <td class="undoneTaskCount"><?php echo $echartData['develTaskStatusCount']['undoneTaskCount']?></td>
+                        </tr>
+                        <tr class='text-center'>
+                            <td class='chart-label'>需求</td>
+                            <td class ='doneTaskCountPercent'><?php echo $echartData['storyTaskStatusCount']['doneTaskCountPercent']?></td>
+                            <td class="undoneTaskCountPercent"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCountPercent']?></td>
+                            <td class="taskCount"><?php echo $echartData['storyTaskStatusCount']['taskCount']?></td>
+                            <td class="doneTaskCount"><?php echo $echartData['storyTaskStatusCount']['doneTaskCount']?></td>
+                            <td class="undoneTaskCount"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCount']?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table class='table table-borderless active-disabled' style="word-break:break-all; word-wrap:break-word;">
+        <tr style="height: 450px;">
+            <td><div id="storyTaskProgress" style="width: 525px;height:400px;"></td>
+            <td><div id="develTaskProgress" style="width: 525px;height:400px;"></td>
+        </tr>
+        <tr style="height: 450px;">
+            <td><div id="testTaskProgress" style="width: 525px;height:400px;"></div></td>
+            <td><div id="undoneStoryTasks" style="width: 525px;height:400px;"></td>
+        </tr>
+        <tr style="height: 450px;">
+            <td><div id="undoneDevelTasks" style="width: 525px;height:400px;"></td>
+            <td><div id="undoneTestTasks" style="width: 525px;height:400px;"></td>
+        </tr>
+        <tr style="height: 450px;">
+            <td><div id="undoneTaskByType" style="width: 525px;height:400px;"></td>
+            <td><div id="finishedTasksPerDay" style="width: 525px;height:400px;"></td>
+        </tr>
+    </table>
+    <div><h3 class="title" style="text-align:center">各项目分类型任务进展</h3></div>
+    <div style="overflow: auto; width: 100%; max-height: 300px;" class='table-wrapper'>
+        <table class='table table-condensed active-disabled table-hover table-striped table-bordered projectProgress' style='width: 100%;'>
+            <thead>
+            <tr class='colhead'>
+                <th>项目ID</th>
+                <th>项目名称</th>
+                <th>需求</th>
+                <th>已完成</th>
+                <th>待完成</th>
+                <th>开发</th>
+                <th>已完成</th>
+                <th>待完成</th>
+                <th>测试</th>
+                <th>已完成</th>
+                <th>待完成</th>
             </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div><h3 class="title" style="text-align:center">需求待完成工作</h3></div>
-                    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
-                        <table class='table table-condensed table-hover table-striped table-bordered unDoneStoryTaskReport'>
-                            <thead>
-                            <tr class='text-center'>
-                                <th class="title">需求待完成工作</th>
-                                <?php foreach($undoneTaskCount->date as $val):?>
-                                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
-                                <?php endforeach;?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($undoneTaskCount->undoneStoryTaskCount as $id => $value ):?>
-                                <tr class='text-center'>
-                                    <td class='chart-label'><?php echo $projects[$id]?></td>
-                                    <?php foreach ($value as $val):?>
-                                        <td class="taskData"><?php echo $val;?></td>
-                                    <?php endforeach;?>
-                                </tr>
-                            <?php endforeach;?>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div><h3 class="title" style="text-align:center">开发待完成工作</h3></div>
-                    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
-                        <table class='table table-condensed table-hover table-striped table-bordered unDoneDevelTaskReport'>
-                            <thead>
-                            <tr class='text-center'>
-                                <th class="title">开发待完成工作</th>
-                                <?php foreach($undoneTaskCount->date as $val):?>
-                                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
-                                <?php endforeach;?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($undoneTaskCount->undoneDevelTaskCount as $id => $value ):?>
-                                <tr class='text-center'>
-                                    <td class='chart-label'><?php echo $projects[$id]?></td>
-                                    <?php foreach ($value as $val):?>
-                                        <td class="taskData"><?php echo $val;?></td>
-                                    <?php endforeach;?>
-                                </tr>
-                            <?php endforeach;?>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div><h3 class="title" style="text-align:center">测试待完成工作</h3></div>
-                    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
-                        <table class='table table-condensed table-hover table-striped table-bordered unDoneTestTaskReport'>
-                            <thead>
-                            <tr class='text-center'>
-                                <th class="title">测试待完成工作</th>
-                                <?php foreach($undoneTaskCount->date as $val):?>
-                                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
-                                <?php endforeach;?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($undoneTaskCount->undoneTestTaskCount as $id => $value ):?>
-                                <tr class='text-center'>
-                                    <td class='chart-label'><?php echo $projects[$id]?></td>
-                                    <?php foreach ($value as $val):?>
-                                        <td class="taskData"><?php echo $val;?></td>
-                                    <?php endforeach;?>
-                                </tr>
-                            <?php endforeach;?>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div>
-                    <div><h3 class="title" style="text-align:center">各组开发未完成任务情况</h3></div>
-                    <div style="overflow: auto; max-height: 300px;" class='table-wrapper'>
-                        <table class='table table-condensed table-hover table-striped table-bordered undoneTaskByTypeReport'>
-                            <thead>
-                            <tr class='text-center'>
-                                <th>项目名称</th>
-                                <th class="x-label">服务</th>
-                                <th class="x-label">前端</th>
-                                <th class="x-label">大数据</th>
-                                <th class="x-label">ios</th>
-                                <th class="x-label">android</th>
-                                <th class="x-label">sdk</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($info as $id  =>$project):?>
-                                <tr class='text-center'>
-                                    <td class='chart-label'><?php echo $projects[$id]?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['fos'])?$undoneTaskByType[$id]['fos']->taskSum:0;?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['web'])?$undoneTaskByType[$id]['web']->taskSum:0;?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['devel'])?$undoneTaskByType[$id]['devel']->taskSum:0;?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['ios'])?$undoneTaskByType[$id]['ios']->taskSum:0;?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['android'])?$undoneTaskByType[$id]['android']->taskSum:0;?></td>
-                                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['sdk'])?$undoneTaskByType[$id]['sdk']->taskSum:0;?></td>
-                                </tr>
-                            <?php endforeach;?>
-                            </tbody>
-                        </table>
-                    </div>
-                    </div>
-                </td>
-            </tr>
-            <tr style="height: 300px;">
-                <td colspan="2">
-                    <div><h3 class="title" style="text-align:center">每日开发完成情况</h3></div>
-                    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
-                        <table class='table table-condensed table-hover table-striped table-bordered finishedTasksPerDayReport'>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <?php foreach($info as $id  =>$project):?>
-                                    <th class="groupLabel"><?php echo $project->projectInfo->name;?></th>
-                                    <?php endforeach;?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($finishedTasksPerDay as $date =>$value):?>
-                                    <tr>
-                                        <td class="x-label"><?php echo date('m-d', strtotime($date))?></td>
-                                        <?php foreach ($value as $project=>$count):?>
-                                            <td class="taskPerDay"><?php echo $count?></td>
-                                        <?php endforeach;?>
-                                    </tr>
-                                <?php endforeach;?>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($info as $id  =>$project):?>
+                <tr class='text-center'>
+                    <td align="center"><?php echo $id;?></td>
+                    <td class='chart-label'><?php echo $project->projectInfo->name;?></td>
+                    <td align="center"><?php echo $project->storyTaskSum;?></td>
+                    <td class="doneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['doneTask'])?$project->newStoryTaskStatusSum['doneTask']:0;?></td>
+                    <td class="undoneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['undone'])?$project->newStoryTaskStatusSum['undone']:0;?></td>
+                    <td align="center"><?php echo $project->develTaskSum;?></td>
+                    <td class="doneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['doneTask'])?$project->newDevelTaskStatusSum['doneTask']:0;?></td>
+                    <td class="undoneDevelTask"><?php echo isset($project->newDevelTaskStatusSum['undone'])?$project->newDevelTaskStatusSum['undone']:0;?></td>
+                    <td align="center"><?php echo $project->testSum;?></td>
+                    <td class="doneTestTask"><?php echo isset($project->newTestStatusSum['doneTask'])?$project->newTestStatusSum['doneTask']:0;?></td>
+                    <td class="undoneTestTask"><?php echo isset($project->newTestStatusSum['undone'])?$project->newTestStatusSum['undone']:0;?></td>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
         </table>
+    </div>
+    <div><h3 class="title" style="text-align:center">需求待完成工作</h3></div>
+    <div style="overflow: auto; width: 100%;" class='table-wrapper'>
+        <table class='table table-condensed table-hover table-striped table-bordered unDoneStoryTaskReport'>
+            <thead>
+            <tr class='colhead'>
+                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <?php foreach($undoneTaskCount->date as $val):?>
+                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
+                <?php endforeach;?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($undoneTaskCount->undoneStoryTaskCount as $id => $value ):?>
+                <tr class='text-center'>
+                    <td class='chart-label'><?php echo $projects[$id]?></td>
+                    <?php foreach ($value as $val):?>
+                        <td class="taskData"><?php echo $val;?></td>
+                    <?php endforeach;?>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+    <div><h3 class="title" style="text-align:center">开发待完成工作</h3></div>
+    <div style="overflow: auto; position: relative;" class='table-wrapper'>
+        <table class='table table-condensed table-hover table-striped table-bordered unDoneDevelTaskReport'>
+            <thead>
+            <tr class='text-center'>
+                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <?php foreach($undoneTaskCount->date as $val):?>
+                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
+                <?php endforeach;?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($undoneTaskCount->undoneDevelTaskCount as $id => $value ):?>
+                <tr class='text-center'>
+                    <td class='chart-label'><?php echo $projects[$id]?></td>
+                    <?php foreach ($value as $val):?>
+                        <td class="taskData"><?php echo $val;?></td>
+                    <?php endforeach;?>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+    <div><h3 class="title" style="text-align:center">测试待完成工作</h3></div>
+    <div style="overflow: auto; position: relative;" class='table-wrapper'>
+        <table class='table table-condensed table-hover table-striped table-bordered unDoneTestTaskReport'>
+        <thead>
+        <tr class='text-center'>
+            <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+            <?php foreach($undoneTaskCount->date as $val):?>
+                <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
+            <?php endforeach;?>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($undoneTaskCount->undoneTestTaskCount as $id => $value ):?>
+            <tr class='text-center'>
+                <td class='chart-label'><?php echo $projects[$id]?></td>
+                <?php foreach ($value as $val):?>
+                    <td class="taskData"><?php echo $val;?></td>
+                <?php endforeach;?>
+            </tr>
+        <?php endforeach;?>
+        </tbody>
+        </table>
+    </div>
+    <div><h3 class="title" style="text-align:center">各组开发未完成任务情况</h3></div>
+    <div style="overflow: auto; max-height: 300px;" class='table-wrapper'>
+        <table class='table table-condensed table-hover table-striped table-bordered undoneTaskByTypeReport'>
+            <thead>
+            <tr class='text-center'>
+                <th>项目名称</th>
+                <th class="x-label">服务</th>
+                <th class="x-label">前端</th>
+                <th class="x-label">大数据</th>
+                <th class="x-label">ios</th>
+                <th class="x-label">android</th>
+                <th class="x-label">sdk</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($info as $id  =>$project):?>
+                <tr class='text-center'>
+                    <td class='chart-label'><?php echo $projects[$id]?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['fos'])?$undoneTaskByType[$id]['fos']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['web'])?$undoneTaskByType[$id]['web']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['devel'])?$undoneTaskByType[$id]['devel']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['ios'])?$undoneTaskByType[$id]['ios']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['android'])?$undoneTaskByType[$id]['android']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['sdk'])?$undoneTaskByType[$id]['sdk']->taskSum:0;?></td>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+    <div><h3 class="title" style="text-align:center">每日开发完成情况</h3></div>
+    <div style="overflow: auto; max-height: 300px; position: relative;" class='table-wrapper'>
+        <table class='table table-condensed table-hover table-striped table-bordered finishedTasksPerDayReport'>
+            <thead>
+            <tr class='text-center'>
+                <th></th>
+                <?php foreach($info as $id  =>$project):?>
+                    <th class="groupLabel"><?php echo $project->projectInfo->name;?></th>
+                <?php endforeach;?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($finishedTasksPerDay as $date =>$value):?>
+                <tr class='text-center'>
+                    <td class="x-label"><?php echo date('m-d', strtotime($date))?></td>
+                    <?php foreach ($value as $project=>$count):?>
+                        <td class="taskPerDay"><?php echo $count?></td>
+                    <?php endforeach;?>
+                </tr>
+            <?php endforeach;?>
+
+            </tbody>
+        </table>
+    </div>
     <?php endif;?>
     <div><h3 class="title" style="text-align:center">各项目任务分状态统计</h3></div>
-    <table class='table table-condensed table-striped table-bordered tablesorter active-disabled taskTable' style="word-break:break-all; word-wrap:break-all;">
+    <table class='table table-condensed table-striped table-bordered tablesorter active-disabled taskTable' style="word-break:break-all; word-wrap:break-word;">
         <thead>
         <tr class='colhead'>
             <th class='w-id'><?php echo $lang->report->projectID;?></th>
