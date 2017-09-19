@@ -44,6 +44,6 @@ public function getBurnUpData()
         $data->date = date('Y-m-d');
 
         $this->dao->insert(TABLE_BURNUP)->data($data)->exec();
-        //unset($data);
+        unset($data);
     }
 }

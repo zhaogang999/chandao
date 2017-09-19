@@ -94,7 +94,10 @@ class myProject extends project
         $this->view->title        = $title;
         $this->view->position     = $position;
         $this->view->productID    = $productID;
-        $this->view->stories      = $stories;
+        //2085 项目需求中增加需求所属计划的显示
+        $this->view->stories      = $this->loadModel('story')->mergePlanTitle($productID, $stories);
+        $this->view->plans         = $this->loadModel('productplan')->getPairs($productID);
+
         $this->view->summary      = $this->product->summary($stories);
         $this->view->orderBy      = $orderBy;
         $this->view->type         = $type;

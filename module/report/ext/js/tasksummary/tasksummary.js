@@ -60,7 +60,7 @@ fixedTableHead('.table-wrapper');
                     left: '3%',
                     right: '4%',
                     bottom: '3%',
-                    y: '25%',
+                    y: '20%',
                     containLabel: true
                 },
                 xAxis : [
@@ -77,7 +77,7 @@ fixedTableHead('.table-wrapper');
                 series : [
                     {
                         name:'已完成',
-                        barWidth : 45,
+                        barWidth : 55,
                         itemStyle : { normal: {label : {show: true, position: 'inside'}}},
                         type:'bar',
                         stack: '广告',
@@ -85,7 +85,7 @@ fixedTableHead('.table-wrapper');
                     },
                     {
                         name:'待完成',
-                        barWidth : 45,
+                        barWidth : 55,
                         itemStyle : { normal: {label : {show: true, position: 'inside'}}},
                         type:'bar',
                         stack: '广告',
@@ -125,7 +125,7 @@ fixedTableHead('.table-wrapper');
                     left: '3%',
                     right: '5%',
                     bottom: '3%',
-                    y: "25%",
+                    y: "20%",
                     containLabel: true
                 },
                 yAxis : [
@@ -150,7 +150,7 @@ fixedTableHead('.table-wrapper');
                         name:'已完成',
                         itemStyle : { normal: {label : {show: true, position: 'inside',formatter: '{c}%'}}},
                         type:'bar',
-                        barWidth : 35,
+                        barWidth : 45,
                         stack: '完成情况',
                         data:$donePercent
                     },
@@ -158,7 +158,7 @@ fixedTableHead('.table-wrapper');
                         name:'未完成',
                         itemStyle : { normal: {label : {show: true, position: 'inside', formatter: '{c}%'}}},
                         type:'bar',
-                        barWidth : 35,
+                        barWidth : 45,
                         stack: '完成情况',
                         data:$undonePercent
                     }
@@ -225,6 +225,7 @@ fixedTableHead('.table-wrapper');
                 left: '5%',
                 right: '7%',
                 bottom: '10%',
+                y: "20%",
                 containLabel: true
             },
             xAxis : [

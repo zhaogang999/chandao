@@ -41,58 +41,11 @@
         </div>
     </form>
     <?php if (isset($info)):?>
-    <table class='table active-disabled table-borderless' style="100%">
-        <tr style="height: 340px;">
-            <td>
-                <div id="main" style="width: 350px;height:280px;"></div>
-            </td>
-            <td>
-                <div id="detail" style="width: 350px;height:280px;"></div>
-            </td>
-            <td>
-                <div><h3 style="text-align:center">统计数据</h3></div>
-                <table class='table table-condensed table-hover table-striped table-bordered table-chart'>
-                    <thead>
-                        <tr class='table-bordered text-center'>
-                            <th>任务类型</th>
-                            <th>已完成</th>
-                            <th>待完成</th>
-                            <th>总数</th>
-                            <th>已完成</th>
-                            <th>待完成</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class='text-center'>
-                            <td  class='chart-label'>测试</td>
-                            <td class ='doneTaskCountPercent'><?php echo $echartData['testTaskStatusCount']['doneTaskCountPercent']?></td>
-                            <td class="undoneTaskCountPercent"><?php echo $echartData['testTaskStatusCount']['undoneTaskCountPercent']?></td>
-                            <td class="taskCount"><?php echo $echartData['testTaskStatusCount']['taskCount']?></td>
-                            <td class="doneTaskCount"><?php echo $echartData['testTaskStatusCount']['doneTaskCount']?></td>
-                            <td class="undoneTaskCount"><?php echo $echartData['testTaskStatusCount']['undoneTaskCount']?></td>
-                        </tr>
-                        <tr class='text-center'>
-                            <td class='chart-label'>开发</td>
-                            <td class ='doneTaskCountPercent'><?php echo $echartData['develTaskStatusCount']['doneTaskCountPercent']?></td>
-                            <td class="undoneTaskCountPercent"><?php echo $echartData['develTaskStatusCount']['undoneTaskCountPercent']?></td>
-                            <td class="taskCount"><?php echo $echartData['develTaskStatusCount']['taskCount']?></td>
-                            <td class="doneTaskCount"><?php echo $echartData['develTaskStatusCount']['doneTaskCount']?></td>
-                            <td class="undoneTaskCount"><?php echo $echartData['develTaskStatusCount']['undoneTaskCount']?></td>
-                        </tr>
-                        <tr class='text-center'>
-                            <td class='chart-label'>需求</td>
-                            <td class ='doneTaskCountPercent'><?php echo $echartData['storyTaskStatusCount']['doneTaskCountPercent']?></td>
-                            <td class="undoneTaskCountPercent"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCountPercent']?></td>
-                            <td class="taskCount"><?php echo $echartData['storyTaskStatusCount']['taskCount']?></td>
-                            <td class="doneTaskCount"><?php echo $echartData['storyTaskStatusCount']['doneTaskCount']?></td>
-                            <td class="undoneTaskCount"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCount']?></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </table>
     <table class='table table-borderless active-disabled' style="word-break:break-all; word-wrap:break-word;">
+        <tr style="height: 400px">
+            <td><div id="main" style="width: 525px;height:350px;"></div></td>
+            <td><div id="detail" style="width: 525px;height:350px;"></div></td>
+        </tr>
         <tr style="height: 450px;">
             <td><div id="storyTaskProgress" style="width: 525px;height:400px;"></td>
             <td><div id="develTaskProgress" style="width: 525px;height:400px;"></td>
@@ -110,13 +63,52 @@
             <td><div id="finishedTasksPerDay" style="width: 525px;height:400px;"></td>
         </tr>
     </table>
+    <div><h3 class="title" style="text-align:center">整体统计</h3></div>
+    <table class='table table-condensed table-hover table-striped table-bordered table-chart'>
+        <thead>
+        <tr class='table-bordered text-center'>
+            <th>任务类型</th>
+            <th>已完成</th>
+            <th>待完成</th>
+            <th>总数</th>
+            <th>已完成</th>
+            <th>待完成</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class='text-center'>
+            <td  class='chart-label'>测试</td>
+            <td class ='doneTaskCountPercent'><?php echo $echartData['testTaskStatusCount']['doneTaskCountPercent']?></td>
+            <td class="undoneTaskCountPercent"><?php echo $echartData['testTaskStatusCount']['undoneTaskCountPercent']?></td>
+            <td class="taskCount"><?php echo $echartData['testTaskStatusCount']['taskCount']?></td>
+            <td class="doneTaskCount"><?php echo $echartData['testTaskStatusCount']['doneTaskCount']?></td>
+            <td class="undoneTaskCount"><?php echo $echartData['testTaskStatusCount']['undoneTaskCount']?></td>
+        </tr>
+        <tr class='text-center'>
+            <td class='chart-label'>开发</td>
+            <td class ='doneTaskCountPercent'><?php echo $echartData['develTaskStatusCount']['doneTaskCountPercent']?></td>
+            <td class="undoneTaskCountPercent"><?php echo $echartData['develTaskStatusCount']['undoneTaskCountPercent']?></td>
+            <td class="taskCount"><?php echo $echartData['develTaskStatusCount']['taskCount']?></td>
+            <td class="doneTaskCount"><?php echo $echartData['develTaskStatusCount']['doneTaskCount']?></td>
+            <td class="undoneTaskCount"><?php echo $echartData['develTaskStatusCount']['undoneTaskCount']?></td>
+        </tr>
+        <tr class='text-center'>
+            <td class='chart-label'>需求</td>
+            <td class ='doneTaskCountPercent'><?php echo $echartData['storyTaskStatusCount']['doneTaskCountPercent']?></td>
+            <td class="undoneTaskCountPercent"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCountPercent']?></td>
+            <td class="taskCount"><?php echo $echartData['storyTaskStatusCount']['taskCount']?></td>
+            <td class="doneTaskCount"><?php echo $echartData['storyTaskStatusCount']['doneTaskCount']?></td>
+            <td class="undoneTaskCount"><?php echo $echartData['storyTaskStatusCount']['undoneTaskCount']?></td>
+        </tr>
+        </tbody>
+    </table>
     <div><h3 class="title" style="text-align:center">各项目分类型任务进展</h3></div>
     <div style="overflow: auto; width: 100%; max-height: 300px;" class='table-wrapper'>
         <table class='table table-condensed active-disabled table-hover table-striped table-bordered projectProgress' style='width: 100%;'>
             <thead>
             <tr class='colhead'>
                 <th>项目ID</th>
-                <th>项目名称</th>
+                <th>项目代号</th>
                 <th>需求</th>
                 <th>已完成</th>
                 <th>待完成</th>
@@ -132,7 +124,7 @@
             <?php foreach($info as $id  =>$project):?>
                 <tr class='text-center'>
                     <td align="center"><?php echo $id;?></td>
-                    <td class='chart-label'><?php echo $project->projectInfo->name;?></td>
+                    <td class='chart-label'><?php echo $project->projectInfo->code;?></td>
                     <td align="center"><?php echo $project->storyTaskSum;?></td>
                     <td class="doneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['doneTask'])?$project->newStoryTaskStatusSum['doneTask']:0;?></td>
                     <td class="undoneStoryTask"><?php echo isset($project->newStoryTaskStatusSum['undone'])?$project->newStoryTaskStatusSum['undone']:0;?></td>
@@ -224,7 +216,7 @@
                 <th>项目名称</th>
                 <th class="x-label">服务</th>
                 <th class="x-label">前端</th>
-                <th class="x-label">大数据</th>
+                <th class="x-label">开发</th>
                 <th class="x-label">ios</th>
                 <th class="x-label">android</th>
                 <th class="x-label">sdk</th>

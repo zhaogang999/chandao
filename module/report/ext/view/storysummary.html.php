@@ -55,9 +55,38 @@
         <td align="center"><?php echo $project->storyCountByTime['twoWeek'];?></td>
         <td align="center"><?php echo $project->storyChange['count'];?></td>
         <td align="center"><?php echo $project->storyChange['rate'];?></td>
-        <td align="center"><?php echo $project->zeroTaskStoryCount;?></td>
-        <td align="center"><?php echo $project->zeroDevelTaskStories;?></td>
-        <td align="center"><?php echo $project->zeroTestTaskStories;?></td>
+        <td align="center">
+          <?php if (isset($project->zeroTaskStories))
+          {
+            echo count($project->zeroTaskStories) . ' (';
+            foreach ($project->zeroTaskStories as $taskID)
+            {
+              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+            }
+            echo ')';
+          }
+          ?>
+        </td>
+        <td align="center">
+          <?php if (isset($project->zeroDevelTaskStories))
+          {
+            foreach ($project->zeroDevelTaskStories as $taskID)
+            {
+              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+            }
+          }
+          ?>
+        </td>
+        <td align="center">
+          <?php if (isset($project->zeroTestTaskStories))
+          {
+            foreach ($project->zeroTestTaskStories as $taskID)
+            {
+              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+            }
+          }
+          ?>
+        </td>
       </tr>
     <?php endforeach;?>
     </tbody>

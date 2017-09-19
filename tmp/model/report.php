@@ -6,11 +6,11 @@ helper::cd();
 class extreportModel extends reportModel 
 {
 /**
- * get count of Branch
+ * get count of bug of Branch
  *
  * @param $product
  * @access public
- * @return array
+ * @return object
 */
 public function bugBranchStatistics($product)
 {
@@ -57,7 +57,7 @@ public function bugResponseTimeStatistics()
 }
 
 /**
- * bug解决周期&bug响应时间
+ * bug解决周期&bug响应时间 分项目
  *
  * @param  $productID string
  * @access public
@@ -198,6 +198,7 @@ public function getBugSum($productIDs,$sort)
 /**
 * get info of burnup
 *
+ * @param $data object
 * @access public
 * @return array
 */
@@ -226,6 +227,11 @@ public function dailyBugStatistics($data)
 
     return $result;
 }
+/**
+ * 抓取燃起图数据
+ * 
+ * @return void
+ */
 public function getBurnUpData()
 {
     $this->loadModel('story');
@@ -266,11 +272,11 @@ public function getBurnUpData()
         $data->date = date('Y-m-d');
 
         $this->dao->insert(TABLE_BURNUP)->data($data)->exec();
-        //unset($data);
+        unset($data);
     }
 }
 /**
- * 每日bug情况统计
+ * 每日bug情况统计数据
  *
  * @access public
  * @return void
@@ -337,6 +343,11 @@ public function getDailyBugStatistics()
     }
     //var_dump($resolved);die;
 }
+/**
+ * 获取未完成任务的统计数据
+ * 
+ * @return void
+ */
 public function getUndoneTaskCount()
 {
     $projects = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetch();
@@ -467,14 +478,14 @@ public function storySummary()
 
         $storyIdList = array_keys($stories);
 
-        $zeroTaskStoryCount = $this->getZeroTaskStoryCount($storyIdList,$project);
+        $zeroTaskStories = $this->getZeroTaskStories($storyIdList,$project);
         $zeroDevelTaskStories = $this->getZeroTaskStories($storyIdList,$project, "fos, devel, sdk, web, ios, android");
         $zeroTestTaskStories = $this->getZeroTaskStories($storyIdList,$project, 'test');
 
         $storyCountByTime = $this->getStoryOpenDateReport($stories, $projectAB->begin);
         $storyChange = $this->getStoryChangeRate($project);
         
-        $info[$project]->zeroTaskStoryCount = $zeroTaskStoryCount;
+        $info[$project]->zeroTaskStories = $zeroTaskStories;
         $info[$project]->zeroDevelTaskStories = $zeroDevelTaskStories;
         $info[$project]->zeroTestTaskStories = $zeroTestTaskStories;
         $info[$project]->storyCountByTime = $storyCountByTime;
@@ -527,36 +538,6 @@ public function getStoryOpenDateReport($stories, $projectBegin)
 }
 
 /**
- * Get counts of ZeroTaskStory.
- *
- * @param  array  $stories
- * @param  int    $projectID
- * @access public
- * @return string
- */
-public function getZeroTaskStoryCount($stories, $projectID)
-{
-    $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
-        ->from(TABLE_TASK)
-        ->where('story')->in($stories)
-        ->andWhere('deleted')->eq(0)
-        ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
-        ->groupBy('story')
-        ->fetchPairs();
-
-    $storyCount = 0;
-    $zeroTaskStories = array();
-    foreach($stories as $storyID) if(!isset($taskCounts[$storyID]))
-    {
-        $zeroTaskStories[$storyID] = $storyID;
-        $storyCount++;
-    }
-    $zeroTaskStories = implode($zeroTaskStories, ',');
-
-    return $storyCount . '(' .$zeroTaskStories . ')';
-}
-
-/**
  * Get getZeroTaskStories of project.
  *
  * @param  array  $stories
@@ -570,7 +551,7 @@ public function getZeroTaskStories($stories, $projectID, $type)
     $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
         ->from(TABLE_TASK)
         ->where('story')->in($stories)
-        ->andWhere('type')->in($type)
+        ->beginIF($type)->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
         ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
         ->groupBy('story')
@@ -578,7 +559,6 @@ public function getZeroTaskStories($stories, $projectID, $type)
 
     $zeroTaskStories = array();
     foreach($stories as $storyID) if(!isset($taskCounts[$storyID])) $zeroTaskStories[$storyID] = $storyID;
-    $zeroTaskStories = implode($zeroTaskStories, ',');
 
     return $zeroTaskStories;
 }
@@ -798,7 +778,7 @@ public function taskSummary($data)
     $testStatusSum = $this->dao->query($testStatusSumSql)->fetchAll();
     $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
     $delayedTaskSum = $this->dao->query($delayedTaskSumSql)->fetchAll();
-    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
+    $projectInfo = $this->dao->select("id,name,code")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
 
     $echartData['testTaskStatusCount'] = $this->taskStatusCount("'test'", $projects);
     $echartData['develTaskStatusCount'] = $this->taskStatusCount("'fos', 'devel', 'sdk', 'web', 'ios', 'android'", $projects);
@@ -849,6 +829,14 @@ public function taskSummary($data)
     return $result;
 }
 
+/**
+ * 获取每日完成的开发任务数
+ * 
+ * @param $projects
+ * @param $begin
+ * @param $end
+ * @return array
+ */
 public function finishedTasksPerDay($projects, $begin, $end)
 {
     $finishedTasksPerDay = $this->dao->select("project,DATE_FORMAT(finishedDate,'%Y-%m-%d') AS date, COUNT(id) AS value")->from(TABLE_TASK)->where('project')->in($projects)->andWhere('deleted')->eq('0')->andWhere('type')->in('fos,devel,sdk,web,ios,android')->groupBy('finishedDate')->having("date != '0000-00-00' AND date>='$begin' AND date<='$end'")->orderBy('project,finishedDate')->fetchGroup('date','project');
@@ -872,6 +860,14 @@ public function finishedTasksPerDay($projects, $begin, $end)
     return $dataOfFinishedTaskPerDay;
 }
 
+/**
+ * 获取未完成任务的统计数据
+ * 
+ * @param $projects
+ * @param $begin
+ * @param $end
+ * @return stdClass
+ */
 public function undoneTaskCount($projects, $begin, $end)
 {
     $data = new stdClass();
@@ -950,10 +946,16 @@ public function taskStatusCount($type, $projects)
     return $result;
 }
 
+/**
+ * 按任务状态对项目的任务进行统计
+ * 
+ * @param $data
+ * @return array
+ */
 public function taskStatusCountOfProject ($data)
 {
     $newData = array();
-    //$testStatistic = array();
+    
     foreach ($data as $val)
     {
         $newData[$val->project][$val->status]= $val->taskSum;

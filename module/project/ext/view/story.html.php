@@ -62,6 +62,8 @@
           <th class='w-id  {sorter:false}'>    <?php common::printOrderLink('id',         $orderBy, $vars, $lang->idAB);?></th>
           <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
+          <!--2085 项目需求中增加需求所属计划的显示-->
+          <th class='w-100px {sorter:false}'>          <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
           <th class='w-user {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
           <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
           <th class='w-hour {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
@@ -99,6 +101,8 @@
             <?php if(isset($branchGroups[$story->product][$story->branch])) echo "<span class='label label-info label-badge'>" . $branchGroups[$story->product][$story->branch] . '</span>';?>
             <?php echo html::a($storyLink,$story->title, null, "style='color: $story->color'");?>
           </td>
+          <!--2085 项目需求中增加需求所属计划的显示-->
+          <td title="<?php echo $story->planTitle;?>"><?php echo $story->planTitle;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
           <td><?php echo $users[$story->assignedTo];?></td>
           <td><?php echo $story->estimate;?></td>
@@ -171,6 +175,29 @@
                 echo "<button id='moreAction' type='button' class='btn dropdown-toggle' data-toggle='dropdown'><span class='caret'></span></button>";
                 echo "<ul class='dropdown-menu' id='moreActionMenu'>";
 
+              if(common::hasPriv('story', 'batchChangePlan'))
+              {
+                unset($plans['']);
+                $plans      = array(0 => $lang->null) + $plans;
+                $withSearch = count($plans) > 8;
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->planAB, '', "id='planItem'");
+                echo "<div class='dropdown-menu" . ($withSearch ? ' with-search':'') . "'>";
+                echo "<ul class='dropdown-list'>";
+                foreach($plans as $planID => $plan)
+                {
+                  $actionLink = $this->createLink('story', 'batchChangePlan', "planID=$planID");
+                  echo "<li class='option' data-key='$planID'>" . html::a('#', $plan, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . "</li>";
+                }
+                echo '</ul>';
+                if($withSearch) echo "<div class='menu-search'><div class='input-group input-group-sm'><input type='text' class='form-control' placeholder=''><span class='input-group-addon'><i class='icon-search'></i></span></div></div>";
+                echo '</div></li>';
+              }
+              else
+              {
+                echo '<li>' . html::a('javascript:;', $lang->story->planAB, '', $class) . '</li>';
+              }
+              
                 if($canBatchClose)
                 {
                     $actionLink = $this->createLink('story', 'batchClose', "productID=0&projectID=$project->id");

@@ -29,7 +29,7 @@ public function taskSummary($data)
     $testStatusSum = $this->dao->query($testStatusSumSql)->fetchAll();
     $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
     $delayedTaskSum = $this->dao->query($delayedTaskSumSql)->fetchAll();
-    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
+    $projectInfo = $this->dao->select("id,name,code")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
 
     $echartData['testTaskStatusCount'] = $this->taskStatusCount("'test'", $projects);
     $echartData['develTaskStatusCount'] = $this->taskStatusCount("'fos', 'devel', 'sdk', 'web', 'ios', 'android'", $projects);
