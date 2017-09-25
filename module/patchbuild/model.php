@@ -24,12 +24,12 @@ class patchbuildModel extends model
             ->stripTags($this->config->patchbuild->editor->createpatchbuild['id'], $this->config->allowedTags)
             //->remove('resolvedBy,allchecker,files,labels,uid')
             ->get();
-
+var_dump($build);die;
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()
             ->batchCheck($this->config->build->createPatchBuild->requiredFields, 'notempty')
-            ->check("product = {$build->product} AND deleted = '0'")
+            //->check("product = {$build->product} AND deleted = '0'")
             ->exec();
         if(!dao::isError())
         {
@@ -57,7 +57,8 @@ class patchbuildModel extends model
             ->get();
         //if(!isset($build->branch)) $build->branch = $oldBuild->branch;
 
-        $build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->editBatchBuild['id'], $this->post->uid);
+
+        //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->editBatchBuild['id'], $this->post->uid);
         $this->dao->update(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()
             //->batchCheck($this->config->build->editBatchBuild->requiredFields, 'notempty')

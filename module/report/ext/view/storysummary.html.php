@@ -59,9 +59,9 @@
           <?php if (isset($project->zeroTaskStories))
           {
             echo count($project->zeroTaskStories) . ' (';
-            foreach ($project->zeroTaskStories as $taskID)
+            foreach ($project->zeroTaskStories as $storyID)
             {
-              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+              if(!common::printLink('story', 'view', "story=$storyID", sprintf('%03d', $storyID))) printf('%03d', $storyID);
             }
             echo ')';
           }
@@ -70,9 +70,9 @@
         <td align="center">
           <?php if (isset($project->zeroDevelTaskStories))
           {
-            foreach ($project->zeroDevelTaskStories as $taskID)
+            foreach ($project->zeroDevelTaskStories as $storyID)
             {
-              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+              if(!common::printLink('story', 'view', "story=$storyID", sprintf('%03d', $storyID))) printf('%03d', $storyID);
             }
           }
           ?>
@@ -80,9 +80,9 @@
         <td align="center">
           <?php if (isset($project->zeroTestTaskStories))
           {
-            foreach ($project->zeroTestTaskStories as $taskID)
+            foreach ($project->zeroTestTaskStories as $storyID)
             {
-              if(!common::printLink('task', 'view', "task=$taskID", sprintf('%03d', $taskID))) printf('%03d', $taskID);
+              if(!common::printLink('story', 'view', "story=$storyID", sprintf('%03d', $storyID))) printf('%03d', $storyID);
             }
           }
           ?>

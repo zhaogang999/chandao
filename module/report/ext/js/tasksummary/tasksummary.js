@@ -277,7 +277,7 @@ fixedTableHead('.table-wrapper');
             var $groupLabels = [];
             var $series =[];
             var $xth = $table.find('thead > tr');
-            $xth.find('.x-label').each(function(idx){
+            $table.find('.x-label').each(function(idx){
                 var $childXth = $(this);
                 $xLabel.push($childXth.text());
             });
@@ -285,26 +285,26 @@ fixedTableHead('.table-wrapper');
                 title = $xth.find('.title').text();
             }
 
-
-            var $rows = $table.find('tbody > tr').each(function(idx)
-            {
-                var $undoneTask = [];
-                var $row = $(this);
-                var $groupLabel = $row.find('.chart-label').text();
-                $groupLabels.push($groupLabel);
-                //$undoneTask.push($row.find('.taskData').text());
-
-                $row.find('.taskData').each(function(idx){
-                    var $childTaskData = $(this);
-                    $undoneTask.push($childTaskData.text());
-                });
-                $series.push({name:$groupLabel,type:type,data:$undoneTask,itemStyle:{normal:{label:{show:true,position: 'top'}}}});
+            $table.find('.chart-label').each(function(idx){
+                var $label = $(this);
+                $groupLabels.push($label.text());
             });
-            //var myChart = echarts.init(document.getElementById('undoneStoryTasks'));
+
+            var cols = $table.find('.chart-label').length;
+            var rows = $table.find('.x-label').length;
+            var td = $table.find('.taskData');
+
+            for (var i=1;i<=cols;i++){
+                var projectTaskCount = [];
+                for (var j=1;j<=rows;j++){
+                    projectTaskCount.push(td.eq((j-1)*cols+i-1).text());
+                }
+                var $groupLabel = $table.find('.chart-label').eq(i-1).text();
+                //$series.push(projectTaskCount);
+                $series.push({name:$groupLabel,type:type,data:projectTaskCount,itemStyle:{normal:{label:{show:true,position: 'top'}}}});
+            }
+
             getUndoneTaskCharts (idName, title, $groupLabels, $xLabel, $series);
-            //getUndoneTaskCharts ('undoneDevelTasks', title, $groupLabels, $xLabel, $series);
-            //getUndoneTaskCharts ('undoneTestTasks', title, $groupLabels, $xLabel, $series);
-            
         });
     };
 

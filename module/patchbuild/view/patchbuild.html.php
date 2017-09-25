@@ -14,7 +14,7 @@
 <?php js::set('confirmDelete', $lang->patchbuild->confirmDelete)?>
 <div id='titlebar'>
   <div class='heading'>
-    <?php echo html::icon($lang->icons['patchbuild']);?> <?php echo $this->lang->patchbuild->patchBuild;?>
+    <?php echo html::icon($lang->icons['build']);?> <?php echo $lang->patchbuild->patchBuild;?>
   </div>
   <?php if ($from == 'project'):?>
   <div class='actions'>

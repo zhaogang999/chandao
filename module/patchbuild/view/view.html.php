@@ -141,12 +141,7 @@ tfoot tr td .table-actions .btn{display:none;}
         </table>
       </fieldset>
       <?php include '../../common/view/action.html.php';?>
-      <div class='actions'><?php echo $actionLinks;?></div>
     </div>
   </div>
 </div>
-<?php js::set('param', helper::safe64Decode($param))?>
-<?php js::set('link', $link)?>
-<?php js::set('buildID', $build->id)?>
-<?php js::set('type', $type)?>
 <?php include '../../common/view/footer.html.php';?>

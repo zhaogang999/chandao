@@ -46,6 +46,11 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
             case 'keywords':
                 echo $task->keywords;
                 break;
+            //在任务列表页面增加任务关联需求的所属字段
+            case 'plan':
+                $plan = $this->loadModel('productplan')->getByID($task->plan);
+                echo $plan->title;
+                break;
 
             case 'status':
                 $storyChanged = ($task->storyStatus == 'active' and $task->latestStoryVersion > $task->storyVersion);

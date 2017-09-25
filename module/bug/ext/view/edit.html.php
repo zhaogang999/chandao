@@ -165,6 +165,13 @@ js::set('oldResolvedBuild'       , $bug->resolvedBuild);
             <th><?php echo $lang->bug->mailto;?></th>
             <td><?php echo html::select('mailto[]', $users, str_replace(' ', '', $bug->mailto), 'class="form-control chosen" multiple');?></td>
           </tr>
+
+          <!--2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索-->
+          <tr>
+            <th><?php echo $lang->bug->discoveryPhase;?></th>
+            <td><?php echo html::select('discoveryPhase', $lang->bug->discoveryPhaseList, $bug->discoveryPhase, "class='form-control chosen'");?></td>
+          </tr>
+
         </table>
       </fieldset>
 

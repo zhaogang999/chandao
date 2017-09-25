@@ -18,14 +18,17 @@ class myReport extends report
             $data['end'] = empty($data['end'])?$project->end:$data['end'];
 
             $result = $this->report->burnUp($data);
-
-            $this->view->project    = $data['project'];
-            $this->view->begin    = $data['begin'];
-            $this->view->end    = $data['end'];
+            
             $this->view->burnUpData = $result;
         }
 
-        $this->view->projects   = array(''=>'') + $this->loadModel('project')->getPairs();
+        $projects = $this->loadModel('project')->getPairs();
+        krsort($projects);
+
+        $this->view->project    = isset($data['project'])?$data['project']:0;
+        $this->view->begin    = isset($data['begin'])?$data['begin']:'';
+        $this->view->end    = isset($data['end'])?$data['end']:'';
+        $this->view->projects   = array(''=>'') + $projects;
         $this->view->title      = $this->lang->report->burnUp;
         $this->view->position[] = $this->lang->report->burnUp;
         $this->view->submenu    = 'project';

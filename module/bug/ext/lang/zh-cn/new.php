@@ -22,3 +22,12 @@ $lang->bug->report->bugsDeadline->graph->xAxisName     = '日期';
 
 //1747 提bug时，限定某些字段为必填项
 $lang->bug->severityList[''] = '';
+
+//2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索
+$lang->bug->discoveryPhase = '发现阶段';
+
+$lang->bug->discoveryPhaseList[''] = '';
+$lang->bug->discoveryPhaseList['Check-in'] = '提测阶段';
+$lang->bug->discoveryPhaseList['alpha'] = '内测阶段';
+$lang->bug->discoveryPhaseList['acceptance'] = '验收阶段';
+$lang->bug->discoveryPhaseList['production'] = '生产阶段';

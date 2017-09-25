@@ -8,12 +8,12 @@
  */
 public function finish($taskID)
 {
-    $emptyReviewDetail  = '';
+    $emptyReviewDetail  = new stdClass();
     $reviewDetail       = array();
-    $emptyReview        = '';
-    $review             = '';
-    $taskDetail         = '';
-    $estimate           = '';
+    $emptyReview        = new stdClass();
+    $review             = new stdClass();
+    $taskDetail         = new stdClass();
+    $estimate           = new stdClass();
 
     $emptyReviewDetail->reviewID = '';
     $emptyReviewDetail->number = '';

@@ -69,10 +69,10 @@ public function getStoryChangeRate($project)
     $storyCount  = $this->dao->select("count('story') as storyCount")->from(TABLE_PROJECTSTORY)
         ->where('project')->eq($project)
         ->fetch('storyCount');
-    $storyChangeRate = ceil($storyChangeCount/$storyCount*100) . '%';
+    $storyChangeRate = $storyCount!=0?ceil($storyChangeCount/$storyCount*100):0;
 
     $storyChange['count'] = $storyChangeCount;
-    $storyChange['rate'] = $storyChangeRate;
+    $storyChange['rate'] = $storyChangeRate. '%';
 
     return $storyChange;
 }
@@ -103,12 +103,12 @@ public function getStoryOpenDateReport($stories, $projectBegin)
  * @access public
  * @return string
  */
-public function getZeroTaskStories($stories, $projectID, $type)
+public function getZeroTaskStories($stories, $projectID, $type='')
 {
     $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
         ->from(TABLE_TASK)
         ->where('story')->in($stories)
-        ->beginIF($type)->andWhere('type')->in($type)->fi()
+        ->beginIF($type!='')->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
         ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
         ->groupBy('story')

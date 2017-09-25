@@ -512,10 +512,10 @@ public function getStoryChangeRate($project)
     $storyCount  = $this->dao->select("count('story') as storyCount")->from(TABLE_PROJECTSTORY)
         ->where('project')->eq($project)
         ->fetch('storyCount');
-    $storyChangeRate = ceil($storyChangeCount/$storyCount*100) . '%';
+    $storyChangeRate = $storyCount!=0?ceil($storyChangeCount/$storyCount*100):0;
 
     $storyChange['count'] = $storyChangeCount;
-    $storyChange['rate'] = $storyChangeRate;
+    $storyChange['rate'] = $storyChangeRate. '%';
 
     return $storyChange;
 }
@@ -546,12 +546,12 @@ public function getStoryOpenDateReport($stories, $projectBegin)
  * @access public
  * @return string
  */
-public function getZeroTaskStories($stories, $projectID, $type)
+public function getZeroTaskStories($stories, $projectID, $type='')
 {
     $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
         ->from(TABLE_TASK)
         ->where('story')->in($stories)
-        ->beginIF($type)->andWhere('type')->in($type)->fi()
+        ->beginIF($type!='')->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
         ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
         ->groupBy('story')
@@ -767,16 +767,12 @@ public function taskSummary($data)
     $projects = trim(implode(',', $projects), ',');
 
     $taskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN(" .$projects . ") AND deleted='0' GROUP BY `project`";
-
-    $develTaskStatusSumSql = "SELECT `project`,`status`,COUNT( `id` ) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND `type` IN ('fos', 'devel', 'sdk', 'web', 'ios', 'android') AND deleted = '0' GROUP BY `project`,`status`";
-    $testStatusSumSql = "SELECT `project`,`status`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND deleted='0' AND `type`='test' GROUP BY `project`,`status`";
-    $storyTaskStatusSumSql = "SELECT `project`,`status`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND deleted='0' AND `type` IN ('ra') GROUP BY `project`,`status`";
+    $develTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("fos,devel,sdk,web,ios,android")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
+    $testStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("test")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
+    $storyTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("ra")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
     $delayedTaskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND curdate()>deadline AND `status` not IN ('done','closed','cancel') AND deadline != '0000-00-00' AND deleted='0' GROUP BY `project`";
 
     $taskSum = $this->dao->query($taskSumSql)->fetchAll();
-    $develTaskStatusSum = $this->dao->query($develTaskStatusSumSql)->fetchAll();
-    $testStatusSum = $this->dao->query($testStatusSumSql)->fetchAll();
-    $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
     $delayedTaskSum = $this->dao->query($delayedTaskSumSql)->fetchAll();
     $projectInfo = $this->dao->select("id,name,code")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
 
@@ -788,18 +784,16 @@ public function taskSummary($data)
     $taskSum = $this->transform($taskSum);
     $delayedTaskSum = $this->transform($delayedTaskSum);
 
-    $newDevelTaskStatusSum  = $this->taskStatusCountOfProject($develTaskStatusSum);
-    //var_dump($newDevelTaskStatusSum);die;
-    $newTestStatusSum       = $this->taskStatusCountOfProject($testStatusSum);
-    $newStoryTaskStatusSum  = $this->taskStatusCountOfProject($storyTaskStatusSum);
-
     $undoneTaskCount = $this->undoneTaskCount($projects, $begin, $end);
     //$undoneTaskByType = $this->undoneTaskByType($projects);
     $undoneTaskByType = $this->dao->select('project,type,COUNT(id) as taskSum')->from(TABLE_TASK)->where('project')->in($projects)->andWhere('deleted')->eq('0')->andWhere('type')->in('fos,devel,sdk,web,ios,android')->andWhere('status')->in('wait,doing,pause')->groupBy('project,type')->fetchGroup('project','type');
-
     $finishedTasksPerDay = $this->finishedTasksPerDay($projects, $begin, $end);
     
     $projects = explode(',', $projects);
+    $newDevelTaskStatusSum  = $this->taskStatusCountOfProject($projects,$develTaskStatusSum);
+    $newTestStatusSum       = $this->taskStatusCountOfProject($projects,$testStatusSum);
+    $newStoryTaskStatusSum  = $this->taskStatusCountOfProject($projects,$storyTaskStatusSum);
+
     $projectSum =count($projects);
 
     for($i=0;$i<$projectSum;$i++)
@@ -807,13 +801,13 @@ public function taskSummary($data)
         $info[$projects[$i]] = new stdClass();
         $info[$projects[$i]]->projectInfo = $projectInfo[$i];
         $info[$projects[$i]]->taskSum = isset($taskSum[$projects[$i]])?$taskSum[$projects[$i]]:0;
-        //$info[$projects[$i]]->develTaskSum = isset($newDevelTaskStatusSum[$projects[$i]]) ? array_sum($newDevelTaskStatusSum[$projects[$i]])/2:0;
+
         $info[$projects[$i]]->develTaskSum = $newDevelTaskStatusSum[$projects[$i]]['undone'] + $newDevelTaskStatusSum[$projects[$i]]['doneTask'];
         $info[$projects[$i]]->newDevelTaskStatusSum = isset($newDevelTaskStatusSum[$projects[$i]])?$newDevelTaskStatusSum[$projects[$i]]:0;
-        //$info[$projects[$i]]->testSum = isset($newTestStatusSum[$projects[$i]]) ? array_sum($newTestStatusSum[$projects[$i]])/2 : 0;
+
         $info[$projects[$i]]->testSum = $newTestStatusSum[$projects[$i]]['undone'] + $newTestStatusSum[$projects[$i]]['doneTask'];
         $info[$projects[$i]]->newTestStatusSum = isset($newTestStatusSum[$projects[$i]])?$newTestStatusSum[$projects[$i]]:0;
-        //$info[$projects[$i]]->storyTaskSum = isset($newStoryTaskStatusSum[$projects[$i]]) ? array_sum($newStoryTaskStatusSum[$projects[$i]])/2:0;
+
         $info[$projects[$i]]->storyTaskSum = $newStoryTaskStatusSum[$projects[$i]]['undone'] + $newStoryTaskStatusSum[$projects[$i]]['doneTask'];
         $info[$projects[$i]]->newStoryTaskStatusSum = isset($newStoryTaskStatusSum[$projects[$i]])?$newStoryTaskStatusSum[$projects[$i]]:0;
         $info[$projects[$i]]->delayedTaskSum = isset($delayedTaskSum[$projects[$i]])?$delayedTaskSum[$projects[$i]]:0;
@@ -873,8 +867,10 @@ public function undoneTaskCount($projects, $begin, $end)
     $data = new stdClass();
     $date = array();
 
-    $undoneTaskCount = $this->dao->select('*')->from(TABLE_UNDONETASKREPORT)->where('project')->in($projects)->andWhere('date')->between($begin,$end)->fetchGroup('project','date');
-    $begin = strtotime($begin);
+    $undoneTaskCount = $this->dao->select('*')->from(TABLE_UNDONETASKREPORT)->where('project')->in($projects)->andWhere('date')->between($begin,$end)->fetchGroup('date','project');
+
+
+    /*$begin = strtotime($begin);
     $end = strtotime($end);
     $projects = explode(',', $projects);
 
@@ -903,8 +899,8 @@ public function undoneTaskCount($projects, $begin, $end)
     $data->undoneStoryTaskCount = $undoneStoryTaskCount;
     $data->undoneDevelTaskCount = $undoneDevelTaskCount;
     $data->undoneTestTaskCount  = $undoneTestTaskCount;
-    //var_dump($date);die;
-    return $data;
+    //var_dump($date);die;*/
+    return $undoneTaskCount;
 }
 
 /**
@@ -948,27 +944,27 @@ public function taskStatusCount($type, $projects)
 
 /**
  * 按任务状态对项目的任务进行统计
- * 
+ *
+ * @param  $projects
  * @param $data
  * @return array
  */
-public function taskStatusCountOfProject ($data)
+public function taskStatusCountOfProject ($projects, $data)
 {
     $newData = array();
-    
-    foreach ($data as $val)
-    {
-        $newData[$val->project][$val->status]= $val->taskSum;
 
-        if ($val->status == 'done' || $val->status == 'closed')
-        {
-            $newData[$val->project]['doneTask'] += $val->taskSum;
-        }
-        elseif ($val->status == 'wait' || $val->status == 'doing' || $val->status == 'pause')
-        {
-            $newData[$val->project]['undone'] += $val->taskSum;
-        }
+    foreach ($projects as $project)
+    {
+        $newData[$project]['wait']= isset($data[$project]['wait']->taskSum)?$data[$project]['wait']->taskSum:0;
+        $newData[$project]['doing']= isset($data[$project]['doing']->taskSum)?$data[$project]['doing']->taskSum:0;
+        $newData[$project]['done']= isset($data[$project]['done']->taskSum)?$data[$project]['done']->taskSum:0;
+        $newData[$project]['pause']= isset($data[$project]['pause']->taskSum)?$data[$project]['pause']->taskSum:0;
+        $newData[$project]['cancel']= isset($data[$project]['cancel']->taskSum)?$data[$project]['cancel']->taskSum:0;
+        $newData[$project]['closed']= isset($data[$project]['closed']->taskSum)?$data[$project]['closed']->taskSum:0;
+        $newData[$project]['doneTask'] = $newData[$project]['done'] + $newData[$project]['closed'];
+        $newData[$project]['undone'] = $newData[$project]['wait'] + $newData[$project]['doing'] + $newData[$project]['pause'];
     }
+
     return $newData;
 }
 //**//

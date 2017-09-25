@@ -19,7 +19,7 @@
     <div class='row' style='margin-bottom:5px;'>
       <div class='col-sm-7'>
         <div class='input-group input-group-sm'>
-          <span class='input-group-addon'><?php echo $lang->report->project;?></span>
+          <span class='input-group-addon'><?php echo $lang->report->product;?></span>
           <?php echo html::select('product', $products, $product, "class='form-control chosen' onchange='getStories(this.value)'");?>
         </div>
       </div>
@@ -27,6 +27,7 @@
       </div>
     </div>
   </form>
+  <?php if (isset($result)):?>
   <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-all;">
     <thead>
         <tr class='colhead'>
@@ -39,11 +40,12 @@
     <?php foreach($branchs as $id  =>$branch):?>
       <tr class="a-center">
         <td><?php echo $branch;?></td>
-        <td align="center"><?php echo $result->activedBugs[$id];?></td>
-        <td align="center"><?php echo $result->bugs[$id];?></td>
+        <td align="center"><?php echo isset($result->activedBugs[$id])?$result->activedBugs[$id]:'';?></td>
+        <td align="center"><?php echo isset($result->bugs[$id])?$result->bugs[$id]:'';?></td>
       </tr>
     <?php endforeach;?>
     </tbody>
-  </table> 
+  </table>
+  <?php endif;?>
 </div>
 <?php include '../../../common/view/footer.html.php';?>

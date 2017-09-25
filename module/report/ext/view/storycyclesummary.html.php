@@ -27,6 +27,7 @@
       </div>
     </div>
   </form>
+  <?php if (isset($result)):?>
   <table class='table table-condensed table-striped table-bordered tablesorter active-disabled' style="word-break:break-all; word-wrap:break-all;">
     <thead>
         <tr class='colhead'>
@@ -54,6 +55,7 @@
       </tr>
     <?php endforeach;?>
     </tbody>
-  </table> 
+  </table>
+  <?php endif;?>
 </div>
 <?php include '../../../common/view/footer.html.php';?>

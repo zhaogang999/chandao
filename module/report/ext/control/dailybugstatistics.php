@@ -18,13 +18,13 @@ class myReport extends report
             $data['end'] = empty($data['end'])?$now:$data['end'];
 
             $result = $this->report->dailyBugStatistics($data);
-
-            $this->view->product    = $data['product'];
-            $this->view->begin    = $data['begin'];
-            $this->view->end    = $data['end'];
+            
             $this->view->result = $result;
         }
 
+        $this->view->product    = isset($data['product'])?$data['product']:0;
+        $this->view->begin    = isset($data['begin'])?$data['begin']:'';
+        $this->view->end    = isset($data['end'])?$data['end']:'';
         $this->view->products   = array(''=>'') + $this->loadModel('product')->getPairs('noclosed');
         $this->view->title      = $this->lang->report->dailyBugStatistics;
         $this->view->position[] = $this->lang->report->dailyBugStatistics;

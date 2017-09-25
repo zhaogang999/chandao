@@ -16,8 +16,8 @@
 <div class='container'>
   <div id='titlebar'>
     <div class='heading'>
-      <span class='prefix'><?php echo html::icon($lang->icons['createPatchBuild']);?></span>
-      <strong><small class='text-muted'><?php echo html::icon($lang->icons['createPatchBuild']);?></small> <?php echo $lang->patchbuild->createPatchBuild;?></strong>
+      <span class='prefix'><?php echo html::icon($lang->icons['build']);?></span>
+      <strong><small class='text-muted'><?php echo html::icon($lang->icons['create']);?></small> <?php echo $lang->patchbuild->createPatchBuild;?></strong>
     </div>
   </div>
   <form class='form-condensed' method='post' target='hiddenwin' id='dataform' enctype='multipart/form-data'>

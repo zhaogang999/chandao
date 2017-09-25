@@ -3,12 +3,14 @@ include '../../control.php';
 class myReport extends report
 {
     /**
-     * 每日获取bug分布情况数据
+     * 每日抓取report数据
      * 
      * @return void
      */
-    public function getDailyBugStatistics()
+    public function getReportData()
     {
+        //$this->report->getBurnUpData();
         $this->report->getDailyBugStatistics();
+        //$this->report->getUndoneTaskCount();
     }
 }

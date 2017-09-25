@@ -13,12 +13,12 @@ class myReport extends report
         if ($product !=0)
         {
             $result = $this->report->bugBranchStatistics($product);
-
-            $this->view->product    = $product;
+            
             $this->view->result = $result;
             $this->view->branchs = $this->loadModel('branch')->getPairs($product);
         }
 
+        $this->view->product    = $product;
         $this->view->products   = array(''=>'') + $this->loadModel('product')->getPairs('noclosed');
         $this->view->title      = $this->lang->report->bugBranchStatistics;
         $this->view->position[] = $this->lang->report->bugBranchStatistics;

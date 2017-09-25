@@ -17,7 +17,7 @@ class myStory extends story
         //细分需求相互关联 
         $parentStory = $this->dao->select('id,title')->from(TABLE_STORY)->where('childStories')->like("%$storyID%")->fetch();
         //新增
-        unset($story->tasks);
+        //unset($story->tasks);
         $story->tasks  = $this->dao->select('id, name, assignedTo, project, type, status, consumed, `left`')->from(TABLE_TASK)->where('story')->eq($storyID)->andWhere('deleted')->eq(0)->orderBy('id DESC')->fetchGroup('project');
 
         if(!$story) die(js::error($this->lang->notFound) . js::locate('back'));

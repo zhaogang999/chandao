@@ -139,7 +139,7 @@ class patchbuild extends control
             $products      = array();
             foreach($productGroups as $product) $products[$product->id] = $product->name;
 
-            $this->view->title         = $project->name . $this->lang->colon . $this->lang->build->create;
+            $this->view->title         = $project->name . $this->lang->colon . $this->lang->patchbuild->createPatchBuild;
             $this->view->position[]    = html::a($this->createLink('project', 'task', "projectID=$projectID"), $project->name);
             $this->view->position[]    = $this->lang->patchbuild->createPatchBuild;
             $this->view->product       = isset($productGroups[$productID]) ? $productGroups[$productID] : '';

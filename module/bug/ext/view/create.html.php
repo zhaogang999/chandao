@@ -103,9 +103,14 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
       <tr>
         <th><nobr><?php echo $lang->bug->lblAssignedTo;?></nobr></th>
         <td>
-          <div class='input-group'>
+          <div class='row-table'>
             <span id='assignedToBox'><?php echo html::select('assignedTo', $projectMembers, $assignedTo, "class='form-control chosen'");?></span>
             <span class='input-group-btn'><?php echo html::commonButton($lang->bug->allUsers, "class='btn btn-default' onclick='loadAllUsers()' data-toggle='tooltip'");?></span>
+            
+            <!--2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索-->
+            <span class='input-group-addon fix-border'><?php echo $lang->bug->discoveryPhase;?></span>
+            <?php echo html::select('discoveryPhase', $lang->bug->discoveryPhaseList, '', "class='form-control'");?>
+            
           </div>
         </td>
         <?php if($this->config->global->flow != 'onlyTest'):?>

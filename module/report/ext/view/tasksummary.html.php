@@ -145,17 +145,17 @@
             <thead>
             <tr class='colhead'>
                 <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                <?php foreach($undoneTaskCount->date as $val):?>
-                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
+                <?php foreach($data->project as $project):?>
+                    <th class="chart-label"><?php echo $projects[$project];?></th>
                 <?php endforeach;?>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($undoneTaskCount->undoneStoryTaskCount as $id => $value ):?>
+            <?php foreach ($undoneTaskCount as $date => $value ):?>
                 <tr class='text-center'>
-                    <td class='chart-label'><?php echo $projects[$id]?></td>
+                    <td class='x-label'><?php echo date('m-d', strtotime($date))?></td>
                     <?php foreach ($value as $val):?>
-                        <td class="taskData"><?php echo $val;?></td>
+                        <td class="taskData"><?php echo $val->undoneStoryTaskCount;?></td>
                     <?php endforeach;?>
                 </tr>
             <?php endforeach;?>
@@ -166,19 +166,19 @@
     <div style="overflow: auto; position: relative;" class='table-wrapper'>
         <table class='table table-condensed table-hover table-striped table-bordered unDoneDevelTaskReport'>
             <thead>
-            <tr class='text-center'>
+            <tr class='colhead'>
                 <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                <?php foreach($undoneTaskCount->date as $val):?>
-                    <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
+                <?php foreach($data->project as $project):?>
+                    <th class="chart-label"><?php echo $projects[$project];?></th>
                 <?php endforeach;?>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($undoneTaskCount->undoneDevelTaskCount as $id => $value ):?>
+            <?php foreach ($undoneTaskCount as $date => $value ):?>
                 <tr class='text-center'>
-                    <td class='chart-label'><?php echo $projects[$id]?></td>
+                    <td class='x-label'><?php echo date('m-d', strtotime($date))?></td>
                     <?php foreach ($value as $val):?>
-                        <td class="taskData"><?php echo $val;?></td>
+                        <td class="taskData"><?php echo $val->undoneDevelTaskCount;?></td>
                     <?php endforeach;?>
                 </tr>
             <?php endforeach;?>
@@ -188,24 +188,24 @@
     <div><h3 class="title" style="text-align:center">测试待完成工作</h3></div>
     <div style="overflow: auto; position: relative;" class='table-wrapper'>
         <table class='table table-condensed table-hover table-striped table-bordered unDoneTestTaskReport'>
-        <thead>
-        <tr class='text-center'>
-            <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-            <?php foreach($undoneTaskCount->date as $val):?>
-                <th class="x-label"><?php echo date('m-d', strtotime($val));?></th>
-            <?php endforeach;?>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($undoneTaskCount->undoneTestTaskCount as $id => $value ):?>
-            <tr class='text-center'>
-                <td class='chart-label'><?php echo $projects[$id]?></td>
-                <?php foreach ($value as $val):?>
-                    <td class="taskData"><?php echo $val;?></td>
+            <thead>
+            <tr class='colhead'>
+                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <?php foreach($data->project as $project):?>
+                    <th class="chart-label"><?php echo $projects[$project];?></th>
                 <?php endforeach;?>
             </tr>
-        <?php endforeach;?>
-        </tbody>
+            </thead>
+            <tbody>
+            <?php foreach ($undoneTaskCount as $date => $value ):?>
+                <tr class='text-center'>
+                    <td class='x-label'><?php echo date('m-d', strtotime($date))?></td>
+                    <?php foreach ($value as $val):?>
+                        <td class="taskData"><?php echo $val->undoneTestTaskCount;?></td>
+                    <?php endforeach;?>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
         </table>
     </div>
     <div><h3 class="title" style="text-align:center">各组开发未完成任务情况</h3></div>
@@ -261,7 +261,6 @@
             </tbody>
         </table>
     </div>
-    <?php endif;?>
     <div><h3 class="title" style="text-align:center">各项目任务分状态统计</h3></div>
     <table class='table table-condensed table-striped table-bordered tablesorter active-disabled taskTable' style="word-break:break-all; word-wrap:break-word;">
         <thead>
@@ -311,5 +310,6 @@
         <?php endforeach;?>
         </tbody>
     </table>
+    <?php endif;?>
 </div>
 <?php include '../../../common/view/footer.html.php';?>

@@ -12,3 +12,9 @@ $config->task->datatable->fieldList['keywords']['title']    = 'keywords';
 $config->task->datatable->fieldList['keywords']['fixed']    = 'left';
 $config->task->datatable->fieldList['keywords']['width']    = '40';
 $config->task->datatable->fieldList['keywords']['required'] = 'no';
+
+//在任务列表页面增加任务关联需求的所属计划字段
+$config->task->datatable->fieldList['plan']['title']    = 'plan';
+$config->task->datatable->fieldList['plan']['fixed']    = 'no';
+$config->task->datatable->fieldList['plan']['width']    = '70';
+$config->task->datatable->fieldList['plan']['required'] = 'no';
