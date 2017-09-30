@@ -545,7 +545,7 @@ class storyModel extends model
                 $story->title          = $data->titles[$storyID];
                 $story->estimate       = $data->estimates[$storyID];
                 $story->pri            = $data->pris[$storyID];
-                $story->assignedTo     = $data->assignedTo[$storyID];
+                $story->assignedTo     = trim(implode(',', $data->assignedTo[$storyID]), ',');
                 $story->assignedDate   = $oldStory == $data->assignedTo[$storyID] ? $oldStory->assignedDate : $now;
                 $story->branch         = isset($data->branches[$storyID]) ? $data->branches[$storyID] : 0;
                 $story->module         = $data->modules[$storyID];

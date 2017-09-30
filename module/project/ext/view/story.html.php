@@ -82,6 +82,8 @@
         $canBatchClose = common::hasPriv('story', 'batchClose');
         //判断是否有需求批量转项目的权限
         $canBatchChangeProject = common::hasPriv('project', 'batchChangeProject');
+        //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
+        $canBatchChangePlan = common::hasPriv('story', 'batchChangePlan')
         
         ?>
         <?php foreach($stories as $key => $story):?>
@@ -104,7 +106,12 @@
           <!--2085 项目需求中增加需求所属计划的显示-->
           <td title="<?php echo $story->planTitle;?>"><?php echo $story->planTitle;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
-          <td><?php echo $users[$story->assignedTo];?></td>
+
+          <!--需求可以指派多个人-->
+          <td title="<?php $assignedToAB = '';$assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; $assignedToAB .=  $users[trim($account)] . '&nbsp;'; };echo $title = $assignedToAB; ?>">
+            <?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?>
+          </td>
+
           <td><?php echo $story->estimate;?></td>
           <td class='story-<?php echo $story->status;?>'><?php echo zget($lang->story->statusList, $story->status);?></td>
           <td><?php echo $lang->story->stageList[$story->stage];?></td>
@@ -164,7 +171,8 @@
             $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));
             if(count($stories))
             {
-              if($canBatchEdit or $canBatchClose or $canBatchChangeProject) echo html::selectButton();
+              //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
+              if($canBatchChangePlan or $canBatchEdit or $canBatchClose or $canBatchChangeProject) echo html::selectButton();
 
                 echo "<div class='btn-group dropup'>";
                 if($canBatchEdit)
@@ -175,7 +183,8 @@
                 echo "<button id='moreAction' type='button' class='btn dropdown-toggle' data-toggle='dropdown'><span class='caret'></span></button>";
                 echo "<ul class='dropdown-menu' id='moreActionMenu'>";
 
-              if(common::hasPriv('story', 'batchChangePlan'))
+              //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
+              if($canBatchChangePlan)
               {
                 unset($plans['']);
                 $plans      = array(0 => $lang->null) + $plans;
@@ -192,10 +201,6 @@
                 echo '</ul>';
                 if($withSearch) echo "<div class='menu-search'><div class='input-group input-group-sm'><input type='text' class='form-control' placeholder=''><span class='input-group-addon'><i class='icon-search'></i></span></div></div>";
                 echo '</div></li>';
-              }
-              else
-              {
-                echo '<li>' . html::a('javascript:;', $lang->story->planAB, '', $class) . '</li>';
               }
               
                 if($canBatchClose)

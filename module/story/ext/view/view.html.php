@@ -236,7 +236,8 @@
               </tr>
               <tr>
                 <th><?php echo $lang->story->assignedTo;?></th>
-                <td><?php if($story->assignedTo) echo $users[$story->assignedTo] . $lang->at . $story->assignedDate;?></td>
+                <!--需求可以指派给多个人-->
+                <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
               </tr>
               <tr>
                 <th><?php echo $lang->story->reviewedBy;?></th>

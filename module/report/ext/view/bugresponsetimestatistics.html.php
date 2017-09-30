@@ -28,10 +28,10 @@
         <th class="w-30px"><?php echo $lang->report->resolving2weeks;?></th>
         <th class="w-35px"><?php echo $lang->report->resolvinglong;?></th>
         <th class="w-30px"><?php echo $lang->report->responsed1week;?></th>
-        <th class="w-100px"><?php echo $lang->report->responsed1weekbugs;?></th>
         <th class="w-30px"><?php echo $lang->report->responsed2weeks;?></th>
-        <th class="w-100px"><?php echo $lang->report->responsed2weeksbugs;?></th>
         <th class="w-35px"><?php echo $lang->report->responsedlong;?></th>
+        <th class="w-100px"><?php echo $lang->report->responsed1weekbugs;?></th>
+        <th class="w-100px"><?php echo $lang->report->responsed2weeksbugs;?></th>
         <th class="w-200px"><?php echo $lang->report->responsedlongbugs;?></th>
       </tr>
     </thead>
@@ -44,6 +44,8 @@
         <td align="center"><?php echo $data->resolving2weeks;?></td>
         <td align="center"><?php echo $data->resolvinglong;?></td>
         <td align="center"><?php echo $data->responsed1week;?></td>
+        <td align="center"><?php echo $data->responsed2weeks;?></td>
+        <td align="center"><?php echo $data->responsedlong;?></td>
         <td>
           <?php
           foreach ($data->responsed1weekbugs as $key => $bugID)
@@ -52,7 +54,6 @@
           }
           ?>
         </td>
-        <td align="center"><?php echo $data->responsed2weeks;?></td>
         <td>
           <?php
           foreach ($data->responsed2weeksbugs as $key => $bugID)
@@ -61,7 +62,6 @@
           }
           ?>
         </td>
-        <td align="center"><?php echo $data->responsedlong;?></td>
         <td>
           <?php
           foreach ($data->responsedlongbugs as $key => $bugID)

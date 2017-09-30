@@ -10,7 +10,9 @@
  * @link        http://www.zentao.net
  */
 ?>
-<?php include './header.html.php';?>
+<?php include '../../../common/view/header.html.php';?>
+<?php include '../../../common/view/kindeditor.html.php';?>
+<?php include '../../../common/view/form.html.php';?>
 <form class='form-condensed' method='post' enctype='multipart/form-data' target='hiddenwin' id='dataform'>
 <div id='titlebar'>
   <div class='heading'>
@@ -54,7 +56,7 @@
         echo html::linkButton($lang->goback, $app->session->storyList ? $app->session->storyList : inlink('view', "storyID=$story->id"));
         ?>
       </div>
-      <?php include '../../common/view/action.html.php';?>
+      <?php include '../../../common/view/action.html.php';?>
     </div>
   </div>
   <div class='col-side'>
@@ -158,6 +160,7 @@
           <tr>
             <th><?php echo $lang->story->assignedTo;?></th>
             <td>
+                <!--指派给可以指派多人-->
                 <?php echo html::select('assignedTo[]', $users, str_replace(' ', '', $story->assignedTo), "class='form-control chosen' multiple");?>
             </td>
           </tr>
@@ -239,4 +242,4 @@
   </div>
 </div>
 </form>
-<?php include '../../common/view/footer.html.php';?>
+<?php include '../../../common/view/footer.html.php';?>

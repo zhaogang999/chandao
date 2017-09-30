@@ -24,7 +24,7 @@ class patchbuildModel extends model
             ->stripTags($this->config->patchbuild->editor->createpatchbuild['id'], $this->config->allowedTags)
             //->remove('resolvedBy,allchecker,files,labels,uid')
             ->get();
-var_dump($build);die;
+
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()

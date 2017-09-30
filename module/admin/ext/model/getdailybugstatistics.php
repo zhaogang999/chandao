@@ -46,7 +46,6 @@ public function getDailyBugStatistics()
     $count = $this->dao->select("product, count(id) as count")->from(TABLE_BUG)
         ->where('deleted')->eq('0')
         ->andWhere('product')->in($productIDs)
-        ->andWhere('status')->ne('closed')
         ->groupBy('product')
         ->fetchPairs();
 
@@ -65,5 +64,4 @@ public function getDailyBugStatistics()
 
         $this->dao->insert(TABLE_BUGREPORT)->data($data)->exec();
     }
-    //var_dump($resolved);die;
 }

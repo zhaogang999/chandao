@@ -10,7 +10,7 @@
  * @link        http://www.zentao.net
  */
 ?>
-<?php include '../../common/view/header.html.php';?>
+<?php include '../../../common/view/header.html.php';?>
 <?php js::set('dittoNotice', $this->lang->story->dittoNotice);?>
 <div id='titlebar'>
   <div class='heading'>
@@ -135,5 +135,5 @@ foreach(explode(',', $showFields) as $field)
 </form>
 <?php endif;?>
 <?php $customLink = $this->createLink('custom', 'ajaxSaveCustomFields', 'module=story&section=custom&key=batchEditFields')?>
-<?php include '../../common/view/customfield.html.php';?>
-<?php include '../../common/view/footer.html.php';?>
+<?php include '../../../common/view/customfield.html.php';?>
+<?php include '../../../common/view/footer.html.php';?>

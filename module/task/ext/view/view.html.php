@@ -79,6 +79,7 @@
           $task->descAB = str_replace('<p>[测试策略]','<p class="commentTitle">[测试策略]</p><p>', $task->descAB);
           $task->descAB = str_replace('<p>[测试验证]','<p class="commentTitle">[测试验证]</p><p>', $task->descAB);
           $task->descAB = str_replace('<p>[测试风险]','<p class="commentTitle">[测试风险]</p><p>', $task->descAB);
+          $task->descAB = str_replace('<p>[参考资料]','<p class="commentTitle">[参考资料]</p><p>', $task->descAB);
 
           $task->descAB = str_replace('<p></p>', '', $task->descAB);
           echo strip_tags($task->descAB) == $task->descAB ? nl2br($task->descAB) : $task->descAB;

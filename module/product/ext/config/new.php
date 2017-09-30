@@ -6,3 +6,6 @@ $first_array = array_splice ($config->product->search['fields'], 0, 4);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
 
 $config->product->search['params']['sourcenote']  = array('operator' => 'include', 'control' => 'input',  'values' => '');
+
+//需求可以指派多个人；搜索条件改为include。
+$config->product->search['params']['assignedTo']     = array('operator' => 'include',       'control' => 'select', 'values' => 'users');

@@ -5,6 +5,225 @@ helper::import('.\module\story\model.php');
 helper::cd();
 class extstoryModel extends storyModel 
 {
+/**
+ * Batch update stories.
+ *
+ * @access public
+ * @return array.
+ */
+public function batchUpdate()
+{
+    /* Init vars. */
+    $stories     = array();
+    $allChanges  = array();
+    $now         = helper::now();
+    $data        = fixer::input('post')->get();
+    $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : array();
+
+    /* Init $stories. */
+    if(!empty($storyIDList))
+    {
+        $oldStories = $this->getByList($storyIDList);
+
+        /* Process the data if the value is 'ditto'. */
+        foreach($storyIDList as $storyID)
+        {
+            if($data->pris[$storyID]     == 'ditto') $data->pris[$storyID]     = isset($prev['pri'])    ? $prev['pri']    : 0;
+            if($data->branches[$storyID] == 'ditto') $data->branches[$storyID] = isset($prev['branch']) ? $prev['branch'] : 0;
+            if($data->modules[$storyID]  == 'ditto') $data->modules[$storyID]  = isset($prev['module']) ? $prev['module'] : 0;
+            if($data->plans[$storyID]    == 'ditto') $data->plans[$storyID]    = isset($prev['plan'])   ? $prev['plan']   : 0;
+            if($data->sources[$storyID]  == 'ditto') $data->sources[$storyID]  = isset($prev['source']) ? $prev['source'] : '';
+            if(isset($data->stages[$storyID])        and ($data->stages[$storyID]        == 'ditto')) $data->stages[$storyID]        = isset($prev['stage'])        ? $prev['stage']        : '';
+            if(isset($data->closedBys[$storyID])     and ($data->closedBys[$storyID]     == 'ditto')) $data->closedBys[$storyID]     = isset($prev['closedBy'])     ? $prev['closedBy']     : '';
+            if(isset($data->closedReasons[$storyID]) and ($data->closedReasons[$storyID] == 'ditto')) $data->closedReasons[$storyID] = isset($prev['closedReason']) ? $prev['closedReason'] : '';
+
+            $prev['pri']    = $data->pris[$storyID];
+            $prev['branch'] = isset($data->branches[$storyID]) ? $data->branches[$storyID] : 0;
+            $prev['module'] = $data->modules[$storyID];
+            $prev['plan']   = $data->plans[$storyID];
+            $prev['source'] = $data->sources[$storyID];
+            if(isset($data->stages[$storyID]))        $prev['stage']        = $data->stages[$storyID];
+            if(isset($data->closedBys[$storyID]))     $prev['closedBy']     = $data->closedBys[$storyID];
+            if(isset($data->closedReasons[$storyID])) $prev['closedReason'] = $data->closedReasons[$storyID];
+        }
+
+        foreach($storyIDList as $storyID)
+        {
+            $oldStory = $oldStories[$storyID];
+
+            $story                 = new stdclass();
+            $story->lastEditedBy   = $this->app->user->account;
+            $story->lastEditedDate = $now;
+            $story->status         = $oldStory->status;
+            $story->color          = $data->colors[$storyID];
+            $story->title          = $data->titles[$storyID];
+            $story->estimate       = $data->estimates[$storyID];
+            $story->pri            = $data->pris[$storyID];
+            //需求可以指派给多人
+            $story->assignedTo     = trim(implode(',', $data->assignedTo[$storyID]), ',');
+            
+            $story->assignedDate   = $oldStory == $data->assignedTo[$storyID] ? $oldStory->assignedDate : $now;
+            $story->branch         = isset($data->branches[$storyID]) ? $data->branches[$storyID] : 0;
+            $story->module         = $data->modules[$storyID];
+            $story->plan           = $data->plans[$storyID];
+            $story->source         = $data->sources[$storyID];
+            $story->keywords       = $data->keywords[$storyID];
+            $story->stage          = isset($data->stages[$storyID])             ? $data->stages[$storyID]             : $oldStory->stage;
+            $story->closedBy       = isset($data->closedBys[$storyID])          ? $data->closedBys[$storyID]          : $oldStory->closedBy;
+            $story->closedReason   = isset($data->closedReasons[$storyID])      ? $data->closedReasons[$storyID]      : $oldStory->closedReason;
+            $story->duplicateStory = isset($data->duplicateStories[$storyID])   ? $data->duplicateStories[$storyID]   : $oldStory->duplicateStory;
+            $story->childStories   = isset($data->childStoriesIDList[$storyID]) ? $data->childStoriesIDList[$storyID] : $oldStory->childStories;
+            $story->version        = $story->title == $oldStory->title ? $oldStory->version : $oldStory->version + 1;
+
+            if($story->title        != $oldStory->title)                         $story->status     = 'changed';
+            if($story->plan         !== false and $story->plan == '')            $story->plan       = 0;
+            if($story->closedBy     != false  and $oldStory->closedDate == '')   $story->closedDate = $now;
+            if($story->closedReason != false  and $oldStory->closedDate == '')   $story->closedDate = $now;
+            if($story->closedBy     != false  or  $story->closedReason != false) $story->status     = 'closed';
+            if($story->closedReason != false  and $story->closedBy     == false) $story->closedBy   = $this->app->user->account;
+
+            $stories[$storyID] = $story;
+        }
+
+        foreach($stories as $storyID => $story)
+        {
+            $oldStory = $oldStories[$storyID];
+
+            $this->dao->update(TABLE_STORY)->data($story)
+                ->autoCheck()
+                ->checkIF($story->closedBy, 'closedReason', 'notempty')
+                ->checkIF($story->closedReason == 'done', 'stage', 'notempty')
+                ->checkIF($story->closedReason == 'duplicate',  'duplicateStory', 'notempty')
+                ->where('id')->eq((int)$storyID)
+                ->exec();
+            if($story->title != $oldStory->title)
+            {
+                $data          = new stdclass();
+                $data->story   = $storyID;
+                $data->version = $story->version;
+                $data->title   = $story->title;
+                $data->spec    = $oldStory->spec;
+                $data->verify  = $oldStory->verify;
+                $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
+            }
+
+            if(!dao::isError())
+            {
+                $allChanges[$storyID] = common::createChanges($oldStory, $story);
+            }
+            else
+            {
+                die(js::error('story#' . $storyID . dao::getError(true)));
+            }
+        }
+    }
+
+    return $allChanges;
+}
+/**
+ * Created by PhpStorm.
+ * User: 月下亭中人
+ * Date: 2017/9/28
+ * Time: 10:31
+ */
+/**
+ * Create a story.
+ *
+ * @access public
+ * @return int|bool the id of the created story or false when error.
+ */
+public function create($projectID = 0, $bugID = 0)
+{
+    $now   = helper::now();
+    $story = fixer::input('post')
+        ->cleanInt('product,module,pri,plan')
+        ->cleanFloat('estimate')
+        ->callFunc('title', 'trim')
+        ->setDefault('plan,verify', '')
+        ->add('openedBy', $this->app->user->account)
+        ->add('openedDate', $now)
+        ->add('assignedDate', 0)
+        ->add('version', 1)
+        ->add('status', 'draft')
+        ->setIF($this->post->assignedTo != '', 'assignedDate', $now)
+        ->setIF($this->post->needNotReview or $projectID > 0, 'status', 'active')
+        ->setIF($this->post->plan > 0, 'stage', 'planned')
+        ->setIF($projectID > 0, 'stage', 'projected')
+        ->setIF($bugID > 0, 'fromBug', $bugID)
+        ->join('mailto', ',')
+        ->stripTags($this->config->story->editor->create['id'], $this->config->allowedTags)
+        ->remove('files,labels,needNotReview,newStory,uid')
+        ->get();
+
+    /* Check repeat story. */
+    $result = $this->loadModel('common')->removeDuplicate('story', $story, "product={$story->product}");
+    if($result['stop']) return array('status' => 'exists', 'id' => $result['duplicate']);
+
+    if($this->checkForceReview()) $story->status = 'draft';
+    if($story->status == 'draft') $story->stage   = $this->post->plan > 0 ? 'planned' : 'wait';
+    $story = $this->loadModel('file')->processEditor($story, $this->config->story->editor->create['id'], $this->post->uid);
+    $this->dao->insert(TABLE_STORY)->data($story, 'spec,verify')->autoCheck()->batchCheck($this->config->story->create->requiredFields, 'notempty')->exec();
+    if(!dao::isError())
+    {
+        $storyID = $this->dao->lastInsertID();
+        $this->file->updateObjectID($this->post->uid, $storyID, 'story');
+        $this->file->saveUpload('story', $storyID, $extra = 1);
+
+        $data          = new stdclass();
+        $data->story   = $storyID;
+        $data->version = 1;
+        $data->title   = $story->title;
+        $data->spec    = $story->spec;
+        $data->verify  = $story->verify;
+        $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
+
+        if($projectID != 0 and $story->status != 'draft')
+        {
+            $this->dao->insert(TABLE_PROJECTSTORY)
+                ->set('project')->eq($projectID)
+                ->set('product')->eq($this->post->product)
+                ->set('story')->eq($storyID)
+                ->set('version')->eq(1)
+                ->exec();
+        }
+        //2262 bug转需求之后，bug自动关闭，无法再跟进验证，希望转需求后，bug状态呈现已解决，而非关闭
+        if($bugID > 0)
+        {
+            $bugAB = $this->loadModel('bug')->getByID($bugID);
+            $bug = new stdclass();
+            $bug->toStory      = $storyID;
+            $bug->status       = 'resolved';
+            $bug->resolution   = 'tostory';
+            $bug->resolvedBy   = $this->app->user->account;
+            $bug->resolvedDate = $now;
+            $bug->assignedTo   = $bugAB->assignedTo;
+            $bug->assignedDate = $now;
+            $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($bugID)->exec();
+
+            $this->loadModel('action')->create('bug', $bugID, 'tostory', '', $storyID);
+            $this->action->create('bug', $bugID, 'resolved', '', 'tostory');
+
+            /* add files to story from bug. */
+            $files = $this->dao->select('*')->from(TABLE_FILE)
+                ->where('objectType')->eq('bug')
+                ->andWhere('objectID')->eq($bugID)
+                ->fetchAll();
+            if(!empty($files))
+            {
+                foreach($files as $file)
+                {
+                    $file->objectType = 'story';
+                    $file->objectID = $storyID;
+                    unset($file->id);
+                    $this->dao->insert(TABLE_FILE)->data($file)->exec();
+                }
+            }
+        }
+        $this->setStage($storyID);
+        return array('status' => 'created', 'id' => $storyID);
+    }
+    return false;
+}
 public function setListValue($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->setListValue($productID, $branch);
@@ -13,6 +232,53 @@ public function setListValue($productID, $branch = 0)
 public function createFromImport($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->createFromImport($productID, $branch);
+}
+/**
+ * Get stories by assignedTo.
+ *
+ * @param  int    $productID
+ * @param  string $account
+ * @param  string $orderBy
+ * @param  object $pager
+ * @access public
+ * @return array
+ */
+public function getByAssignedTo($productID, $branch, $modules, $account, $orderBy, $pager)
+{
+    //需求可以指派给多个人；查询自拍给用like
+    return $this->getByField($productID, $branch, $modules, 'assignedTo', $account, $orderBy, $pager, 'include');
+}
+/**
+ * Get stories of a user.
+ *
+ * @param  string $account
+ * @param  string $type         the query type
+ * @param  string $orderBy
+ * @param  object $pager
+ * @access public
+ * @return array
+ */
+public function getUserStories($account, $type = 'assignedTo', $orderBy = 'id_desc', $pager = null)
+{
+    $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
+        ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
+        ->where('t1.deleted')->eq(0)
+        ->beginIF($type != 'all')
+        //需求可以指派给多个人；查询指派给用like
+        ->beginIF($type == 'assignedTo')->andWhere('assignedTo')->like('%' . $account . '%')->fi()
+        ->beginIF($type == 'openedBy')->andWhere('openedBy')->eq($account)->fi()
+        ->beginIF($type == 'reviewedBy')->andWhere('reviewedBy')->like('%' . $account . '%')->fi()
+        ->beginIF($type == 'closedBy')->andWhere('closedBy')->eq($account)->fi()
+        ->fi()
+        ->orderBy($orderBy)
+        ->page($pager)
+        ->fetchAll();
+
+    $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story');
+    $productIdList = array();
+    foreach($stories as $story) $productIdList[$story->product] = $story->product;
+
+    return $this->mergePlanTitle($productIdList, $stories);
 }
 /**
  * Link stories.
@@ -81,6 +347,13 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $title = '';
         if($id == 'title') $title = $story->title;
         if($id == 'plan')  $title = $story->planTitle;
+        //需求指派多人
+        if($id == 'assignedTo')
+        {
+            $assignedToAB = '';
+            $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; $assignedToAB .=  $users[trim($account)] . '&nbsp;'; };
+            $title = $assignedToAB;
+        }
 
         echo "<td class='" . $class . "' title='$title'>";
         switch ($id)
@@ -152,7 +425,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 echo substr($story->openedDate, 5, 11);
                 break;
             case 'assignedTo':
-                echo zget($users, $story->assignedTo, $story->assignedTo);
+                //需求指派多人
+                $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; };
                 break;
             case 'assignedDate':
                 echo substr($story->assignedDate, 5, 11);
@@ -540,6 +814,73 @@ public function setStage($storyID)
     }
 
     return;
+}
+/**
+ * Update a story.
+ *
+ * @param  int    $storyID
+ * @access public
+ * @return array the changes of the story.
+ */
+public function update($storyID)
+{
+    $now      = helper::now();
+    $oldStory = $this->getById($storyID);
+    if(isset($_POST['lastEditedDate']) and $oldStory->lastEditedDate != $this->post->lastEditedDate)
+    {
+        dao::$errors[] = $this->lang->error->editedByOther;
+        return false;
+    }
+
+    $story = fixer::input('post')
+        ->cleanInt('product,module,pri')
+        ->add('assignedDate', $oldStory->assignedDate)
+        ->add('lastEditedBy', $this->app->user->account)
+        ->add('lastEditedDate', $now)
+        ->setDefault('status', $oldStory->status)
+        ->setDefault('product', $oldStory->product)
+        ->setDefault('plan', 0)
+        ->setDefault('branch', 0)
+        ->setIF($this->post->assignedTo   != $oldStory->assignedTo, 'assignedDate', $now)
+        ->setIF($this->post->closedBy     != false and $oldStory->closedDate == '', 'closedDate', $now)
+        ->setIF($this->post->closedReason != false and $oldStory->closedDate == '', 'closedDate', $now)
+        ->setIF($this->post->closedBy     != false or  $this->post->closedReason != false, 'status', 'closed')
+        ->setIF($this->post->closedReason != false and $this->post->closedBy     == false, 'closedBy', $this->app->user->account)
+        ->join('reviewedBy', ',')
+        ->join('mailto', ',')
+        //需求可以指派给多人
+        ->join('assignedTo', ',')
+        ->remove('linkStories,childStories,files,labels,comment')
+        ->get();
+    if(is_array($story->plan)) $story->plan = trim(join(',', $story->plan), ',');
+    if(empty($_POST['product'])) $story->branch = $oldStory->branch;
+
+    $this->dao->update(TABLE_STORY)
+        ->data($story)
+        ->autoCheck()
+        ->checkIF(isset($story->closedBy), 'closedReason', 'notempty')
+        ->checkIF(isset($story->closedReason) and $story->closedReason == 'done', 'stage', 'notempty')
+        ->checkIF(isset($story->closedReason) and $story->closedReason == 'duplicate',  'duplicateStory', 'notempty')
+        ->where('id')->eq((int)$storyID)->exec();
+
+    if(!dao::isError())
+    {
+        if($story->product != $oldStory->product)
+        {
+            $this->dao->update(TABLE_PROJECTSTORY)->set('product')->eq($story->product)->where('story')->eq($storyID)->exec();
+            $storyProjects  = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($storyID)->orderBy('project')->fetchPairs('project', 'project');
+            $linkedProjects = $this->dao->select('project')->from(TABLE_PROJECTPRODUCT)->where('project')->in($storyProjects)->andWhere('product')->eq($story->product)->orderBy('project')->fetchPairs('project','project');
+            $unlinkedProjects = array_diff($storyProjects, $linkedProjects);
+            foreach($unlinkedProjects as $projectID)
+            {
+                $data = new stdclass();
+                $data->project = $projectID;
+                $data->product = $story->product;
+                $this->dao->replace(TABLE_PROJECTPRODUCT)->data($data)->exec();
+            }
+        }
+        return common::createChanges($oldStory, $story);
+    }
 }
 //**//
 }

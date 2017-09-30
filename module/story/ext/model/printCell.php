@@ -29,6 +29,13 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $title = '';
         if($id == 'title') $title = $story->title;
         if($id == 'plan')  $title = $story->planTitle;
+        //需求指派多人
+        if($id == 'assignedTo')
+        {
+            $assignedToAB = '';
+            $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; $assignedToAB .=  $users[trim($account)] . '&nbsp;'; };
+            $title = $assignedToAB;
+        }
 
         echo "<td class='" . $class . "' title='$title'>";
         switch ($id)
@@ -100,7 +107,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 echo substr($story->openedDate, 5, 11);
                 break;
             case 'assignedTo':
-                echo zget($users, $story->assignedTo, $story->assignedTo);
+                //需求指派多人
+                $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; };
                 break;
             case 'assignedDate':
                 echo substr($story->assignedDate, 5, 11);

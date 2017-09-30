@@ -71,7 +71,7 @@ function setOwners(result)
 {
     if(result == 'test')
     {
-        $(document.getElementsByTagName("iframe")[0].contentWindow.document.body).html("<p>[测试范围]</p><p>[测试策略]</p><p>[测试验证]</p><p>[测试风险]</p>");
+        $(document.getElementsByTagName("iframe")[0].contentWindow.document.body).html("<p>[测试范围]</p><p>[测试策略]</p><p>[测试验证]</p><p>[测试风险]</p><p>[参考资料]</p>");
     }
     else
     {
