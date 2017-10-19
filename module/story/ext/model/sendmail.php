@@ -49,8 +49,11 @@ public function sendmail($storyID, $actionID)
 
     /* Set toList and ccList. */
 
-    $toList = $story->assignedTo . ',' . $story->openedBy;
+    $toList = $story->assignedTo;
     $ccList = str_replace(' ', '', trim($story->mailto, ','));
+
+    //2284 需求发生任何变动，需要触发邮件（含编辑，备注，变更等所有操作）并且收件人不光含抄送人，还需包含需求原始提出人
+    $ccList = $ccList . ',' . $story->openedBy;
 
     /* If the action is changed or reviewed, mail to the project team. */
     if(strtolower($action->action) == 'changed' or strtolower($action->action) == 'reviewed')

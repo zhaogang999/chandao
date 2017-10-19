@@ -75,7 +75,7 @@ public function create($projectID = 0, $bugID = 0)
             $bug->resolution   = 'tostory';
             $bug->resolvedBy   = $this->app->user->account;
             $bug->resolvedDate = $now;
-            $bug->assignedTo   = $bugAB->assignedTo;
+            $bug->assignedTo   = $bugAB->openedBy;
             $bug->assignedDate = $now;
             $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($bugID)->exec();
 

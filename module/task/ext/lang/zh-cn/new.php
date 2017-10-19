@@ -10,3 +10,5 @@ $lang->task->error->reviewError = '『评审』类型的任务不能批量完成
 $lang->task->testTaskComment = "<p>[测试用例成果]</p><p>[测试执行通过率]</p><p>[未测试范围]</p>";
 //1754 增加开发任务关闭成果展示内容 
 $lang->task->develTaskComment = "<p>[开发任务成果]</p><p>[开发任务达成率]</p><p>[未开发内容]</p>";
+//9195 需求类型的任务完成后填写生成需求ID
+$lang->task->storyTaskComment = "<p>[生成需求ID号]</p>";

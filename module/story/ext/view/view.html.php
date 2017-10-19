@@ -226,6 +226,17 @@
                 <th><?php echo $lang->story->legendMailto;?></th>
                 <td><?php $mailto = explode(',', $story->mailto); foreach($mailto as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
               </tr>
+                <!--9180 将需求指派给谁显示在需求基本信息中-->
+              <tr>
+                <th><?php echo $lang->story->assignedTo;?></th>
+                <!--需求可以指派给多个人-->
+                <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
+              </tr>
+                <!--需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划-->
+              <tr>
+                <th><?php echo $lang->story->customPlan;?></th>
+                <td><?php echo $customPlan;?></td>
+              </tr>
             </table>
           </div>
           <div class='tab-pane' id='legendLifeTime'>

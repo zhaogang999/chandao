@@ -48,8 +48,7 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 break;
             //在任务列表页面增加任务关联需求的所属字段
             case 'plan':
-                $plan = $this->loadModel('productplan')->getByID($task->plan);
-                echo $plan->title;
+                echo $task->plan;
                 break;
 
             case 'status':

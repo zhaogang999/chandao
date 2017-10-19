@@ -156,7 +156,7 @@ class mystory extends story
                     foreach($linkStoriesIdList as $linkStoryID)
                     {
                         $linkStoryID = trim($linkStoryID);
-                        $tmpLinkStories[] = isset($relatedStories[$linkStoryID]) ? $relatedStories[$linkStoryID] : $linkStoryID;
+                        $tmpLinkStories[] = isset($relatedStories[$linkStoryID]) ? $relatedStories[$linkStoryID] . "(#$linkStoryID)" : $linkStoryID;
                     }
                     $story->linkStories = join("; \n", $tmpLinkStories);
                 }
@@ -168,7 +168,7 @@ class mystory extends story
                     foreach($childStoriesIdList as $childStoryID)
                     {
                         $childStoryID = trim($childStoryID);
-                        $tmpChildStories[] = isset($relatedStories[$childStoryID]) ? $relatedStories[$childStoryID] : $childStoryID;
+                        $tmpChildStories[] = isset($relatedStories[$childStoryID]) ? $relatedStories[$childStoryID] . "(#$childStoryID)" : $childStoryID;
                     }
                     $story->childStories = join("; \n", $tmpChildStories);
                 }

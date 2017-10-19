@@ -177,6 +177,9 @@ $(function()
             $action->commentAB = str_replace('<p>[开发任务成果]','<p class="commentTitle">[开发任务成果]</p><p>', $action->commentAB);
             $action->commentAB = str_replace('<p>[开发任务达成率]','<p class="commentTitle">[开发任务达成率]</p><p>', $action->commentAB);
             $action->commentAB = str_replace('<p>[未开发内容]','<p class="commentTitle">[未开发内容]</p><p>', $action->commentAB);
+
+            //9195 需求类型的任务完成后填写生成需求ID
+            $action->commentAB = str_replace('<p>[生成需求ID号]','<p class="commentTitle">[生成需求ID号]</p><p>', $action->commentAB);
             
             $action->commentAB = str_replace('<p></p>', '', $action->commentAB);
             echo strip_tags($action->commentAB) == $action->commentAB ? nl2br($action->commentAB) : $action->commentAB;

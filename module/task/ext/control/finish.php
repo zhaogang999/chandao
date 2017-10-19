@@ -62,6 +62,12 @@ class myTask extends task
         {
             $this->view->develTaskComment = $this->lang->task->develTaskComment;
         }
+
+        //需求类型的任务增加文字模板
+        if ($this->view->task->type == 'ra')
+        {
+            $this->view->storyTaskComment = $this->lang->task->storyTaskComment;
+        }
         
         $this->display();
     }

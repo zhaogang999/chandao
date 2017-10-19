@@ -155,7 +155,7 @@
                 <tr class='text-center'>
                     <td class='x-label'><?php echo date('m-d', strtotime($date))?></td>
                     <?php foreach ($value as $val):?>
-                        <td class="taskData"><?php echo $val->undoneStoryTaskCount;?></td>
+                        <td class="taskData"><?php echo isset($val->undoneStoryTaskCount)?$val->undoneStoryTaskCount:0;?></td>
                     <?php endforeach;?>
                 </tr>
             <?php endforeach;?>

@@ -29,6 +29,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $title = '';
         if($id == 'title') $title = $story->title;
         if($id == 'plan')  $title = $story->planTitle;
+        //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        if($id == 'customPlan') $title = $story->customPlan;
         //需求指派多人
         if($id == 'assignedTo')
         {
@@ -66,7 +68,10 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'linkStories':
                 echo $story->linkStories;
                 break;
-            
+            //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+            case 'customPlan':
+                echo $story->customPlan;
+                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
                 break;

@@ -91,7 +91,7 @@ foreach(explode(',', $showFields) as $field)
         <td <?php echo zget($visibleFields, 'estStarted', "class='hidden'")?>><?php echo html::input("estStarteds[$taskID]",     $tasks[$taskID]->estStarted, "class='form-control text-center form-date'");?></td>
         <td <?php echo zget($visibleFields, 'deadline', "class='hidden'")?>><?php echo html::input("deadlines[$taskID]",     $tasks[$taskID]->deadline, "class='form-control text-center form-date'");?></td>
         <!--新增实际开始-->
-        <td <?php echo zget($visibleFields, 'deadline', "class='hidden'")?>><?php echo html::input("realStarted[$taskID]",     $tasks[$taskID]->realStarted, "class='form-control text-center form-date'");?></td>
+        <td <?php echo zget($visibleFields, 'realStarted', "class='hidden'")?>><?php echo html::input("realStarted[$taskID]",     $tasks[$taskID]->realStarted, "class='form-control text-center form-date'");?></td>
         <td class='text-left<?php echo zget($visibleFields, 'finishedBy', ' hidden')?>' style='overflow:visible'><?php echo html::select("finishedBys[$taskID]", $members, $tasks[$taskID]->finishedBy, "class='form-control chosen'");?></td>
         <td class='text-left<?php echo zget($visibleFields, 'canceledBy', ' hidden')?>' style='overflow:visible'><?php echo html::select("canceledBys[$taskID]", $members, $tasks[$taskID]->canceledBy, "class='form-control chosen'");?></td>
         <td class='text-left<?php echo zget($visibleFields, 'closedBy', ' hidden')?>' style='overflow:visible'><?php echo html::select("closedBys[$taskID]",   $members, $tasks[$taskID]->closedBy, "class='form-control chosen'");?></td>

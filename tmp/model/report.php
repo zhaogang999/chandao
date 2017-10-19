@@ -336,11 +336,9 @@ public function storySummary()
 
         $projectAB = $this->project->getById($project);
 
-        $storyIdList = array_keys($stories);
-
-        $zeroTaskStories = $this->getZeroTaskStories($storyIdList,$project);
-        $zeroDevelTaskStories = $this->getZeroTaskStories($storyIdList,$project, "fos, devel, sdk, web, ios, android");
-        $zeroTestTaskStories = $this->getZeroTaskStories($storyIdList,$project, 'test');
+        $zeroTaskStories = $this->getZeroTaskStories($stories,$project);
+        $zeroDevelTaskStories = $this->getZeroTaskStories($stories,$project, "fos, devel, sdk, web, ios, android");
+        $zeroTestTaskStories = $this->getZeroTaskStories($stories,$project, 'test');
 
         $storyCountByTime = $this->getStoryOpenDateReport($stories, $projectAB->begin);
         $storyChange = $this->getStoryChangeRate($project);
@@ -408,9 +406,11 @@ public function getStoryOpenDateReport($stories, $projectBegin)
  */
 public function getZeroTaskStories($stories, $projectID, $type='')
 {
+    $storyIdList = array_keys($stories);
+
     $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
         ->from(TABLE_TASK)
-        ->where('story')->in($stories)
+        ->where('story')->in($storyIdList)
         ->beginIF($type!='')->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
         ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
@@ -418,7 +418,11 @@ public function getZeroTaskStories($stories, $projectID, $type='')
         ->fetchPairs();
 
     $zeroTaskStories = array();
-    foreach($stories as $storyID) if(!isset($taskCounts[$storyID])) $zeroTaskStories[$storyID] = $storyID;
+    foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
+    {
+        $zeroTaskStories[$storyID]->storyID = $storyID;
+        $zeroTaskStories[$storyID]->version = $story->version;
+    }
 
     return $zeroTaskStories;
 }
@@ -645,6 +649,7 @@ public function taskSummary($data)
     $delayedTaskSum = $this->transform($delayedTaskSum);
 
     $undoneTaskCount = $this->undoneTaskCount($projects, $begin, $end);
+    //var_dump($undoneTaskCount);die;
     //$undoneTaskByType = $this->undoneTaskByType($projects);
     $undoneTaskByType = $this->dao->select('project,type,COUNT(id) as taskSum')->from(TABLE_TASK)->where('project')->in($projects)->andWhere('deleted')->eq('0')->andWhere('type')->in('fos,devel,sdk,web,ios,android')->andWhere('status')->in('wait,doing,pause')->groupBy('project,type')->fetchGroup('project','type');
     $finishedTasksPerDay = $this->finishedTasksPerDay($projects, $begin, $end);
@@ -724,42 +729,26 @@ public function finishedTasksPerDay($projects, $begin, $end)
  */
 public function undoneTaskCount($projects, $begin, $end)
 {
-    $data = new stdClass();
-    $date = array();
-
     $undoneTaskCount = $this->dao->select('*')->from(TABLE_UNDONETASKREPORT)->where('project')->in($projects)->andWhere('date')->between($begin,$end)->fetchGroup('date','project');
-
-
-    /*$begin = strtotime($begin);
-    $end = strtotime($end);
     $projects = explode(',', $projects);
 
-    $undoneStoryTaskCount = array();
-    $undoneDevelTaskCount = array();
-    $undoneTestTaskCount = array();
-
-    foreach ($projects as $val)
+    foreach ($undoneTaskCount as $date => $value)
     {
-        $dateTime = $begin;
-        while ($dateTime <= $end)
+        foreach ($projects as $val)
         {
-            $key = date('Y-m-d', $dateTime);
-            $date[$key] = $key;
-            if (isset($undoneTaskCount[$val]))
+            if (!isset($value[$val]))
             {
-                $undoneStoryTaskCount[$val][] = isset($undoneTaskCount[$val][$key])?$undoneTaskCount[$val][$key]->undoneStoryTaskCount:0;
-                $undoneDevelTaskCount[$val][] = isset($undoneTaskCount[$val][$key])?$undoneTaskCount[$val][$key]->undoneDevelTaskCount:0;
-                $undoneTestTaskCount[$val][]  = isset($undoneTaskCount[$val][$key])?$undoneTaskCount[$val][$key]->undoneTestTaskCount:0;
+                $undoneTaskCount[$date][$val] = new stdClass();
+                $undoneTaskCount[$date][$val]->project = $val;
+                $undoneTaskCount[$date][$val]->date = $date;
+                $undoneTaskCount[$date][$val]->undoneStoryTaskCount = 0;
+                $undoneTaskCount[$date][$val]->undoneDevelTaskCount = 0;
+                $undoneTaskCount[$date][$val]->undoneTestTaskCount  = 0;
             }
-            $dateTime = strtotime('+1 day',$dateTime);
         }
     }
 
-    $data->date = $date;
-    $data->undoneStoryTaskCount = $undoneStoryTaskCount;
-    $data->undoneDevelTaskCount = $undoneDevelTaskCount;
-    $data->undoneTestTaskCount  = $undoneTestTaskCount;
-    //var_dump($date);die;*/
+    ksort($undoneTaskCount);
     return $undoneTaskCount;
 }
 

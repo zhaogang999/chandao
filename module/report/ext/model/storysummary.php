@@ -33,11 +33,9 @@ public function storySummary()
 
         $projectAB = $this->project->getById($project);
 
-        $storyIdList = array_keys($stories);
-
-        $zeroTaskStories = $this->getZeroTaskStories($storyIdList,$project);
-        $zeroDevelTaskStories = $this->getZeroTaskStories($storyIdList,$project, "fos, devel, sdk, web, ios, android");
-        $zeroTestTaskStories = $this->getZeroTaskStories($storyIdList,$project, 'test');
+        $zeroTaskStories = $this->getZeroTaskStories($stories,$project);
+        $zeroDevelTaskStories = $this->getZeroTaskStories($stories,$project, "fos, devel, sdk, web, ios, android");
+        $zeroTestTaskStories = $this->getZeroTaskStories($stories,$project, 'test');
 
         $storyCountByTime = $this->getStoryOpenDateReport($stories, $projectAB->begin);
         $storyChange = $this->getStoryChangeRate($project);
@@ -105,9 +103,11 @@ public function getStoryOpenDateReport($stories, $projectBegin)
  */
 public function getZeroTaskStories($stories, $projectID, $type='')
 {
+    $storyIdList = array_keys($stories);
+
     $taskCounts = $this->dao->select('story, COUNT(*) AS tasks')
         ->from(TABLE_TASK)
-        ->where('story')->in($stories)
+        ->where('story')->in($storyIdList)
         ->beginIF($type!='')->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
         ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
@@ -115,7 +115,11 @@ public function getZeroTaskStories($stories, $projectID, $type='')
         ->fetchPairs();
 
     $zeroTaskStories = array();
-    foreach($stories as $storyID) if(!isset($taskCounts[$storyID])) $zeroTaskStories[$storyID] = $storyID;
+    foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
+    {
+        $zeroTaskStories[$storyID]->storyID = $storyID;
+        $zeroTaskStories[$storyID]->version = $story->version;
+    }
 
     return $zeroTaskStories;
 }

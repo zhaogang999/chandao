@@ -25,6 +25,9 @@ class myStory extends story
         $story->files = $this->loadModel('file')->getByObject('story', $storyID);
         $product      = $this->dao->findById($story->product)->from(TABLE_PRODUCT)->fields('name, id, type')->fetch();
         $plan         = $this->dao->findById($story->plan)->from(TABLE_PRODUCTPLAN)->fetch('title');
+        //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        $customPlan   = $this->dao->findById($story->customPlan)->from(TABLE_PRODUCTPLAN)->fetch('title');
+        
         $bugs         = $this->dao->select('id,title')->from(TABLE_BUG)->where('story')->eq($storyID)->andWhere('deleted')->eq(0)->fetchAll();
         $fromBug      = $this->dao->select('id,title')->from(TABLE_BUG)->where('toStory')->eq($storyID)->fetch();
         $cases        = $this->dao->select('id,title')->from(TABLE_CASE)->where('story')->eq($storyID)->andWhere('deleted')->eq(0)->fetchAll();
@@ -55,6 +58,10 @@ class myStory extends story
         $this->view->product    = $product;
         $this->view->branches   = $product->type == 'normal' ? array() : $this->loadModel('branch')->getPairs($product->id);
         $this->view->plan       = $plan;
+
+        //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        $this->view->customPlan = $customPlan;
+        
         $this->view->bugs       = $bugs;
         $this->view->fromBug    = $fromBug;
         $this->view->cases      = $cases;

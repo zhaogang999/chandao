@@ -166,8 +166,11 @@
       <!--测试类型的任务增加文字模板-->
       <?php if(isset($testTaskComment)):?>
         <td colspan='2' width="800"><?php echo html::textarea('comment', $testTaskComment, "rows='6' class='w-p98'");?></td>
-      <?php elseif(isset($develTaskComment)) : ?>
+      <?php elseif(isset($develTaskComment)):?>
         <td colspan='2' width="800"><?php echo html::textarea('comment', $develTaskComment, "rows='6' class='w-p98'");?></td>
+        <!--9195 需求类型的任务完成后填写生成需求ID-->
+      <?php elseif(isset($storyTaskComment)):?>
+        <td colspan='2' width="800"><?php echo html::textarea('comment', $storyTaskComment, "rows='6' class='w-p98'");?></td>
       <?php else:?>
         <td colspan='2' width="800"><?php echo html::textarea('comment', '', "rows='6' class='w-p98'");?></td>
       <?php endif;?>

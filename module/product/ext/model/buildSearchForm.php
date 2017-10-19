@@ -14,6 +14,9 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     $this->config->product->search['actionURL'] = $actionURL;
     $this->config->product->search['queryID']   = $queryID;
     $this->config->product->search['params']['plan']['values']    = $this->loadModel('productplan')->getPairs($productID);
+    //需求增加一个字段“”期望实现时间“，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+    $this->config->product->search['params']['customPlan']['values']    = $this->loadModel('productplan')->getPairs($productID);
+    
     //1195 跨产品进行需求关联时，默认搜索条件中所属产品为“所有产品”.搜索时默认所属产品为所有产品
     //$this->config->product->search['params']['product']['values'] = array('all' => $this->lang->product->allProduct, $productID => $products[$productID]);
     $this->config->product->search['params']['product']['values'] = array($productID => $products[$productID], 'all' => $this->lang->product->allProduct);

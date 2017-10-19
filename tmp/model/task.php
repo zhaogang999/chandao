@@ -1062,10 +1062,11 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
 {
     if(is_string($type)) $type = strtolower($type);
     //在任务列表页面增加任务关联需求的所属计划字段
-    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t2.plan AS plan, t3.realname AS assignedToRealName')
+    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t4.title AS plan, t3.realname AS assignedToRealName')
         ->from(TABLE_TASK)->alias('t1')
         ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
         ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
+        ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t2.plan = t4.id')
         ->where('t1.project')->eq((int)$projectID)
         ->andWhere('t1.deleted')->eq(0)
         ->beginIF($productID)->andWhere('t2.product')->eq((int)$productID)->fi()
@@ -1099,10 +1100,11 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
 public function getTasksByModule($projectID = 0, $moduleIdList = 0, $orderBy = 'id_desc', $pager = null)
 {
     //增加plan
-    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t2.plan, t3.realname AS assignedToRealName')
+    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t4.title AS plan, t3.realname AS assignedToRealName')
         ->from(TABLE_TASK)->alias('t1')
         ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
         ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
+        ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t2.plan = t4.id')
         ->where('t1.project')->eq((int)$projectID)
         ->beginIF($moduleIdList)->andWhere('t1.module')->in($moduleIdList)->fi()
         ->andWhere('t1.deleted')->eq(0)
@@ -1188,8 +1190,7 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 break;
             //在任务列表页面增加任务关联需求的所属字段
             case 'plan':
-                $plan = $this->loadModel('productplan')->getByID($task->plan);
-                echo $plan->title;
+                echo $task->plan;
                 break;
 
             case 'status':

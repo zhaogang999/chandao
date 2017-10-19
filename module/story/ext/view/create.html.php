@@ -27,7 +27,7 @@
   <form class='form-condensed' method='post' enctype='multipart/form-data' id='dataform' data-type='ajax'>
     <table class='table table-form'>
       <tr>
-        <th class='w-80px'><?php echo $lang->story->product;?></th>
+        <th class='w-90px'><?php echo $lang->story->product;?></th>
         <td class='w-p45-f'>
           <div class='input-group'>
             <?php echo html::select('product', $products, $productID, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
@@ -51,6 +51,16 @@
           </div>
         </td><td></td>
       </tr>
+      <!--需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划-->
+      <tr>
+        <th><?php echo $lang->story->customPlan;?></th>
+        <td>
+          <div class='input-group'>
+        <?php echo html::select('customPlan', $plans, '', "class='form-control chosen'");?>
+          </div>
+        </td>
+      </tr>
+
      <!--2013 外部门首次提需求时屏蔽所属计划这个字段 55-76行-->
       <tr>
         <th><?php echo $lang->story->reviewedBy;?></th>

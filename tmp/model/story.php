@@ -196,7 +196,7 @@ public function create($projectID = 0, $bugID = 0)
             $bug->resolution   = 'tostory';
             $bug->resolvedBy   = $this->app->user->account;
             $bug->resolvedDate = $now;
-            $bug->assignedTo   = $bugAB->assignedTo;
+            $bug->assignedTo   = $bugAB->openedBy;
             $bug->assignedDate = $now;
             $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($bugID)->exec();
 
@@ -318,6 +318,51 @@ public function linkStories($storyID, $type = 'linkStories')
     }
 }
 /**
+ * Merge plan title.
+ *
+ * @param  int|array    $productID
+ * @param  array    $stories
+ * @access public
+ * @return array
+ */
+public function mergePlanTitle($productID, $stories, $branch = 0)
+{
+    $query = $this->dao->get();
+
+    if(is_array($branch))
+    {
+        unset($branch[0]);
+        $branch = join(',', $branch);
+        if($branch) $branch = "0,$branch";
+    }
+    //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+    $plans = $this->dao->select('id,title')->from(TABLE_PRODUCTPLAN)
+        ->where('product')->in($productID)
+        //->beginIF($branch)->andWhere('branch')->in($branch)->fi()
+        ->andWhere('deleted')->eq(0)
+        ->fetchPairs('id', 'title');
+
+    $stages = $this->dao->select('*')->from(TABLE_STORYSTAGE)->where('branch')->in($branch)->fetchGroup('story', 'branch');
+
+    $branch = trim(str_replace(',0,', '', ",$branch,"), ',');
+    $branch = empty($branch) ? 0 : $branch;
+
+    foreach($stories as $story)
+    {
+        //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        $story->customPlan = zget($plans, $story->customPlan, '') . ' ';
+
+        $story->planTitle = '';
+        $storyPlans = explode(',', trim($story->plan, ','));
+        foreach($storyPlans as $planID) $story->planTitle .= zget($plans, $planID, '') . ' ';
+    }
+
+    /* For save session query. */
+    $this->dao->sqlobj->sql = $query;
+
+    return $stories;
+}
+/**
  * Print cell data
  *
  * @param  object $col
@@ -347,6 +392,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $title = '';
         if($id == 'title') $title = $story->title;
         if($id == 'plan')  $title = $story->planTitle;
+        //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        if($id == 'customPlan') $title = $story->customPlan;
         //需求指派多人
         if($id == 'assignedTo')
         {
@@ -384,7 +431,10 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'linkStories':
                 echo $story->linkStories;
                 break;
-            
+            //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+            case 'customPlan':
+                echo $story->customPlan;
+                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
                 break;
@@ -561,6 +611,8 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
     $stories = array();
     foreach($tmpStories as $story)
     {
+        //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
+        $story->customPlan = zget($plans, $story->customPlan, '') . ' ';
         $story->planTitle = '';
         $storyPlans = explode(',', trim($story->plan, ','));
         foreach($storyPlans as $planID) $story->planTitle .= zget($plans, $planID, '') . ' ';
@@ -618,8 +670,11 @@ public function sendmail($storyID, $actionID)
 
     /* Set toList and ccList. */
 
-    $toList = $story->assignedTo . ',' . $story->openedBy;
+    $toList = $story->assignedTo;
     $ccList = str_replace(' ', '', trim($story->mailto, ','));
+
+    //2284 需求发生任何变动，需要触发邮件（含编辑，备注，变更等所有操作）并且收件人不光含抄送人，还需包含需求原始提出人
+    $ccList = $ccList . ',' . $story->openedBy;
 
     /* If the action is changed or reviewed, mail to the project team. */
     if(strtolower($action->action) == 'changed' or strtolower($action->action) == 'reviewed')
