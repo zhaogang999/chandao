@@ -10,3 +10,6 @@ $lang->testcase->menu->patchbuild = array('link' => '补丁版本|patchbuild|pat
 $lang->report->menu->test    = array('link' => '测试|report|bugcreate', 'alias' => 'bugassign,bugsummary,dailybugstatistics,bugbranchstatistics,bugresponsetimestatistics');
 
 $lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|projectdeviation', 'alias' => 'storysummary,burnup,storycyclesummary,storytasksummary,tasksummary,taskplansummary');
+
+//9312 补丁版本下增加各字段的搜索功能
+$lang->searchObjects['patchbuild']         = '补丁版本';

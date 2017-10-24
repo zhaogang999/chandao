@@ -8,6 +8,19 @@
 class patchbuildModel extends model
 {
     /**
+     * Build a search form
+     * 
+     * @param $actionURL  string
+     * @access public
+     * @return void
+     */
+    public function buildPatchBuildSearchForm($actionURL)
+    {
+        $this->config->patchbuild->search['actionURL'] = $actionURL;
+        $this->loadModel('search')->setSearchParams($this->config->patchbuild->search);
+    }
+    
+    /**
      * Create a patchBuild
      *
      * @param  int    $projectID
@@ -78,21 +91,41 @@ class patchbuildModel extends model
      *
      * @param  int    $projectID
      * @param  string    $orderBy
+     * @param  string    $type
      * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProjectPatchBuild($projectID, $orderBy = 'id_desc', $pager = null)
+    public function getProjectPatchBuild($projectID, $orderBy = 'id_desc', $type  = 'byModule', $pager = null)
     {
-        return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
-            ->from(TABLE_PATCHBUILD)->alias('t1')
-            ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
-            ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
-            ->where('t1.project')->eq((int)$projectID)
-            ->andWhere('t1.deleted')->eq(0)
-            ->orderBy($orderBy)
-            ->page($pager)
-            ->fetchAll();
+        if ($type == 'bySearch')
+        {
+            $patchBuildQuery = $this->session->patchbuildQuery;
+            $patchBuildQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $patchBuildQuery);
+
+            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+                ->from(TABLE_PATCHBUILD)->alias('t1')
+                ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
+                ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
+                ->where('t1.project')->eq((int)$projectID)
+                ->andWhere('t1.deleted')->eq(0)
+                ->andWhere($patchBuildQuery)
+                ->orderBy($orderBy)
+                ->page($pager)
+                ->fetchAll();
+        }
+        else
+        {
+            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+                ->from(TABLE_PATCHBUILD)->alias('t1')
+                ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
+                ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
+                ->where('t1.project')->eq((int)$projectID)
+                ->andWhere('t1.deleted')->eq(0)
+                ->orderBy($orderBy)
+                ->page($pager)
+                ->fetchAll();
+        }
     }
 
     /**
@@ -139,21 +172,41 @@ class patchbuildModel extends model
      *
      * @param  int    $productID
      * @param  string    $orderBy
+     * @param  string    $type
      * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProductPatchBuild($productID, $orderBy = 'id_desc', $pager = null)
+    public function getProductPatchBuild($productID, $orderBy = 'id_desc', $type  = 'byModule', $pager = null)
     {
-        return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
-            ->from(TABLE_PATCHBUILD)->alias('t1')
-            ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
-            ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
-            ->where('t1.product')->eq((int)$productID)
-            ->andWhere('t1.deleted')->eq(0)
-            ->orderBy($orderBy)
-            ->page($pager)
-            ->fetchAll();
+        if ($type == 'bySearch')
+        {
+            $patchBuildQuery = $this->session->patchbuildQuery;
+            $patchBuildQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $patchBuildQuery);
+            
+            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+                ->from(TABLE_PATCHBUILD)->alias('t1')
+                ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
+                ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
+                ->where('t1.product')->eq((int)$productID)
+                ->andWhere('t1.deleted')->eq(0)
+                ->andwhere($patchBuildQuery)
+                ->orderBy($orderBy)
+                ->page($pager)
+                ->fetchAll();
+        }
+        else
+        {
+            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+                ->from(TABLE_PATCHBUILD)->alias('t1')
+                ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
+                ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
+                ->where('t1.product')->eq((int)$productID)
+                ->andWhere('t1.deleted')->eq(0)
+                ->orderBy($orderBy)
+                ->page($pager)
+                ->fetchAll();
+        }
     }
 
     /**

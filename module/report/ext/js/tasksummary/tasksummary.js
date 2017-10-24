@@ -308,6 +308,45 @@ fixedTableHead('.table-wrapper');
         });
     };
 
+    jQuery.fn.getUndonetaskByGroup = function(idName,type,title)
+    {
+        $(this).each(function() {
+            var $table = $(this);
+            var $xLabel = [];
+            var $groupLabels = [];
+            var $series =[];
+            var $xth = $table.find('thead > tr');
+            $xth.find('.x-label').each(function(idx){
+                var $childXth = $(this);
+                $xLabel.push($childXth.text());
+            });
+            if (!title) {
+                title = $xth.find('.title').text();
+            }
+
+
+            var $rows = $table.find('tbody > tr').each(function(idx)
+            {
+                var $undoneTask = [];
+                var $row = $(this);
+                var $groupLabel = $row.find('.chart-label').text();
+                $groupLabels.push($groupLabel);
+                //$undoneTask.push($row.find('.taskData').text());
+
+                $row.find('.taskData').each(function(idx){
+                    var $childTaskData = $(this);
+                    $undoneTask.push($childTaskData.text());
+                });
+                $series.push({name:$groupLabel,type:type,data:$undoneTask,itemStyle:{normal:{label:{show:true,position: 'top'}}}});
+            });
+            //var myChart = echarts.init(document.getElementById('undoneStoryTasks'));
+            getUndoneTaskCharts (idName, title, $groupLabels, $xLabel, $series);
+            //getUndoneTaskCharts ('undoneDevelTasks', title, $groupLabels, $xLabel, $series);
+            //getUndoneTaskCharts ('undoneTestTasks', title, $groupLabels, $xLabel, $series);
+
+        });
+    };
+
     function getUndoneTaskCharts (idName, title, groupLabels, xLabel, series)
     {
         var myChart = echarts.init(document.getElementById(idName));
@@ -399,7 +438,7 @@ fixedTableHead('.table-wrapper');
         $('.unDoneStoryTaskReport').getUndoneStoryReport('undoneStoryTasks','line', '需求待完成工作');
         $('.unDoneDevelTaskReport').getUndoneStoryReport('undoneDevelTasks','line', '开发待完成工作');
         $('.unDoneTestTaskReport').getUndoneStoryReport('undoneTestTasks','line', '测试待完成工作');
-        $('.undoneTaskByTypeReport').getUndoneStoryReport('undoneTaskByType','bar','各组开发未完成任务情况');
+        $('.undoneTaskByTypeReport').getUndonetaskByGroup('undoneTaskByType','bar','各组开发未完成任务情况');
         $('.finishedTasksPerDayReport').finishedTasksPerDay('finishedTasksPerDay','line','每日开发完成情况');
     });
 })();

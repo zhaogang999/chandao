@@ -21,13 +21,14 @@
     <?php common::printIcon('patchbuild', 'createPatchBuild', "project=$object->id", "", "button", "plus");?>
   </div>
   <?php endif;?>
+  <div id='querybox' class='show'></div>
 </div>
 
-<table class='table tablesorter table-fixed' id='buildList'>
+<table class='table tablesorter table-fixed' id='patchBuildForm'>
   <thead>
   <?php
 
-  $vars = "objectID=$objectID&from=$from&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
+  $vars = "objectID=$objectID&from=$from&type=$type&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
   ?>
     <tr class='colhead'>
       <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>

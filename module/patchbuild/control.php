@@ -20,12 +20,13 @@ class patchbuild extends control
      * 
      * @param int $objectID
      * @param string $from
+     * @param string $type
      * @param string $orderBy
      * @param int $recTotal
      * @param int $recPerPage
      * @param int $pageID
      */
-    public function patchBuild($objectID, $from, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function patchBuild($objectID, $from, $type = 'byModule', $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         $this->loadModel('project');
         $this->loadModel('product');
@@ -53,7 +54,8 @@ class patchbuild extends control
             $this->view->product       = $object;
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
-            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $pager);
+            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $pager);
+            $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=$object->id&from=qa&type=bySearch");
         }
         elseif($from == 'project')
         {
@@ -65,14 +67,17 @@ class patchbuild extends control
             $this->view->products      = $this->project->getProducts($object->id);
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
-            $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $pager);
+            $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $type, $pager);
+            $actionURL    = $this->createLink('patchBuild', 'patchBuild', "objectID=$object->id&from=project&type=bySearch");
         }
-
+        
+        $this->patchbuild->buildPatchBuildSearchForm($actionURL);
         /* Header and position. */
         $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
         //$this->view->position[] = $this->lang->project->patchBuild;
         $this->view->users  = $this->loadModel('user')->getPairs('noletter');
         $this->view->from   = $from;
+        $this->view->type   = $type;
         $this->view->object = $object;
         $this->view->pager       = $pager;
         $this->view->orderBy     = $orderBy;
