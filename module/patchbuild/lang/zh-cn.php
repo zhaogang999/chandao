@@ -33,6 +33,11 @@ $lang->patchbuild->config        = '配置要求';
 $lang->patchbuild->influence     = '影响范围';
 $lang->patchbuild->mailto        = '抄送给';
 $lang->patchbuild->assignedTo    = '指派给';
+$lang->patchbuild->workSeason    = '作业季';
+
+$lang->patchbuild->workSeasonList['1']   = '17冬';
+$lang->patchbuild->workSeasonList['2']   = '18春';
+$lang->patchbuild->workSeasonList['3']   = '17冬+18春';
 
 $lang->patchbuild->patchTypeList['']              = '';
 $lang->patchbuild->patchTypeList['alpha']         = '内测';

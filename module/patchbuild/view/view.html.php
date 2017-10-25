@@ -95,6 +95,10 @@ tfoot tr td .table-actions .btn{display:none;}
             <td><?php echo $build->productName;?></td>
           </tr>
           <tr>
+            <th class='w-80px'><?php echo $lang->patchbuild->workSeason;?></th>
+            <td><?php echo $lang->patchbuild->workSeasonList[$build->workSeason];?></td>
+          </tr>
+          <tr>
             <th class='w-80px'><?php echo $lang->patchbuild->patchType;?></th>
             <td><?php echo $lang->patchbuild->patchTypeList[$build->patchType];?></td>
           </tr>

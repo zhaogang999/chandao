@@ -21,7 +21,7 @@
     <?php common::printIcon('patchbuild', 'createPatchBuild', "project=$object->id", "", "button", "plus");?>
   </div>
   <?php endif;?>
-  <div id='querybox' class='show'></div>
+  <!--<div id='querybox' class='show'></div>-->
 </div>
 
 <table class='table tablesorter table-fixed' id='patchBuildForm'>
@@ -32,6 +32,7 @@
   ?>
     <tr class='colhead'>
       <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>
+      <th class='w-id'><?php common::printOrderLink('workSeason', $orderBy, $vars, $lang->patchbuild->workSeason);?></th>
       <th class='w-id'><?php common::printOrderLink('patchType', $orderBy, $vars, $lang->patchbuild->patchType);?></th>
       <th class='w-id'><?php common::printOrderLink('platform', $orderBy, $vars, $lang->patchbuild->platform);?></th>
       <th class='w-200px'><?php common::printOrderLink('version', $orderBy, $vars, $lang->patchbuild->version);?></th>
@@ -53,6 +54,7 @@
   <?php foreach($patchBuilds as $build):?>
   <tr class='text-center'>
     <td><?php echo $build->id;?></td>
+    <td><?php echo $lang->patchbuild->workSeasonList[$build->workSeason]; ?></td>
     <td><?php echo $lang->patchbuild->patchTypeList[$build->patchType]; ?></td>
     <td><?php echo $lang->patchbuild->platformList[$build->platform]; ?></td>
     <td class='text-left' title='<?php echo $build->version?>'><?php echo html::a($this->createLink('patchbuild', 'view', "build=$build->id&from=$from"), $build->version);?></td>
@@ -82,7 +84,7 @@
   </tr>
   <?php endforeach;?>
   </tbody>
-  <tfoot><tr><td colspan='<?php echo $from == 'qa' ? 13 : 10;?>'><?php $pager->show();?></td></tr></tfoot>
+  <tfoot><tr><td colspan='<?php echo $from == 'qa' ? 14 : 11;?>'><?php $pager->show();?></td></tr></tfoot>
 </table>
 <script language="JavaScript">
   $(function()

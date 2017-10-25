@@ -47,6 +47,10 @@
         <td><?php echo html::select('patchType', $lang->patchbuild->patchTypeList, '', 'class="form-control chosen"');?></td>
       </tr>
       <tr>
+        <th><?php echo $lang->patchbuild->workSeason;?></th>
+        <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, '', 'class="form-control chosen"');?></td>
+      </tr>
+      <tr>
         <th><?php echo $lang->patchbuild->platform;?></th>
         <td><?php echo html::select('platform', $lang->patchbuild->platformList, '', 'class="form-control chosen"');?></td>
       </tr>

@@ -12,7 +12,7 @@ $config->product->search['params']['assignedTo']     = array('operator' => 'incl
 
 //需求增加一个字段“”期望实现时间“，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
 $insert_array = array('customPlan' =>$lang->story->customPlan);
-$first_array = array_splice ($config->product->search['fields'], 0, 3);
+$first_array = array_splice ($config->product->search['fields'], 0, 11);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
 
 $config->product->search['params']['customPlan']  = array('operator' => '=', 'control' => 'select',  'values' => '');
