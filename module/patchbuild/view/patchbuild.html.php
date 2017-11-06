@@ -35,7 +35,7 @@
       <th class='w-id'><?php common::printOrderLink('workSeason', $orderBy, $vars, $lang->patchbuild->workSeason);?></th>
       <th class='w-id'><?php common::printOrderLink('patchType', $orderBy, $vars, $lang->patchbuild->patchType);?></th>
       <th class='w-id'><?php common::printOrderLink('platform', $orderBy, $vars, $lang->patchbuild->platform);?></th>
-      <th class='w-200px'><?php common::printOrderLink('version', $orderBy, $vars, $lang->patchbuild->version);?></th>
+      <th class='w-150px'><?php common::printOrderLink('version', $orderBy, $vars, $lang->patchbuild->version);?></th>
       <th class='w-id'><?php common::printOrderLink('reason', $orderBy, $vars, $lang->patchbuild->reason);?></th>
       <th class='w-user'><?php common::printOrderLink('submitter', $orderBy, $vars, $lang->patchbuild->submitter);?></th>
       <th class='w-id'><?php common::printOrderLink('group', $orderBy, $vars, $lang->patchbuild->group);?></th>
@@ -89,7 +89,7 @@
 <script language="JavaScript">
   $(function()
   {
-    setTimeout(function(){fixedTheadOfList('#buildList')}, '100');
+    setTimeout(function(){fixedTheadOfList('#patchBuildForm')}, 100);
   })
 </script>
 <?php include '../../common/view/footer.html.php';?>

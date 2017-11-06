@@ -33,7 +33,7 @@ $lang->patchbuild->config        = '配置要求';
 $lang->patchbuild->influence     = '影响范围';
 $lang->patchbuild->mailto        = '抄送给';
 $lang->patchbuild->assignedTo    = '指派给';
-$lang->patchbuild->workSeason    = '作业季';
+$lang->patchbuild->workSeason    = '目标环境';
 
 $lang->patchbuild->workSeasonList['1']   = '17冬';
 $lang->patchbuild->workSeasonList['2']   = '18春';
@@ -78,6 +78,7 @@ $lang->patchbuild->testPassList['']              = '';
 $lang->patchbuild->testPassList['passed']        = '通过';
 $lang->patchbuild->testPassList['notPassed']     = '未通过';
 $lang->patchbuild->testPassList['partialPassed'] = '部分通过';
+$lang->patchbuild->testPassList['withoutApproval'] = '免验收';
 
 $lang->patchbuild->testEnvList['']                = '';
 $lang->patchbuild->testEnvList['released']        = '发布';

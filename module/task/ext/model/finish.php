@@ -66,18 +66,100 @@ public function finish($taskID)
     if($estimate->consumed) $this->addTaskEstimate($estimate);
 
     $taskInfo = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq("$taskID")->fetch();
+
+    $taskDetail->consumed = $task->consumed;
+    $taskDetail->assignedTo = $task->assignedTo;
+    $taskDetail->finishedDate = $task->finishedDate;
+    $taskDetail->left = $task->left;
+    $taskDetail->assignedDate = $task->assignedDate;
+    $taskDetail->status = $task->status;
+    $taskDetail->finishedBy = $task->finishedBy;
+    $taskDetail->lastEditedBy = $task->lastEditedBy;
+    $taskDetail->lastEditedDate = $task->lastEditedDate;
+
+    //1.task
+    $this->dao->begin();
+    $this->dao->update(TABLE_TASK)->data($taskDetail)
+        ->autoCheck()
+        ->check('consumed', 'notempty')
+        ->where('id')->eq((int)$taskID)->exec();
+
+    if(dao::isError())
+    {
+        $this->dao->rollback();
+        return false;
+    }
+
+    $changes = common::createChanges($oldTask, $taskDetail);
+
+    if ($taskInfo->type == 'script')
+    {
+        if($task->scriptName == '') die(js::error($this->lang->task->error->scriptNameEmpty));
+        if($task->scriptType == '') die(js::error($this->lang->task->error->scriptTypeEmpty));
+        if($task->lob == '') die(js::error($this->lang->task->error->lobEmpty));
+        if($task->frequency == '') die(js::error($this->lang->task->error->frequencyEmpty));
+        if($task->configurationFile == '') die(js::error($this->lang->task->error->configurationFileEmpty));
+        if($task->output == '') die(js::error($this->lang->task->error->outputEmpty));
+        if($task->precondition == '') die(js::error($this->lang->task->error->preconditionDocEmpty));
+        if($task->performBody == '') die(js::error($this->lang->task->error->performBodyEmpty));
+        if($task->performMode == '') die(js::error($this->lang->task->error->performModeEmpty));
+        if($task->performSystem == '') die(js::error($this->lang->task->error->performSystemEmpty));
+        if($task->scriptPath == '') die(js::error($this->lang->task->error->scriptPathEmpty));
+        
+        $oldScriptDetail = $this->dao->select('*')
+            ->from(TABLE_SCRIPT)
+            ->where('task')->eq("$taskID")
+            ->andWhere('deleted')->eq('0')
+            ->fetch();
+
+        $scriptDetail = new stdClass();
+        $scriptDetail->task = $taskID;
+        $scriptDetail->scriptName = $task->scriptName;
+        $scriptDetail->scriptType = $task->scriptType;
+        $scriptDetail->lob = $task->lob;
+        $scriptDetail->frequency = $task->frequency;
+        $scriptDetail->configurationFile = $task->configurationFile;
+        $scriptDetail->output = $task->output;
+        $scriptDetail->precondition = $task->precondition;
+        $scriptDetail->performBody = $task->performBody;
+        $scriptDetail->performMode = $task->performMode;
+        $scriptDetail->performSystem = $task->performSystem;
+        $scriptDetail->scriptPath = $task->scriptPath;
+        $scriptDetail->notice = $task->notice;
+
+        if ($oldScriptDetail)
+        {
+            $this->dao->update(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->where('task')->eq($taskID)->limit(1)->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+            else
+            {
+                $scriptChange = common::createChanges($oldScriptDetail, $scriptDetail);
+                $changes = array_merge($changes, $scriptChange);
+            }
+        }
+        else
+        {
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+    }
+
     if ($taskInfo->type == 'review')
     {
-        $taskDetail->consumed = $task->consumed;
-        $taskDetail->assignedTo = $task->assignedTo;
-        $taskDetail->finishedDate = $task->finishedDate;
-        $taskDetail->left = $task->left;
-        $taskDetail->assignedDate = $task->assignedDate;
-        $taskDetail->status = $task->status;
-        $taskDetail->finishedBy = $task->finishedBy;
-        $taskDetail->lastEditedBy = $task->lastEditedBy;
-        $taskDetail->lastEditedDate = $task->lastEditedDate;
-
         $review->fileNO = $task->fileNO;
         $review->recorder = $task->recorder;
         $review->reviewName = $task->reviewName;
@@ -112,19 +194,6 @@ public function finish($taskID)
 
         if(!is_numeric($task->effort)) die(js::error($this->lang->task->error->effortNumber));
         if(!is_numeric($task->pages)) die(js::error($this->lang->task->error->pagesNumber));
-        
-        //添加评审
-        //1.task
-        $this->dao->begin();
-        $this->dao->update(TABLE_TASK)->data($taskDetail)
-            ->autoCheck()
-            ->check('consumed', 'notempty')
-            ->where('id')->eq((int)$taskID)->exec();
-        if(dao::isError())
-        {
-            $this->dao->rollback();
-            return false;
-        }
 
         //2.insert review
         $this->dao->insert(TABLE_REVIEW)->data($review)
@@ -169,12 +238,7 @@ public function finish($taskID)
                 return false;
             }
         }
-        //成功操作
-        $this->dao->commit();
-        //设置需求状态
-        if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
         //获得改变值
-        $taskChange = common::createChanges($oldTask, $taskDetail);
         //建一个空对象
         $emptyReview->fileNO = '';
         $emptyReview->recorder = '';
@@ -191,23 +255,18 @@ public function finish($taskID)
         $emptyReview->effort = '';
         $emptyReview->conclusion = '';
         $reviewChange = common::createChanges($emptyReview, $review);
-        $changes = array_merge($taskChange,$reviewChange);
+        $changes = array_merge($changes,$reviewChange);
 
         foreach($reviewDetailChanges as $reviewDetailChange)
         {
             $changes = array_merge($changes,$reviewDetailChange);
         }
-        return $changes;
     }
-    else
-    {
-        //源代码，非评审
-        $this->dao->update(TABLE_TASK)->data($task)
-            ->autoCheck()
-            ->check('consumed', 'notempty')
-            ->where('id')->eq((int)$taskID)->exec();
 
-        if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
-        if(!dao::isError()) return common::createChanges($oldTask, $task);
-    }
+    //成功操作
+    $this->dao->commit();
+    //设置需求状态
+    if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+
+    return $changes;
 }

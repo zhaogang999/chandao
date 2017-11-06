@@ -360,6 +360,62 @@ public function update($taskID)
             $changes = array_merge($changes,$reviewDetailChange);
         }
     }
+
+    if ($task->type == 'script')
+    {
+        $oldScriptDetail = $this->dao->select('*')
+            ->from(TABLE_SCRIPT)
+            ->where('task')->eq("$taskID")
+            ->andWhere('deleted')->eq('0')
+            ->fetch();
+        
+        $scriptDetail = new stdClass();
+        $scriptDetail->task = $taskID;
+        $scriptDetail->scriptName = $task->scriptName;
+        $scriptDetail->scriptType = $task->scriptType;
+        $scriptDetail->lob = $task->lob;
+        $scriptDetail->frequency = $task->frequency;
+        $scriptDetail->configurationFile = $task->configurationFile;
+        $scriptDetail->output = $task->output;
+        $scriptDetail->precondition = $task->precondition;
+        $scriptDetail->performBody = $task->performBody;
+        $scriptDetail->performMode = $task->performMode;
+        $scriptDetail->performSystem = $task->performSystem;
+        $scriptDetail->scriptPath = $task->scriptPath;
+        $scriptDetail->notice = $task->notice;
+
+        if ($oldScriptDetail)
+        {
+            $this->dao->update(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->batchCheck($this->config->task->finshScript->requiredFields, 'notempty')
+                ->where('id')->eq($task->scriptID)->limit(1)->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+            else
+            {
+                $scriptChange = common::createChanges($oldScriptDetail, $scriptDetail);
+                $changes = array_merge($changes, $scriptChange);
+            }
+        }
+        else
+        {
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+    }
+
     $this->dao->commit();
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
     $this->file->updateObjectID($this->post->uid, $taskID, 'task');

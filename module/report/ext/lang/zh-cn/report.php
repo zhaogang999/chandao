@@ -119,3 +119,9 @@ $lang->report->responsed2weeks      = '7-14天';
 $lang->report->responsed2weeksbugs  = '14天内未响应bugID';
 $lang->report->responsedlong        = '14天以上';
 $lang->report->responsedlongbugs    = '14天以上未响应bugID';
+
+$lang->report->planTitle    = '预计发版';
+$lang->report->linkTask     = '相关任务';
+$lang->report->editScript   = '编辑脚本';
+$lang->report->scriptTask   = '脚本列表';
+$lang->report->viewScript   = '脚本详情';

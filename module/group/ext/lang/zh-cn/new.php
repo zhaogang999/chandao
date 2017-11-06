@@ -12,6 +12,9 @@ $lang->resource->report->burnUp             = 'burnUp';
 $lang->resource->report->storyCycleSummary  = 'storyCycleSummary';
 $lang->resource->report->bugBranchStatistics  = 'bugBranchStatistics';
 $lang->resource->report->bugResponseTimeStatistics  = 'bugResponseTimeStatistics';
+$lang->resource->report->editScript = 'editScript';
+$lang->resource->report->scriptTask = 'scriptTask';
+$lang->resource->report->viewScript = 'viewScript';
 $lang->resource->report->dailyBugStatistics = 'dailyBugStatistics';
 $lang->resource->custom->loginDefaultPage   = 'loginDefaultPage';
 

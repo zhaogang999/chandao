@@ -18,6 +18,7 @@ if(!defined('TABLE_UNDONETASKREPORT')) define('TABLE_UNDONETASKREPORT', '`' . $c
 if(!defined('TABLE_PATCHBUILD')) define('TABLE_PATCHBUILD', '`' . $config->db->prefix . 'patchbuild`');
 if(!defined('TABLE_BURNUP')) define('TABLE_BURNUP', '`' . $config->db->prefix . 'burnup`');
 if(!defined('TABLE_BUGREPORT')) define('TABLE_BUGREPORT', '`' . $config->db->prefix . 'bugreport`');
+if(!defined('TABLE_SCRIPT')) define('TABLE_SCRIPT', '`' . $config->db->prefix . 'script`');
 
 $config->timeout       = 60000;
 

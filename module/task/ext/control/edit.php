@@ -36,6 +36,24 @@ class myTask extends task
                 $this->task->sendmail($taskID, $actionID);
             }
 
+            foreach($changes as $change)
+            {
+                if(($change['field'] == 'type' and $change['old'] == 'script') or ($task->type == 'script' and $change['field'] == 'status' and $change['new'] == 'cancel'))
+                {
+                    $script = $this->dao->select('*')->from(TABLE_SCRIPT)->where('task')->eq($taskID)->andWhere('deleted')->eq('0')->fetch();
+                    //$this->loadModel('report')->delete(TABLE_SCRIPT, $script->id);
+                    $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(1)->where('id')->eq($script->id)->exec();
+                }
+                if(($change['field'] == 'type' and $change['new'] == 'script') or ($task->type == 'script' and $change['field'] == 'status' and $change['old'] == 'cancel'))
+                {
+                    $script = $this->dao->select('*')->from(TABLE_SCRIPT)->where('task')->eq($taskID)->andWhere('deleted')->eq('1')->fetch();
+                    if ($script)
+                    {
+                        $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(0)->where('id')->eq($script->id)->exec();
+                    }
+                }
+            }
+
             if($task->fromBug != 0)
             {
                 foreach($changes as $change)
@@ -74,6 +92,15 @@ class myTask extends task
                 ->where('reviewID')->eq($this->view->review->id)
                 ->andWhere('deleted')->eq('0')
                 ->fetchAll();
+        }
+
+        if ($this->view->task->type == 'script')
+        {
+            $this->view->script = $this->dao->select('*')
+                ->from(TABLE_SCRIPT)
+                ->where('task')
+                ->eq($taskID)
+                ->fetch();
         }
 
         $noclosedProjects = $this->project->getPairs('noclosed,nocode');

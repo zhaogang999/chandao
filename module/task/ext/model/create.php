@@ -24,6 +24,7 @@ public function create($projectID)
         ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
         ->setDefault('openedBy',   $this->app->user->account)
         ->setDefault('openedDate', helper::now())
+        ->setDefault('releasedDate', '0000-00-00')
         ->stripTags($this->config->task->editor->create['id'], $this->config->allowedTags)
         ->join('mailto', ',')
         ->remove('after,files,labels,assignedTo,uid')
@@ -51,6 +52,7 @@ public function create($projectID)
         $task = $this->file->processEditor($task, $this->config->task->editor->create['id'], $this->post->uid);
 
         //任务数据新增
+        $taskDetail->source = $task->source;
         $taskDetail->module = $task->module;
         $taskDetail->type = $task->type;
         $taskDetail->story = $task->story;
@@ -76,96 +78,92 @@ public function create($projectID)
         //禅道任务增加关键字字段；需求：858；行号：72-73
         $taskDetail->keywords    = $task->keywords;
 
-        if ($task->source == 'QA')
-        {
-            $taskDetail->source = $task->source;
-            $this->dao->begin();
-            $this->dao->insert(TABLE_TASK)->data($taskDetail)
-                ->autoCheck()
-                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
-                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $taskDetail->estStarted)
-                ->exec();
-            if (!dao::isError()) {
-                //taskId
-                $taskID = $this->dao->lastInsertID();
-            } else {
-                $this->dao->rollback();
-                return false;
-            }
-            $num = count($task->auditID);
-           
-            for ($i = 0; $i < $num; $i++) {
-                $auditDetail["$i"] = new stdClass();
-                $auditDetail["$i"]->task       = $taskID;
-                $auditDetail["$i"]->auditID   = $task->auditID["$i"];
-                $auditDetail["$i"]->noDec     = $task->noDec["$i"];
-                $auditDetail["$i"]->noType    = $task->noType["$i"];
-                $auditDetail["$i"]->serious   = $task->serious["$i"];
-                $auditDetail["$i"]->cause     = $task->cause["$i"];
-                $auditDetail["$i"]->measures   = $task->measures["$i"];
+        //源代码
+        $this->dao->insert(TABLE_TASK)->data($taskDetail)
+            ->autoCheck()
+            ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
+            ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
+            ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+            ->exec();
 
-                $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
-                    ->autoCheck()
-                    ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                    ->exec();
-                if (!dao::isError()) {
-                    $auditDetail["$i"]->id = $this->dao->lastInsertID();
-                } else {
-                    $this->dao->rollback();
-                    return false;
+        if(!dao::isError())
+        {
+            $taskID = $this->dao->lastInsertID();
+            if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            if(!empty($taskFiles))
+            {
+                foreach($taskFiles as $taskFile)
+                {
+                    $taskFile->objectID = $taskID;
+                    $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
                 }
             }
-
-            //成功操作
-            $this->dao->commit();
-            //设置需求状态
-            if ($this->post->story) $this->loadModel('story')->setStage($this->post->story);
-            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-            if (!empty($taskFile)) {
-                $taskFile->objectID = $taskID;
-                $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
-            } else {
+            else
+            {
                 $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                $taskFile = $this->dao->select('*')->from(TABLE_FILE)->where('id')->eq(key($taskFileTitle))->fetch();
-                unset($taskFile->id);
+                $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
+                foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
             }
             $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
         }
         else
         {
-            //源代码
-            $this->dao->insert(TABLE_TASK)->data($taskDetail)
+            return false;
+        }
+
+        if ($task->type == 'script')
+        {
+            $scriptDetail = new stdClass();
+            $scriptDetail->task = $taskID;
+            $scriptDetail->scriptName = $task->scriptName;
+            $scriptDetail->scriptType = $task->scriptType;
+            $scriptDetail->lob = $task->lob;
+            $scriptDetail->frequency = $task->frequency;
+            $scriptDetail->configurationFile = $task->configurationFile;
+            $scriptDetail->output = $task->output;
+            $scriptDetail->precondition = $task->precondition;
+            $scriptDetail->performBody = $task->performBody;
+            $scriptDetail->performMode = $task->performMode;
+            $scriptDetail->performSystem = $task->performSystem;
+            $scriptDetail->scriptPath = $task->scriptPath;
+            $scriptDetail->notice = $task->notice;
+
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
                 ->autoCheck()
-                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
-                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
                 ->exec();
 
-            if(!dao::isError())
-            {
-                $taskID = $this->dao->lastInsertID();
-                if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
-                $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-                if(!empty($taskFiles))
-                {
-                    foreach($taskFiles as $taskFile)
-                    {
-                        $taskFile->objectID = $taskID;
-                        $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
-                    }
-                }
-                else
-                {
-                    $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                    $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
-                    foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
-                }
-                $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
-            }
-            else
-            {
+            if (!dao::isError()) {
+                $scriptDetail->id = $this->dao->lastInsertID();
+            } else {
                 return false;
+            }
+        }
+
+        if ($task->source == 'QA') {
+            $num = count($task->auditID);
+
+            for ($i = 0; $i < $num; $i++)
+            {
+                $auditDetail["$i"] = new stdClass();
+                $auditDetail["$i"]->task = $taskID;
+                $auditDetail["$i"]->auditID = $task->auditID["$i"];
+                $auditDetail["$i"]->noDec = $task->noDec["$i"];
+                $auditDetail["$i"]->noType = $task->noType["$i"];
+                $auditDetail["$i"]->serious = $task->serious["$i"];
+                $auditDetail["$i"]->cause = $task->cause["$i"];
+                $auditDetail["$i"]->measures = $task->measures["$i"];
+
+                $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
+                    ->autoCheck()
+                    ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
+                    ->exec();
+
+                if (!dao::isError()) {
+                    $auditDetail["$i"]->id = $this->dao->lastInsertID();
+                } else {
+                    return false;
+                }
             }
         }
     }

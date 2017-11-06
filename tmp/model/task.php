@@ -6,6 +6,45 @@ helper::cd();
 class exttaskModel extends taskModel 
 {
 /**
+ * Created by PhpStorm.
+ * User: 月下亭中人
+ * Date: 2017/11/2
+ * Time: 10:02
+ */
+/**
+ * Activate a task.
+ *
+ * @param  int      $taskID
+ * @access public
+ * @return void
+ */
+public function activate($taskID)
+{
+    $oldTask = $this->getById($taskID);
+    $task = fixer::input('post')
+        ->setDefault('left', 0)
+        ->setDefault('status', 'doing')
+        ->setDefault('finishedBy, canceledBy, closedBy, closedReason', '')
+        ->setDefault('finishedDate, canceledDate, closedDate', '0000-00-00')
+        ->setDefault('lastEditedBy',   $this->app->user->account)
+        ->setDefault('lastEditedDate', helper::now())
+        ->remove('comment')->get();
+
+    $this->dao->update(TABLE_TASK)->data($task)
+        ->autoCheck()
+        ->check('left', 'notempty')
+        ->where('id')->eq((int)$taskID)->exec();
+
+    if ($oldTask->type == 'script')
+    {
+        $script = $this->dao->select('*')->from(TABLE_SCRIPT)->where('task')->eq($taskID)->andWhere('deleted')->eq('0')->fetch();
+        $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(0)->where('id')->eq($script->id)->exec();
+    }
+
+    if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
+    if(!dao::isError()) return common::createChanges($oldTask, $task);
+}
+/**
  * Create a batch task.
  *
  * @param  int    $projectID
@@ -260,6 +299,44 @@ public function batchUpdate()
     return $allChanges;
 }
 /**
+ * Created by PhpStorm.
+ * User: 月下亭中人
+ * Date: 2017/11/2
+ * Time: 9:57
+ */
+/**
+ * Cancel a task.
+ *
+ * @param  int      $taskID
+ * @access public
+ * @return void
+ */
+public function cancel($taskID)
+{
+    $oldTask = $this->getById($taskID);
+    $now     = helper::now();
+    $task = fixer::input('post')
+        ->setDefault('status', 'cancel')
+        ->setDefault('assignedTo', $oldTask->openedBy)
+        ->setDefault('assignedDate', $now)
+        ->setDefault('finishedBy', '')
+        ->setDefault('finishedDate', '0000-00-00')
+        ->setDefault('canceledBy, lastEditedBy', $this->app->user->account)
+        ->setDefault('canceledDate, lastEditedDate', $now)
+        ->remove('comment')->get();
+
+    $this->dao->update(TABLE_TASK)->data($task)->autoCheck()->where('id')->eq((int)$taskID)->exec();
+
+    if ($oldTask->type == 'script')
+    {
+        $script = $this->dao->select('*')->from(TABLE_SCRIPT)->where('task')->eq($taskID)->andWhere('deleted')->eq('0')->fetch();
+        $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(1)->where('id')->eq($script->id)->exec();
+    }
+    
+    if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
+    if(!dao::isError()) return common::createChanges($oldTask, $task);
+}
+/**
  * Create a task.
  *
  * @param  int    $projectID
@@ -284,6 +361,7 @@ public function create($projectID)
         ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
         ->setDefault('openedBy',   $this->app->user->account)
         ->setDefault('openedDate', helper::now())
+        ->setDefault('releasedDate', '0000-00-00')
         ->stripTags($this->config->task->editor->create['id'], $this->config->allowedTags)
         ->join('mailto', ',')
         ->remove('after,files,labels,assignedTo,uid')
@@ -311,6 +389,7 @@ public function create($projectID)
         $task = $this->file->processEditor($task, $this->config->task->editor->create['id'], $this->post->uid);
 
         //任务数据新增
+        $taskDetail->source = $task->source;
         $taskDetail->module = $task->module;
         $taskDetail->type = $task->type;
         $taskDetail->story = $task->story;
@@ -336,96 +415,92 @@ public function create($projectID)
         //禅道任务增加关键字字段；需求：858；行号：72-73
         $taskDetail->keywords    = $task->keywords;
 
-        if ($task->source == 'QA')
-        {
-            $taskDetail->source = $task->source;
-            $this->dao->begin();
-            $this->dao->insert(TABLE_TASK)->data($taskDetail)
-                ->autoCheck()
-                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
-                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $taskDetail->estStarted)
-                ->exec();
-            if (!dao::isError()) {
-                //taskId
-                $taskID = $this->dao->lastInsertID();
-            } else {
-                $this->dao->rollback();
-                return false;
-            }
-            $num = count($task->auditID);
-           
-            for ($i = 0; $i < $num; $i++) {
-                $auditDetail["$i"] = new stdClass();
-                $auditDetail["$i"]->task       = $taskID;
-                $auditDetail["$i"]->auditID   = $task->auditID["$i"];
-                $auditDetail["$i"]->noDec     = $task->noDec["$i"];
-                $auditDetail["$i"]->noType    = $task->noType["$i"];
-                $auditDetail["$i"]->serious   = $task->serious["$i"];
-                $auditDetail["$i"]->cause     = $task->cause["$i"];
-                $auditDetail["$i"]->measures   = $task->measures["$i"];
+        //源代码
+        $this->dao->insert(TABLE_TASK)->data($taskDetail)
+            ->autoCheck()
+            ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
+            ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
+            ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
+            ->exec();
 
-                $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
-                    ->autoCheck()
-                    ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                    ->exec();
-                if (!dao::isError()) {
-                    $auditDetail["$i"]->id = $this->dao->lastInsertID();
-                } else {
-                    $this->dao->rollback();
-                    return false;
+        if(!dao::isError())
+        {
+            $taskID = $this->dao->lastInsertID();
+            if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
+            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
+            if(!empty($taskFiles))
+            {
+                foreach($taskFiles as $taskFile)
+                {
+                    $taskFile->objectID = $taskID;
+                    $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
                 }
             }
-
-            //成功操作
-            $this->dao->commit();
-            //设置需求状态
-            if ($this->post->story) $this->loadModel('story')->setStage($this->post->story);
-            $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-            if (!empty($taskFile)) {
-                $taskFile->objectID = $taskID;
-                $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
-            } else {
+            else
+            {
                 $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                $taskFile = $this->dao->select('*')->from(TABLE_FILE)->where('id')->eq(key($taskFileTitle))->fetch();
-                unset($taskFile->id);
+                $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
+                foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
             }
             $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
         }
         else
         {
-            //源代码
-            $this->dao->insert(TABLE_TASK)->data($taskDetail)
+            return false;
+        }
+
+        if ($task->type == 'script')
+        {
+            $scriptDetail = new stdClass();
+            $scriptDetail->task = $taskID;
+            $scriptDetail->scriptName = $task->scriptName;
+            $scriptDetail->scriptType = $task->scriptType;
+            $scriptDetail->lob = $task->lob;
+            $scriptDetail->frequency = $task->frequency;
+            $scriptDetail->configurationFile = $task->configurationFile;
+            $scriptDetail->output = $task->output;
+            $scriptDetail->precondition = $task->precondition;
+            $scriptDetail->performBody = $task->performBody;
+            $scriptDetail->performMode = $task->performMode;
+            $scriptDetail->performSystem = $task->performSystem;
+            $scriptDetail->scriptPath = $task->scriptPath;
+            $scriptDetail->notice = $task->notice;
+
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
                 ->autoCheck()
-                ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
-                ->checkIF($taskDetail->estimate != '', 'estimate', 'float')
-                ->checkIF($taskDetail->deadline != '0000-00-00', 'deadline', 'ge', $task->estStarted)
                 ->exec();
 
-            if(!dao::isError())
-            {
-                $taskID = $this->dao->lastInsertID();
-                if($this->post->story) $this->loadModel('story')->setStage($this->post->story);
-                $this->file->updateObjectID($this->post->uid, $taskID, 'task');
-                if(!empty($taskFiles))
-                {
-                    foreach($taskFiles as $taskFile)
-                    {
-                        $taskFile->objectID = $taskID;
-                        $this->dao->insert(TABLE_FILE)->data($taskFile)->exec();
-                    }
-                }
-                else
-                {
-                    $taskFileTitle = $this->file->saveUpload('task', $taskID);
-                    $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
-                    foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
-                }
-                $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
-            }
-            else
-            {
+            if (!dao::isError()) {
+                $scriptDetail->id = $this->dao->lastInsertID();
+            } else {
                 return false;
+            }
+        }
+
+        if ($task->source == 'QA') {
+            $num = count($task->auditID);
+
+            for ($i = 0; $i < $num; $i++)
+            {
+                $auditDetail["$i"] = new stdClass();
+                $auditDetail["$i"]->task = $taskID;
+                $auditDetail["$i"]->auditID = $task->auditID["$i"];
+                $auditDetail["$i"]->noDec = $task->noDec["$i"];
+                $auditDetail["$i"]->noType = $task->noType["$i"];
+                $auditDetail["$i"]->serious = $task->serious["$i"];
+                $auditDetail["$i"]->cause = $task->cause["$i"];
+                $auditDetail["$i"]->measures = $task->measures["$i"];
+
+                $this->dao->insert(TABLE_QAAUDIT)->data($auditDetail["$i"])
+                    ->autoCheck()
+                    ->batchCheck($this->config->task->create->newRequiredFields, 'notempty')
+                    ->exec();
+
+                if (!dao::isError()) {
+                    $auditDetail["$i"]->id = $this->dao->lastInsertID();
+                } else {
+                    return false;
+                }
             }
         }
     }
@@ -792,6 +867,62 @@ public function update($taskID)
             $changes = array_merge($changes,$reviewDetailChange);
         }
     }
+
+    if ($task->type == 'script')
+    {
+        $oldScriptDetail = $this->dao->select('*')
+            ->from(TABLE_SCRIPT)
+            ->where('task')->eq("$taskID")
+            ->andWhere('deleted')->eq('0')
+            ->fetch();
+        
+        $scriptDetail = new stdClass();
+        $scriptDetail->task = $taskID;
+        $scriptDetail->scriptName = $task->scriptName;
+        $scriptDetail->scriptType = $task->scriptType;
+        $scriptDetail->lob = $task->lob;
+        $scriptDetail->frequency = $task->frequency;
+        $scriptDetail->configurationFile = $task->configurationFile;
+        $scriptDetail->output = $task->output;
+        $scriptDetail->precondition = $task->precondition;
+        $scriptDetail->performBody = $task->performBody;
+        $scriptDetail->performMode = $task->performMode;
+        $scriptDetail->performSystem = $task->performSystem;
+        $scriptDetail->scriptPath = $task->scriptPath;
+        $scriptDetail->notice = $task->notice;
+
+        if ($oldScriptDetail)
+        {
+            $this->dao->update(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->batchCheck($this->config->task->finshScript->requiredFields, 'notempty')
+                ->where('id')->eq($task->scriptID)->limit(1)->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+            else
+            {
+                $scriptChange = common::createChanges($oldScriptDetail, $scriptDetail);
+                $changes = array_merge($changes, $scriptChange);
+            }
+        }
+        else
+        {
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+    }
+
     $this->dao->commit();
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
     $this->file->updateObjectID($this->post->uid, $taskID, 'task');
@@ -873,18 +1004,100 @@ public function finish($taskID)
     if($estimate->consumed) $this->addTaskEstimate($estimate);
 
     $taskInfo = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq("$taskID")->fetch();
+
+    $taskDetail->consumed = $task->consumed;
+    $taskDetail->assignedTo = $task->assignedTo;
+    $taskDetail->finishedDate = $task->finishedDate;
+    $taskDetail->left = $task->left;
+    $taskDetail->assignedDate = $task->assignedDate;
+    $taskDetail->status = $task->status;
+    $taskDetail->finishedBy = $task->finishedBy;
+    $taskDetail->lastEditedBy = $task->lastEditedBy;
+    $taskDetail->lastEditedDate = $task->lastEditedDate;
+
+    //1.task
+    $this->dao->begin();
+    $this->dao->update(TABLE_TASK)->data($taskDetail)
+        ->autoCheck()
+        ->check('consumed', 'notempty')
+        ->where('id')->eq((int)$taskID)->exec();
+
+    if(dao::isError())
+    {
+        $this->dao->rollback();
+        return false;
+    }
+
+    $changes = common::createChanges($oldTask, $taskDetail);
+
+    if ($taskInfo->type == 'script')
+    {
+        if($task->scriptName == '') die(js::error($this->lang->task->error->scriptNameEmpty));
+        if($task->scriptType == '') die(js::error($this->lang->task->error->scriptTypeEmpty));
+        if($task->lob == '') die(js::error($this->lang->task->error->lobEmpty));
+        if($task->frequency == '') die(js::error($this->lang->task->error->frequencyEmpty));
+        if($task->configurationFile == '') die(js::error($this->lang->task->error->configurationFileEmpty));
+        if($task->output == '') die(js::error($this->lang->task->error->outputEmpty));
+        if($task->precondition == '') die(js::error($this->lang->task->error->preconditionDocEmpty));
+        if($task->performBody == '') die(js::error($this->lang->task->error->performBodyEmpty));
+        if($task->performMode == '') die(js::error($this->lang->task->error->performModeEmpty));
+        if($task->performSystem == '') die(js::error($this->lang->task->error->performSystemEmpty));
+        if($task->scriptPath == '') die(js::error($this->lang->task->error->scriptPathEmpty));
+        
+        $oldScriptDetail = $this->dao->select('*')
+            ->from(TABLE_SCRIPT)
+            ->where('task')->eq("$taskID")
+            ->andWhere('deleted')->eq('0')
+            ->fetch();
+
+        $scriptDetail = new stdClass();
+        $scriptDetail->task = $taskID;
+        $scriptDetail->scriptName = $task->scriptName;
+        $scriptDetail->scriptType = $task->scriptType;
+        $scriptDetail->lob = $task->lob;
+        $scriptDetail->frequency = $task->frequency;
+        $scriptDetail->configurationFile = $task->configurationFile;
+        $scriptDetail->output = $task->output;
+        $scriptDetail->precondition = $task->precondition;
+        $scriptDetail->performBody = $task->performBody;
+        $scriptDetail->performMode = $task->performMode;
+        $scriptDetail->performSystem = $task->performSystem;
+        $scriptDetail->scriptPath = $task->scriptPath;
+        $scriptDetail->notice = $task->notice;
+
+        if ($oldScriptDetail)
+        {
+            $this->dao->update(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->where('task')->eq($taskID)->limit(1)->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+            else
+            {
+                $scriptChange = common::createChanges($oldScriptDetail, $scriptDetail);
+                $changes = array_merge($changes, $scriptChange);
+            }
+        }
+        else
+        {
+            $this->dao->insert(TABLE_SCRIPT)->data($scriptDetail)
+                ->autoCheck()
+                ->exec();
+
+            if(dao::isError())
+            {
+                $this->dao->rollback();
+                return false;
+            }
+        }
+    }
+
     if ($taskInfo->type == 'review')
     {
-        $taskDetail->consumed = $task->consumed;
-        $taskDetail->assignedTo = $task->assignedTo;
-        $taskDetail->finishedDate = $task->finishedDate;
-        $taskDetail->left = $task->left;
-        $taskDetail->assignedDate = $task->assignedDate;
-        $taskDetail->status = $task->status;
-        $taskDetail->finishedBy = $task->finishedBy;
-        $taskDetail->lastEditedBy = $task->lastEditedBy;
-        $taskDetail->lastEditedDate = $task->lastEditedDate;
-
         $review->fileNO = $task->fileNO;
         $review->recorder = $task->recorder;
         $review->reviewName = $task->reviewName;
@@ -919,19 +1132,6 @@ public function finish($taskID)
 
         if(!is_numeric($task->effort)) die(js::error($this->lang->task->error->effortNumber));
         if(!is_numeric($task->pages)) die(js::error($this->lang->task->error->pagesNumber));
-        
-        //添加评审
-        //1.task
-        $this->dao->begin();
-        $this->dao->update(TABLE_TASK)->data($taskDetail)
-            ->autoCheck()
-            ->check('consumed', 'notempty')
-            ->where('id')->eq((int)$taskID)->exec();
-        if(dao::isError())
-        {
-            $this->dao->rollback();
-            return false;
-        }
 
         //2.insert review
         $this->dao->insert(TABLE_REVIEW)->data($review)
@@ -976,12 +1176,7 @@ public function finish($taskID)
                 return false;
             }
         }
-        //成功操作
-        $this->dao->commit();
-        //设置需求状态
-        if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
         //获得改变值
-        $taskChange = common::createChanges($oldTask, $taskDetail);
         //建一个空对象
         $emptyReview->fileNO = '';
         $emptyReview->recorder = '';
@@ -998,25 +1193,20 @@ public function finish($taskID)
         $emptyReview->effort = '';
         $emptyReview->conclusion = '';
         $reviewChange = common::createChanges($emptyReview, $review);
-        $changes = array_merge($taskChange,$reviewChange);
+        $changes = array_merge($changes,$reviewChange);
 
         foreach($reviewDetailChanges as $reviewDetailChange)
         {
             $changes = array_merge($changes,$reviewDetailChange);
         }
-        return $changes;
     }
-    else
-    {
-        //源代码，非评审
-        $this->dao->update(TABLE_TASK)->data($task)
-            ->autoCheck()
-            ->check('consumed', 'notempty')
-            ->where('id')->eq((int)$taskID)->exec();
 
-        if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
-        if(!dao::isError()) return common::createChanges($oldTask, $task);
-    }
+    //成功操作
+    $this->dao->commit();
+    //设置需求状态
+    if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+
+    return $changes;
 }
 /**
  * Get task info by Id.修改bug：任务详情页的相关用例；当用例已被删除时；但这条用例还显示。待官方修复后删除

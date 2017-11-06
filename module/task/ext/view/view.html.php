@@ -295,6 +295,101 @@
           <?php endif;?>
         </fieldset>
       <?php endif; ?>
+
+      <?php if(isset($script)):?>
+      <fieldset>
+        <legend><?php echo $lang->task->script;?></legend>
+        <table class='table table-data table-borderless'>
+          <tr>
+            <td class='w-70px'><b><?php echo $lang->task->scriptID;?></b></td>
+            <td width="40%">
+              <?php echo $script->id;?>
+            </td>
+            <td class='w-70px'><b><?php echo $lang->task->scriptName;?></b></td>
+            <td>
+              <?php echo $script->scriptName;?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->scriptType;?></b></td>
+            <td>
+              <?php echo $lang->task->scriptTypeList[$script->scriptType];?>
+            </td>
+            <td><b><?php echo $lang->task->lob;?></b></td>
+            <td>
+              <?php echo $lang->task->lobList[$script->lob];?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->frequency;?></b></td>
+            <td>
+              <?php echo $script->frequency;?>
+            </td>
+            <td><b><?php echo $lang->task->configurationFile;?></b></td>
+            <td>
+              <?php echo $script->configurationFile;?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->output;?></b></td>
+            <td>
+              <?php echo $script->output;?>
+            </td>
+            <td><b><?php echo $lang->task->precondition;?></b></td>
+            <td>
+              <?php echo $script->precondition;?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->performBody;?></b></td>
+            <td>
+              <?php echo $script->performBody;?>
+            </td>
+            <td><b><?php echo $lang->task->performMode;?></b></td>
+            <td>
+              <?php echo $lang->task->performModeList[$script->performMode];?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->performSystem;?></b></td>
+            <td>
+              <?php echo $lang->task->performSystemList[$script->performSystem];?>
+            </td>
+            <td><b><?php echo $lang->task->scriptPath;?></b></td>
+            <td>
+              <?php echo $script->scriptPath;?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->releasedDate;?></b></td>
+            <td>
+              <?php echo $script->releasedDate;?>
+            </td>
+            <td><b><?php echo $lang->task->tester;?></b></td>
+            <td>
+              <?php echo $users[$script->tester];?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->AT;?></b></td>
+            <td>
+              <?php echo $lang->task->ATList[$script->AT];?>
+            </td>
+            <td><b><?php echo $lang->task->released;?></b></td>
+            <td>
+              <?php echo $lang->task->releasedList[$script->released];?>
+            </td>
+          </tr>
+          <tr>
+            <td><b><?php echo $lang->task->notice;?></b></td>
+            <td colspan="3" class='article-content'>
+              <?php /*echo strip_tags($script->notice) == $script->notice ? nl2br($script->notice) : $script->notice;*/?>
+              <?php echo $script->notice;?>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+      <?php endif;?>
       
       <?php include '../../../common/view/action.html.php';?>
       <div class='actions'> <?php if(!$task->deleted) echo $actionLinks;?></div>

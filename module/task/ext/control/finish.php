@@ -13,6 +13,11 @@ class myTask extends task
     {
         $this->commonAction($taskID);
 
+        if ($this->view->task->status == 'wait' || $this->view->task->status == 'pause')
+        {
+           die($this->lang->task->error->undoingError);
+        }
+        
         if(!empty($_POST))
         {
             $this->loadModel('action');
@@ -67,6 +72,14 @@ class myTask extends task
         if ($this->view->task->type == 'ra')
         {
             $this->view->storyTaskComment = $this->lang->task->storyTaskComment;
+        }
+
+        if ($this->view->task->type == 'script')
+        {
+            $this->view->script = $this->dao->select('*')
+                ->from(TABLE_SCRIPT)
+                ->where('task')->eq($taskID)
+                ->fetch();
         }
         
         $this->display();

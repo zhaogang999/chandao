@@ -89,7 +89,7 @@ tfoot tr td .table-actions .btn{display:none;}
     <div class='main-side main'>
       <fieldset>
         <legend><?php echo $lang->patchbuild->basicInfo?></legend>
-        <table class='table table-data table-condensed table-borderless table-fixed'>
+        <table class='table table-data table-condensed table-borderless'>
           <tr>
             <th class='w-80px'><?php echo $lang->patchbuild->product;?></th>
             <td><?php echo $build->productName;?></td>

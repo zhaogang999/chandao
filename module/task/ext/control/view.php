@@ -34,6 +34,13 @@ class myTask extends task
                 ->andWhere('deleted')->eq('0')
                 ->fetchAll();
         }
+        if ($task->type == 'script')
+        {
+            $this->view->script = $this->dao->select('*')
+                ->from(TABLE_SCRIPT)
+                ->where('task')->eq($taskID)
+                ->fetch();
+        }
 
         if(!$task) die(js::error($this->lang->notFound) . js::locate('back'));
 

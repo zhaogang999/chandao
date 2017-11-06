@@ -125,7 +125,62 @@
           </div>
         </td>
       </tr>
-      
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->scriptName;?></th>
+        <td colspan='4'><?php echo html::input('scriptName', '', "class='form-control'");?></td>
+        <td width="400">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->task->scriptType;?></span>
+            <?php echo html::select('scriptType', $lang->task->scriptTypeList, '', 'class=form-control');?>
+            <span class='input-group-addon fix-border br-0'><?php echo $lang->task->lob;?></span>
+            <?php echo html::select('lob', $lang->task->lobList, '', 'class=form-control');?>
+          </div>
+        </td>
+      </tr>
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->frequency;?></th>
+        <td colspan='2'><?php echo html::input('frequency', '', "class='form-control'");?></td>
+        <td colspan="3">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->task->configurationFile;?></span>
+            <?php echo html::input('configurationFile', '', "class='form-control'");?>
+          </div>
+        </td>
+      </tr>
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->output;?></th>
+        <td colspan='2'><?php echo html::input('output', '', "class='form-control'");?></td>
+        <td colspan="3">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->task->precondition;?></span>
+            <?php echo html::input('precondition', '', "class='form-control'");?>
+          </div>
+        </td>
+      </tr>
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->performMode;?></th>
+        <td><?php echo html::select('performMode', $lang->task->performModeList, '', 'class=form-control');?></td>
+        <td width="200">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->task->performSystem;?></span>
+            <?php echo html::select('performSystem', $lang->task->performSystemList, '', 'class=form-control');?>
+          </div>
+        </td>
+        <td colspan="3">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->task->performBody;?></span>
+            <?php echo html::input('performBody', '', "class='form-control'");?>
+          </div>
+        </td>
+      </tr>
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->scriptPath;?></th>
+        <td colspan='5'><?php echo html::input('scriptPath', '', "class='form-control'");?></td>
+      </tr>
+      <tr class="scriptTask" style="display:none;">
+        <th><?php echo $lang->task->notice;?></th>
+        <td colspan='5'><?php echo html::textarea('notice', '', "rows='6' class='form-control'");?></td>
+      </tr>
       <tr id="qaAudit" style="display:none;">
         <th><?php echo $lang->task->noItem?></th>
         <td colspan='5'>

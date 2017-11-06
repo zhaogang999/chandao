@@ -92,4 +92,11 @@ function setOwners(result)
         $('#assignedTo').chosen(defaultChosenOptions);
         $('#selectAllUser').addClass('hidden');
     }
+
+    if(result == 'script')
+    {
+        $('.scriptTask').show();
+    }else{
+        $('.scriptTask').hide();
+    }
 }

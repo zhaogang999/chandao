@@ -45,7 +45,7 @@
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->workSeason;?></th>
-        <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, '', 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, $build->workSeason, 'class="form-control chosen"');?></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->patchType;?></th>
