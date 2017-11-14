@@ -177,7 +177,7 @@
                 </td>
                 <!--增加富文本编辑器-->
                 <td>
-                <textarea id="expects<?php echo $stepID;?>" class='form-control' name='expects[]' rows='1'></textarea>
+                <textarea id="expects<?php echo $stepID;?>" class='form-control' name='expects[]' rows='8'><?php echo $step->expect; ?></textarea>
                 </td>
                 <td class='step-actions'>
                   <div class='btn-group'>

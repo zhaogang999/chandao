@@ -12,8 +12,9 @@ $config->patchbuild->editpatchbuild->requiredFields = 'workSeason';
 //9312 补丁版本下增加各字段的搜索功能
 global $lang;
 $config->patchbuild->search['module']                   = 'patchbuild';
-$config->patchbuild->search['fields']['version']          = $lang->patchbuild->version;
 $config->patchbuild->search['fields']['id']          = $lang->patchbuild->id;
+$config->patchbuild->search['fields']['patchContent']          = $lang->patchbuild->patchContent;
+$config->patchbuild->search['fields']['version']          = $lang->patchbuild->version;
 $config->patchbuild->search['fields']['patchType']          = $lang->patchbuild->patchType;
 $config->patchbuild->search['fields']['workSeason']          = $lang->patchbuild->workSeason;
 $config->patchbuild->search['fields']['platform']          = $lang->patchbuild->platform;
@@ -28,6 +29,7 @@ $config->patchbuild->search['fields']['assignedTo']          = $lang->patchbuild
 
 $config->patchbuild->search['params']['version']         = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->patchbuild->search['params']['workSeason']      = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->workSeasonList);
+$config->patchbuild->search['params']['patchContent']         = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->patchbuild->search['params']['patchType']      = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->patchTypeList);
 $config->patchbuild->search['params']['platform']         = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->platformList);
 $config->patchbuild->search['params']['submitter']    = array('operator' => '=',       'control' => 'select', 'values' => 'users');

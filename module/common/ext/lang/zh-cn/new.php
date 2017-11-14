@@ -14,5 +14,5 @@ $lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|p
 //9312 补丁版本下增加各字段的搜索功能
 $lang->searchObjects['patchbuild']         = '补丁版本';
 
-$lang->menu->customstory    = '用户需求|customstory|index';
+//$lang->menu->customstory    = '用户需求|customstory|index';
 $lang->report->menu->scripttask   = array('link' => '脚本任务|report|scripttask', 'alias' => 'viewscript,editscript');

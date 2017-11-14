@@ -12,14 +12,24 @@
 ?>
 <?php include '../../../common/view/header.html.php';?>
 <?php js::set('confirmDelete', $lang->task->confirmDelete)?>
+<style>
+  .date{
+    width: 175px;
+  }
+  #titlebar{
+    background:none;
+    margin: -39px -0px 0px -0px;
+    display:block
+  }
+</style>
 <div id='titlebar'>
   <div class='heading'>
     <?php echo html::icon($lang->icons['build']);?> <?php echo $lang->task->task;?>
   </div>
-  <!--<div id='querybox' class='show'></div>-->
+  <div id='querybox' class='show'></div>
 </div>
 
-<table class='table tablesorter table-fixed' id='taskForm'>
+<table class='table tablesorter table-fixed' id='scriptForm'>
   <thead>
   <?php
 
@@ -34,13 +44,13 @@
       <th class='w-id'><?php common::printOrderLink('performMode', $orderBy, $vars, $lang->task->performMode);?></th>
       <th class='w-id'><?php common::printOrderLink('performSystem', $orderBy, $vars, $lang->task->performSystem);?></th>
       <th class='w-id'><?php common::printOrderLink('planTitle', $orderBy, $vars, $lang->report->planTitle);?></th>
-      <th class='w-id'><?php common::printOrderLink('releasedDate', $orderBy, $vars, $lang->task->releasedDate);?></th>
       <th class='w-id'><?php common::printOrderLink('openedBy', $orderBy, $vars, $lang->task->openedBy);?></th>
       <th class='w-id'><?php common::printOrderLink('finishedBy', $orderBy, $vars, $lang->task->finishedBy);?></th>
       <th class='w-date'><?php common::printOrderLink('finishedDate', $orderBy, $vars, $lang->task->finishedDate);?></th>
       <th class='w-id'><?php common::printOrderLink('tester', $orderBy, $vars, $lang->task->tester);?></th>
       <th class='w-id'><?php common::printOrderLink('AT', $orderBy, $vars, $lang->task->AT);?></th>
       <th class='w-id'><?php common::printOrderLink('released', $orderBy, $vars, $lang->task->released);?></th>
+      <th class='w-id'><?php common::printOrderLink('releasedDate', $orderBy, $vars, $lang->task->releasedDate);?></th>
       <th class='w-60px'><?php echo $lang->actions;?></th>
     </tr>
   </thead>
@@ -59,13 +69,13 @@
     <td><?php echo $lang->task->performModeList[$script->performMode]; ?></td>
     <td><?php echo $lang->task->performSystemList[$script->performSystem]; ?></td>
     <td><?php echo $script->planTitle;?></td>
-    <td><?php echo $script->releasedDate;?></td>
     <td><?php echo $users[$script->openedBy];?></td>
     <td><?php echo $users[$script->finishedBy];?></td>
     <td><?php echo substr($script->finishedDate, 0, 10);?></td>
     <td><?php echo $users[$script->tester];?></td>
     <td><?php echo $lang->task->ATList[$script->AT]; ?></td>
     <td><?php echo $lang->task->releasedList[$script->released]; ?></td>
+    <td><?php echo $script->releasedDate;?></td>
     <td>
       <?php
       if(common::hasPriv('report', 'editscript'))
@@ -82,7 +92,7 @@
 <script language="JavaScript">
   $(function()
   {
-    setTimeout(function(){fixedTheadOfList('#buildList')}, 100);
+    setTimeout(function(){fixedTheadOfList('#scriptForm')}, 100);
   })
 </script>
 <?php include '../../../common/view/footer.html.php';?>

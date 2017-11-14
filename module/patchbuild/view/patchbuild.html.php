@@ -21,7 +21,7 @@
     <?php common::printIcon('patchbuild', 'createPatchBuild', "project=$object->id", "", "button", "plus");?>
   </div>
   <?php endif;?>
-  <!--<div id='querybox' class='show'></div>-->
+  <div id='querybox' class='show'></div>
 </div>
 
 <table class='table tablesorter table-fixed' id='patchBuildForm'>

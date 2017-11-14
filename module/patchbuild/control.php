@@ -21,12 +21,13 @@ class patchbuild extends control
      * @param int $objectID
      * @param string $from
      * @param string $type
+     * @param int $param
      * @param string $orderBy
      * @param int $recTotal
      * @param int $recPerPage
      * @param int $pageID
      */
-    public function patchBuild($objectID, $from, $type = 'byModule', $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function patchBuild($objectID, $from, $type = 'byModule', $param = 0,$orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         $this->loadModel('project');
         $this->loadModel('product');
@@ -55,7 +56,7 @@ class patchbuild extends control
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
             $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $pager);
-            $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=$object->id&from=qa&type=bySearch");
+            $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=$object->id&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
         {
@@ -68,10 +69,11 @@ class patchbuild extends control
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
             $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $type, $pager);
-            $actionURL    = $this->createLink('patchBuild', 'patchBuild', "objectID=$object->id&from=project&type=bySearch");
+            $actionURL    = $this->createLink('patchBuild', 'patchBuild', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
         }
-        
-        $this->patchbuild->buildPatchBuildSearchForm($actionURL);
+        $this->config->patchbuild->search['onMenuBar'] = 'yes';
+        $queryID   = ($type == 'bySearch')  ? (int)$param : 0;
+        $this->patchbuild->buildPatchBuildSearchForm($actionURL, $queryID);
         /* Header and position. */
         $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
         //$this->view->position[] = $this->lang->project->patchBuild;
@@ -82,6 +84,7 @@ class patchbuild extends control
         $this->view->pager       = $pager;
         $this->view->orderBy     = $orderBy;
         $this->view->objectID     = $objectID;
+        $this->view->param         = $param;
 
         $this->display();
     }
@@ -207,9 +210,9 @@ class patchbuild extends control
         }
         elseif ($from == 'qa')
         {
-            $this->patchbuild->setMenu($this->loadModel('product')->getPairs(), $objectID);
             $this->lang->patchbuild->menu      = $this->lang->qa->menu;
             $this->lang->menugroup->patchbuild       = 'qa';
+            $this->patchbuild->setMenu($this->loadModel('product')->getPairs(), $objectID);
         }
 
         if($this->config->global->flow == 'onlyTest')
@@ -344,10 +347,12 @@ class patchbuild extends control
         }
         elseif($from == 'qa')
         {
+            $this->lang->patchbuild->menu      = $this->lang->qa->menu;
+            $this->lang->patchbuild->menuOrder = $this->lang->qa->menuOrder;
+            $this->lang->menugroup->patchbuild       = 'qa';
             $product = $this->loadModel('product')->getById($build->product);
             $this->patchbuild->setMenu($this->loadModel('product')->getPairs(), $build->product);
-            $this->lang->patchbuild->menu      = $this->lang->qa->menu;
-            $this->lang->menugroup->patchbuild       = 'qa';
+
             $this->view->position[]    = html::a($this->createLink('product', 'browse', "productID=$build->product"), $product->name);
             $this->view->position[]    = $this->lang->patchbuild->view;
             $this->view->from = 'qa';

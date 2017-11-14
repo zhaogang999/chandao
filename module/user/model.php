@@ -887,7 +887,11 @@ class userModel extends model
      */
     public function getContactLists($account, $params= '')
     {
+        $Group = '1';
+        $users = $this->dao->findByGroup($Group)->from(TABLE_USERGROUP)->fetchAll();
+        var_dump($users);die;
         $contacts = $this->dao->select('id, listName')->from(TABLE_USERCONTACT)->where('account')->eq($account)->fetchPairs();
+        //$contacts = $this->dao->select('id, listName')->from(TABLE_USERCONTACT)->where('account')->in("$account,admin")->fetchPairs();
         if(!$contacts) return array();
 
         if(strpos($params, 'withempty') !== false) $contacts = array('' => '') + $contacts;

@@ -65,7 +65,7 @@
       </div>
     </div>
   </div>
-  <div class='col-side'>
+  <div class='col-side' style='word-break:break-all;'>
     <div class='main-side main'>
       <fieldset>
         <legend><?php echo $lang->task->legendBasic;?></legend>

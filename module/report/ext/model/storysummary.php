@@ -29,7 +29,14 @@ public function storySummary()
     {
         $info[$project] = new stdClass();
 
-        $stories = $this->story->getProjectStories($project,'id_desc', 'bySearch');
+        //$stories = $this->story->getProjectStories($project,'id_desc', 'bySearch');
+        $stories = $this->dao->select('t1.*, t2.*, t2.version as version')->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
+            ->where('t2.deleted')->eq('0')
+            ->andWhere('t2.status')->ne('closed')
+            ->andWhere('t1.project')->eq((int)$project)
+            ->orderBy('id_desc')
+            ->fetchAll('id');
 
         $projectAB = $this->project->getById($project);
 

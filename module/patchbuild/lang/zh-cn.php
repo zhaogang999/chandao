@@ -35,6 +35,7 @@ $lang->patchbuild->mailto        = '抄送给';
 $lang->patchbuild->assignedTo    = '指派给';
 $lang->patchbuild->workSeason    = '目标环境';
 
+$lang->patchbuild->workSeasonList['']   = '';
 $lang->patchbuild->workSeasonList['1']   = '17冬';
 $lang->patchbuild->workSeasonList['2']   = '18春';
 $lang->patchbuild->workSeasonList['3']   = '17冬+18春';
@@ -92,3 +93,5 @@ $lang->patchbuild->mail->close  = new stdclass();
 $lang->patchbuild->mail->create->title = "%s创建了补丁版本 #%s:%s";
 $lang->patchbuild->mail->edit->title   = "%s编辑了补丁版本 #%s:%s";
 $lang->patchbuild->mail->close->title  = "%s关闭了补丁版本 #%s:%s";
+
+//$lang->patchbuild->featureBar['patchbuild']['all']          = $lang->project->allTasks;

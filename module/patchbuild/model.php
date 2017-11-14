@@ -11,11 +11,13 @@ class patchbuildModel extends model
      * Build a search form
      * 
      * @param $actionURL  string
+     * @param int $queryID
      * @access public
      * @return void
      */
-    public function buildPatchBuildSearchForm($actionURL)
+    public function buildPatchBuildSearchForm($actionURL, $queryID)
     {
+        $this->config->patchbuild->search['queryID']   = $queryID;
         $this->config->patchbuild->search['actionURL'] = $actionURL;
         $this->loadModel('search')->setSearchParams($this->config->patchbuild->search);
     }
@@ -218,14 +220,14 @@ class patchbuildModel extends model
      * @access public
      * @return void
      */
-    public function setMenu($products, $productID, $branch = 0)
+    public function setMenu($products, $productID)
     {
-        $this->loadModel('product')->setMenu($products, $productID, $branch);
-        $selectHtml = $this->product->select($products, $productID, 'qa', 'index', '', $branch);
-        foreach($this->lang->qa->menu as $key => $menu)
+        $this->loadModel('product')->setMenu($products, $productID);
+        $selectHtml = $this->product->select($products, $productID, 'patchbuild', 'patchbuild', 'qa');
+        foreach($this->lang->patchbuild->menu as $key => $menu)
         {
             $replace = ($key == 'product') ? $selectHtml : $productID;
-            common::setMenuVars($this->lang->qa->menu, $key, $replace);
+            common::setMenuVars($this->lang->patchbuild->menu, $key, $replace);
         }
     }
 

@@ -228,6 +228,19 @@ public function dailyBugStatistics($data)
     return $result;
 }
 /**
+ * Build a search form
+ *
+ * @param $actionURL  string
+ * @access public
+ * @return void
+ */
+public function buildReportSearchForm($actionURL)
+{
+    $this->config->report->search['actionURL'] = $actionURL;
+    $this->loadModel('search')->setSearchParams($this->config->report->search);
+}
+
+/**
  * Get patchBuilds of a project.
  *
  * @param  string    $orderBy
@@ -240,16 +253,19 @@ public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $pager 
 {
     if ($type == 'bySearch')
     {
-        $patchBuildQuery = $this->session->patchbuildQuery;
-        $patchBuildQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $patchBuildQuery);
+        $reportQuery = $this->session->reportQuery;
+        $reportQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $reportQuery);
+        $reportQuery = str_replace(array('t1.`storyTitle`','t1.`openedBy`'), array('t3.`title`','t3.`openedBy`'),$reportQuery);
+        $reportQuery = str_replace(array('t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
+        $reportQuery = str_replace(array('t1.`planTitle`'), array('t4.`title`'), $reportQuery);
 
-        return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
-            ->from(TABLE_PATCHBUILD)->alias('t1')
-            ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
-            ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
-            ->where('t1.project')->eq((int)$projectID)
-            ->andWhere('t1.deleted')->eq(0)
-            ->andWhere($patchBuildQuery)
+        return $this->dao->select('t1.*, t2.`id` as task, t2.`name` as taskTitle, t2.finishedBy, t2.finishedDate, t2.story, t3.title as storyTitle, t3.plan, t3.openedBy, t4.title as planTitle')
+            ->from(TABLE_SCRIPT)->alias('t1')
+            ->leftJoin(TABLE_TASK)->alias('t2')->on('t1.task = t2.id')
+            ->leftJoin(TABLE_STORY)->alias('t3')->on('t2.story = t3.id')
+            ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
+            ->where('t1.deleted')->eq(0)
+            ->andWhere($reportQuery)
             ->orderBy($orderBy)
             ->page($pager)
             ->fetchAll();
@@ -431,7 +447,14 @@ public function storySummary()
     {
         $info[$project] = new stdClass();
 
-        $stories = $this->story->getProjectStories($project,'id_desc', 'bySearch');
+        //$stories = $this->story->getProjectStories($project,'id_desc', 'bySearch');
+        $stories = $this->dao->select('t1.*, t2.*, t2.version as version')->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
+            ->where('t2.deleted')->eq('0')
+            ->andWhere('t2.status')->ne('closed')
+            ->andWhere('t1.project')->eq((int)$project)
+            ->orderBy('id_desc')
+            ->fetchAll('id');
 
         $projectAB = $this->project->getById($project);
 

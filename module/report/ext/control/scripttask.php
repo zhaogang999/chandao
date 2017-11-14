@@ -26,9 +26,9 @@ class myReport extends report
         
         $this->view->position[] = $this->lang->task->script;
         $this->view->scriptTasks = $this->report->getScriptTask($sort, $type, $pager);
-        //$actionURL    = $this->createLink('report', 'patchbuild', "productID=$object->id&from=qa&type=bySearch");
+        $actionURL    = $this->createLink('report', 'scriptTask', "type=bySearch");
 
-        //$this->patchbuild->buildPatchBuildSearchForm($actionURL);
+        $this->report->buildReportSearchForm($actionURL);
         /* Header and position. */
         $this->view->title      = $this->lang->task->script;
         $this->view->users      = $this->loadModel('user')->getPairs('noletter');
