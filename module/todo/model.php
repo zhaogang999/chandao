@@ -35,10 +35,10 @@ class todoModel extends model
             ->stripTags($this->config->todo->editor->create['id'], $this->config->allowedTags)
             ->remove('bug, task,uid')
             ->get();
-        $todo = $this->loadModel('file')->processEditor($todo, $this->config->todo->editor->create['id'], $this->post->uid);
+        $todo = $this->loadModel('file')->processImgURL($todo, $this->config->todo->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_TODO)->data($todo)
             ->autoCheck()
-            ->checkIF($todo->type == 'custom', $this->config->todo->create->requiredFields, 'notempty')
+            ->checkIF($todo->type != 'bug' and$todo->type != 'task', $this->config->todo->create->requiredFields, 'notempty')
             ->checkIF($todo->type == 'bug'  and $todo->idvalue == 0, 'idvalue', 'notempty')
             ->checkIF($todo->type == 'task' and $todo->idvalue == 0, 'idvalue', 'notempty')
             ->exec();
@@ -46,6 +46,7 @@ class todoModel extends model
         {
             $todoID = $this->dao->lastInsertID();
             $this->file->updateObjectID($this->post->uid, $todoID, 'todo');
+            $this->loadModel('score')->create('todo', 'create', $todoID);
             return $todoID;
         }
     }
@@ -91,7 +92,9 @@ class todoModel extends model
                     echo js::error(dao::getError());
                     die(js::reload('parent'));
                 }
-                $this->loadModel('action')->create('todo', $this->dao->lastInsertID(), 'opened');
+                $todoID = $this->dao->lastInsertID();
+                $this->loadModel('score')->create('todo', 'create', $todoID);
+                $this->loadModel('action')->create('todo', $todoID, 'opened');
             }
             else
             {
@@ -114,7 +117,7 @@ class todoModel extends model
      */
     public function update($todoID)
     {
-        $oldTodo = $this->getById($todoID);
+        $oldTodo = $this->dao->findById((int)$todoID)->from(TABLE_TODO)->fetch();
         if($oldTodo->type == 'bug' or $oldTodo->type == 'task') $oldTodo->name = '';
         $todo = fixer::input('post')
             ->cleanInt('date, pri, begin, end, private')
@@ -126,7 +129,7 @@ class todoModel extends model
             ->stripTags($this->config->todo->editor->edit['id'], $this->config->allowedTags)
             ->remove('uid')
             ->get();
-        $todo = $this->loadModel('file')->processEditor($todo, $this->config->todo->editor->edit['id'], $this->post->uid);
+        $todo = $this->loadModel('file')->processImgURL($todo, $this->config->todo->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_TODO)->data($todo)
             ->autoCheck()
             ->checkIF($todo->type == 'custom', $this->config->todo->edit->requiredFields, 'notempty')
@@ -171,9 +174,10 @@ class todoModel extends model
                 $todos[$todoID] = $todo;
             }
 
+            $oldTodos = $this->dao->select('*')->from(TABLE_TODO)->where('id')->in(array_keys($todos))->fetchAll('id');
             foreach($todos as $todoID => $todo)
             {
-                $oldTodo = $this->getById($todoID);
+                $oldTodo = $oldTodos[$todoID];
                 if($oldTodo->type == 'bug' or $oldTodo->type == 'task') $oldTodo->name = '';
                 $this->dao->update(TABLE_TODO)->data($todo)
                     ->autoCheck()
@@ -226,7 +230,8 @@ class todoModel extends model
     {
         $todo = $this->dao->findById((int)$todoID)->from(TABLE_TODO)->fetch();
         if(!$todo) return false;
-        if($setImgSize) $todo->desc = $this->loadModel('file')->setImgSize($todo->desc);
+        $todo = $this->loadModel('file')->replaceImgURL($todo, 'desc');
+        if($setImgSize) $todo->desc = $this->file->setImgSize($todo->desc);
         if($todo->type == 'task') $todo->name = $this->dao->findById($todo->idvalue)->from(TABLE_TASK)->fetch('name');
         if($todo->type == 'bug')  $todo->name = $this->dao->findById($todo->idvalue)->from(TABLE_BUG)->fetch('title');
         $todo->date = str_replace('-', '', $todo->date);

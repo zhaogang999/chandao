@@ -62,6 +62,20 @@ $lang->install->pdoMySQL     = 'PDO_MySQL擴展';
 $lang->install->pdoMySQLFail = '修改PHP配置檔案，加載pdo_mysql擴展。';
 $lang->install->json         = 'JSON擴展';
 $lang->install->jsonFail     = '修改PHP配置檔案，加載JSON擴展。';
+$lang->install->openssl      = 'OPENSSL擴展';
+$lang->install->opensslFail  = '修改PHP配置檔案，加載OPENSSL擴展。';
+$lang->install->mbstring     = 'MBSTRING擴展';
+$lang->install->mbstringFail = '修改PHP配置檔案，加載MBSTRING擴展。';
+$lang->install->zlib         = 'ZLIB擴展';
+$lang->install->zlibFail     = '修改PHP配置檔案，加載ZLIB擴展。';
+$lang->install->curl         = 'CURL擴展';
+$lang->install->curlFail     = '修改PHP配置檔案，加載CURL擴展。';
+$lang->install->filter       = 'FILTER擴展';
+$lang->install->filterFail   = '修改PHP配置檔案，加載FILTER擴展。';
+$lang->install->gd           = 'GD擴展';
+$lang->install->gdFail       = '修改PHP配置檔案，加載GD擴展。';
+$lang->install->iconv        = 'ICONV擴展';
+$lang->install->iconvFail    = '修改PHP配置檔案，加載ICONV擴展。';
 $lang->install->tmpRoot      = '臨時檔案目錄';
 $lang->install->dataRoot     = '上傳檔案目錄';
 $lang->install->session      = 'Session存儲目錄';
@@ -179,5 +193,15 @@ $lang->install->zdoo->desc = <<<EOD
   <li>以容器為交付單位</li>
   <li>租戶隔離，可深度定製</li>
   <li>提供一體化管理平台</li>
+</ul>
+EOD;
+$lang->install->xuanxuan = new stdclass();
+$lang->install->xuanxuan->name = '喧喧即時聊天軟件';
+$lang->install->xuanxuan->desc = <<<EOD
+<ul>
+  <li>輕：輕量級架構，容易部署</li>
+  <li>跨：真正完整跨平台解決方案</li>
+  <li>美：基于Html5開發，界面美觀</li>
+  <li>開：開放架構，方便二開整合</li>
 </ul>
 EOD;

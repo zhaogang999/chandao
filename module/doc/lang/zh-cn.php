@@ -36,6 +36,13 @@ $lang->doc->whiteList      = '白名单';
 $lang->doc->contentType    = '文档格式';
 $lang->doc->separator      = "<i class='icon-angle-right'></i>";
 $lang->doc->fileTitle      = '附件名';
+$lang->doc->filePath       = '地址';
+$lang->doc->extension      = '类型';
+$lang->doc->size           = '大小';
+$lang->doc->download       = '下载';
+$lang->doc->acl            = '权限';
+$lang->doc->groups         = '分组';
+$lang->doc->users          = '用户';
 
 $lang->doc->moduleDoc      = '按模块浏览';
 $lang->doc->searchDoc      = '搜索';
@@ -103,6 +110,7 @@ $lang->doc->browseType             = '浏览方式';
 $lang->doc->browseTypeList['list'] = '列表';
 $lang->doc->browseTypeList['menu'] = '目录';
 $lang->doc->browseTypeList['tree'] = '树状图';
+$lang->doc->browseTypeList['card'] = '卡片';
 
 $lang->doc->confirmDelete      = "您确定删除该文档吗？";
 $lang->doc->confirmDeleteLib   = "您确定删除该文档库吗？";

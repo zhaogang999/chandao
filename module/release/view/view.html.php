@@ -29,7 +29,7 @@
         ob_start();
 
         echo "<div class='btn-group'>";
-        if(common::hasPriv('release', 'changeStatus'))
+        if(common::hasPriv('release', 'changeStatus', $release))
         {
             $changedStatus = $release->status == 'normal' ? 'terminate' : 'normal';
             echo html::a(inlink('changeStatus', "releaseID=$release->id&type=$changedStatus"), '<i class="icon-' . ($release->status == 'normal' ? 'pause' : 'play') . '"></i> ' . $lang->release->changeStatusList[$changedStatus], 'hiddenwin', "class='btn'");
@@ -39,8 +39,8 @@
         echo '</div>';
 
         echo "<div class='btn-group'>";
-        common::printIcon('release', 'edit',   "releaseID=$release->id");
-        common::printIcon('release', 'delete', "releaseID=$release->id", '', 'button', '', 'hiddenwin');
+        common::printIcon('release', 'edit',   "releaseID=$release->id", $release);
+        common::printIcon('release', 'delete', "releaseID=$release->id", $release, 'button', '', 'hiddenwin');
         echo '</div>';
 
         echo "<div class='btn-group'>";
@@ -69,6 +69,7 @@
           <li <?php if($type == 'bug')     echo "class='active'"?>><a href='#bugs' data-toggle='tab'><?php echo html::icon($lang->icons['bug'], 'green') . ' ' . $lang->release->bugs;?></a></li>
           <li <?php if($type == 'leftBug') echo "class='active'"?>><a href='#leftBugs' data-toggle='tab'><?php echo html::icon($lang->icons['bug'], 'red') . ' ' . $lang->release->generatedBugs;?></a></li>
           <?php endif;?>
+          <li <?php if($type == 'releaseInfo') echo "class='active'"?>><a href='#releaseInfo' data-toggle='tab'><?php echo html::icon($lang->icons['plan'], 'blue') . ' ' . $lang->release->view;?></a></li>
           <?php if($countStories or ($this->config->global->flow != 'onlyStory' and ($countBugs or $countLeftBugs))):?>
           <li class='pull-right'><div><?php common::printIcon('release', 'export', '', '', 'button', '', '', "export btn-sm");?></div></li>
           <?php endif;?>
@@ -240,10 +241,8 @@
                 <tr>
                   <td colspan='7'>
                     <div class='table-actions clearfix'>
-                      <div class='text'>
-                        <?php if($countLeftBugs and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->release->batchUnlink);?>
-                        <?php echo sprintf($lang->release->createdBugs, $countLeftBugs);?>
-                      </div>
+                      <?php if($countLeftBugs and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->release->batchUnlink);?>
+                      <div class='text'><?php echo sprintf($lang->release->createdBugs, $countLeftBugs);?></div>
                     </div>
                   </td>
                 </tr>
@@ -251,69 +250,71 @@
             </table>
             </form>
           </div>
+
+          <div class='tab-pane <?php if($type == 'releaseInfo') echo 'active'?>' id='releaseInfo'>
+            <div>
+              <fieldset>
+                <legend><?php echo $lang->release->desc;?></legend>
+                <div class='article-content'><?php echo $release->desc;?></div>
+              </fieldset>
+              <fieldset>
+                <legend><?php echo $lang->release->basicInfo?></legend>
+                <table class='table table-data table-condensed table-borderless table-fixed'>
+                  <tr>
+                    <th class='w-80px'><?php echo $lang->release->product;?></th>
+                    <td><?php echo $release->productName;?></td>
+                  </tr>  
+                  <?php if($release->productType != 'normal'):?>
+                  <tr>
+                    <th><?php echo $lang->product->branch;?></th>
+                    <td><?php echo $branchName;?></td>
+                  </tr>
+                  <?php endif;?>
+                  <tr>
+                    <th><?php echo $lang->release->name;?></th>
+                    <td><?php echo $release->name;?></td>
+                  </tr>  
+                  <tr>
+                    <th><?php echo $lang->release->build;?></th>
+                    <td title='<?php echo $release->buildName?>'>
+                    <?php echo ($release->project) ? html::a($this->createLink('build', 'view', "buildID=$release->buildID"), $release->buildName, '_blank') : $release->buildName;?>
+                    </td>
+                  </tr>  
+                  <tr>
+                    <th><?php echo $lang->release->status;?></th>
+                    <td><?php echo $lang->release->statusList[$release->status];?></td>
+                  </tr>
+                  <tr>
+                    <th><?php echo $lang->release->date;?></th>
+                    <td><?php echo $release->date;?></td>
+                  </tr>
+                </table>
+              </fieldset>
+              <fieldset>
+                <legend><?php echo $lang->files?></legend>
+                <div class='article-content'>
+                <?php
+                if($release->files)
+                {
+                    echo $this->fetch('file', 'printFiles', array('files' => $release->files, 'fieldset' => 'false'));
+                }
+                elseif($release->filePath)
+                {
+                    echo $lang->release->filePath . html::a($release->filePath, $release->filePath, '_blank');
+                }
+                elseif($release->scmPath)
+                {
+                    echo $lang->release->scmPath . html::a($release->scmPath, $release->scmPath, '_blank');
+                }
+                ?>
+                </div>
+              </fieldset>
+              <?php include '../../common/view/action.html.php';?>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </div>
-  <div class='col-side'>
-    <div class='main-side main'>
-      <fieldset>
-        <legend><?php echo $lang->release->desc;?></legend>
-        <div class='article-content'><?php echo $release->desc;?></div>
-      </fieldset>
-      <fieldset>
-        <legend><?php echo $lang->release->basicInfo?></legend>
-        <table class='table table-data table-condensed table-borderless table-fixed'>
-          <tr>
-            <th class='w-80px'><?php echo $lang->release->product;?></th>
-            <td><?php echo $release->productName;?></td>
-          </tr>  
-          <?php if($release->productType != 'normal'):?>
-          <tr>
-            <th><?php echo $lang->product->branch;?></th>
-            <td><?php echo $branchName;?></td>
-          </tr>
-          <?php endif;?>
-          <tr>
-            <th><?php echo $lang->release->name;?></th>
-            <td><?php echo $release->name;?></td>
-          </tr>  
-          <tr>
-            <th><?php echo $lang->release->build;?></th>
-            <td title='<?php echo $release->buildName?>'>
-            <?php echo ($release->project) ? html::a($this->createLink('build', 'view', "buildID=$release->buildID"), $release->buildName, '_blank') : $release->buildName;?>
-            </td>
-          </tr>  
-          <tr>
-            <th><?php echo $lang->release->status;?></th>
-            <td><?php echo $lang->release->statusList[$release->status];?></td>
-          </tr>
-          <tr>
-            <th><?php echo $lang->release->date;?></th>
-            <td><?php echo $release->date;?></td>
-          </tr>
-        </table>
-      </fieldset>
-      <fieldset>
-        <legend><?php echo $lang->files?></legend>
-        <div class='article-content'>
-        <?php
-        if($release->files)
-        {
-            echo $this->fetch('file', 'printFiles', array('files' => $release->files, 'fieldset' => 'false'));
-        }
-        elseif($release->filePath)
-        {
-            echo $lang->release->filePath . html::a($release->filePath, $release->filePath, '_blank');
-        }
-        elseif($release->scmPath)
-        {
-            echo $lang->release->scmPath . html::a($release->scmPath, $release->scmPath, '_blank');
-        }
-        ?>
-        </div>
-      </fieldset>
-      <?php include '../../common/view/action.html.php';?>
     </div>
   </div>
 </div>

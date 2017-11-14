@@ -124,7 +124,7 @@ $lang->searchObjects['release']     = 'Release';
 $lang->searchObjects['productplan'] = $lang->productCommon . 'Plan';
 $lang->searchObjects['testtask']    = 'Test Task';
 $lang->searchObjects['doc']         = 'Document';
-$lang->searchObjects['caselib']     = 'Case Library';
+$lang->searchObjects['testsuite']   = 'Case Library';
 $lang->searchObjects['testreport']  = 'Test Report';
 $lang->searchTips                   = 'ID (ctrl+g)';
 
@@ -175,28 +175,32 @@ $lang->my->menu->dynamic        = 'Dynamic|my|dynamic|';
 $lang->my->menu->profile        = array('link' => 'Profile|my|profile', 'alias' => 'editprofile');
 $lang->my->menu->changePassword = 'Password|my|changepassword';
 $lang->my->menu->manageContacts = 'Contact|my|managecontacts';
+$lang->my->menu->score          = 'Score|my|score';
 
 $lang->todo = new stdclass();
 $lang->todo->menu = $lang->my->menu;
+
+$lang->score       = new stdclass();
+$lang->score->menu = $lang->my->menu;
 
 /* 产品视图设置。*/
 $lang->product = new stdclass();
 $lang->product->menu = new stdclass();
 
-$lang->product->menu->list    = array('link' => '%s', 'fixed' => true);
-$lang->product->menu->story   = array('link' => 'Story|product|browse|productID=%s', 'alias' => 'batchedit', 'subModule' => 'story');
-$lang->product->menu->dynamic = 'Dynamic|product|dynamic|productID=%s';
-$lang->product->menu->plan    = array('link' => 'Plan|productplan|browse|productID=%s', 'subModule' => 'productplan');
-$lang->product->menu->release = array('link' => 'Release|release|browse|productID=%s',     'subModule' => 'release');
-$lang->product->menu->roadmap = 'Roadmap|product|roadmap|productID=%s';
-$lang->product->menu->doc     = array('link' => 'Document|doc|objectLibs|type=product&objectID=%s&from=product', 'subModule' => 'doc');
-$lang->product->menu->branch  = '@branch@|branch|manage|productID=%s';
-$lang->product->menu->module  = 'Module|tree|browse|productID=%s&view=story';
-$lang->product->menu->view    = array('link' => 'Overview|product|view|productID=%s', 'alias' => 'edit');
-$lang->product->menu->project = "{$lang->projectCommon}|product|project|status=all&productID=%s";
-$lang->product->menu->create  = array('link' => "<i class='icon-plus'></i>&nbsp;Add{$lang->productCommon}|product|create", 'float' => 'right');
-$lang->product->menu->all     = array('link' => "<i class='icon-cubes'></i>&nbsp;All{$lang->productCommon}|product|all|productID=%s", 'float' => 'right');
-$lang->product->menu->index   = array('link' => "<i class='icon-home'></i>{$lang->productCommon}Homepage|product|index|locate=no", 'float' => 'right');
+$lang->product->menu->list     = array('link' => '%s', 'fixed' => true);
+$lang->product->menu->story    = array('link' => 'Story|product|browse|productID=%s', 'alias' => 'batchedit', 'subModule' => 'story');
+$lang->product->menu->dynamic  = 'Dynamic|product|dynamic|productID=%s';
+$lang->product->menu->plan     = array('link' => 'Plan|productplan|browse|productID=%s', 'subModule' => 'productplan');
+$lang->product->menu->release  = array('link' => 'Release|release|browse|productID=%s',     'subModule' => 'release');
+$lang->product->menu->roadmap  = 'Roadmap|product|roadmap|productID=%s';
+$lang->product->menu->doc      = array('link' => 'Document|doc|objectLibs|type=product&objectID=%s&from=product', 'subModule' => 'doc');
+$lang->product->menu->branch   = '@branch@|branch|manage|productID=%s';
+$lang->product->menu->module   = 'Module|tree|browse|productID=%s&view=story';
+$lang->product->menu->view     = array('link' => 'Overview|product|view|productID=%s', 'alias' => 'edit');
+$lang->product->menu->project  = "{$lang->projectCommon}|product|project|status=all&productID=%s";
+$lang->product->menu->create   = array('link' => "<i class='icon-plus'></i>&nbsp;Add{$lang->productCommon}|product|create", 'float' => 'right');
+$lang->product->menu->all      = array('link' => "<i class='icon-cubes'></i>&nbsp;All{$lang->productCommon}|product|all|productID=%s", 'float' => 'right');
+$lang->product->menu->index    = array('link' => "<i class='icon-home'></i>{$lang->productCommon}Homepage|product|index|locate=no", 'float' => 'right');
 
 $lang->story       = new stdclass();
 $lang->productplan = new stdclass();
@@ -214,7 +218,7 @@ $lang->project->menu = new stdclass();
 
 $lang->project->menu->list      = array('link' => '%s', 'fixed' => true);
 $lang->project->menu->task      = array('link' => 'Task|project|task|projectID=%s', 'subModule' => 'task,tree', 'alias' => 'grouptask,importtask,burn,importbug,kanban,printkanban,tree');
-$lang->project->menu->story     = array('link' => 'Story|project|story|projectID=%s', 'subModule' => 'story', 'alias' => 'linkstory');
+$lang->project->menu->story     = array('link' => 'Story|project|story|projectID=%s', 'subModule' => 'story', 'alias' => 'linkstory,storykanban');
 $lang->project->menu->bug       = 'Bug|project|bug|projectID=%s';
 $lang->project->menu->dynamic   = 'Dynamic|project|dynamic|projectID=%s';
 $lang->project->menu->build     = array('link' => 'Build|project|build|projectID=%s', 'subModule' => 'build');
@@ -249,7 +253,7 @@ $lang->bug = new stdclass();
 $lang->bug->menu = new stdclass();
 
 $lang->bug->menu->product   = array('link' => '%s', 'fixed' => true);
-$lang->bug->menu->bug       = array('link' => 'Bug|bug|browse|productID=%s', 'alias' => 'view,create,batchcreate,edit,resolve,close,activate,report,batchedit,confirmbug,assignto', 'subModule' => 'tree');
+$lang->bug->menu->bug       = array('link' => 'Bug|bug|browse|productID=%s', 'alias' => 'view,create,batchcreate,edit,resolve,close,activate,report,batchedit,batchactivate,confirmbug,assignto', 'subModule' => 'tree');
 $lang->bug->menu->testcase  = array('link' => 'Case|testcase|browse|productID=%s');
 $lang->bug->menu->testtask  = array('link' => 'Build|testtask|browse|productID=%s');
 $lang->bug->menu->testsuite = array('link' => 'Suite|testsuite|browse|productID=%s');
@@ -341,6 +345,7 @@ $lang->admin->menu->safe      = array('link' => 'Security|admin|safe', 'alias' =
 $lang->admin->menu->cron      = array('link' => 'Cron|cron|index', 'subModule' => 'cron');
 $lang->admin->menu->trashes   = array('link' => 'Recycle|action|trash', 'subModule' => 'action');
 $lang->admin->menu->dev       = array('link' => 'Develop|dev|api', 'alias' => 'db', 'subModule' => 'dev,editor');
+$lang->admin->menu->api       = array('link' => 'API|webhook|browse', 'alias' => 'create,edit', 'subModule' => 'entry,webhook');
 $lang->admin->menu->sso       = 'RangerTeam|admin|sso';
 
 $lang->convert   = new stdclass();
@@ -353,6 +358,8 @@ $lang->editor    = new stdclass();
 $lang->mail      = new stdclass();
 $lang->cron      = new stdclass();
 $lang->dev       = new stdclass();
+$lang->entry     = new stdclass();
+$lang->webhook   = new stdclass();
 $lang->search    = new stdclass();
 
 $lang->convert->menu   = $lang->admin->menu;
@@ -365,6 +372,8 @@ $lang->custom->menu    = $lang->admin->menu;
 $lang->editor->menu    = $lang->admin->menu;
 $lang->mail->menu      = $lang->admin->menu;
 $lang->dev->menu       = $lang->admin->menu;
+$lang->entry->menu     = $lang->admin->menu;
+$lang->webhook->menu   = $lang->admin->menu;
 
 /* 菜单分组。*/
 $lang->menugroup = new stdclass();
@@ -387,6 +396,7 @@ $lang->menugroup->testreport  = 'qa';
 $lang->menugroup->people      = 'company';
 $lang->menugroup->dept        = 'company';
 $lang->menugroup->todo        = 'my';
+$lang->menugroup->score       = 'my';
 $lang->menugroup->action      = 'admin';
 $lang->menugroup->backup      = 'admin';
 $lang->menugroup->cron        = 'admin';
@@ -395,6 +405,8 @@ $lang->menugroup->custom      = 'admin';
 $lang->menugroup->editor      = 'admin';
 $lang->menugroup->mail        = 'admin';
 $lang->menugroup->dev         = 'admin';
+$lang->menugroup->entry       = 'admin';
+$lang->menugroup->webhook     = 'admin';
 
 /* 错误提示信息。*/
 $lang->error = new stdclass();
@@ -411,6 +423,7 @@ $lang->error->int             = array("『%s』has to be numbers", "『%s』shou
 $lang->error->float           = "『%s』should be numbers, decimals included.";
 $lang->error->email           = "『%s』should be valid EMAIL.";
 $lang->error->date            = "『%s』should be valid date.";
+$lang->error->code            = "『%s』should be english or numbers.";
 $lang->error->account         = "『%s』should be valid account.";
 $lang->error->passwordsame    = "Two passwords should be consistent.";
 $lang->error->passwordrule    = "Password should meet requirements. It should be 6 characters at least.";
@@ -419,6 +432,25 @@ $lang->error->pasteImg        = 'Paste Image is not allowed in your browser!';
 $lang->error->noData          = 'No Data';
 $lang->error->editedByOther   = 'This record might have been changed. Please refresh and try to edit again!';
 $lang->error->tutorialData    = 'No data can be imported in tutorial mode. Please exit tutorial first!';
+
+if(!defined('PARAM_CODE_MISSING'))    define('PARAM_CODE_MISSING',    301);
+if(!defined('PARAM_TOKEN_MISSING'))   define('PARAM_TOKEN_MISSING',   302);
+if(!defined('INVALID_ENTRY'))         define('INVALID_ENTRY',         311);
+if(!defined('EMPTY_KEY'))             define('EMPTY_KEY',             312);
+if(!defined('IP_DENIED'))             define('IP_DENIED',             321);
+if(!defined('INVALID_TOKEN'))         define('INVALID_TOKEN',         331);
+if(!defined('SESSION_CODE_MISSING'))  define('SESSION_CODE_MISSING',  341);
+if(!defined('SESSION_VERIFY_FAILED')) define('SESSION_VERIFY_FAILED', 342);
+
+$lang->error->entry = array();
+$lang->error->entry['PARAM_CODE_MISSING']    = 'Param code not set.';
+$lang->error->entry['PARAM_TOKEN_MISSING']   = 'Param token not set.';
+$lang->error->entry['INVALID_ENTRY']         = 'Entry not exist.';
+$lang->error->entry['EMPTY_KEY']             = 'Key of entry not set.';
+$lang->error->entry['IP_DENIED']             = 'IP denied.';
+$lang->error->entry['INVALID_TOKEN']         = 'Invalid token.';
+$lang->error->entry['SESSION_CODE_MISSING']  = 'Session code not set.';
+$lang->error->entry['SESSION_VERIFY_FAILED'] = 'Session verify failed.';
 
 /* 分页信息。*/
 $lang->pager = new stdclass();
@@ -449,16 +481,16 @@ $lang->browserNotice      = 'Your current browser might not show the best effect
 $lang->noticePasteImg     = "Paste image to editor.";
 
 /* 时间格式设置。*/
-define('DT_DATETIME1',  'Y-m-d H:i:s');
-define('DT_DATETIME2',  'y-m-d H:i');
-define('DT_MONTHTIME1', 'n/d H:i');
-define('DT_MONTHTIME2', 'n月d日 H:i');
-define('DT_DATE1',     'Y-m-d');
-define('DT_DATE2',     'Ymd');
-define('DT_DATE3',     'Y年m月d日');
-define('DT_DATE4',     'n月j日');
-define('DT_TIME1',     'H:i:s');
-define('DT_TIME2',     'H:i');
+if(!defined('DT_DATETIME1')) define('DT_DATETIME1',  'Y-m-d H:i:s');
+if(!defined('DT_DATETIME2')) define('DT_DATETIME2',  'y-m-d H:i');
+if(!defined('DT_MONTHTIME1'))define('DT_MONTHTIME1', 'n/d H:i');
+if(!defined('DT_MONTHTIME2'))define('DT_MONTHTIME2', 'n月d日 H:i');
+if(!defined('DT_DATE1'))     define('DT_DATE1',     'Y-m-d');
+if(!defined('DT_DATE2'))     define('DT_DATE2',     'Ymd');
+if(!defined('DT_DATE3'))     define('DT_DATE3',     'Y年m月d日');
+if(!defined('DT_DATE4'))     define('DT_DATE4',     'n月j日');
+if(!defined('DT_TIME1'))     define('DT_TIME1',     'H:i:s');
+if(!defined('DT_TIME2'))     define('DT_TIME2',     'H:i');
 
 /* datepicker 时间*/
 $lang->datepicker = new stdclass();
@@ -478,7 +510,7 @@ $lang->datepicker->dpText->TEXT_CLOSE       = 'Close';
 $lang->datepicker->dpText->TEXT_DATE        = 'Choose Time';
 $lang->datepicker->dpText->TEXT_CHOOSE_DATE = 'Choose Date';
 
-$lang->datepicker->dayNames     = array('Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat');
+$lang->datepicker->dayNames     = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 $lang->datepicker->abbrDayNames = array('Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat');
 $lang->datepicker->monthNames   = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 
@@ -513,44 +545,45 @@ $lang->icons['trash']     = 'trash';
 $lang->icons['extension'] = 'th-large';
 $lang->icons['app']       = 'th-large';
 
-$lang->icons['results']        = 'list-alt';
-$lang->icons['create']         = 'plus';
-$lang->icons['post']           = 'edit';
-$lang->icons['batchCreate']    = 'plus-sign';
-$lang->icons['batchEdit']      = 'edit-sign';
-$lang->icons['batchClose']     = 'off';
-$lang->icons['edit']           = 'pencil';
-$lang->icons['delete']         = 'remove';
-$lang->icons['copy']           = 'copy';
-$lang->icons['report']         = 'bar-chart';
-$lang->icons['export']         = 'download-alt';
-$lang->icons['report-file']    = 'file-powerpoint';
-$lang->icons['import']         = 'upload-alt';
-$lang->icons['finish']         = 'ok-sign';
-$lang->icons['resolve']        = 'ok-sign';
-$lang->icons['start']          = 'play';
-$lang->icons['restart']        = 'play';
-$lang->icons['run']            = 'play';
-$lang->icons['runCase']        = 'play';
-$lang->icons['batchRun']       = 'play-sign';
-$lang->icons['assign']         = 'hand-right';
-$lang->icons['assignTo']       = 'hand-right';
-$lang->icons['change']         = 'random';
-$lang->icons['link']           = 'link';
-$lang->icons['close']          = 'off';
-$lang->icons['activate']       = 'magic';
-$lang->icons['review']         = 'review';
-$lang->icons['confirm']        = 'search';
-$lang->icons['confirmBug']     = 'search';
-$lang->icons['putoff']         = 'calendar';
-$lang->icons['suspend']        = 'pause';
-$lang->icons['pause']          = 'pause';
-$lang->icons['cancel']         = 'ban-circle';
-$lang->icons['recordEstimate'] = 'time';
-$lang->icons['customFields']   = 'cogs';
-$lang->icons['manage']         = 'cog';
-$lang->icons['unlock']         = 'unlock-alt';
+$lang->icons['results']            = 'list-alt';
+$lang->icons['create']             = 'plus';
+$lang->icons['post']               = 'edit';
+$lang->icons['batchCreate']        = 'plus-sign';
+$lang->icons['batchEdit']          = 'edit-sign';
+$lang->icons['batchClose']         = 'off';
+$lang->icons['edit']               = 'pencil';
+$lang->icons['delete']             = 'remove';
+$lang->icons['copy']               = 'copy';
+$lang->icons['report']             = 'bar-chart';
+$lang->icons['export']             = 'download-alt';
+$lang->icons['report-file']        = 'file-powerpoint';
+$lang->icons['import']             = 'upload-alt';
+$lang->icons['finish']             = 'ok-sign';
+$lang->icons['resolve']            = 'ok-sign';
+$lang->icons['start']              = 'play';
+$lang->icons['restart']            = 'play';
+$lang->icons['run']                = 'play';
+$lang->icons['runCase']            = 'play';
+$lang->icons['batchRun']           = 'play-sign';
+$lang->icons['assign']             = 'hand-right';
+$lang->icons['assignTo']           = 'hand-right';
+$lang->icons['change']             = 'random';
+$lang->icons['link']               = 'link';
+$lang->icons['close']              = 'off';
+$lang->icons['activate']           = 'magic';
+$lang->icons['review']             = 'review';
+$lang->icons['confirm']            = 'search';
+$lang->icons['confirmBug']         = 'search';
+$lang->icons['putoff']             = 'calendar';
+$lang->icons['suspend']            = 'pause';
+$lang->icons['pause']              = 'pause';
+$lang->icons['cancel']             = 'ban-circle';
+$lang->icons['recordEstimate']     = 'time';
+$lang->icons['customFields']       = 'cogs';
+$lang->icons['manage']             = 'cog';
+$lang->icons['unlock']             = 'unlock-alt';
 $lang->icons['confirmStoryChange'] = 'search';
+$lang->icons['score']              = 'tint';
 
 include (dirname(__FILE__) . '/menuOrder.php');
 
@@ -577,7 +610,7 @@ if(isset($config->global->flow) and $config->global->flow == 'onlyStory')
     unset($lang->product->menu->doc);
     
     /* Rename product module. */
-    $lang->menu->product = 'Product|product|index';
+    $lang->menu->product = "{$lang->productCommon}|product|index";
 
     /* Adjust search items. */
     unset($lang->searchObjects['bug']);
@@ -641,7 +674,7 @@ if(isset($config->global->flow) and $config->global->flow == 'onlyTest')
     unset($lang->menuOrder[30]);
 
     /* Rename product module. */
-    $lang->menu->product = 'Product|product|index';
+    $lang->menu->product = "{$lang->productCommon}|product|index";
 
     /* Adjust sub menu of my dashboard. */
     unset($lang->my->menu->task);

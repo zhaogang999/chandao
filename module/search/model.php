@@ -47,7 +47,7 @@ class searchModel extends model
         $groupItems = $this->config->search->groupItems;
         $groupAndOr = strtoupper($this->post->groupAndOr);
         if($groupAndOr != 'AND' and $groupAndOr != 'OR') $groupAndOr = 'AND';
-
+        $scoreNum = 0;
         for($i = 1; $i <= $groupItems * 2; $i ++)
         {
             /* The and or between two groups. */
@@ -65,6 +65,8 @@ class searchModel extends model
             if($this->post->$valueName == false) continue;
             if($this->post->$valueName == 'null') $this->post->$valueName = '';  // Null is special, stands to empty.
             if($this->post->$valueName == 'ZERO') $this->post->$valueName = 0;   // ZERO is special, stands to 0.
+
+            $scoreNum += 1;
 
             /* Set and or. */
             $andOr = strtoupper($this->post->$andOrName);
@@ -127,6 +129,7 @@ class searchModel extends model
         $formSessionName  = $this->post->module . 'Form';
         $this->session->set($querySessionName, $where);
         $this->session->set($formSessionName,  $_POST);
+        if($scoreNum > 2 && !dao::isError()) $this->loadModel('score')->create('search', 'saveQueryAdvanced');
     }
 
     /**
@@ -212,7 +215,7 @@ class searchModel extends model
                 }
                 else
                 {
-                    $params[$fieldName]['values']  = $params[$fieldName]['values'] + array('null' => $this->lang->search->null);
+                    $params[$fieldName]['values'] = $params[$fieldName]['values'] + array('null' => $this->lang->search->null);
                 }
             }
         }
@@ -269,7 +272,7 @@ class searchModel extends model
             if($this->post->onMenuBar)
             {
                 $queryModule      = $query->module == 'task' ? 'project' : ($query->module == 'story' ? 'product' : $query->module);
-                $featureBarConfig = $this->dao->select('*')->from(TABLE_CONFIG)->where('owner')->eq($this->app->user->account)->andWhere('module')->eq('common')->andWhere('section')->eq('customMenu')->andWhere('`key`')->like("feature_{$queryModule}_%")->fetch();
+                $featureBarConfig = $this->dao->select('*')->from(TABLE_CONFIG)->where('owner')->eq($this->app->user->account)->andWhere('module')->eq('common')->andWhere('section')->eq('customMenu')->andWhere('`key`')->like($this->config->global->flow ."_feature_{$queryModule}_%")->fetch();
 
                 $this->app->loadLang($queryModule);
                 if(!isset($this->lang->$queryModule->featureBar)) return $queryID;
@@ -299,10 +302,11 @@ class searchModel extends model
                 $featureBarConfig->owner   = $this->app->user->account;
                 $featureBarConfig->module  = 'common';
                 $featureBarConfig->section = 'customMenu';
-                $featureBarConfig->key     = "feature_{$queryModule}_{$method}";
+                $featureBarConfig->key     = $this->config->global->flow . "_feature_{$queryModule}_{$method}";
                 $featureBarConfig->value   = json_encode($newConfig);
                 $this->dao->replace(TABLE_CONFIG)->data($featureBarConfig)->exec();
             }
+            if(!dao::isError()) $this->loadModel('score')->create('search', 'saveQuery', $queryID);
             return $queryID;
         }
         return false;
@@ -354,12 +358,12 @@ class searchModel extends model
         if($module == 'story')
         {
             $pairs = 'id,title';
-            $table = 'zt_story';
+            $table = TABLE_STORY;
         }
         else if($module == 'task')
         {
             $pairs = 'id,name';
-            $table = 'zt_task';
+            $table = TABLE_TASK;
         }
         $query    = '`' . $conditions['field1'] . '`';
         $operator = $conditions['operator1'];
@@ -425,16 +429,16 @@ class searchModel extends model
         $lastMonth = date::getLastMonth();
         $thisMonth = date::getThisMonth();
         $yesterday = date::yesterday();
-        $today     = date::today();
+        $today     = date(DT_DATE1);
         if(strpos($query, '$') !== false)
         {
             $query = str_replace('$@me', $this->app->user->account, $query);
-            $query = str_replace("'\$lastMonth'", "'" . $lastMonth['begin'] . "' and '" . $lastMonth['end'] . "'", $query);
-            $query = str_replace("'\$thisMonth'", "'" . $thisMonth['begin'] . "' and '" . $thisMonth['end'] . "'", $query);
-            $query = str_replace("'\$lastWeek'",  "'" . $lastWeek['begin']  . "' and '" . $lastWeek['end']  . "'", $query);
-            $query = str_replace("'\$thisWeek'",  "'" . $thisWeek['begin']  . "' and '" . $thisWeek['end']  . "'", $query);
-            $query = str_replace("'\$yesterday'", "'" . $yesterday          . "' and '" . $yesterday        . "'", $query);
-            $query = str_replace("'\$today'",     "'" . $today              . "' and '" . $today            . "'", $query);
+            $query = str_replace("'\$lastMonth'", "'" . $lastMonth['begin']      . "' and '" . $lastMonth['end']        . "'", $query);
+            $query = str_replace("'\$thisMonth'", "'" . $thisMonth['begin']      . "' and '" . $thisMonth['end']        . "'", $query);
+            $query = str_replace("'\$lastWeek'",  "'" . $lastWeek['begin']       . "' and '" . $lastWeek['end']         . "'", $query);
+            $query = str_replace("'\$thisWeek'",  "'" . $thisWeek['begin']       . "' and '" . $thisWeek['end']         . "'", $query);
+            $query = str_replace("'\$yesterday'", "'" . $yesterday . ' 00:00:00' . "' and '" . $yesterday . ' 23:59:59' . "'", $query);
+            $query = str_replace("'\$today'",     "'" . $today     . ' 00:00:00' . "' and '" . $today     . ' 23:59:59' . "'", $query);
         }
         return $query;
     }

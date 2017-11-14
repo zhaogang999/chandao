@@ -26,7 +26,7 @@ class productplan extends control
         $this->view->product  = $product;
         $this->view->branch   = $branch;
         $this->view->branches = $product->type == 'normal' ? array() : $this->loadModel('branch')->getPairs($productID);
-        $this->view->position[] = html::a($this->createLink('product', 'browse', "productID={$this->view->product->id}&branch=$branch"), $this->view->product->name);
+        $this->view->position[] = html::a($this->createLink('product', 'browse', "productID={$productID}&branch=$branch"), $product->name);
         $this->product->setMenu($this->product->getPairs(), $productID, $branch);
     }
 
@@ -61,6 +61,7 @@ class productplan extends control
         $this->view->begin = $lastPlan ? $begin : '';
 
         $this->view->title = $this->view->product->name . $this->lang->colon . $this->lang->productplan->create;
+        $this->view->lastPlan = $lastPlan;
         $this->view->position[] = $this->lang->productplan->common;
         $this->view->position[] = $this->lang->productplan->create;
         $this->display();
@@ -123,6 +124,7 @@ class productplan extends control
                 $actionID = $this->action->create('productplan', $planID, 'Edited');
                 $this->action->logHistory($actionID, $change);
             }
+            $this->loadModel('score')->create('ajax', 'batchOther');
             die(js::locate(inlink('browse', "productID=$productID&branch=$branch"), 'parent'));
         }
         die(js::locate('back'));
@@ -178,7 +180,7 @@ class productplan extends control
      * @access public
      * @return void
      */
-    public function browse($productID = 0, $branch = 0, $browseType = 'unexpired', $orderBy = 'begin_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1 )
+    public function browse($productID = 0, $branch = 0, $browseType = 'all', $orderBy = 'begin_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1 )
     {
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -202,17 +204,17 @@ class productplan extends control
 
     /**
      * View plan.
-     * 
-     * @param  int    $planID 
-     * @param  string $type 
-     * @param  string $orderBy 
+     *
+     * @param  int    $planID
+     * @param  string $type
+     * @param  string $orderBy
      * @access public
      * @return void
      */
     public function view($planID = 0, $type = 'story', $orderBy = 'id_desc', $link = 'false', $param = '')
     {
-        if($type == 'story')$this->session->set('storyList', $this->app->getURI(true));
-        if($type == 'bug')  $this->session->set('bugList', $this->app->getURI(true));
+        $this->session->set('storyList', $this->app->getURI(true) . '&type=' . 'story');
+        $this->session->set('bugList', $this->app->getURI(true) . '&type=' . 'bug');
 
         /* Append id for secend sort. */
         $sort = $this->loadModel('common')->appendOrder($orderBy);
@@ -263,8 +265,8 @@ class productplan extends control
 
     /**
      * Link stories.
-     * 
-     * @param  int    $planID 
+     *
+     * @param  int    $planID
      * @access public
      * @return void
      */

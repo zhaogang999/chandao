@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\task\model.php');
+helper::import('module\task\model.php');
 helper::cd();
 class exttaskModel extends taskModel 
 {
@@ -43,8 +43,7 @@ public function activate($taskID)
 
     if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
     if(!dao::isError()) return common::createChanges($oldTask, $task);
-}
-/**
+}/**
  * Create a batch task.
  *
  * @param  int    $projectID
@@ -134,8 +133,7 @@ public function batchCreate($projectID)
     }
 
     return $mails;
-}
-/**
+}/**
  * Batch update task.
  *
  * @access public
@@ -297,8 +295,7 @@ public function batchUpdate()
     }
 
     return $allChanges;
-}
-/**
+}/**
  * Created by PhpStorm.
  * User: 月下亭中人
  * Date: 2017/11/2
@@ -335,8 +332,7 @@ public function cancel($taskID)
     
     if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
     if(!dao::isError()) return common::createChanges($oldTask, $task);
-}
-/**
+}/**
  * Create a task.
  *
  * @param  int    $projectID
@@ -505,8 +501,7 @@ public function create($projectID)
         }
     }
     return $tasksID;
-}
-/**
+}/**
  * Update a task.
  *
  * @param  int    $taskID
@@ -927,8 +922,7 @@ public function update($taskID)
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
     $this->file->updateObjectID($this->post->uid, $taskID, 'task');
     return $changes;
-}
-public function setListValue($productID)
+}public function setListValue($productID)
 {
     return $this->loadExtension('excel')->setListValue($productID);
 }
@@ -936,8 +930,7 @@ public function setListValue($productID)
 public function createFromImport($productID)
 {
     return $this->loadExtension('excel')->createFromImport($productID);
-}
-/**
+}/**
  * Finish a task.
  *
  * @param  int      $taskID
@@ -1207,8 +1200,7 @@ public function finish($taskID)
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
 
     return $changes;
-}
-/**
+}/**
  * Get task info by Id.修改bug：任务详情页的相关用例；当用例已被删除时；但这条用例还显示。待官方修复后删除
  *
  * @param  int    $taskID
@@ -1236,8 +1228,7 @@ public function getById($taskID, $setImgSize = false)
     if($task->story) $task->cases = $this->dao->select('id, title')->from(TABLE_CASE)->where('story')->eq($task->story)->andWhere('storyVersion')->eq($task->storyVersion)->andWhere('deleted')->eq('0')->fetchPairs();
 
     return $this->processTask($task);
-}
-/**
+}/**
  * Get tasks of a project.
  *
  * @param  int          $projectID
@@ -1275,8 +1266,7 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
 
     if($tasks) return $this->processTasks($tasks);
     return array();
-}
-/**
+}/**
  * Get tasks list of a project.
  *
  * @param  int           $projectID
@@ -1306,8 +1296,7 @@ public function getTasksByModule($projectID = 0, $moduleIdList = 0, $orderBy = '
 
     if($tasks) return $this->processTasks($tasks);
     return array();
-}
-/**
+}/**
  * Judge an action is clickable or not.
  *
  * @param  object    $task
@@ -1330,8 +1319,7 @@ public static function isClickable($task, $action)
     if($action == 'pause')    return $task->status == 'doing' or  $task->status == 'wait';
 
     return true;
-}
-/**
+}/**
  * Print cell data.
  *
  * @param  object  $col

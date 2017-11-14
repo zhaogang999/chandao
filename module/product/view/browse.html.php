@@ -13,6 +13,8 @@
 <?php include '../../common/view/header.html.php';?>
 <?php include '../../common/view/datatable.fix.html.php';?>
 <?php js::set('browseType', $browseType);?>
+<?php js::set('productID', $productID);?>
+<?php js::set('branch', $branch);?>
 <div id='featurebar'>
   <ul class='nav'>
     <li>
@@ -68,16 +70,15 @@
           $link = common::hasPriv('story', 'create') ?  $this->createLink('story', 'create', "productID=$productID&branch=$branch&moduleID=$moduleID") : '#';
           echo html::a($link, "<i class='icon icon-plus'></i>" . $lang->story->create, '', $misc);
       }
+
+      $misc = common::hasPriv('story', 'batchCreate') ? '' : "disabled";
+      $link = common::hasPriv('story', 'batchCreate') ?  $this->createLink('story', 'batchCreate', "productID=$productID&branch=$branch&moduleID=$moduleID") : '#';
       ?>
-      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      <button type="button" class="btn btn-primary dropdown-toggle <?php echo $misc?>" data-toggle="dropdown">
         <span class="caret"></span>
       </button>
       <ul class='dropdown-menu pull-right'>
-      <?php
-      $misc = common::hasPriv('story', 'batchCreate') ? '' : "class=disabled";
-      $link = common::hasPriv('story', 'batchCreate') ?  $this->createLink('story', 'batchCreate', "productID=$productID&branch=$branch&moduleID=$moduleID") : '#';
-      echo "<li>" . html::a($link, $lang->story->batchCreate, '', $misc) . "</li>";
-      ?>
+      <?php echo "<li>" . html::a($link, $lang->story->batchCreate, '', "class='$misc'") . "</li>";?>
       </ul>
     </div>
   </div>
@@ -103,13 +104,39 @@
     <?php
     $datatableId  = $this->moduleName . ucfirst($this->methodName);
     $useDatatable = (isset($this->config->datatable->$datatableId->mode) and $this->config->datatable->$datatableId->mode == 'datatable');
-    $file2Include = $useDatatable ? dirname(__FILE__) . '/datatabledata.html.php' : dirname(__FILE__) . '/browsedata.html.php';
     $vars         = "productID=$productID&branch=$branch&browseType=$browseType&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
-    include $file2Include;
+
+    if($useDatatable) include '../../common/view/datatable.html.php';
+    if(!$useDatatable) include '../../common/view/tablesorter.html.php';
+    $setting = $this->datatable->getSetting('product');
+    $widths  = $this->datatable->setFixedFieldWidth($setting);
+    $columns = 0;
     ?>
+    <table class='table table-condensed table-hover table-striped tablesorter table-fixed <?php echo $useDatatable ? 'datatable' : ''?>' id='storyList' data-checkable='true' data-fixed-left-width='<?php echo $widths['leftWidth']?>' data-fixed-right-width='<?php echo $widths['rightWidth']?>' data-custom-menu='true' data-checkbox-name='storyIDList[]'>
+      <thead>
+        <tr>
+        <?php
+        foreach($setting as $key => $value)
+        {
+            if($value->show)
+            {
+                $this->datatable->printHead($value, $orderBy, $vars);
+                $columns ++;
+            }
+        }
+        ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($stories as $story):?>
+        <tr class='text-center' data-id='<?php echo $story->id?>'>
+          <?php foreach($setting as $key => $value) $this->story->printCell($value, $story, $users, $branches, $storyStages, $modulePairs, $storyTasks, $storyBugs, $storyCases, $useDatatable ? 'datatable' : 'table');?>
+        </tr>
+        <?php endforeach;?>
+      </tbody>
       <tfoot>
       <tr>
-        <td colspan='13'>
+        <td colspan='<?php echo $columns?>'>
           <div class='table-actions clearfix'>
             <?php if(count($stories)):?>
             <?php echo html::selectButton();?>

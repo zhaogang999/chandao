@@ -53,14 +53,14 @@ js::set('confirmDelete', $lang->user->confirmDelete);
       </tr>
       </thead>
       <tbody>
-      
-      <?php 
+
+      <?php
       $canBatchEdit = common::hasPriv('user', 'batchEdit');
       ?>
       <?php foreach($users as $user):?>
       <tr class='text-center'>
         <td class='cell-id'>
-          <?php 
+          <?php
           if($canBatchEdit) echo "<input type='checkbox' name='users[]' value='$user->account'> ";
           printf('%03d', $user->id);
           ?>
@@ -76,8 +76,8 @@ js::set('confirmDelete', $lang->user->confirmDelete);
         <td><?php if($user->last) echo date('Y-m-d', $user->last);?></td>
         <td><?php echo $user->visits;?></td>
         <td class='text-left'>
-          <?php 
-          common::printIcon('user', 'edit',      "userID=$user->id&from=company", '', 'list');
+          <?php
+          common::printIcon('user', 'edit', "userID=$user->id&from=company", '', 'list');
           if(strpos($this->app->company->admins, ",{$user->account},") === false and common::hasPriv('user', 'delete'))
           {
               echo html::a($this->createLink('user', 'delete', "userID=$user->id"), '<i class="icon-remove"></i>', '', "title='{$lang->user->delete}' class='btn-icon iframe'");

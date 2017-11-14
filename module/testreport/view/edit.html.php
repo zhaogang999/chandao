@@ -46,7 +46,7 @@
           </td>
         </tr>
         <tr>
-          <th><?php echo $lang->testreport->member?></th>
+          <th><?php echo $lang->testreport->members?></th>
           <td colspan='2'><?php echo html::select('members[]', $users, $report->members, "class='form-control chosen' multiple")?></td>
         </tr>
         <tr>
@@ -63,8 +63,8 @@
           <?php
           echo '<p>' . $storySummary . '</p>';
           echo '<p>' . sprintf($lang->testreport->buildSummary, empty($builds) ? 1 : count($builds)) . $caseSummary . '</p>';
-          echo '<p>' . sprintf($lang->testreport->bugSummary, $bugInfo['countBugByTask'], count($legacyBugs), $bugInfo['bugConfirmedRate'] . '%', $bugInfo['bugCreateByCaseRate'] . '%') . '</p>';
-          unset($bugInfo['countBugByTask']); unset($bugInfo['bugConfirmedRate']); unset($bugInfo['bugCreateByCaseRate']);
+          echo '<p>' . sprintf($lang->testreport->bugSummary, $bugInfo['foundBugs'], count($legacyBugs), $bugInfo['countBugByTask'], $bugInfo['bugConfirmedRate'] . '%', $bugInfo['bugCreateByCaseRate'] . '%') . '</p>';
+          unset($bugInfo['countBugByTask']); unset($bugInfo['bugConfirmedRate']); unset($bugInfo['bugCreateByCaseRate']); unset($bugInfo['foundBugs']);
           ?>
           </td>
         </tr>

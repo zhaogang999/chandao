@@ -9,14 +9,14 @@
  * @version     $Id: zh-cn.php 4129 2013-01-18 01:58:14Z wwccss $
  * @link        http://www.zentao.net
  */
-$lang->build->common    = "版本";
-$lang->build->create    = "创建版本";
-$lang->build->edit      = "编辑版本";
-$lang->build->linkStory = "关联需求";
-$lang->build->linkBug   = "关联Bug";
-$lang->build->delete    = "删除版本";
-$lang->build->deleted   = "已删除";
-$lang->build->view      = "版本详情";
+$lang->build->common       = "版本";
+$lang->build->create       = "创建版本";
+$lang->build->edit         = "编辑版本";
+$lang->build->linkStory    = "关联需求";
+$lang->build->linkBug      = "关联Bug";
+$lang->build->delete       = "删除版本";
+$lang->build->deleted      = "已删除";
+$lang->build->view         = "版本详情";
 $lang->build->batchUnlink          = '批量移除';
 $lang->build->batchUnlinkStory     = '批量移除需求';
 $lang->build->batchUnlinkBug       = '批量移除Bug';
@@ -29,6 +29,7 @@ $lang->build->basicInfo = '基本信息';
 
 $lang->build->id        = 'ID';
 $lang->build->product   = $lang->productCommon;
+$lang->build->branch    = '平台/分支';
 $lang->build->project   = '所属' . $lang->projectCommon;
 $lang->build->name      = '名称编号';
 $lang->build->date      = '打包日期';
@@ -38,6 +39,7 @@ $lang->build->filePath  = '下载地址';
 $lang->build->desc      = '描述';
 $lang->build->files     = '上传发行包';
 $lang->build->last      = '上个版本';
+$lang->build->packageType        = '包类型';
 $lang->build->unlinkStory        = '移除需求';
 $lang->build->unlinkBug          = '移除Bug';
 $lang->build->stories            = '完成的需求';

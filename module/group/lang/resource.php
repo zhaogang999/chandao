@@ -84,6 +84,8 @@ $lang->resource->my->changePassword = 'changePassword';
 $lang->resource->my->unbind         = 'unbind';
 $lang->resource->my->manageContacts = 'manageContacts';
 $lang->resource->my->deleteContacts = 'deleteContacts';
+$lang->resource->my->limited        = 'limited';
+$lang->resource->my->score          = 'score';
 
 $lang->my->methodOrder[0]  = 'index';
 $lang->my->methodOrder[5]  = 'todo';
@@ -100,6 +102,8 @@ $lang->my->methodOrder[55] = 'changePassword';
 $lang->my->methodOrder[60] = 'unbind';
 $lang->my->methodOrder[65] = 'manageContacts';
 $lang->my->methodOrder[75] = 'deleteContacts';
+$lang->my->methodOrder[80] = 'score';
+$lang->my->methodOrder[85] = 'limited';
 
 /* Todo. */
 $lang->resource->todo = new stdclass();
@@ -140,6 +144,7 @@ $lang->resource->product->close       = 'close';
 $lang->resource->product->updateOrder = 'updateOrder';
 $lang->resource->product->all         = 'all';
 $lang->resource->product->build       = 'build';
+$lang->resource->product->export      = 'export';
 
 $lang->product->methodOrder[0]  = 'index';
 $lang->product->methodOrder[5]  = 'browse';
@@ -156,6 +161,7 @@ $lang->product->methodOrder[60] = 'close';
 $lang->product->methodOrder[65] = 'updateOrder';
 $lang->product->methodOrder[70] = 'all';
 $lang->product->methodOrder[75] = 'build';
+$lang->product->methodOrder[80] = 'export';
 
 /* Branch. */
 $lang->resource->branch = new stdclass();
@@ -319,6 +325,11 @@ $lang->resource->project->kanban           = 'kanban';
 $lang->resource->project->printKanban      = 'printKanban';
 $lang->resource->project->tree             = 'tree';
 $lang->resource->project->all              = 'all';
+$lang->resource->project->kanbanHideCols   = 'kanbanHideCols';
+$lang->resource->project->kanbanColsColor  = 'kanbanColsColor';
+$lang->resource->project->export           = 'export';
+$lang->resource->project->storyKanban      = 'storyKanban';
+$lang->resource->project->storySort        = 'storySort';
 
 $lang->project->methodOrder[0]   = 'index';
 $lang->project->methodOrder[5]   = 'view';
@@ -358,6 +369,11 @@ $lang->project->methodOrder[175] = 'kanban';
 $lang->project->methodOrder[180] = 'printKanban';
 $lang->project->methodOrder[185] = 'tree';
 $lang->project->methodOrder[190] = 'all';
+$lang->project->methodOrder[195] = 'kanbanHideCols';
+$lang->project->methodOrder[200] = 'kanbanColsColor';
+$lang->project->methodOrder[205] = 'export';
+$lang->project->methodOrder[210] = 'storyKanban';
+$lang->project->methodOrder[215] = 'storySort';
 
 /* Task. */
 $lang->resource->task = new stdclass();
@@ -459,6 +475,7 @@ $lang->resource->bug->batchAssignTo      = 'batchAssignTo';
 $lang->resource->bug->resolve            = 'resolve';
 $lang->resource->bug->batchResolve       = 'batchResolve';
 $lang->resource->bug->activate           = 'activate';
+$lang->resource->bug->batchActivate      = 'batchActivate';
 $lang->resource->bug->close              = 'close';
 $lang->resource->bug->report             = 'reportChart';
 $lang->resource->bug->export             = 'export';
@@ -483,6 +500,7 @@ $lang->bug->methodOrder[50]  = 'batchAssignTo';
 $lang->bug->methodOrder[55]  = 'resolve';
 $lang->bug->methodOrder[60]  = 'batchResolve';
 $lang->bug->methodOrder[65]  = 'batchClose';
+$lang->bug->methodOrder[67]  = 'batchActivate';
 $lang->bug->methodOrder[70]  = 'activate';
 $lang->bug->methodOrder[75]  = 'close';
 $lang->bug->methodOrder[80]  = 'report';
@@ -616,10 +634,6 @@ $lang->resource->testsuite->delete           = 'delete';
 $lang->resource->testsuite->linkCase         = 'linkCase';
 $lang->resource->testsuite->unlinkCase       = 'unlinkCase';
 $lang->resource->testsuite->batchUnlinkCases = 'batchUnlinkCases';
-$lang->resource->testsuite->batchCreateCase  = 'batchCreateCase';
-$lang->resource->testsuite->exportTemplet    = 'exportTemplet';
-$lang->resource->testsuite->import           = 'import';
-$lang->resource->testsuite->showImport       = 'showImport';
 
 $lang->testsuite->methodOrder[0]  = 'index';
 $lang->testsuite->methodOrder[5]  = 'browse';
@@ -630,23 +644,27 @@ $lang->testsuite->methodOrder[25] = 'delete';
 $lang->testsuite->methodOrder[30] = 'linkCase';
 $lang->testsuite->methodOrder[35] = 'unlinkCase';
 $lang->testsuite->methodOrder[40] = 'batchUnlinkCases';
-$lang->testsuite->methodOrder[45] = 'batchCreateCase';
-$lang->testsuite->methodOrder[50] = 'exportTemplet';
-$lang->testsuite->methodOrder[55] = 'import';
-$lang->testsuite->methodOrder[60] = 'showImport';
 
 $lang->resource->caselib = new stdclass();
-$lang->resource->caselib->library    = 'library';
-$lang->resource->caselib->createLib  = 'createLib';
-$lang->resource->caselib->edit       = 'editLib';
-$lang->resource->caselib->createCase = 'createCase';
-$lang->resource->caselib->libView    = 'libView';
+$lang->resource->caselib->library          = 'library';
+$lang->resource->caselib->createLib        = 'createLib';
+$lang->resource->caselib->edit             = 'editLib';
+$lang->resource->caselib->createCase       = 'createCase';
+$lang->resource->caselib->libView          = 'libView';
+$lang->resource->caselib->batchCreateCase  = 'batchCreateCase';
+$lang->resource->caselib->exportTemplet    = 'exportTemplet';
+$lang->resource->caselib->import           = 'import';
+$lang->resource->caselib->showImport       = 'showImport';
 
 $lang->caselib->methodOrder[0]  = 'library';
 $lang->caselib->methodOrder[5]  = 'createLib';
 $lang->caselib->methodOrder[10] = 'edit';
 $lang->caselib->methodOrder[15] = 'createCase';
-$lang->caselib->methodOrder[20] = 'libView';
+$lang->caselib->methodOrder[20] = 'batchCreateCase';
+$lang->caselib->methodOrder[25] = 'libView';
+$lang->caselib->methodOrder[30] = 'exportTemplet';
+$lang->caselib->methodOrder[35] = 'import';
+$lang->caselib->methodOrder[40] = 'showImport';
 
 /* Doc. */
 $lang->resource->doc = new stdclass();
@@ -710,17 +728,24 @@ $lang->mail->methodOrder[60] = 'sendcloudUser';
 
 /* custom. */
 $lang->resource->custom = new stdclass();
-$lang->resource->custom->index   = 'index';
-$lang->resource->custom->set     = 'set';
-$lang->resource->custom->restore = 'restore';
-$lang->resource->custom->flow    = 'flow';
-$lang->resource->custom->working = 'working';
+$lang->resource->custom->index     = 'index';
+$lang->resource->custom->set       = 'set';
+$lang->resource->custom->restore   = 'restore';
+$lang->resource->custom->flow      = 'flow';
+$lang->resource->custom->working   = 'working';
+$lang->resource->custom->setPublic = 'setPublic';
 
 $lang->custom->methodOrder[5]  = 'index';
 $lang->custom->methodOrder[10] = 'set';
 $lang->custom->methodOrder[15] = 'restore';
 $lang->custom->methodOrder[20] = 'flow';
 $lang->custom->methodOrder[25] = 'working';
+$lang->custom->methodOrder[30] = 'setPublic';
+
+$lang->resource->datatable = new stdclass();
+$lang->resource->datatable->setGlobal = 'setGlobal';
+
+$lang->datatable->methodOrder[5]  = 'setGlobal';
 
 /* Subversion. */
 $lang->resource->svn = new stdclass();
@@ -1321,6 +1346,14 @@ $lang->changelog['9.2'][] = 'testsuite-batchCreateCase';
 $lang->changelog['9.2'][] = 'testsuite-exportTemplet';
 $lang->changelog['9.2'][] = 'testsuite-import';
 $lang->changelog['9.2'][] = 'testsuite-showImport';
+$lang->changelog['9.5'][] = 'bug-batchActivate';
+
+$lang->changelog['9.6'][] = 'custom-setPublic';
+$lang->changelog['9.6'][] = 'datatable-setGlobal';
+$lang->changelog['9.6'][] = 'product-export';
+$lang->changelog['9.6'][] = 'project-export';
+$lang->changelog['9.6'][] = 'project-storyKanban';
+$lang->changelog['9.6'][] = 'project-storySort';
 
 global $config;
 if($config->global->flow != 'full')

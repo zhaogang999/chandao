@@ -30,13 +30,13 @@
    {
       ob_start();
       echo "<div class='btn-group'>";
-      common::printIcon('story', 'create', "productID=$plan->product&branch=$plan->branch&moduleID=0&storyID=0&projectID=0&bugID=0&planID=$plan->id", '', 'button', 'plus');
+      common::printIcon('story', 'create', "productID=$plan->product&branch=$plan->branch&moduleID=0&storyID=0&projectID=0&bugID=0&planID=$plan->id", $plan, 'button', 'plus');
       if(common::hasPriv('productplan', 'linkStory')) echo html::a(inlink('view', "planID=$plan->id&type=story&orderBy=id_desc&link=true"), '<i class="icon-link"></i> ' . $lang->productplan->linkStory, '', "class='btn'");
       if(common::hasPriv('productplan', 'linkBug') and $config->global->flow != 'onlyStory') echo html::a(inlink('view', "planID=$plan->id&type=bug&orderBy=id_desc&link=true"), '<i class="icon-bug"></i> ' . $lang->productplan->linkBug, '', "class='btn'");
       echo '</div>';
       echo "<div class='btn-group'>";
-      common::printIcon('productplan', 'edit',     "planID=$plan->id");
-      common::printIcon('productplan', 'delete',   "planID=$plan->id", '', 'button', '', 'hiddenwin');
+      common::printIcon('productplan', 'edit',   "planID=$plan->id", $plan);
+      common::printIcon('productplan', 'delete', "planID=$plan->id", $plan, 'button', '', 'hiddenwin');
       echo '</div>';
       $actionLinks = ob_get_contents();
       ob_end_clean();
@@ -46,7 +46,7 @@
   ?>
   </div>
 </div>
-<div class='row-table <?php echo $this->cookie->productPlanSide == 'hide' ? 'hide-side' : ''?>'>
+<div class='row-table'>
   <div class='col-main'>
     <div class='main'>
       <div class='tabs'>
@@ -132,7 +132,7 @@
                       $actionLink = inlink('batchUnlinkStory', "planID=$plan->id&orderBy=$orderBy");
                       ?>
                       <div class='btn-group dropup'>
-                        <?php echo html::commonButton($lang->productplan->unlinkStory, ($canBatchUnlink ? '' : 'disabled') . "onclick=\"setFormAction('$actionLink', '', this)\"");?>
+                        <?php echo html::commonButton($lang->productplan->unlinkStory, ($canBatchUnlink ? '' : 'disabled') . "onclick=\"setFormAction('$actionLink', 'hiddenwin', this)\"");?>
                         <button type='button' class='btn dropdown-toggle' data-toggle='dropdown'><span class='caret'></span></button>
                         <ul class='dropdown-menu'>
                           <?php
@@ -280,7 +280,7 @@
                                 foreach ($users as $key => $value)
                                 {
                                     if(empty($key) or $key == 'closed') continue;
-                                    echo "<li class='option' data-key='$key'>" . html::a("javascript:$(\".table-actions #assignedTo\").val(\"$key\");setFormAction(\"$actionLink\")", $value, '', '') . '</li>';
+                                    echo "<li class='option' data-key='$key'>" . html::a("javascript:$(\".table-actions #assignedTo\").val(\"$key\");setFormAction(\"$actionLink\", false, \"#storyList\")", $value, '', '') . '</li>';
                                 }
                                 echo "</ul>";
                                 if($withSearch) echo "<div class='menu-search'><div class='input-group input-group-sm'><input type='text' class='form-control' placeholder=''><span class='input-group-addon'><i class='icon-search'></i></span></div></div>";

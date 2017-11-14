@@ -1,4 +1,4 @@
- <?php
+<?php
 /**
  * The create view of bug module of ZenTaoPMS.
  *
@@ -62,7 +62,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
       </tr>
       <?php $showProject = (strpos(",$showFields,", ',project,') !== false && $this->config->global->flow != 'onlyTest');?>
       <tr>
-        <th><?php echo ($showProject) ? $lang->bug->project : (($this->config->global->flow == 'onlyTest') ? $lang->bug->type : $lang->bug->openedBuild);?></th>
+        <th><?php echo ($showProject) ? $lang->bug->project : $lang->bug->type;?></th>
 
         <?php if(!$showProject):?>
         <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
@@ -92,9 +92,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
         <?php endif;?>
         <td>
           <div class='input-group'>
-            <?php if($showProject or $this->config->global->flow == 'onlyTest'):?>
             <span class='input-group-addon'><?php echo $lang->bug->openedBuild?></span>
-            <?php endif;?>
             <span id='buildBox'><?php echo html::select('openedBuild[]', $builds, $buildID, "size=4 multiple=multiple class='chosen form-control'");?></span>
             <span class='input-group-addon fix-border' id='buildBoxActions'></span>
             <span class='input-group-btn'><?php echo html::commonButton($lang->bug->allBuilds, "class='btn btn-default' data-toggle='tooltip' onclick='loadAllBuilds()'")?></span>
@@ -119,7 +117,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
         </td>
         <?php endif;?>
       </tr>
-      <?php if($this->config->global->flow != 'onlyTest'):?>
+      <?php if($this->config->global->flow != 'onlyTest' && $showProject):?>
       <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
       <?php $showBrowser = strpos(",$showFields,", ',browser,') !== false;?>
       <tr>
@@ -151,7 +149,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
           <div class='row-table'>
             <div class='col-table w-p100'>
               <div class='input-group w-p100'>
-                <input type='hidden' id='color' name='color' data-provide='colorpicker' data-wrapper='input-group-btn' data-pull-menu-right='false' data-btn-tip='<?php echo $lang->bug->colorTag ?>' data-update-text='#title'>
+                <input type='hidden' id='color' name='color' data-provide='colorpicker' data-wrapper='input-group-btn' data-pull-menu-right='false' data-btn-tip='<?php echo $lang->bug->colorTag ?>' data-update-text='#title' value='<?php echo $color;?>'>
                 <?php echo html::input('title', $bugTitle, "class='form-control'");?>
               </div>
             </div>
@@ -200,14 +198,14 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
                 }
                 ?>
                 <?php if($hasCustomPri):?>
-                <?php echo html::select('pri', (array)$lang->bug->priList, '', "class='form-control minw-80px'");?> 
+                <?php echo html::select('pri', (array)$lang->bug->priList, $pri, "class='form-control minw-80px'");?> 
                 <?php else: ?>
                 <div class='input-group-btn dropdown-pris'>
                   <button type='button' class='btn dropdown-toggle br-0' data-toggle='dropdown'>
                     <span class='pri-text'></span> &nbsp;<span class='caret'></span>
                   </button>
                   <ul class='dropdown-menu pull-right'></ul>
-                  <?php echo html::select('pri', $lang->bug->priList, '', "class='hide'");?>
+                  <?php echo html::select('pri', $lang->bug->priList, $pri, "class='hide'");?>
                 </div>
                 <?php endif;?>
                 <?php endif;?>
@@ -216,7 +214,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
             <?php endif;?>
           </div>
         </td>
-      </tr>  
+      </tr>
       <tr>
         <th><?php echo $lang->bug->steps;?></th>
         <td colspan='2'>
@@ -231,7 +229,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
               </div>
             </div>
           </div>
-          <?php echo html::textarea('steps', $steps, "rows='5' class='form-control'");?>
+          <?php echo html::textarea('steps', $steps, "rows='10' class='form-control'");?>
         </td>
       </tr>
       <?php
@@ -252,7 +250,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
             <?php if($showStory):?>
             <span class='input-group-addon'><?php echo $lang->bug->task?></span>
             <?php endif;?>
-            <span id='taskIdBox'> <?php echo html::select('task', '', $taskID, "class='form-control chosen'");?></span>
+            <span id='taskIdBox'> <?php echo html::select('task', '', $taskID, "class='form-control chosen'") . html::hidden('oldTaskID', $taskID);?></span>
           </div>
         </td>
         <?php endif;?>

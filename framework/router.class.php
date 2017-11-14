@@ -77,7 +77,32 @@ class router extends baseRouter
             $lang->projectCommon = isset($this->config->projectCommonList[$this->clientLang][(int)$projectCommon]) ? $this->config->projectCommonList[$this->clientLang][(int)$projectCommon] : $this->config->projectCommonList['zh-cn'][0];
         }
 
-        return parent::loadLang($moduleName, $appName);
+        parent::loadLang($moduleName, $appName);
+
+        /* Merge from the db lang. */
+        if($moduleName != 'common' and isset($lang->db->custom[$moduleName]))
+        {
+            foreach($lang->db->custom[$moduleName] as $section => $fields)
+            {
+                if(isset($lang->{$moduleName}->{$section}['']))
+                {
+                    $nullKey   = '';
+                    $nullValue = $lang->{$moduleName}->{$section}[$nullKey]; 
+                }
+                elseif(isset($lang->{$moduleName}->{$section}[0]))
+                {
+                    $nullKey   = 0;
+                    $nullValue = $lang->{$moduleName}->{$section}[0]; 
+                }
+                unset($lang->{$moduleName}->{$section});
+
+                if(isset($nullKey))$lang->{$moduleName}->{$section}[$nullKey] = $nullValue;
+                foreach($fields as $key => $value) $lang->{$moduleName}->{$section}[$key] = $value;
+                unset($nullKey);
+                unset($nullValue);
+            }
+        }
+        return $lang;
     }
 
     /**
@@ -98,5 +123,37 @@ class router extends baseRouter
         $fatalLevel[E_USER_ERROR] = E_USER_ERROR;
         if(isset($fatalLevel[$level])) $this->config->debug = true;
         parent::saveError($level, $message, $file, $line);
+    }
+
+    /**
+     * Alias load  module config.
+     * 
+     * @param  string $moduleName 
+     * @param  string $appName 
+     * @access public
+     * @return void
+     */
+    public function loadConfig($moduleName, $appName = '')
+    {
+        return parent::loadModuleConfig($moduleName, $appName);
+    }
+
+    /**
+     * Export config.
+     * 
+     * @access public
+     * @return void
+     */
+    public function exportConfig()
+    {
+        ob_start();
+        parent::exportConfig();
+        $view = ob_get_contents();
+        ob_end_clean();
+
+        $view = json_decode($view);
+        $view->rand = $this->session->random;
+        $this->session->set('rand', $this->session->random);
+        echo json_encode($view);
     }
 }

@@ -39,6 +39,7 @@ $lang->testsuite->legendBasicInfo = '基本信息';
 $lang->testsuite->unlinkedCases = '未關聯';
 
 $lang->testsuite->confirmDelete     = '您確認要刪除該套件嗎？';
+$lang->testsuite->libraryDelete     = '您確認要刪除該用例庫嗎？';
 $lang->testsuite->confirmUnlinkCase = '您確認要移除該用例嗎？';
 $lang->testsuite->noticeNone        = '您還沒有創建套件';
 
@@ -49,7 +50,7 @@ $lang->testsuite->authorList['private'] = '私有';
 $lang->testsuite->authorList['public']  = '公開';
 
 $lang->caselib->common = '公共用例庫';
-$lang->caselib->all    = '所有公共庫';
+$lang->caselib->all    = '所有用例庫';
 
 $lang->testsuite->createLib  = '創建庫';
 $lang->testsuite->editLib    = '編輯庫';

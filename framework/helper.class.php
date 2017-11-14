@@ -112,3 +112,32 @@ class helper extends baseHelper
         return $string;
     }
 }
+
+/**
+ * 检查是否是onlybody模式。
+ * Check exist onlybody param.
+ * 
+ * @access public
+ * @return void
+ */
+function isonlybody()
+{
+    return helper::inOnlyBodyMode();
+}
+
+/**
+ * Format time.
+ *
+ * @param  int    $time
+ * @param  string $format
+ * @access public
+ * @return void
+ */
+function formatTime($time, $format = '')
+{
+    $time = str_replace('0000-00-00', '', $time);
+    $time = str_replace('00:00:00', '', $time);
+    if(trim($time) == '') return ;
+    if($format) return date($format, strtotime($time));
+    return trim($time);
+}

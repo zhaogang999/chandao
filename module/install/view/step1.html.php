@@ -27,25 +27,61 @@
           <th><?php echo $lang->install->phpVersion;?></th>
           <td><?php echo $phpVersion;?></td>
           <td class='<?php echo $phpResult;?>'><?php echo $lang->install->$phpResult;?></td>
-          <td class='a-left f-12px'><?php if($phpResult == 'fail') echo $lang->install->phpFail;?></td>
+          <td class='text-left f-12px'><?php if($phpResult == 'fail') echo $lang->install->phpFail;?></td>
         </tr>
         <tr>
           <th><?php echo $lang->install->pdo;?></th>
           <td><?php $pdoResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
           <td class='<?php echo $pdoResult;?>'><?php echo $lang->install->$pdoResult;?></td>
-          <td class='a-left f-12px'><?php if($pdoResult == 'fail') echo $lang->install->pdoFail;?></td>
+          <td class='text-left f-12px'><?php if($pdoResult == 'fail') echo $lang->install->pdoFail;?></td>
         </tr>
         <tr>
           <th><?php echo $lang->install->pdoMySQL;?></th>
           <td><?php $pdoMySQLResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
           <td class='<?php echo $pdoMySQLResult;?>'><?php echo $lang->install->$pdoMySQLResult;?></td>
-          <td class='a-left f-12px'><?php if($pdoMySQLResult == 'fail') echo $lang->install->pdoMySQLFail;?></td>
+          <td class='text-left f-12px'><?php if($pdoMySQLResult == 'fail') echo $lang->install->pdoMySQLFail;?></td>
         </tr>
         <tr>
           <th><?php echo $lang->install->json;?></th>
           <td><?php $jsonResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
           <td class='<?php echo $jsonResult;?>'><?php echo $lang->install->$jsonResult;?></td>
-          <td class='a-left f-12px'><?php if($jsonResult == 'fail') echo $lang->install->jsonFail;?></td>
+          <td class='text-left f-12px'><?php if($jsonResult == 'fail') echo $lang->install->jsonFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->openssl;?></th>
+          <td><?php $opensslResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $opensslResult;?>'><?php echo $lang->install->$opensslResult;?></td>
+          <td class='text-left f-12px'><?php if($opensslResult == 'fail') echo $lang->install->opensslFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->mbstring;?></th>
+          <td><?php $mbstringResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $mbstringResult;?>'><?php echo $lang->install->$mbstringResult;?></td>
+          <td class='text-left f-12px'><?php if($mbstringResult == 'fail') echo $lang->install->mbstringFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->zlib;?></th>
+          <td><?php $zlibResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $zlibResult;?>'><?php echo $lang->install->$zlibResult;?></td>
+          <td class='text-left f-12px'><?php if($zlibResult == 'fail') echo $lang->install->zlibFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->curl;?></th>
+          <td><?php $curlResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $curlResult;?>'><?php echo $lang->install->$curlResult;?></td>
+          <td class='text-left f-12px'><?php if($curlResult == 'fail') echo $lang->install->curlFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->filter;?></th>
+          <td><?php $filterResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $filterResult;?>'><?php echo $lang->install->$filterResult;?></td>
+          <td class='text-left f-12px'><?php if($filterResult == 'fail') echo $lang->install->filterFail;?></td>
+        </tr>
+        <tr>
+          <th><?php echo $lang->install->iconv;?></th>
+          <td><?php $iconvResult == 'ok' ? printf($lang->install->loaded) : printf($lang->install->unloaded);?></td>
+          <td class='<?php echo $iconvResult;?>'><?php echo $lang->install->$iconvResult;?></td>
+          <td class='text-left f-12px'><?php if($iconvResult == 'fail') echo $lang->install->iconvFail;?></td>
         </tr>
         <tr>
           <th><?php echo $lang->install->tmpRoot;?></th>
@@ -58,7 +94,7 @@
             ?>
           </td>
           <td class='<?php echo $tmpRootResult;?>'><?php echo $lang->install->$tmpRootResult;?></td>
-          <td class='a-left f-12px'>
+          <td class='text-left f-12px'>
             <?php 
             if(!$tmpRootInfo['exists'])   printf($mkdir, $tmpRootInfo['path'], $tmpRootInfo['path']);
             if(!$tmpRootInfo['writable']) printf($chmod, $tmpRootInfo['path'], $tmpRootInfo['path']);
@@ -74,7 +110,7 @@
             ?>
           </td>
           <td class='<?php echo $dataRootResult;?>'><?php echo $lang->install->$dataRootResult;?></td>
-          <td class='a-left f-12px'>
+          <td class='text-left f-12px'>
             <?php 
             if(!$dataRootInfo['exists'])   printf($mkdir, $dataRootInfo['path'], $dataRootInfo['path']);
             if(!$dataRootInfo['writable']) printf($chmod, $dataRootInfo['path'], $dataRootInfo['path']);
@@ -91,7 +127,7 @@
             ?>
           </td>
           <td class='<?php echo $sessionResult;?>'><?php echo $lang->install->$sessionResult;?></td>
-          <td class='a-left f-12px'>
+          <td class='text-left f-12px'>
             <?php 
             if($sessionInfo['path'])
             {
@@ -110,7 +146,19 @@
     </div>
     <div class='modal-footer'>
       <?php
-      if($phpResult == 'ok' and $pdoResult == 'ok' and $pdoMySQLResult == 'ok' and $tmpRootResult == 'ok' and $dataRootResult == 'ok' and $sessionResult == 'ok')
+      if($phpResult      == 'ok' and
+         $pdoResult      == 'ok' and
+         $pdoMySQLResult == 'ok' and
+         $tmpRootResult  == 'ok' and
+         $dataRootResult == 'ok' and
+         $sessionResult  == 'ok' and
+         $jsonResult     == 'ok' and
+         $opensslResult  == 'ok' and
+         $mbstringResult == 'ok' and
+         $zlibResult     == 'ok' and
+         $curlResult     == 'ok' and
+         $filterResult   == 'ok' and
+         $iconvResult    == 'ok')
       {
           echo html::a($this->createLink('install', 'step2'), $lang->install->next, '', "class='btn btn-primary'");
       }
@@ -122,7 +170,7 @@
             echo '<div class="panel panel-sm text-left"><div class="panel-heading strong">' . $lang->install->phpINI . '</div><div class="panel-body">' . nl2br($this->install->getIniInfo()) . '</div></div>';
           }
       }
-      ?>      
+      ?>
     </div>
   </div>
 </div>

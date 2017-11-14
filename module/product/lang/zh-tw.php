@@ -11,7 +11,7 @@
  */
 $lang->product->common      = $lang->productCommon . '視圖';
 $lang->product->index       = $lang->productCommon . "首頁";
-$lang->product->browse      = "瀏覽{$lang->productCommon}";
+$lang->product->browse      = "需求列表";
 $lang->product->dynamic     = "動態";
 $lang->product->view        = "{$lang->productCommon}概況";
 $lang->product->edit        = "編輯{$lang->productCommon}";
@@ -26,6 +26,7 @@ $lang->product->other       = '其他：';
 $lang->product->closed      = '已關閉';
 $lang->product->updateOrder = "排序";
 $lang->product->all         = "所有{$lang->productCommon}";
+$lang->product->export      = "導出";
 
 $lang->product->basicInfo = '基本信息';
 $lang->product->otherInfo = '其他信息';
@@ -42,13 +43,22 @@ $lang->product->doc      = '文檔列表';
 $lang->product->project  = $lang->projectCommon . '列表';
 $lang->product->build    = '版本列表';
 
+$lang->product->activeStories    = '激活需求';
+$lang->product->changedStories   = '已變更需求';
+$lang->product->draftStories     = '草稿需求';
+$lang->product->closedStories    = '已關閉需求';
+$lang->product->unResolvedBugs   = '未解決Bug';
+$lang->product->assignToNullBugs = '未指派Bug';
+
 $lang->product->confirmDelete   = " 您確定刪除該{$lang->productCommon}嗎？";
 
 $lang->product->errorNoProduct = "還沒有創建{$lang->productCommon}！";
 $lang->product->accessDenied   = "您無權訪問該{$lang->productCommon}";
 
+$lang->product->id        = "編號";
 $lang->product->name      = "{$lang->productCommon}名稱";
 $lang->product->code      = "{$lang->productCommon}代號";
+$lang->product->line      = '產品綫';
 $lang->product->order     = '排序';
 $lang->product->type      = "{$lang->productCommon}類型";
 $lang->product->status    = '狀態';

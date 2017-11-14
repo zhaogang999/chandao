@@ -13,7 +13,7 @@ class doc extends control
 {
     /**
      * Construct function, load user, tree, action auto.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -56,15 +56,15 @@ class doc extends control
 
     /**
      * Browse docs.
-     * 
+     *
      * @param  string|int $libID    product|project or the int id of custom library
-     * @param  int    $moduleID 
-     * @param  int    $productID 
-     * @param  int    $projectID 
-     * @param  string $orderBy 
-     * @param  int    $recTotal 
-     * @param  int    $recPerPage 
-     * @param  int    $pageID 
+     * @param  int    $moduleID
+     * @param  int    $productID
+     * @param  int    $projectID
+     * @param  string $orderBy
+     * @param  int    $recTotal
+     * @param  int    $recPerPage
+     * @param  int    $pageID
      * @access public
      * @return void
      */
@@ -75,7 +75,7 @@ class doc extends control
 
         $this->loadModel('search');
 
-        /* Set browseType.*/ 
+        /* Set browseType.*/
         $browseType = strtolower($browseType);
         if(($this->cookie->browseType == 'bymenu' or $this->cookie->browseType == 'bytree') and $browseType != 'bysearch') $browseType = $this->cookie->browseType;
         $queryID    = ($browseType == 'bysearch') ? (int)$param : 0;
@@ -128,10 +128,10 @@ class doc extends control
         /* Append id for secend sort. */
         if($browseType == 'bymenu' and strtolower($orderBy) != 'editeddate_desc' and strtolower($orderBy) != 'addeddate_desc') $orderBy = 'title_asc';
         $sort = $this->loadModel('common')->appendOrder($orderBy);
- 
+
         /* Get docs by browse type. */
         $docs = $this->doc->getDocsByBrowseType($libID, $browseType, $queryID, $moduleID, $sort, $pager);
-       
+
         /* Build the search form. */
         $actionURL = $this->createLink('doc', 'browse', "lib=$libID&browseType=bySearch&queryID=myQueryID&orderBy=$orderBy&from=$from");
         $this->doc->buildSearchForm($libID, $this->libs, $queryID, $actionURL, $type);
@@ -223,13 +223,13 @@ class doc extends control
             }
             die(js::locate($this->createLink($this->moduleName, 'browse', "libID=$libID"), 'parent.parent'));
         }
-        
+
         $lib = $this->doc->getLibByID($libID);
         if(!empty($lib->product)) $this->view->product = $this->dao->select('id,name')->from(TABLE_PRODUCT)->where('id')->eq($lib->product)->fetch();
         if(!empty($lib->project)) $this->view->project = $this->dao->select('id,name')->from(TABLE_PROJECT)->where('id')->eq($lib->project)->fetch();
         $this->view->lib     = $lib;
         $this->view->groups  = $this->loadModel('group')->getPairs();
-        $this->view->users   = $this->user->getPairs('nocode');
+        $this->view->users   = $this->user->getPairs('noletter', $lib->users);
         $this->view->libID   = $libID;
         
         die($this->display());
@@ -259,7 +259,7 @@ class doc extends control
             die(js::locate($this->createLink('doc', 'browse'), 'parent'));
         }
     }
-    
+
     /**
      * Create a doc.
      * 
@@ -376,14 +376,14 @@ class doc extends control
         $this->view->moduleOptionMenu = $this->tree->getOptionMenu($libID, 'doc', $startModuleID = 0);
         $this->view->type             = $type;
         $this->view->groups           = $this->loadModel('group')->getPairs();
-        $this->view->users            = $this->user->getPairs('nocode');
+        $this->view->users            = $this->user->getPairs('noletter', $doc->users);
         $this->display();
     }
 
     /**
      * View a doc.
-     * 
-     * @param  int    $docID 
+     *
+     * @param  int    $docID
      * @access public
      * @return void
      */
@@ -419,80 +419,6 @@ class doc extends control
         $this->view->users      = $this->user->getPairs('noclosed,noletter');
         $this->view->preAndNext = $this->loadModel('common')->getPreAndNextObject('doc', $docID);
         $this->view->keTableCSS = $this->doc->extractKETableCSS($doc->content);
-
-        $this->display();
-    }
-
-    /**
-     * Diff doc. 
-     * 
-     * @param  int    $docID 
-     * @param  int    $newVersion 
-     * @param  int    $oldVersion 
-     * @access public
-     * @return void
-     */
-    public function diff($docID, $newVersion, $oldVersion = '')
-    {
-        if(empty($oldVersion)) $oldVersion = $newVersion - 1;
-        if(empty($oldVersion) or empty($newVersion)) die(js::error($this->lang->doc->versionNotFound) . js::locate('back'));
-
-        $newDoc = $this->doc->getById($docID, $newVersion, true);
-        $oldDoc = $this->doc->getById($docID, $oldVersion, true);
-        if(!$newDoc) die(js::error($this->lang->notFound) . js::locate('back'));
-
-        /* Merge files in doc. */
-        $dbOldDocFiles = $this->dao->select('files')->from(TABLE_DOCCONTENT)->where('doc')->eq($docID)->andWhere('version')->eq($oldVersion)->fetch('files');
-        $dbOldDocFiles = explode(',', $dbOldDocFiles);
-        sort($dbOldDocFiles);
-        $oldDocFiles = array();
-        foreach($dbOldDocFiles as $fileID)
-        {
-            if(!isset($oldDoc->files[$fileID])) continue;
-            $file = $oldDoc->files[$fileID];
-            $oldDocFiles[$fileID] = 'File #' . $fileID;
-            if($file) $oldDocFiles[$fileID] .= ' ' . $file->title . '.' . $file->extension;
-        }
-        $oldDoc->files = join("\n", $oldDocFiles);
-
-        $dbNewDocFiles = $this->dao->select('files')->from(TABLE_DOCCONTENT)->where('doc')->eq($docID)->andWhere('version')->eq($newVersion)->fetch('files');
-        $dbNewDocFiles = explode(',', $dbNewDocFiles);
-        sort($dbNewDocFiles);
-        $newDocFiles = array();
-        foreach($dbNewDocFiles as $fileID)
-        {
-            if(!isset($newDoc->files[$fileID])) continue;
-            $file = $newDoc->files[$fileID];
-            $newDocFiles[$fileID] = 'File #' . $fileID;
-            if($file) $newDocFiles[$fileID] .= ' ' . $file->title . '.' . $file->extension;
-        }
-        $newDoc->files = join("\n", $newDocFiles);
-
-        /* Get diff. */
-        $diff = new stdclass();
-        $diff->content = $this->doc->diff($oldDoc->content, $newDoc->content);
-        $diff->digest  = $this->doc->diff($oldDoc->digest, $newDoc->digest);
-        $diff->files   = $this->doc->diff($oldDoc->files, $newDoc->files);
-
-        /* Check priv when lib is product or project. */
-        $lib  = $this->doc->getLibByID($newDoc->lib);
-        $type = $lib->product ? 'product' : ($lib->project ? 'project' : 'custom');
-
-        /* Set menu. */
-        $this->doc->setMenu($newDoc->lib, $newDoc->module);
-
-        $this->view->title      = "DOC #$newDoc->id $newDoc->title - " . $lib->name;
-        $this->view->position[] = html::a($this->createLink('doc', 'browse', "libID=$newDoc->lib"), $lib->name);
-        $this->view->position[] = $this->lang->doc->view;
-
-        $this->view->newDoc     = $newDoc;
-        $this->view->oldDoc     = $oldDoc;
-        $this->view->docID      = $docID;
-        $this->view->lib        = $lib;
-        $this->view->type       = $type;
-        $this->view->newVersion = $newVersion;
-        $this->view->oldVersion = $oldVersion;
-        $this->view->diff       = $diff;
 
         $this->display();
     }
@@ -668,7 +594,7 @@ class doc extends control
      * @access public
      * @return void
      */
-    public function showFiles($type, $objectID, $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function showFiles($type, $objectID, $viewType='card', $orderBy='t1.id_desc', $recTotal=0, $recPerPage=20, $pageID=1)
     {
         $uri = $this->app->getURI(true);
         $this->app->session->set('taskList',  $uri);
@@ -699,6 +625,19 @@ class doc extends control
             if($this->productID and $type == 'project') $crumb = $this->doc->getProductCrumb($this->productID, $objectID);
             $crumb .= html::a(inlink('objectLibs', "type=$type&objectID=$objectID"), $object->name);
             $crumb .= $this->lang->doc->separator . ' ' . $this->lang->doclib->files;
+
+            if($type == 'product')
+            {
+                $lib = $this->product->getById($objectID);
+                if(!$this->product->checkPriv($lib)) $this->accessDenied();
+            }
+
+            if($type == 'project')
+            {
+                $lib = $this->project->getById($objectID);
+                if(!$this->project->checkPriv($lib)) $this->accessDenied();
+            }
+
             $this->doc->setMenu($libID = 0, $moduleID = 0, $crumb);
         }
 
@@ -709,11 +648,31 @@ class doc extends control
         $this->view->title      = $object->name;
         $this->view->position[] = $object->name;
 
-        $this->view->type   = $type;
-        $this->view->object = $object;
-        $this->view->files  = $this->doc->getLibFiles($type, $objectID, $pager);
-        $this->view->pager  = $pager;
+        $this->view->type       = $type;
+        $this->view->object     = $object;
+        $this->view->files      = $this->doc->getLibFiles($type, $objectID, $orderBy, $pager);
+        $this->view->pager      = $pager;
+        $this->view->viewType   = $viewType;
+        $this->view->orderBy    = $orderBy;
+        $this->view->objectID   = $objectID;
+
         $this->display();
+    }
+
+    /**
+     * Show libs for product or project
+     * 
+     * @access private
+     * @return void
+     */
+    private function accessDenied()
+    {
+        echo(js::alert($this->lang->doc->accessDenied));
+
+        $loginLink = $this->config->requestType == 'GET' ? "?{$this->config->moduleVar}=user&{$this->config->methodVar}=login" : "user{$this->config->requestFix}login";
+
+       if(strpos($this->server->http_referer, $loginLink) !== false) die(js::locate(inlink('index')));
+       die(js::locate('back'));
     }
 
     /**

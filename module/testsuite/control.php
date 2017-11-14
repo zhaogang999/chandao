@@ -174,9 +174,8 @@ class testsuite extends control
 
         if($suite->type == 'library')
         {
-            $this->lang->menugroup->testsuite  = 'caselib';
-
             /* Set lib menu. */
+            if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
             $libraries = $this->testsuite->getLibraries();
             $suiteID   = $this->testsuite->saveLibState($suiteID, $libraries);
             $this->testsuite->setLibMenu($libraries, $suiteID);
@@ -219,7 +218,7 @@ class testsuite extends control
     {
         if($confirm == 'no')
         {
-            die(js::confirm($this->lang->testsuite->confirmDelete, inlink('delete', "suiteID=$suiteID&confirm=yes")));
+            die(js::confirm($this->lang->testsuite->libraryDelete, inlink('delete', "suiteID=$suiteID&confirm=yes")));
         }
         else
         {
@@ -379,8 +378,6 @@ class testsuite extends control
      */
     public function library($libID = 0, $browseType = 'all', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
-        $this->lang->menugroup->testsuite  = 'caselib';
-
         /* Set browse type. */
         $browseType = strtolower($browseType);
 
@@ -406,6 +403,7 @@ class testsuite extends control
 
         /* Set lib menu. */
         $this->testsuite->setLibMenu($libraries, $libID, $moduleID);
+        if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
 
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -456,8 +454,6 @@ class testsuite extends control
      */
     public function createLib()
     {
-        $this->lang->menugroup->testsuite  = 'caselib';
-
         if(!empty($_POST))
         {
             $libID = $this->testsuite->createLib();
@@ -470,6 +466,7 @@ class testsuite extends control
         $libraries = $this->testsuite->getLibraries();
         $libID     = $this->testsuite->saveLibState(0, $libraries);
         $this->testsuite->setLibMenu($libraries, $libID);
+        if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
 
         $this->view->title      = $this->lang->caselib->common . $this->lang->colon . $this->lang->testsuite->createLib;
         $this->view->position[] = $this->lang->caselib->common;
@@ -487,11 +484,11 @@ class testsuite extends control
      */
     public function createCase($libID, $moduleID = 0, $param = 0)
     {
-        $this->lang->menugroup->testsuite = 'caselib';
-
         if(!empty($_POST))
         {
-            $caseResult = $this->loadModel('testcase')->create($bugID = 0);
+            $this->loadModel('testcase');
+            $this->config->testcase->create->requiredFields = $this->config->testsuite->createcase->requiredFields;
+            $caseResult = $this->testcase->create($bugID = 0);
             if(!$caseResult or dao::isError()) die(js::error(dao::getError()));
 
             $caseID = $caseResult['id'];
@@ -511,6 +508,7 @@ class testsuite extends control
         $libraries = $this->testsuite->getLibraries();
         $libID     = $this->testsuite->saveLibState($libID, $libraries);
         $this->testsuite->setLibMenu($libraries, $libID);
+        if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
 
         $type         = 'feature';
         $stage        = '';
@@ -573,7 +571,6 @@ class testsuite extends control
      */
     public function batchCreateCase($libID, $moduleID = 0)
     {
-        $this->lang->menugroup->testsuite = 'caselib';
         $this->loadModel('testcase');
         if(!empty($_POST))
         {
@@ -588,6 +585,7 @@ class testsuite extends control
 
         /* Set lib menu. */
         $this->testsuite->setLibMenu($libraries, $libID);
+        if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
 
         $currentModuleID = (int)$moduleID;
 
@@ -614,13 +612,12 @@ class testsuite extends control
      */
     public function libView($libID)
     {
-        $this->lang->menugroup->testsuite  = 'caselib';
-
         $lib = $this->testsuite->getById($libID);
 
         /* Set lib menu. */
         $libraries = $this->testsuite->getLibraries();
         $this->testsuite->setLibMenu($libraries, $libID);
+        if($this->config->global->flow == 'onlyTest') $this->lang->menugroup->testsuite = 'caselib';
 
         $this->loadModel('testcase');
         $this->view->title      = $lib->name . $this->lang->colon . $this->lang->testsuite->view;
@@ -746,9 +743,9 @@ class testsuite extends control
             $file = $this->loadModel('file')->getUpload('file');
             $file = $file[0];
 
-            move_uploaded_file($file['tmpname'], $this->file->savePath . $file['pathname']);
+            $fileName = $this->file->savePath . $this->file->getSaveName($file['pathname']);
+            move_uploaded_file($file['tmpname'], $fileName);
 
-            $fileName = $this->file->savePath . $file['pathname'];
             $rows     = $this->file->parseCSV($fileName);
             $fields   = $this->testcase->getImportFields($productID);
             $fields   = array_flip($fields);

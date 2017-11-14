@@ -43,6 +43,7 @@ public function batchChangePlan($storyIDList, $planID, $oldPlanID = 0)
             if(empty($story->branch)) $story->plan .= ",$planID";
         }
 
+        //更改计划需求阶段不发生改变
         //if($planID) $story->stage = 'planned';
         if($planID and $oldStory->stage =='wait') $story->stage = 'planned';
 

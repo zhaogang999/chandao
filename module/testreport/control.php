@@ -91,7 +91,7 @@ class testreport extends control
         $this->view->objectType = $objectType;
         $this->view->extra      = $extra;
         $this->view->pager      = $pager;
-        $this->view->users      = $this->user->getPairs('noletter|nodeleted|noclosed');
+        $this->view->users      = $this->user->getPairs('noletter|noclosed|nodeleted');
         $this->view->tasks      = $tasks;
         $this->view->projects   = $projects;
         $this->display();
@@ -128,12 +128,8 @@ class testreport extends control
             $builds  = array();
             if($task->build == 'trunk')
             {
-                $stories = $this->story->getProjectStories($project->id);
-                $bugs    = $this->testreport->getBugs4Test('trunk', $productID, $project->begin, date('Y-m-d', strtotime($task->begin) - 24 * 3600));
-                foreach($stories as $id => $story)
-                {
-                    if($story->product != $task->product) unset($stories[$id]);
-                }
+                echo js::alert($this->lang->testreport->errorTrunk);
+                die(js::locate('back'));
             }
             else
             {
@@ -183,7 +179,6 @@ class testreport extends control
         $cases   = $this->testreport->getTaskCases($tasks);
         $bugInfo = $this->testreport->getBugInfo($tasks, $productIdList, $begin, $end, $builds);
 
-
         $this->view->begin   = $begin;
         $this->view->end     = $end;
         $this->view->members = $this->dao->select('lastRunner')->from(TABLE_TESTRESULT)->where('run')->in(array_keys($tasks))->fetchPairs('lastRunner', 'lastRunner');
@@ -197,7 +192,7 @@ class testreport extends control
         $this->view->storySummary  = $this->product->summary($stories);
 
         $this->view->builds  = $builds;
-        $this->view->users   = $this->user->getPairs('noletter|nodeleted|noclosed');
+        $this->view->users   = $this->user->getPairs('noletter|noclosed|nodeleted');
 
         $this->view->cases       = $cases;
         $this->view->caseSummary = $this->testreport->getResultSummary($tasks, $cases);
@@ -265,12 +260,8 @@ class testreport extends control
             $builds  = array();
             if($task->build == 'trunk')
             {
-                $stories = $this->story->getProjectStories($project->id);
-                $bugs    = $this->testreport->getBugs4Test('trunk', $report->product, $project->begin, date('Y-m-d', strtotime($task->begin) - 24 * 3600));
-                foreach($stories as $id => $story)
-                {
-                    if($story->product != $task->product) unset($stories[$id]);
-                }
+                echo js::alert($this->lang->testreport->errorTrunk);
+                die(js::locate('back'));
             }
             else
             {
@@ -307,7 +298,7 @@ class testreport extends control
         $this->view->storySummary  = $this->product->summary($stories);
 
         $this->view->builds  = $builds;
-        $this->view->users   = $this->user->getPairs('noletter|nodeleted|noclosed');
+        $this->view->users   = $this->user->getPairs('noletter|noclosed|nodeleted');
 
         $this->view->cases       = $cases;
         $this->view->caseSummary = $this->testreport->getResultSummary($tasks, $cases);
@@ -373,7 +364,7 @@ class testreport extends control
         $this->view->bugs    = $report->bugs ? $this->bug->getByList($report->bugs) : array();
         $this->view->builds  = $builds;
         $this->view->cases   = $cases;
-        $this->view->users   = $this->user->getPairs('noletter|nodeleted|noclosed');
+        $this->view->users   = $this->user->getPairs('noletter|noclosed|nodeleted');
         $this->view->actions = $this->loadModel('action')->getList('testreport', $reportID);
 
         $this->view->storySummary = $this->product->summary($stories);

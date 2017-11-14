@@ -59,10 +59,11 @@ function initKindeditor(afterInit)
         {
             cssPath:[themeRoot + 'zui/css/min.css'],
             width:'100%',
+            height:'200px',
             items:editorTool,
             filterMode: true, 
             bodyClass:'article-content',
-            urlType:'relative', 
+            urlType:'absolute', 
             uploadJson: createLink('file', 'ajaxUpload', 'uid=' + kuid),
             allowFileManager:true,
             langType:'<?php echo $editorLang?>',
@@ -111,6 +112,9 @@ function initKindeditor(afterInit)
                         var file     = original.clipboardData.items[0].getAsFile();
                         if(file)
                         {
+                            $('#submit').attr('disabled', 'disabled');
+                            $("body").click(function(){$('#submit').removeAttr('disabled');});
+
                             var reader = new FileReader();
                             reader.onload = function(evt) 
                             {
@@ -120,13 +124,17 @@ function initKindeditor(afterInit)
                                 var contentType = arr[0].split(";")[0].split(":")[1];
 
                                 html = '<img src="' + result + '" alt="" />';
-                                $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data){cmd.inserthtml(data);});
+                                $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data)
+                                {
+                                    cmd.inserthtml(data);
+                                    $('#submit').removeAttr('disabled');
+                                });
                             };
                             reader.readAsDataURL(file);
                         }
                     });
                 }
-                /* Paste in firefox and other firefox.*/
+                /* Paste in firefox and other firefox. */
                 else
                 {
                     K(doc.body).bind('paste', function(ev)
@@ -136,10 +144,13 @@ function initKindeditor(afterInit)
                             var html = K(doc.body).html();
                             if(html.search(/<img src="data:.+;base64,/) > -1)
                             {
+                                $('#submit').attr('disabled', 'disabled');
+                                $("body").click(function(){$('#submit').removeAttr('disabled');});
                                 $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data)
                                 {
                                     if(data.indexOf('<img') == 0) data = '<p>' + data + '</p>';
                                     frame.html(data);
+                                    $('#submit').removeAttr('disabled');
                                 });
                             }
                         }, 80);

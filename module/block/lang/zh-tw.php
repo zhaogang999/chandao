@@ -16,6 +16,14 @@ $lang->block->style  = '外觀';
 $lang->block->grid   = '寬度';
 $lang->block->color  = '顏色';
 
+$lang->block->account  = '所屬用戶';
+$lang->block->module   = '所屬模組';
+$lang->block->title    = '區塊名稱';
+$lang->block->source   = '來源模組';
+$lang->block->block    = '來源區塊';
+$lang->block->order    = '排序';
+$lang->block->height   = '高度';
+
 $lang->block->lblModule    = '模組';
 $lang->block->lblBlock     = '區塊';
 $lang->block->lblNum       = '條數';
@@ -272,10 +280,12 @@ $lang->block->typeList->story['closedBy']   = '由我關閉';
 $lang->block->typeList->product['noclosed'] = '未關閉';
 $lang->block->typeList->product['closed']   = '已關閉';
 $lang->block->typeList->product['all']      = '全部';
+$lang->block->typeList->product['involved'] = '我參與的';
 
-$lang->block->typeList->project['undone']  = '未完成';
-$lang->block->typeList->project['isdoing'] = '進行中';
-$lang->block->typeList->project['all']     = '全部';
+$lang->block->typeList->project['undone']   = '未完成';
+$lang->block->typeList->project['isdoing']  = '進行中';
+$lang->block->typeList->project['all']      = '全部';
+$lang->block->typeList->project['involved'] = '我參與的';
 
 $lang->block->typeList->testtask['wait']    = '待測版本';
 $lang->block->typeList->testtask['doing']   = '測試中版本';

@@ -288,7 +288,7 @@ class mailModel extends model
         }
 
         /* Remove deleted users. */
-        $users = $this->loadModel('user')->getPairs('nodeleted');
+        $users = $this->loadModel('user')->getPairs('nodeleted|all');
         foreach($toList as $key => $to) if(!isset($users[trim($to)])) unset($toList[$key]);
         foreach($ccList as $key => $cc) if(!isset($users[trim($cc)])) unset($ccList[$key]);
 
@@ -304,7 +304,12 @@ class mailModel extends model
         $this->clear();
 
         /* Replace full webPath image for mail. */
-        if(preg_match('/src="\/?data\/upload/U', $body)) $body = preg_replace('/<img (.*)src="\/?data\/upload/', '<img $1 src="' . zget($this->config->mail, 'domain', common::getSysURL()) . $this->config->webRoot . 'data/upload', $body);
+        $sysURL      = zget($this->config->mail, 'domain', common::getSysURL());
+        $readLinkReg = str_replace(array('%fileID%', '/', '.', '?'), array('[0-9]+', '\/', '\.', '\?'), helper::createLink('file', 'read', 'fileID=(%fileID%)', '\w+'));
+
+        $body = preg_replace('/ src="(' . $readLinkReg . ')" /', ' src="' . $sysURL . '$1" ', $body);
+        $body = preg_replace('/ src="{([0-9]+)(\.(\w+))?}" /', ' src="' . $sysURL . helper::createLink('file', 'read', "fileID=$1", "$3") . '" ', $body);
+        $body = preg_replace('/<img (.*)src="\/?data\/upload/', '<img $1 src="' . $sysURL . $this->config->webRoot . 'data/upload', $body);
 
         try 
         {
@@ -372,6 +377,7 @@ class mailModel extends model
     {
         $ccList = explode(',', str_replace(' ', '', $ccList));
         if(!is_array($ccList)) return;
+        $ccList = array_unique($ccList);
         foreach($ccList as $account)
         {
             if(!isset($emails[$account]) or isset($emails[$account]->sended) or strpos($emails[$account]->email, '@') == false) continue;
@@ -512,7 +518,7 @@ class mailModel extends model
         $data->ccList    = $ccList;
         $data->subject   = $subject;
         $data->body      = $body;
-        $data->addedBy   = $this->app->user->account;
+        $data->addedBy   = $this->config->mail->fromName;
         $data->addedDate = helper::now();
         $this->dao->insert(TABLE_MAILQUEUE)->data($data)->autocheck()->exec();
     }

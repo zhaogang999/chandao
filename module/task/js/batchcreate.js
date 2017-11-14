@@ -1,7 +1,8 @@
 /* Remove width in defaultChosenOptions. */
 delete defaultChosenOptions.width;
 
-$(document).ready(removeDitto());//Remove 'ditto' in first row.
+/* Remove 'ditto' in first row. */
+$(document).ready(removeDitto());
 
 /* Get select of stories.*/
 function setStories(moduleID, projectID, num)
@@ -38,7 +39,14 @@ function copyStoryTitle(num)
     startPosition  = storyTitle.indexOf(':') + 1;
     endPosition    = storyTitle.lastIndexOf('[');
     storyTitle     = storyTitle.substr(startPosition, endPosition - startPosition);
+
     $('#name\\[' + num + '\\]').val(storyTitle);
+    $('#estimate\\[' + num + '\\]').val($('#storyEstimate' + num).val());
+    $('#desc\\[' + num + '\\]').val(($('#storyDesc' + num).val()).replace(/<[^>]+>/g,''));
+
+    var storyPri = $('#storyPri' + num).val();
+    if(storyPri == 0) $('#pri' + num ).val('3');
+    if(storyPri != 0) $('#pri' + num ).val(storyPri);
 }
 
 /* Set the story module. */
@@ -47,11 +55,15 @@ function setStoryRelated(num)
     var storyID = $('#story' + num).val();
     if(storyID)
     {
-        var link = createLink('story', 'ajaxGetModule', 'storyID=' + storyID);
-        $.get(link, function(moduleID)
+        var link = createLink('story', 'ajaxGetInfo', 'storyID=' + storyID);
+        $.getJSON(link, function(storyInfo)
         {
-            $('#module' + num).val(moduleID);
+            $('#module' + num).val(parseInt(storyInfo.moduleID));
             $('#module' + num).trigger("chosen:updated");
+
+            $('#storyEstimate' + num).val(storyInfo.estimate);
+            $('#storyPri'      + num).val(storyInfo.pri);
+            $('#storyDesc'     + num).val(storyInfo.spec);
         });
     }
 }
@@ -139,4 +151,7 @@ $(function()
     $('#module0_chosen').width($('#module1_chosen').width());
     $('#story0_chosen').width($('#story1_chosen').width());
     if($.cookie('zeroTask') == 'true') toggleZeroTaskStory();
+
+    if(storyID != 0) setStoryRelated(0);
 })
+

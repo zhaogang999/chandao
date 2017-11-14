@@ -29,14 +29,14 @@ class story extends control
 
     /**
      * Create a story.
-     * 
-     * @param  int    $productID 
-     * @param  int    $branch 
-     * @param  int    $moduleID 
-     * @param  int    $storyID 
-     * @param  int    $projectID 
-     * @param  int    $bugID 
-     * @param  int    $planID 
+     *
+     * @param  int    $productID
+     * @param  int    $branch
+     * @param  int    $moduleID
+     * @param  int    $storyID
+     * @param  int    $projectID
+     * @param  int    $bugID
+     * @param  int    $planID
      * @access public
      * @return void
      */
@@ -100,7 +100,7 @@ class story extends control
             if(!isset($products[$product->id])) $products[$product->id] = $product->name;
         }
 
-        $users = $this->user->getPairs('nodeleted|pdfirst|noclosed');
+        $users = $this->user->getPairs('pdfirst|noclosed|nodeleted');
         $moduleOptionMenu = $this->tree->getOptionMenu($productID, $viewType = 'story', 0, $branch);
 
         /* Set menu. */
@@ -116,12 +116,15 @@ class story extends control
         $verify     = '';
         $keywords   = '';
         $mailto     = '';
+        $color      = '';
 
         if($storyID > 0)
         {
             $story      = $this->story->getByID($storyID);
             $planID     = $story->plan;
             $source     = $story->source;
+            $sourceNote = $story->sourceNote;
+            $color      = $story->color;
             $pri        = $story->pri;
             $productID  = $story->product;
             $moduleID   = $story->module;
@@ -169,6 +172,7 @@ class story extends control
         $this->view->planID           = $planID;
         $this->view->source           = $source;
         $this->view->sourceNote       = $sourceNote;
+        $this->view->color            = $color;
         $this->view->pri              = $pri;
         $this->view->branch           = $branch;
         $this->view->branches         = $product->type != 'normal' ? $this->loadModel('branch')->getPairs($productID) : array();
@@ -185,7 +189,7 @@ class story extends control
 
         $this->display();
     }
-    
+
     /**
      * Create a batch stories.
      * 
@@ -351,14 +355,14 @@ class story extends control
         }
 
         $this->commonAction($storyID);
-  
+
         /* Assign. */
         $story   = $this->story->getById($storyID, 0, true);
         $product = $this->loadModel('product')->getById($story->product);
         $this->view->title      = $this->lang->story->edit . "STORY" . $this->lang->colon . $this->view->story->title;
         $this->view->position[] = $this->lang->story->edit;
         $this->view->story      = $story;
-        $this->view->users      = $this->user->getPairs('nodeleted|pofirst', "$story->assignedTo,$story->openedBy,$story->closedBy");
+        $this->view->users      = $this->user->getPairs('pofirst|nodeleted', "$story->assignedTo,$story->openedBy,$story->closedBy");
         $this->view->product    = $product;
         $this->view->branches   = $product->type == 'normal' ? array() : $this->loadModel('branch')->getPairs($story->product);
         $this->display();
@@ -366,9 +370,9 @@ class story extends control
 
     /**
      * Batch edit story.
-     * 
-     * @param  int    $productID 
-     * @param  int    $projectID 
+     *
+     * @param  int    $productID
+     * @param  int    $projectID
      * @access public
      * @return void
      */
@@ -396,6 +400,7 @@ class story extends control
         }
 
         $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
 
         /* Get edited stories. */
         $stories = $this->story->getByList($storyIDList);
@@ -536,7 +541,7 @@ class story extends control
 
         /* Assign. */
         $this->view->title      = $this->lang->story->change . "STORY" . $this->lang->colon . $this->view->story->title;
-        $this->view->users      = $this->user->getPairs('nodeleted|pofirst', $this->view->story->assignedTo);
+        $this->view->users      = $this->user->getPairs('pofirst|nodeleted', $this->view->story->assignedTo);
         $this->view->position[] = $this->lang->story->change;
         $this->view->needReview = ($this->app->user->account == $this->view->product->PO || $this->config->story->needReview == 0) ? "checked='checked'" : "";
         $this->display();
@@ -566,7 +571,7 @@ class story extends control
 
         /* Assign. */
         $this->view->title      = $this->lang->story->activate . "STORY" . $this->lang->colon . $this->view->story->title;
-        $this->view->users      = $this->user->getPairs('nodeleted|pofirst', $this->view->story->closedBy);
+        $this->view->users      = $this->user->getPairs('pofirst|nodeleted', $this->view->story->closedBy);
         $this->view->position[] = $this->lang->story->activate;
         $this->display();
     }
@@ -664,7 +669,7 @@ class story extends control
             $this->story->review($storyID);
             if(dao::isError()) die(js::error(dao::getError()));
             $result = $this->post->result;
-            if($this->post->closedReason != '' and strpos('done,postponed,subdivided', $this->post->closedReason) !== false) $result = 'pass';
+            if($this->post->closedReason != '' and strpos('done,postponed,subdivided', $this->post->closedReason) === false) $result = 'pass';
             $actionID = $this->action->create('story', $storyID, 'Reviewed', $this->post->comment, ucfirst($result));
             $this->story->sendmail($storyID, $actionID);
             if($this->post->result == 'reject')
@@ -716,10 +721,12 @@ class story extends control
     public function batchReview($result, $reason = '')
     {
         $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
         $actions     = $this->story->batchReview($storyIDList, $result, $reason);
 
         if(dao::isError()) die(js::error(dao::getError()));
         foreach($actions as $storyID => $actionID) $this->story->sendmail($storyID, $actionID);
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::locate($this->session->storyList, 'parent'));
     }
 
@@ -788,10 +795,12 @@ class story extends control
                     $this->story->sendmail($storyID, $actionID);
                 }
             }
+            if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
             die(js::locate($this->session->storyList, 'parent'));
         }
 
         $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
 
         /* Get edited stories. */
         $stories = $this->dao->select('*')->from(TABLE_STORY)->where('id')->in($storyIDList)->fetchAll('id');
@@ -857,6 +866,7 @@ class story extends control
     public function batchChangeModule($moduleID)
     {
         $storyIDList = !empty($_POST['storyIDList']) ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
         $allChanges  = $this->story->batchChangeModule($storyIDList, $moduleID);
         if(dao::isError()) die(js::error(dao::getError()));
         foreach($allChanges as $storyID => $changes)
@@ -865,6 +875,7 @@ class story extends control
             $this->action->logHistory($actionID, $changes);
             $this->story->sendmail($storyID, $actionID);
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::reload('parent'));
     }
 
@@ -878,6 +889,7 @@ class story extends control
     public function batchChangePlan($planID, $oldPlanID = 0)
     {
         $storyIDList = !empty($_POST['storyIDList']) ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
         $allChanges  = $this->story->batchChangePlan($storyIDList, $planID, $oldPlanID);
         if(dao::isError()) die(js::error(dao::getError()));
         foreach($allChanges as $storyID => $changes)
@@ -886,6 +898,7 @@ class story extends control
             $this->action->logHistory($actionID, $changes);
             $this->story->sendmail($storyID, $actionID);
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::reload('parent'));
     }
 
@@ -899,6 +912,7 @@ class story extends control
     public function batchChangeBranch($branchID)
     {
         $storyIDList = !empty($_POST['storyIDList']) ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
         $allChanges  = $this->story->batchChangeBranch($storyIDList, $branchID);
         if(dao::isError()) die(js::error(dao::getError()));
         foreach($allChanges as $storyID => $changes)
@@ -907,6 +921,7 @@ class story extends control
             $this->action->logHistory($actionID, $changes);
             $this->story->sendmail($storyID, $actionID);
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::reload('parent'));
     }
 
@@ -920,14 +935,18 @@ class story extends control
     public function batchChangeStage($stage)
     {
         $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
+        $storyIDList = array_unique($storyIDList);
         $allChanges  = $this->story->batchChangeStage($storyIDList, $stage);
         if(dao::isError()) die(js::error(dao::getError()));
+
+        $action = $stage == 'verified' ? 'Verified' : 'Edited';
         foreach($allChanges as $storyID => $changes)
         {
-            $actionID = $this->action->create('story', $storyID, 'Edited');
+            $actionID = $this->action->create('story', $storyID, $action);
             $this->action->logHistory($actionID, $changes);
             $this->story->sendmail($storyID, $actionID);
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::locate($this->session->storyList, 'parent'));
     }
 
@@ -950,6 +969,7 @@ class story extends control
                 $this->story->sendmail($storyID, $actionID);
             }
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         die(js::locate($this->session->storyList));
     }
 
@@ -1157,13 +1177,13 @@ class story extends control
 
     /**
      * AJAX: get stories of a product in html select.
-     * 
-     * @param  int    $productID 
-     * @param  int    $moduleID 
-     * @param  int    $storyID 
-     * @param  string $onlyOption 
-     * @param  string $status 
-     * @param  int    $limit 
+     *
+     * @param  int    $productID
+     * @param  int    $moduleID
+     * @param  int    $storyID
+     * @param  string $onlyOption
+     * @param  string $status
+     * @param  int    $limit
      * @access public
      * @return void
      */
@@ -1255,24 +1275,30 @@ class story extends control
 
     /**
      * AJAX: get module of a story.
-     * 
-     * @param  int    $storyID 
+     *
+     * @param  int    $storyID
      * @access public
-     * @return string 
+     * @return string
      */
-    public function ajaxGetModule($storyID)
+    public function ajaxGetInfo($storyID)
     {
-        $story = $this->story->getByID($storyID); 
-        echo $story->module;
+        $story = $this->story->getByID($storyID);
+
+        $storyInfo['moduleID'] = $story->module;
+        $storyInfo['estimate'] = $story->estimate;
+        $storyInfo['pri']      = $story->pri;
+        $storyInfo['spec']     = $story->spec;
+
+        echo json_encode($storyInfo);
     }
 
     /**
      * The report page.
-     * 
-     * @param  int    $productID 
-     * @param  string $browseType 
+     *
+     * @param  int    $productID
+     * @param  string $browseType
      * @param  int    $branchID
-     * @param  int    $moduleID 
+     * @param  int    $moduleID
      * @access public
      * @return void
      */
@@ -1307,12 +1333,12 @@ class story extends control
         $this->view->checkedCharts = $this->post->charts ? join(',', $this->post->charts) : '';
         $this->display();
     }
- 
+
     /**
      * get data to export
-     * 
-     * @param  int $productID 
-     * @param  string $orderBy 
+     *
+     * @param  int $productID
+     * @param  string $orderBy
      * @access public
      * @return void
      */
@@ -1359,6 +1385,7 @@ class story extends control
             $relatedStoryIdList   = array();
             $relatedPlanIdList    = array();
             $relatedBranchIdList  = array();
+            $relatedStoryIDs      = array();
 
             foreach($stories as $story)
             {
@@ -1366,6 +1393,7 @@ class story extends control
                 $relatedModuleIdList[$story->module]   = $story->module;
                 $relatedPlanIdList[$story->plan]       = $story->plan;
                 $relatedBranchIdList[$story->branch]   = $story->branch;
+                $relatedStoryIDs[$story->id]           = $story->id;
 
                 /* Process related stories. */
                 $relatedStories = $story->childStories . ',' . $story->linkStories . ',' . $story->duplicateStory;
@@ -1375,6 +1403,10 @@ class story extends control
                     if($storyID) $relatedStoryIdList[$storyID] = trim($storyID);
                 }
             }
+
+            $storyTasks = $this->loadModel('task')->getStoryTaskCounts($relatedStoryIDs);
+            $storyBugs  = $this->loadModel('bug')->getStoryBugCounts($relatedStoryIDs);
+            $storyCases = $this->loadModel('testcase')->getStoryCaseCounts($relatedStoryIDs);
 
             /* Get related objects title or names. */
             $productsType   = $this->dao->select('id, type')->from(TABLE_PRODUCT)->where('id')->in($relatedProductIdList)->fetchPairs();
@@ -1430,11 +1462,16 @@ class story extends control
                 if(isset($storyLang->stageList[$story->stage]))         $story->stage        = $storyLang->stageList[$story->stage];
                 if(isset($storyLang->reasonList[$story->closedReason])) $story->closedReason = $storyLang->reasonList[$story->closedReason];
                 if(isset($storyLang->sourceList[$story->source]))       $story->source       = $storyLang->sourceList[$story->source];
+                if(isset($storyLang->sourceList[$story->sourceNote]))   $story->sourceNote   = $storyLang->sourceList[$story->sourceNote];
 
                 if(isset($users[$story->openedBy]))     $story->openedBy     = $users[$story->openedBy];
                 if(isset($users[$story->assignedTo]))   $story->assignedTo   = $users[$story->assignedTo];
                 if(isset($users[$story->lastEditedBy])) $story->lastEditedBy = $users[$story->lastEditedBy];
                 if(isset($users[$story->closedBy]))     $story->closedBy     = $users[$story->closedBy]; 
+
+                if(isset($storyTasks[$story->id]))     $story->taskCountAB = $storyTasks[$story->id]; 
+                if(isset($storyBugs[$story->id]))      $story->bugCountAB  = $storyBugs[$story->id]; 
+                if(isset($storyCases[$story->id]))     $story->caseCountAB = $storyCases[$story->id]; 
 
                 $story->openedDate     = substr($story->openedDate, 0, 10);
                 $story->assignedDate   = substr($story->assignedDate, 0, 10);
@@ -1471,7 +1508,7 @@ class story extends control
                 {
                     foreach($relatedFiles[$story->id] as $file)
                     {
-                        $fileURL = common::getSysURL() . $this->file->webPath . $file->pathname;
+                        $fileURL = common::getSysURL() . $this->file->webPath . $this->file->getRealPathName($file->pathname);
                         $story->files .= html::a($fileURL, $file->title, '_blank') . '<br />';
                     }
                 }

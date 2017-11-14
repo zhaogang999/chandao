@@ -261,8 +261,9 @@ class reportModel extends model
             ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
             ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
             ->where('t1.deleted')->eq(0)
-            ->andWhere('t1.status')->notin('cancel, closed, done')
+            ->andWhere('t1.status')->notin('cancel, closed, done, pause')
             ->andWhere('t2.deleted')->eq(0)
+            ->andWhere('t2.status')->notin('cancel, closed, done, suspended')
             ->beginIF($dept)->andWhere('t3.dept')->in($depts)->fi()
             ->fetchGroup('assignedTo');
         $workload = array();
@@ -349,7 +350,7 @@ class reportModel extends model
      */
     public function getUserBugs()
     {
-        $bugs = $this->dao->select('t1.id, t1.title, t2.account as user')
+        $bugs = $this->dao->select('t1.id, t1.title, t2.account as user, t1.deadline')
             ->from(TABLE_BUG)->alias('t1')
             ->leftJoin(TABLE_USER)->alias('t2')
             ->on('t1.assignedTo = t2.account')
@@ -369,7 +370,7 @@ class reportModel extends model
      */
     public function getUserTasks()
     {
-        $tasks = $this->dao->select('t1.id, t1.name, t2.account as user')->from(TABLE_TASK)->alias('t1')
+        $tasks = $this->dao->select('t1.id, t1.name, t2.account as user, t1.deadline')->from(TABLE_TASK)->alias('t1')
             ->leftJoin(TABLE_USER)->alias('t2')->on('t1.assignedTo = t2.account')
             ->leftJoin(TABLE_PROJECT)->alias('t3')->on('t1.project = t3.id')
             ->where('t1.assignedTo')->ne('')

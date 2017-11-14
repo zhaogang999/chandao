@@ -63,9 +63,9 @@ class userModel extends model
 
     /**
      * Get the account=>realname pairs.
-     * 
-     * @param  string $params   noletter|noempty|noclosed|nodeleted|withguest|pofirst|devfirst|qafirst|pmfirst|realname, can be sets of theme
-     * @param  string $usersToAppended  account1,account2 
+     *
+     * @param  string $params   noletter|noempty|nodeleted|noclosed|withguest|pofirst|devfirst|qafirst|pmfirst|realname, can be sets of theme
+     * @param  string $usersToAppended  account1,account2
      * @access public
      * @return array
      */
@@ -88,7 +88,8 @@ class userModel extends model
 
         /* Get raw records. */
         $users = $this->dao->select($fields)->from(TABLE_USER)
-            ->beginIF(strpos($params, 'nodeleted') !== false)->where('deleted')->eq(0)->fi()
+            ->where('1')
+            ->beginIF(strpos($params, 'nodeleted') !== false or empty($this->config->user->showDeleted))->andWhere('deleted')->eq('0')->fi()
             ->orderBy($orderBy)
             ->fetchAll('account');
         if($usersToAppended) $users += $this->dao->select($fields)->from(TABLE_USER)->where('account')->in($usersToAppended)->fetchAll('account');
@@ -199,7 +200,7 @@ class userModel extends model
 
     /**
      * Create a user.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -220,7 +221,7 @@ class userModel extends model
             return false;
         }
 
-        if(empty($_POST['verifyPassword']) or md5($this->post->verifyPassword) != $this->app->user->password)
+        if(empty($_POST['verifyPassword']) or $this->post->verifyPassword != md5($this->app->user->password . $this->session->rand))
         {
             dao::$errors['verifyPassword'][] = $this->lang->user->error->verifyPassword;
             return false;
@@ -249,22 +250,22 @@ class userModel extends model
     }
 
     /**
-     * Batch create users. 
-     * 
-     * @param  int    $users 
+     * Batch create users.
+     *
+     * @param  int    $users
      * @access public
      * @return void
      */
     public function batchCreate()
     {
-        if(empty($_POST['verifyPassword']) or md5($this->post->verifyPassword) != $this->app->user->password) die(js::alert($this->lang->user->error->verifyPassword));
+        if(empty($_POST['verifyPassword']) or $this->post->verifyPassword != md5($this->app->user->password . $this->session->rand)) die(js::alert($this->lang->user->error->verifyPassword));
 
-        $users    = fixer::input('post')->get(); 
+        $users    = fixer::input('post')->get();
         $data     = array();
         $accounts = array();
         for($i = 0; $i < $this->config->user->batchCreate; $i++)
         {
-            if($users->account[$i] != '')  
+            if($users->account[$i] != '')
             {
                 $account = $this->dao->select('account')->from(TABLE_USER)->where('account')->eq($users->account[$i])->fetch();
                 if($account) die(js::error(sprintf($this->lang->user->error->accountDupl, $i+1)));
@@ -368,7 +369,7 @@ class userModel extends model
             return false;
         }
 
-        if(empty($_POST['verifyPassword']) or md5($this->post->verifyPassword) != $this->app->user->password)
+        if(empty($_POST['verifyPassword']) or $this->post->verifyPassword != md5($this->app->user->password . $this->session->rand))
         {
             dao::$errors['verifyPassword'][] = $this->lang->user->error->verifyPassword;
             return false;
@@ -407,9 +408,9 @@ class userModel extends model
             }
         }
         if(!empty($user->password) and $user->account == $this->app->user->account) $this->app->user->password = $user->password;
-
         if(!dao::isError())
         {
+            $this->loadModel('score')->create('user', 'editProfile');
             $this->loadModel('mail');
             if($this->config->mail->mta == 'sendcloud' and $user->email != $oldUser->email)
             {
@@ -420,15 +421,29 @@ class userModel extends model
     }
 
     /**
+     * update session random.
+     *
+     * @access public
+     * @return void
+     */
+    public function updateSessionRandom()
+    {
+        $random = mt_rand();
+        $this->session->set('rand', $random);
+
+        return $random;
+    }
+
+    /**
      * Batch edit user.
-     * 
+     *
      * @access public
      * @return void
      */
     public function batchEdit()
     {
         $data = fixer::input('post')->get();
-        if(empty($_POST['verifyPassword']) or md5($this->post->verifyPassword) != $this->app->user->password) die(js::alert($this->lang->user->error->verifyPassword));
+        if(empty($_POST['verifyPassword']) or $this->post->verifyPassword != md5($this->app->user->password . $this->session->rand)) die(js::alert($this->lang->user->error->verifyPassword));
 
         $oldUsers     = $this->dao->select('id, account, email')->from(TABLE_USER)->where('id')->in(array_keys($data->account))->fetchAll('id');
         $accountGroup = $this->dao->select('id, account')->from(TABLE_USER)->where('account')->in($data->account)->fetchGroup('account', 'id');
@@ -503,7 +518,7 @@ class userModel extends model
     public function updatePassword($userID)
     {
         if(!$this->checkPassword()) return;
-        
+
         $user = fixer::input('post')
             ->setIF($this->post->password1 != false, 'password', md5($this->post->password1))
             ->remove('account, password1, password2, originalPassword')
@@ -520,10 +535,13 @@ class userModel extends model
             dao::$errors['originalPassword'][] = $this->lang->user->error->originalPassword;
             return false;
         }
-
         $this->dao->update(TABLE_USER)->data($user)->autoCheck()->where('id')->eq((int)$userID)->exec();
         $this->app->user->password       = $user->password;
-        $this->app->user->modifyPassword = false;;
+        $this->app->user->modifyPassword = false;
+        if(!dao::isError())
+        {
+            $this->loadModel('score')->create('user', 'changePassword', $this->computePasswordStrength($this->post->password1));
+        }
     }
 
     /**
@@ -566,7 +584,7 @@ class userModel extends model
         }
         return !dao::isError();
     }
-    
+
     /**
      * Identify a user.
      * 
@@ -578,7 +596,7 @@ class userModel extends model
     public function identify($account, $password)
     {
         if(!$account or !$password) return false;
-  
+
         /* Get the user first. If $password length is 32, don't add the password condition.  */
         $record = $this->dao->select('*')->from(TABLE_USER)
             ->where('account')->eq($account)
@@ -612,8 +630,10 @@ class userModel extends model
         {
             $ip   = $this->server->remote_addr;
             $last = $this->server->request_time;
-            $user->last  = date(DT_DATETIME1, $last);
-            $user->admin = strpos($this->app->company->admins, ",{$user->account},") !== false;
+
+            $user->lastTime       = $user->last;
+            $user->last           = date(DT_DATETIME1, $last);
+            $user->admin          = strpos($this->app->company->admins, ",{$user->account},") !== false;
             $user->modifyPassword = ($user->visits == 0 and !empty($this->config->safe->modifyPasswordFirstLogin));
             if($user->modifyPassword) $user->modifyPasswordReason = 'modifyPasswordFirstLogin';
             if(!$user->modifyPassword and !empty($this->config->safe->changeWeak))
@@ -704,6 +724,7 @@ class userModel extends model
             $projectAllow = false;
             foreach($groups as $group)
             {
+                $acl = json_decode($group->acl, true);
                 if(empty($group->acl))
                 {
                     $productAllow = true;
@@ -711,9 +732,9 @@ class userModel extends model
                     $viewAllow    = true;
                     break;
                 }
-                $acl = json_decode($group->acl, true);
                 if(empty($acl['products'])) $productAllow = true;
                 if(empty($acl['projects'])) $projectAllow = true;
+                if(empty($acl['views']))    $viewAllow    = true;
                 if(empty($acls) and !empty($acl))
                 {
                     $acls = $acl;
@@ -727,7 +748,7 @@ class userModel extends model
 
             if($productAllow) $acls['products'] = array();
             if($projectAllow) $acls['projects'] = array();
-            if($viewAllow)    $acls = array();
+            if($viewAllow)    $acls['views']    = array();
 
             $sql = $this->dao->select('module, method')->from(TABLE_USERGROUP)->alias('t1')->leftJoin(TABLE_GROUPPRIV)->alias('t2')
                 ->on('t1.group = t2.group')
@@ -745,9 +766,9 @@ class userModel extends model
 
     /**
      * Keep the user in login state.
-     * 
-     * @param  string    $account 
-     * @param  string    $password 
+     *
+     * @param  string    $account
+     * @param  string    $password
      * @access public
      * @return void
      */
@@ -887,11 +908,7 @@ class userModel extends model
      */
     public function getContactLists($account, $params= '')
     {
-        $Group = '1';
-        $users = $this->dao->findByGroup($Group)->from(TABLE_USERGROUP)->fetchAll();
-        var_dump($users);die;
         $contacts = $this->dao->select('id, listName')->from(TABLE_USERCONTACT)->where('account')->eq($account)->fetchPairs();
-        //$contacts = $this->dao->select('id, listName')->from(TABLE_USERCONTACT)->where('account')->in("$account,admin")->fetchPairs();
         if(!$contacts) return array();
 
         if(strpos($params, 'withempty') !== false) $contacts = array('' => '') + $contacts;
@@ -939,7 +956,17 @@ class userModel extends model
         $data->userList = join(',', $userList);
         $data->account  = $this->app->user->account;
 
-        $this->dao->insert(TABLE_USERCONTACT)->data($data)->exec();
+        if(empty($data->listName))
+        {
+            dao::$errors['listName'][] = sprintf($this->lang->error->notempty, $this->lang->user->contacts->listName);
+            die(js::error(dao::getError()));
+        }
+
+        $this->dao->insert(TABLE_USERCONTACT)->data($data)
+            ->autoCheck()
+            ->exec();
+        if(dao::isError()) die(js::error(dao::getError()));
+
         return $this->dao->lastInsertID();
     }
 
@@ -958,7 +985,16 @@ class userModel extends model
         $data->listName = $listName;
         $data->userList = join(',', $userList);
 
-        $this->dao->update(TABLE_USERCONTACT)->data($data)->where('id')->eq($listID)->exec();
+        if(empty($data->listName))
+        {
+            dao::$errors['listName'][] = sprintf($this->lang->error->notempty, $this->lang->user->contacts->listName);
+            die(js::error(dao::getError()));
+        }
+
+        $this->dao->update(TABLE_USERCONTACT)->data($data)
+            ->where('id')->eq($listID)
+            ->exec();
+        if(dao::isError()) die(js::error(dao::getError()));
     }
 
     /**
@@ -982,10 +1018,12 @@ class userModel extends model
      */
     public function getDataInJSON($user)
     {
-        unset($user->password);
-        unset($user->deleted);
-        $user->company = $this->app->company->name;
-        return array('user' => $user);
+        $newUser = new stdclass();
+        foreach($user as $key => $value)$newUser->$key = $value;
+        unset($newUser->password);
+        unset($newUser->deleted);
+        $newUser->company = $this->app->company->name;
+        return array('user' => $newUser);
     }
 
     /**

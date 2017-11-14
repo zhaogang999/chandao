@@ -73,7 +73,7 @@ class testcaseModel extends model
 
     /**
      * Create a case.
-     * 
+     *
      * @param int $bugID
      * @access public
      * @return void
@@ -84,11 +84,11 @@ class testcaseModel extends model
         $case = fixer::input('post')
             ->add('openedBy', $this->app->user->account)
             ->add('openedDate', $now)
-            ->add('status', $this->forceReview() ? 'wait' : 'normal')
+            ->add('status', $this->forceNotReview() || $this->post->forceNotReview ? 'normal' : 'wait')
             ->add('version', 1)
             ->add('fromBug', $bugID)
             ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion((int)$this->post->story))
-            ->remove('steps,expects,files,labels,stepType')
+            ->remove('steps,expects,files,labels,stepType,forceNotReview')
             ->setDefault('story', 0)
             ->join('stage', ',')
             ->get();
@@ -107,6 +107,7 @@ class testcaseModel extends model
             $caseID = $this->dao->lastInsertID();
             $this->loadModel('file')->saveUpload('testcase', $caseID);
             $parentStepID = 0;
+            $this->loadModel('score')->create('testcase', 'create', $caseID);
             foreach($this->post->steps as $stepID => $stepDesc)
             {
                 if(empty($stepDesc)) continue;
@@ -125,12 +126,12 @@ class testcaseModel extends model
             return array('status' => 'created', 'id' => $caseID);
         }
     }
-    
+
     /**
      * Batch create cases.
-     * 
-     * @param  int    $productID 
-     * @param  int    $storyID 
+     *
+     * @param  int    $productID
+     * @param  int    $storyID
      * @access public
      * @return void
      */
@@ -160,14 +161,14 @@ class testcaseModel extends model
             $type   = $cases->type[$i] == 'ditto'   ? $type   : $cases->type[$i];
             $pri    = $cases->pri[$i] == 'ditto'    ?  $pri   : $cases->pri[$i];
             $cases->module[$i] = (int)$module;
-            $cases->story[$i]  = (int)$story;        
+            $cases->story[$i]  = (int)$story;
             $cases->type[$i]   = $type;
             $cases->pri[$i]    = $pri;
         }
 
         $this->loadModel('story');
         $storyVersions = array();
-        $forceReview   = $this->forceReview();
+        $forceNotReview   = $this->forceNotReview();
         for($i = 0; $i < $batchNum; $i++)
         {
             if($cases->type[$i] != '' and $cases->title[$i] != '')
@@ -186,7 +187,7 @@ class testcaseModel extends model
                 $data[$i]->keywords     = $cases->keywords[$i];
                 $data[$i]->openedBy     = $this->app->user->account;
                 $data[$i]->openedDate   = $now;
-                $data[$i]->status       = $forceReview ? 'wait' : 'normal';
+                $data[$i]->status       = $forceNotReview || $cases->needReview[$i] == 0 ? 'normal' : 'wait';
                 $data[$i]->version      = 1;
 
                 $caseStory = $data[$i]->story;
@@ -209,6 +210,7 @@ class testcaseModel extends model
                 }
 
                 $caseID   = $this->dao->lastInsertID();
+                $this->loadModel('score')->create('testcase', 'create', $caseID);
                 $actionID = $this->loadModel('action')->create('case', $caseID, 'Opened');
             }
             else
@@ -223,6 +225,7 @@ class testcaseModel extends model
                 unset($cases->keywords[$i]);
             }
         }
+        if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchCreate');
     }
 
     /**
@@ -429,10 +432,10 @@ class testcaseModel extends model
 
     /**
      * Get cases by assignedTo.
-     * 
-     * @param  string $account 
-     * @param  string $orderBy 
-     * @param  object $pager 
+     *
+     * @param  string $account
+     * @param  string $orderBy
+     * @param  object $pager
      * @access public
      * @return array
      */
@@ -510,8 +513,8 @@ class testcaseModel extends model
      */
     public function update($caseID)
     {
-        $oldCase     = $this->getById($caseID);
-        if(isset($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
+        $oldCase = $this->getById($caseID);
+        if(!empty($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
         {
             dao::$errors[] = $this->lang->error->editedByOther;
             return false;
@@ -522,7 +525,7 @@ class testcaseModel extends model
         $steps       = array();
 
         //---------------- Judge steps changed or not.-------------------- */
-        
+
         /* Remove the empty setps in post. */
         foreach($this->post->steps as $key => $desc)
         {
@@ -558,7 +561,7 @@ class testcaseModel extends model
             ->join('stage', ',')
             ->remove('comment,steps,expects,files,labels,stepType')
             ->get();
-        if($this->forceReview() and $stepChanged) $case->status = 'wait';
+        if(!$this->forceNotReview() and $stepChanged) $case->status = 'wait';
         $this->dao->update(TABLE_CASE)->data($case)->autoCheck()->batchCheck($this->config->testcase->edit->requiredFields, 'notempty')->where('id')->eq((int)$caseID)->exec();
         if(!$this->dao->isError())
         {
@@ -997,7 +1000,7 @@ class testcaseModel extends model
             $cases[$key] =$caseData;
         }
 
-        $forceReview = $this->forceReview();
+        $forceNotReview = $this->forceNotReview();
         foreach($cases as $key => $caseData)
         {
             $caseID = 0;
@@ -1018,14 +1021,14 @@ class testcaseModel extends model
                 $steps = array();
                 if(isset($_POST['desc'][$key]))
                 {
-                    foreach($data->desc[$key] as $id => $desc)
+                    foreach($this->post->desc[$key] as $id => $desc)
                     {
                         $desc = trim($desc);
                         if(empty($desc))continue;
                         $step = new stdclass();
                         $step->type   = $data->stepType[$key][$id];
                         $step->desc   = $desc;
-                        $step->expect = trim($data->expect[$key][$id]);
+                        $step->expect = trim($this->post->expect[$key][$id]);
 
                         $steps[] = $step;
                     }
@@ -1059,7 +1062,7 @@ class testcaseModel extends model
                 {
                     $caseData->lastEditedBy   = $this->app->user->account;
                     $caseData->lastEditedDate = $now;
-                    if($stepChanged and $forceReview) $caseData->status = 'wait';
+                    if($stepChanged and !$forceNotReview) $caseData->status = 'wait';
                     $this->dao->update(TABLE_CASE)->data($caseData)->where('id')->eq($caseID)->autoCheck()->exec();
                     if($stepChanged)
                     {
@@ -1094,14 +1097,14 @@ class testcaseModel extends model
                 $caseData->openedDate = $now;
                 $caseData->branch     = isset($data->branch[$key]) ? $data->branch[$key] : $branch;
                 if($caseData->story) $caseData->storyVersion = zget($storyVersionPairs, $caseData->story, 1);
-                $caseData->status = $forceReview ? 'wait' : 'normal';
+                $caseData->status = !$forceNotReview ? 'wait' : 'normal';
                 $this->dao->insert(TABLE_CASE)->data($caseData)->autoCheck()->exec();
 
                 if(!dao::isError())
                 {
                     $caseID       = $this->dao->lastInsertID();
                     $parentStepID = 0;
-                    foreach($data->desc[$key] as $id => $desc)
+                    foreach($this->post->desc[$key] as $id => $desc)
                     {
                         $desc = trim($desc);
                         if(empty($desc)) continue;
@@ -1111,7 +1114,7 @@ class testcaseModel extends model
                         $stepData->case    = $caseID;
                         $stepData->version = 1;
                         $stepData->desc    = htmlspecialchars($desc);
-                        $stepData->expect  = htmlspecialchars($data->expect[$key][$id]);
+                        $stepData->expect  = htmlspecialchars($this->post->expect[$key][$id]);
                         $this->dao->insert(TABLE_CASESTEP)->data($stepData)->autoCheck()->exec();
                         if($stepData->type == 'group') $parentStepID = $this->dao->lastInsertID();
                         if($stepData->type == 'step')  $parentStepID = 0;
@@ -1224,16 +1227,17 @@ class testcaseModel extends model
 
     /**
      * Print cell data
-     * 
-     * @param  object $col 
-     * @param  object $case 
-     * @param  array  $users 
-     * @param  array  $branches 
+     *
+     * @param  object $col
+     * @param  object $case
+     * @param  array  $users
+     * @param  array  $branches
      * @access public
      * @return void
      */
-    public function printCell($col, $case, $users, $branches, $modulePairs = array(), $browseType = '')
+    public function printCell($col, $case, $users, $branches, $modulePairs = array(), $browseType = '', $mode = 'datatable')
     {
+        $canView  = common::hasPriv('testcase', 'view');
         $caseLink = helper::createLink('testcase', 'view', "caseID=$case->id&version=$case->version");
         $account  = $this->app->user->account;
         $id = $col->id;
@@ -1241,14 +1245,16 @@ class testcaseModel extends model
         {
             $class = '';
             if($id == 'status') $class .= $case->status;
-            if($id == 'title') $class .= ' text-left';
+            if($id == 'title')  $class .= ' text-left';
+            if($id == 'id')     $class .= ' cell-id';
             if($id == 'lastRunResult') $class .= $case->lastRunResult;
 
             echo "<td class='" . $class . "'" . ($id=='title' ? " title='{$case->title}'":'') . ">";
-            switch ($id)
+            switch($id)
             {
             case 'id':
-                echo html::a($caseLink, sprintf('%03d', $case->id));
+                if($mode == 'table') echo "<input type='checkbox' name='caseIDList[]' value='{$case->id}'/> ";
+                echo $canView ? html::a($caseLink, sprintf('%03d', $case->id)) : sprintf('%03d', $case->id);
                 break;
             case 'pri':
                 echo "<span class='pri" . zget($this->lang->testcase->priList, $case->pri, $case->pri) . "'>";
@@ -1258,7 +1264,7 @@ class testcaseModel extends model
             case 'title':
                 if($case->branch) echo "<span class='label label-info label-badge'>{$branches[$case->branch]}</span> ";
                 if($modulePairs and $case->module) echo "<span class='label label-info label-badge'>{$modulePairs[$case->module]}</span> ";
-                echo html::a($caseLink, $case->title, null, "style='color: $case->color'");
+                echo $canView ? html::a($caseLink, $case->title, null, "style='color: $case->color'") : "<span style='color: $case->color'>$case->title</span>";
                 break;
             case 'branch':
                 echo $branches[$case->branch];
@@ -1286,14 +1292,35 @@ class testcaseModel extends model
                 if(empty($stories)) $stories = $this->dao->select('id,title')->from(TABLE_STORY)->where('deleted')->eq('0')->andWhere('product')->eq($case->product)->fetchPairs('id', 'title');
                 if($case->story and isset($stories[$case->story])) echo html::a(helper::createLink('story', 'view', "storyID=$case->story"), $stories[$case->story]);
                 break;
+            case 'precondition':
+                echo $case->precondition;
+                break;
+            case 'keywords':
+                echo $case->keywords;
+                break;
+            case 'version':
+                echo $case->version;
+                break;
             case 'openedBy':
-                echo zget($users, $case->openedBy, $case->openedBy);
+                echo zget($users, $case->openedBy);
                 break;
             case 'openedDate':
                 echo substr($case->openedDate, 5, 11);
                 break;
+            case 'reviewedBy':
+                echo zget($users, $case->reviewedBy);
+                break;
+            case 'reviewedDate':
+                echo substr($case->reviewedDate, 5, 11);
+                break;
+            case 'lastEditedBy':
+                echo zget($users, $case->lastEditedBy);
+                break;
+            case 'lastEditedDate':
+                echo substr($case->lastEditedDate, 5, 11);
+                break;
             case 'lastRunner':
-                echo zget($users, $case->lastRunner, $case->lastRunner);
+                echo zget($users, $case->lastRunner);
                 break;
             case 'lastRunDate':
                 if(!helper::isZeroDate($case->lastRunDate)) echo date(DT_MONTHTIME1, strtotime($case->lastRunDate));
@@ -1311,13 +1338,13 @@ class testcaseModel extends model
                 echo $case->stepNumber;
                 break;
             case 'actions':
-                common::printIcon('testtask', 'runCase', "runID=0&caseID=$case->id&version=$case->version", '', 'list', 'play', '', 'runCase iframe', false, "data-width='95%'");
-                common::printIcon('testtask', 'results', "runID=0&caseID=$case->id", '', 'list', '', '', 'results iframe', '', "data-width='90%'");
+                common::printIcon('testtask', 'runCase', "runID=0&caseID=$case->id&version=$case->version", $case, 'list', 'play', '', 'runCase iframe', false, "data-width='95%'");
+                common::printIcon('testtask', 'results', "runID=0&caseID=$case->id", $case, 'list', '', '', 'results iframe', '', "data-width='90%'");
                 if($this->config->testcase->needReview or !empty($this->config->testcase->forceReview)) common::printIcon('testcase', 'review',  "caseID=$case->id", $case, 'list', 'review', '', 'iframe');
                 common::printIcon('testcase', 'edit',    "caseID=$case->id", $case, 'list');
                 common::printIcon('testcase', 'create',  "productID=$case->product&branch=$case->branch&moduleID=$case->module&from=testcase&param=$case->id", $case, 'list', 'copy');
 
-                if(common::hasPriv('testcase', 'delete'))
+                if(common::hasPriv('testcase', 'delete', $case))
                 {
                     $deleteURL = helper::createLink('testcase', 'delete', "caseID=$case->id&confirm=yes");
                     echo html::a("javascript:ajaxDelete(\"$deleteURL\",\"batchForm\",confirmDelete)", '<i class="icon-remove"></i>', '', "title='{$this->lang->testcase->delete}' class='btn-icon'");
@@ -1393,15 +1420,16 @@ class testcaseModel extends model
     }
 
     /**
-     * Check whether force review 
-     * 
+     * Check whether force not review
+     *
      * @access public
      * @return bool
      */
-    public function forceReview()
+    public function forceNotReview()
     {
-        if($this->config->testcase->needReview) return true;
-        if(strpos(",{$this->config->testcase->forceReview},", ",{$this->app->user->account},") !== false) return true;
+        if(!$this->config->testcase->needReview && strpos(",{$this->config->testcase->forceReview},", ",{$this->app->user->account},") === false) return true;
+        if($this->config->testcase->needReview  && strpos(",{$this->config->testcase->forceNotReview},", ",{$this->app->user->account},")) return true;
+
         return false;
     }
 }

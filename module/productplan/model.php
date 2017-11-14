@@ -24,7 +24,8 @@ class productplanModel extends model
     public function getByID($planID, $setImgSize = false)
     {
         $plan = $this->dao->findByID((int)$planID)->from(TABLE_PRODUCTPLAN)->fetch();
-        if($setImgSize) $plan->desc = $this->loadModel('file')->setImgSize($plan->desc);
+        $plan = $this->loadModel('file')->replaceImgURL($plan, 'desc');
+        if($setImgSize) $plan->desc = $this->file->setImgSize($plan->desc);
         return $plan;
     }
 
@@ -47,12 +48,14 @@ class productplanModel extends model
      * @access public
      * @return void
      */
-    public function getLast($productID)
+    public function getLast($productID, $branch = 0)
     {
         return $this->dao->select('*')->from(TABLE_PRODUCTPLAN)
             ->where('deleted')->eq(0)
             ->andWhere('product')->eq($productID)
+            ->beginIF($branch)->andWhere('branch')->eq($branch)->fi()
             ->orderBy('end desc')
+            ->limit(1)
             ->fetch();
     }
 
@@ -137,7 +140,7 @@ class productplanModel extends model
     public function create()
     {
         $plan = fixer::input('post')->stripTags($this->config->productplan->editor->create['id'], $this->config->allowedTags)->remove('delta,uid')->get();
-        $plan = $this->loadModel('file')->processEditor($plan, $this->config->plan->editor->create['id'], $this->post->uid);
+        $plan = $this->loadModel('file')->processImgURL($plan, $this->config->productplan->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_PRODUCTPLAN)
             ->data($plan)
             ->autoCheck()
@@ -148,6 +151,7 @@ class productplanModel extends model
         {
             $planID = $this->dao->lastInsertID();
             $this->file->updateObjectID($this->post->uid, $planID, 'plan');
+            $this->loadModel('score')->create('productplan', 'create', $planID);
             return $planID;
         }
     }
@@ -161,9 +165,9 @@ class productplanModel extends model
      */
     public function update($planID)
     {
-        $oldPlan = $this->getById($planID);
+        $oldPlan = $this->dao->findByID((int)$planID)->from(TABLE_PRODUCTPLAN)->fetch();
         $plan = fixer::input('post')->stripTags($this->config->productplan->editor->edit['id'], $this->config->allowedTags)->remove('delta,uid')->get();
-        $plan = $this->loadModel('file')->processEditor($plan, $this->config->plan->editor->edit['id'], $this->post->uid);
+        $plan = $this->loadModel('file')->processImgURL($plan, $this->config->productplan->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_PRODUCTPLAN)
             ->data($plan)
             ->autoCheck()
@@ -238,20 +242,28 @@ class productplanModel extends model
     {
         $this->loadModel('story');
         $this->loadModel('action');
+
+        $stories = $this->story->getByList($this->post->stories);
+        $plan    = $this->getByID($planID);
+
         foreach($this->post->stories as $storyID)
         {
-            if($this->session->currentProductType == 'normal')
+            if(!isset($stories[$storyID])) continue;
+            $story = $stories[$storyID];
+
+            if($this->session->currentProductType == 'normal' or $story->branch != 0 or empty($story->plan))
             {
                 $this->dao->update(TABLE_STORY)->set("plan")->eq($planID)->where('id')->eq((int)$storyID)->exec();
             }
             else
             {
-                $this->dao->update(TABLE_STORY)->set("plan")->eq($planID)->where('id')->eq((int)$storyID)->andWhere('branch')->ne('0')->exec();
-                $this->dao->update(TABLE_STORY)->set("plan=CONCAT(plan, ',', $planID)")->where('id')->eq((int)$storyID)->andWhere('branch')->eq('0')->exec();
+                $plans = $this->dao->select('*')->from(TABLE_PRODUCTPLAN)->where('id')->in($story->plan)->fetchPairs('branch', 'id');
+                $plans[$plan->branch] = $planID;
+                $this->dao->update(TABLE_STORY)->set("plan")->eq(join(',', $plans))->where('id')->eq((int)$storyID)->andWhere('branch')->eq('0')->exec();
             }
             $this->action->create('story', $storyID, 'linked2plan', '', $planID);
             $this->story->setStage($storyID);
-        }        
+        }
     }
 
     /**
@@ -289,9 +301,9 @@ class productplanModel extends model
     }
 
     /**
-     * Unlink bug. 
-     * 
-     * @param  int    $bugID 
+     * Unlink bug.
+     *
+     * @param  int    $bugID
      * @access public
      * @return void
      */

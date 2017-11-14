@@ -63,10 +63,10 @@
         <legend><?php echo $lang->story->legendBasicInfo;?></legend>
         <table class='table table-form'>
           <tr>
-            <th class='w-80px' style="table-layout:fixed" ><?php echo $lang->story->product;?></th>
-            <td width="200" style="table-layout:fixed">
+            <th class='w-80px'><?php echo $lang->story->product;?></th>
+            <td>
               <div class='input-group'>
-                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen' style='width:65px'");?>
+                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
                 <?php if($product->type != 'normal') echo html::select('branch', $branches, $story->branch, "onchange='loadBranch();' class='form-control' style='width:65px'");?>
               </div>
             </td>
@@ -108,17 +108,12 @@
           </tr>
           <tr>
             <th><?php echo $lang->story->source;?></th>
-            <td>
-              <div class='row-table'>
-                <div class='col-table w-90px'><?php echo html::select('source', $lang->story->sourceList, $story->source, 'class=form-control');?></div>
-                <div class='col-table'>
-                  <div class='input-group'>
-                    <span class='input-group-addon fix-border'><?php echo $lang->comment?></span>
-                    <?php echo html::input('sourceNote', $story->sourceNote, "class='form-control' autocomplete='off'");?>
-                  </div>
-                </div>
-              </div>
-            </td>
+            <td><?php echo html::select('source', $lang->story->sourceList, $story->source, 'class=form-control');?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->story->sourceNote;?></th>
+            <td><?php echo html::input('sourceNote', $story->sourceNote, "class='form-control' autocomplete='off'");?>
+          </td>
           </tr>
           <tr>
             <th><?php echo $lang->story->status;?></th>
@@ -157,9 +152,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->story->assignedTo;?></th>
-            <td>
-                <?php echo html::select('assignedTo[]', $users, str_replace(' ', '', $story->assignedTo), "class='form-control chosen' multiple");?>
-            </td>
+            <td><?php echo html::select('assignedTo', $users, $story->assignedTo, 'class="form-control chosen"');?></td>
           </tr>
           <?php if($story->reviewedBy):?>
           <tr>

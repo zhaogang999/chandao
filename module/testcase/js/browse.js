@@ -26,6 +26,7 @@ $(document).ready(function()
     if(browseType == 'bysearch') ajaxGetSearchForm();
     setTimeout(function(){fixedTfootAction('#batchForm')}, 100);
     setTimeout(function(){fixedTheadOfList('#caseList')}, 100);
+    if($('#caseList thead th.w-title').width() < 150) $('#caseList thead th.w-title').width(150);
 
     $('.dropdown-menu .with-search .menu-search').click(function(e)
     {
@@ -56,3 +57,8 @@ $(document).ready(function()
         $('#modulemenu > .nav > li[data-id=' + browseType + ']').addClass('active');
     }
 });
+
+function setQueryBar(queryID, title)
+{
+    $('#bysearchTab').before("<li id='QUERY" + queryID + "Tab' class='active'><a href='" + createLink('testcase', 'browse', "productID=" + productID + "&branch=" + branch + "&browseType=bysearch&param=" + queryID) + "'>" + title + "</a></li>");
+}

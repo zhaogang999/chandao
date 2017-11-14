@@ -99,14 +99,14 @@ class product extends control
 
     /**
      * Browse a product.
-     * 
-     * @param  int    $productID 
-     * @param  string $browseType 
-     * @param  int    $param 
-     * @param  string $orderBy 
-     * @param  int    $recTotal 
-     * @param  int    $recPerPage 
-     * @param  int    $pageID 
+     *
+     * @param  int    $productID
+     * @param  string $browseType
+     * @param  int    $param
+     * @param  string $orderBy
+     * @param  int    $recTotal
+     * @param  int    $recPerPage
+     * @param  int    $pageID
      * @access public
      * @return void
      */
@@ -136,8 +136,8 @@ class product extends control
         if($browseType == 'bymodule') setcookie('storyModule', (int)$param, $this->config->cookieLife, $this->config->webRoot);
         if($browseType != 'bymodule') $this->session->set('storyBrowseType', $browseType);
 
-        $moduleID  = ($browseType == 'bymodule') ? (int)$param : ($browseType == 'bysearch' ? 0 : ($this->cookie->storyModule ? $this->cookie->storyModule : 0));
-        $queryID   = ($browseType == 'bysearch') ? (int)$param : 0;
+        $moduleID = ($browseType == 'bymodule') ? (int)$param : ($browseType == 'bysearch' ? 0 : ($this->cookie->storyModule ? $this->cookie->storyModule : 0));
+        $queryID  = ($browseType == 'bysearch') ? (int)$param : 0;
 
         /* Set menu. */
         $this->product->setMenu($this->products, $productID, $branch);
@@ -189,7 +189,7 @@ class product extends control
         $this->view->moduleTree    = $this->tree->getTreeMenu($productID, $viewType = 'story', $startModuleID = 0, array('treeModel', 'createStoryLink'), '', $branch);
         $this->view->parentModules = $this->tree->getParents($moduleID);
         $this->view->pager         = $pager;
-        $this->view->users         = $this->user->getPairs('nodeleted|noletter|pofirst');
+        $this->view->users         = $this->user->getPairs('noletter|pofirst|nodeleted');
         $this->view->orderBy       = $orderBy;
         $this->view->browseType    = $browseType;
         $this->view->modules       = $this->tree->getOptionMenu($productID, $viewType = 'story', 0, $branch);
@@ -231,6 +231,7 @@ class product extends control
         $this->view->poUsers    = $this->loadModel('user')->getPairs('nodeleted|pofirst|noclosed');
         $this->view->qdUsers    = $this->loadModel('user')->getPairs('nodeleted|qdfirst|noclosed');
         $this->view->rdUsers    = $this->loadModel('user')->getPairs('nodeleted|devfirst|noclosed');
+        $this->view->lines      = array('') + $this->loadModel('tree')->getLinePairs();
 
         unset($this->lang->product->typeList['']);
         $this->display();
@@ -275,6 +276,7 @@ class product extends control
         $this->view->poUsers    = $this->loadModel('user')->getPairs('nodeleted|pofirst',  $product->PO);
         $this->view->qdUsers    = $this->loadModel('user')->getPairs('nodeleted|qdfirst',  $product->QD);
         $this->view->rdUsers    = $this->loadModel('user')->getPairs('nodeleted|devfirst', $product->RD);
+        $this->view->lines      = array('') + $this->loadModel('tree')->getLinePairs();
 
         unset($this->lang->product->typeList['']);
         $this->display();
@@ -314,13 +316,22 @@ class product extends control
         $this->view->customFields = $customFields;
         $this->view->showFields   = $this->config->product->custom->batchEditFields;
 
+        $products      = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in($productIDList)->fetchAll('id');
+        $appendPoUsers = $appendQdUsers = $appendRdUsers = array();
+        foreach($products as $product)
+        {
+            $appendPoUsers[$product->PO] = $product->PO;
+            $appendQdUsers[$product->QD] = $product->QD;
+            $appendRdUsers[$product->RD] = $product->RD;
+        }
+
         $this->view->title         = $this->lang->product->batchEdit;
         $this->view->position[]    = $this->lang->product->batchEdit;
         $this->view->productIDList = $productIDList;
-        $this->view->products      = $this->dao->select('*')->from(TABLE_PRODUCT)->where('id')->in($productIDList)->fetchAll('id');
-        $this->view->poUsers       = $this->loadModel('user')->getPairs('nodeleted|pofirst');
-        $this->view->qdUsers       = $this->loadModel('user')->getPairs('nodeleted|qdfirst');
-        $this->view->rdUsers       = $this->loadModel('user')->getPairs('nodeleted|devfirst');
+        $this->view->products      = $products;
+        $this->view->poUsers       = $this->loadModel('user')->getPairs('nodeleted|pofirst', $appendPoUsers);
+        $this->view->qdUsers       = $this->loadModel('user')->getPairs('nodeleted|qdfirst', $appendQdUsers);
+        $this->view->rdUsers       = $this->loadModel('user')->getPairs('nodeleted|devfirst', $appendRdUsers);
 
         unset($this->lang->product->typeList['']);
         $this->display();
@@ -383,6 +394,7 @@ class product extends control
         $this->view->actions    = $this->loadModel('action')->getList('product', $productID);
         $this->view->users      = $this->user->getPairs('noletter');
         $this->view->groups     = $this->loadModel('group')->getPairs();
+        $this->view->lines      = array('') + $this->loadModel('tree')->getLinePairs();
 
         $this->display();
     }
@@ -482,7 +494,7 @@ class product extends control
         /* Assign. */
         $this->view->productID = $productID;
         $this->view->type      = $type;
-        $this->view->users     = $this->loadModel('user')->getPairs('nodeleted|noletter');
+        $this->view->users     = $this->loadModel('user')->getPairs('noletter|nodeleted');
         $this->view->account   = $account;
         $this->view->orderBy   = $orderBy;
         $this->view->pager     = $pager;
@@ -573,7 +585,25 @@ class product extends control
         $productsPinyin = common::convert2Pinyin($productPairs);
 
         foreach($products as $key => $product) $product->key = $productsPinyin[$product->name];
-        $this->view->products  = $products;
+
+        /* Sort products as lines' order first. */
+        $lines = $this->loadModel('tree')->getLinePairs();
+        $productList = array();
+        foreach($lines as $id => $name)
+        {
+            foreach($products as $key => $product) 
+            {
+                if($product->line == $id) 
+                {
+                    $product->name = $name . '/' . $product->name;
+                    $productList[] = $product;
+                    unset($products[$key]);
+                }
+            }
+        }
+        $productList = array_merge($productList, $products);
+
+        $this->view->products  = $productList;
         $this->display();
     }
 
@@ -618,17 +648,18 @@ class product extends control
 
     /**
      * All product.
-     * 
-     * @param  int    $productID 
-     * @param  string $status 
-     * @param  string $orderBy 
-     * @param  int    $recTotal 
-     * @param  int    $recPerPage 
-     * @param  int    $pageID 
+     *
+     * @param  int    $productID
+     * @param  int    $line
+     * @param  string $status
+     * @param  string $orderBy
+     * @param  int    $recTotal
+     * @param  int    $recPerPage
+     * @param  int    $pageID
      * @access public
      * @return void
      */
-    public function all($productID = 0, $status = 'noclosed', $orderBy = 'order_desc', $recTotal = 0, $recPerPage = 10, $pageID = 1)
+    public function all($productID = 0, $line = 0, $status = 'noclosed', $orderBy = 'order_desc', $recTotal = 0, $recPerPage = 10, $pageID = 1)
     {
         $this->session->set('productList', $this->app->getURI(true));
         $productID = $this->product->saveState($productID, $this->products);
@@ -641,20 +672,72 @@ class product extends control
         $this->app->loadLang('my');
         $this->view->title        = $this->lang->product->allProduct;
         $this->view->position[]   = $this->lang->product->allProduct;
-        $this->view->productStats = $this->product->getStats($orderBy, $pager, $status);
+        $this->view->productStats = $this->product->getStats($orderBy, $pager, $status, $line);
+        $this->view->lineTree     = $this->loadModel('tree')->getTreeMenu(0, $viewType = 'line', $startModuleID = 0, array('treeModel', 'createLineLink'), array('productID' => $productID, 'status' => $status));
+        $this->view->lines        = array('') + $this->tree->getLinePairs();
         $this->view->productID    = $productID;
-        $this->view->pager        = $pager;
-        $this->view->recTotal     = $pager->recTotal;
-        $this->view->recPerPage   = $pager->recPerPage;
-        $this->view->orderBy      = $orderBy;
+        $this->view->line         = $line;
         $this->view->status       = $status;
+        $this->view->orderBy      = $orderBy;
+        $this->view->pager        = $pager;
+        $this->display();
+    }
+
+    /**
+     * Export product. 
+     * 
+     * @param  string    $status 
+     * @param  string    $orderBy 
+     * @access public
+     * @return void
+     */
+    public function export($status, $orderBy)
+    {
+        if($_POST)
+        {
+            $productLang   = $this->lang->product;
+            $productConfig = $this->config->product;
+
+            /* Create field lists. */
+            $fields = $this->post->exportFields ? $this->post->exportFields : explode(',', $productConfig->list->exportFields);
+            foreach($fields as $key => $fieldName)
+            {
+                $fieldName = trim($fieldName);
+                $fields[$fieldName] = zget($productLang, $fieldName);
+                unset($fields[$key]);
+            }
+
+            $lines = $this->loadModel('tree')->getLinePairs();
+            $productStats = $this->product->getStats($orderBy, null, $status);
+            foreach($productStats as $i => $product)
+            {
+                $product->line             = zget($lines, $product->line, '');
+                $product->activeStories    = (int)$product->stories['active'];
+                $product->changedStories   = (int)$product->stories['changed'];
+                $product->draftStories     = (int)$product->stories['draft'];
+                $product->closedStories    = (int)$product->stories['closed'];
+                $product->unResolvedBugs   = (int)$product->unResolved;
+                $product->assignToNullBugs = (int)$product->assignToNull;
+
+                if($this->post->exportType == 'selected')
+                {
+                    $checkedItem = $this->cookie->checkedItem;
+                    if(strpos(",$checkedItem,", ",{$product->id},") === false) unset($productStats[$i]);
+                }
+            }
+
+            $this->post->set('fields', $fields);
+            $this->post->set('rows', $productStats);
+            $this->post->set('kind', 'product');
+            $this->fetch('file', 'export2' . $this->post->fileType, $_POST);
+        }
         $this->display();
     }
 
     /**
      * Doc for compatible.
-     * 
-     * @param  int    $productID 
+     *
+     * @param  int    $productID
      * @access public
      * @return void
      */

@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\bug\model.php');
+helper::import('module\bug\model.php');
 helper::cd();
 class extbugModel extends bugModel 
 {
@@ -40,8 +40,7 @@ public function activate($bugID)
         $this->loadModel('github');
         $this->github->resolve($oldBug, $bug, 'bug');
     }
-}
-/**
+}/**
  * Build search form.
  *
  * @param  int    $productID
@@ -78,8 +77,7 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     }
 
     $this->loadModel('search')->setSearchParams($this->config->bug->search);
-}
-public function setListValue($productID, $branch = 0)
+}public function setListValue($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->setListValue($productID, $branch);
 }
@@ -87,8 +85,7 @@ public function setListValue($productID, $branch = 0)
 public function createFromImport($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->createFromImport($productID, $branch);
-}
-/**
+}/**
  * Get report data of bugs per pri
  *
  * @access public
@@ -102,8 +99,7 @@ public function getDataOfBugsPerPri()
     //7178 搜索bug优先级时，显示错误；官方bug；待官方修复后删除
     foreach($datas as $pri => $data)  $data->name = $this->lang->bug->priList[$pri] != '' ? $this->lang->bug->priList[$pri] : $this->lang->report->undefined;
     return $datas;
-}
-/**
+}/**
  * Get report data of deadline bugs per day.
  *
  * @access public
@@ -115,8 +111,7 @@ public function getDataOfbugsDeadline()
         ->where($this->reportCondition())->groupBy('name')
         ->having('name != 0000-00-00')
         ->orderBy('deadline')->fetchAll();
-}
-/**
+}/**
  * Link related bugs.
  *
  * @param  int    $bugID
@@ -146,8 +141,7 @@ public function linkBugs($bugID)
 
         $this->loadModel('action')->create('bug', $val, 'linkRelatedBug', '', $bugID);
     }
-}
-/**
+}/**
  * Print cell data.
  *
  * @param  object $col
@@ -263,8 +257,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
         }
         echo '</td>';
     }
-}
-/**
+}/**
  * Resolve a bug.
  *
  * @param  int    $bugID

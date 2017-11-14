@@ -117,7 +117,7 @@
               <div class='input-group'>
                 <?php echo html::select("products[$i]", $allProducts, $product->id, "class='form-control chosen' onchange='loadBranches(this)'");?>
                 <span class='input-group-addon fix-border' style='padding:0px'></span>
-                <?php if($product->type != 'normal') echo html::select("branch[$i]", $branchGroups[$product->id], $product->branch, "class='form-control' style='width:80px'")?>
+                <?php if($product->type != 'normal' and isset($branchGroups[$product->id])) echo html::select("branch[$i]", $branchGroups[$product->id], $product->branch, "class='form-control' style='width:80px'")?>
               </div>
             </div>
             <?php $i++;?>
@@ -134,18 +134,19 @@
       <tr>
         <th><?php echo $lang->project->desc;?></th>
         <td colspan='2'><?php echo html::textarea('desc', htmlspecialchars($project->desc), "rows='6' class='form-control'");?></td>
-      </tr>  
+      </tr>
       <tr>
         <th><?php echo $lang->project->acl;?></th>
         <td colspan='2'><?php echo nl2br(html::radio('acl', $lang->project->aclList, $project->acl, "onclick='setWhite(this.value);'", 'block'));?></td>
-      </tr>  
+      </tr>
       <tr id='whitelistBox' <?php if($project->acl != 'custom') echo "class='hidden'";?>>
         <th><?php echo $lang->project->whitelist;?></th>
         <td colspan='2' id='whitelistBox'><?php echo html::checkbox('whitelist', $groups, $project->whitelist);?></td>
-      </tr>  
+      </tr>
       <tr><td></td><td colspan='2'><?php echo html::submitButton() . html::backButton();?></td></tr>
     </table>
   </form>
 </div>
 <?php js::set('weekend', $config->project->weekend);?>
+<?php js::set('errorSameProducts', $lang->project->errorSameProducts);?>
 <?php include '../../common/view/footer.html.php';?>

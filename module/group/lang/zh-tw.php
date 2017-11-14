@@ -32,6 +32,8 @@ $lang->group->noticeVisit        = '空代表訪問沒有訪問限制';
 $lang->group->id       = '編號';
 $lang->group->name     = '分組名稱';
 $lang->group->desc     = '分組描述';
+$lang->group->role     = '角色';
+$lang->group->acl      = '權限';
 $lang->group->users    = '用戶列表';
 $lang->group->module   = '模組';
 $lang->group->method   = '方法';
@@ -46,6 +48,8 @@ $lang->group->copyOptions['copyPriv'] = '複製權限';
 $lang->group->copyOptions['copyUser'] = '複製用戶';
 
 $lang->group->versions['']          = '修改歷史';
+$lang->group->versions['9_6']       = '禪道9.6';
+$lang->group->versions['9_5']       = '禪道9.5';
 $lang->group->versions['9_2']       = '禪道9.2';
 $lang->group->versions['9_1']       = '禪道9.1';
 $lang->group->versions['9_0']       = '禪道9.0';

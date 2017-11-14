@@ -1,14 +1,22 @@
 <?php
-$lang->custom->common    = '自定义';
-$lang->custom->index     = '首页';
-$lang->custom->set       = '自定义配置';
-$lang->custom->restore   = '恢复默认';
-$lang->custom->key       = '键';
-$lang->custom->value     = '值';
-$lang->custom->flow      = '流程';
-$lang->custom->working   = '工作方式';
-$lang->custom->select    = '请选择流程：';
-$lang->custom->branch    = '多分支';
+$lang->custom->common     = '自定义';
+$lang->custom->index      = '首页';
+$lang->custom->set        = '自定义配置';
+$lang->custom->restore    = '恢复默认';
+$lang->custom->key        = '键';
+$lang->custom->value      = '值';
+$lang->custom->flow       = '流程';
+$lang->custom->working    = '工作方式';
+$lang->custom->select     = '请选择流程：';
+$lang->custom->branch     = '多分支';
+$lang->custom->owner      = '所有者';
+$lang->custom->module     = '模块';
+$lang->custom->section    = '附加部分';
+$lang->custom->lang       = '所属语言';
+$lang->custom->setPublic  = '设为公共';
+$lang->custom->required   = '必填项';
+$lang->custom->score      = '积分';
+$lang->custom->scoreReset = '重置积分';
 
 $lang->custom->object['story']    = '需求';
 $lang->custom->object['task']     = '任务';
@@ -65,6 +73,7 @@ $lang->custom->todo->fields['statusList'] = '状态';
 $lang->custom->user = new stdClass();
 $lang->custom->user->fields['roleList']   = '职位';
 $lang->custom->user->fields['statusList'] = '状态';
+$lang->custom->user->fields['deleted']    = '列出已删除用户';
 
 $lang->custom->block->fields['closed'] = '关闭的区块';
 
@@ -77,17 +86,23 @@ $lang->custom->notice = new stdclass();
 $lang->custom->notice->userRole             = '键的长度必须小于20个字符！';
 $lang->custom->notice->canNotAdd            = '该项参与运算，不提供自定义添加功能';
 $lang->custom->notice->forceReview          = "指定人提交的%s必须评审。";
+$lang->custom->notice->forceNotReview       = "指定人提交的%s不需要评审。";
 $lang->custom->notice->longlife             = 'Bug列表页面的久未处理标签中，列出设置天数之前未处理的Bug。';
 $lang->custom->notice->priListKey           = '优先级的键应当为数字！';
+$lang->custom->notice->keyList              = '键值应当为英文或数字';
 $lang->custom->notice->severityListKey      = 'Bug严重程度的键应当为数字！';
 $lang->custom->notice->indexPage['product'] = "从8.2版本起增加了产品主页视图，是否默认进入产品主页？";
 $lang->custom->notice->indexPage['project'] = "从8.2版本起增加了项目主页视图，是否默认进入项目主页？";
 $lang->custom->notice->indexPage['qa']      = "从8.2版本起增加了测试主页视图，是否默认进入测试主页？";
 
-$lang->custom->storyReview   = '评审流程';
-$lang->custom->forceReview   = '强制评审';
-$lang->custom->reviewList[1] = '开启';
-$lang->custom->reviewList[0] = '关闭';
+$lang->custom->storyReview    = '评审流程';
+$lang->custom->forceReview    = '强制评审';
+$lang->custom->forceNotReview = '不需要评审';
+$lang->custom->reviewList[1]  = '开启';
+$lang->custom->reviewList[0]  = '关闭';
+
+$lang->custom->deletedList[1] = '列出';
+$lang->custom->deletedList[0] = '不列出';
 
 $lang->custom->workingHours   = '每天可用工时';
 $lang->custom->weekend        = '休息日';
@@ -108,3 +123,10 @@ $lang->custom->workingList['onlyTask']  = '任务管理工具';
 
 $lang->custom->menuTip  = '点击显示或隐藏导航条目，拖拽来更改显示顺序。';
 $lang->custom->saveFail = '保存失败！';
+
+$lang->custom->scoreStatus[0] = '关闭';
+$lang->custom->scoreStatus[1] = '开启';
+
+$lang->custom->moduleName['product']     = $lang->productCommon;
+$lang->custom->moduleName['productplan'] = '计划';
+$lang->custom->moduleName['project']     = $lang->projectCommon;

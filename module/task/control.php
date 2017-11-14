@@ -34,10 +34,10 @@ class task extends control
 
     /**
      * Create a task.
-     * 
-     * @param  int    $projectID 
-     * @param  int    $storyID 
-     * @param  int    $moduleID 
+     *
+     * @param  int    $projectID
+     * @param  int    $storyID
+     * @param  int    $moduleID
      * @param  int    $taskID
      * @access public
      * @return void
@@ -56,6 +56,7 @@ class task extends control
         $task->estStarted  = '';
         $task->deadline    = '';
         $task->mailto      = '';
+        $task->color       = '';
         if($taskID > 0)
         {
             $task      = $this->task->getByID($taskID);
@@ -104,7 +105,7 @@ class task extends control
                 $taskID   = $taskID['id'];
                 $actionID = $this->action->create('task', $taskID, 'Opened', '');
                 $this->task->sendmail($taskID, $actionID);
-            }            
+            }
 
             /* If link from no head then reload*/
             if(isonlybody())
@@ -138,8 +139,9 @@ class task extends control
             }
         }
 
-        $users            = $this->loadModel('user')->getPairs('nodeleted|noclosed');
-        $stories          = $this->story->getProjectStoryPairs($projectID);
+        $users            = $this->loadModel('user')->getPairs('noclosed|nodeleted');
+        $moduleIdList     = $this->tree->getAllChildID($moduleID);
+        $stories          = $this->story->getProjectStoryPairs($projectID, 0, 0, $moduleIdList);
         $members          = $this->project->getTeamMemberPairs($projectID, 'nodeleted');
         $moduleOptionMenu = $this->tree->getTaskOptionMenu($projectID);
 
@@ -166,13 +168,16 @@ class task extends control
 
     /**
      * Batch create task.
-     * 
-     * @param  int    $projectID 
-     * @param  int    $storyID 
+     *
+     * @param int $projectID
+     * @param int $storyID
+     * @param int $iframe
+     * @param int $taskID
+     *
      * @access public
-     * @return void
+     * @return void 
      */
-    public function batchCreate($projectID = 0, $storyID = 0, $iframe = 0)
+    public function batchCreate($projectID = 0, $storyID = 0, $iframe = 0, $taskID = 0)
     {
         $project   = $this->project->getById($projectID); 
         $taskLink  = $this->createLink('project', 'browse', "projectID=$projectID&tab=task");
@@ -211,6 +216,7 @@ class task extends control
         $this->view->project    = $project;
         $this->view->stories    = $stories;
         $this->view->modules    = $modules;
+        $this->view->parent     = $taskID;
         $this->view->storyID    = $storyID;
         $this->view->story      = $this->story->getByID($storyID);
         $this->view->storyTasks = $this->task->getStoryTaskCounts(array_keys($stories), $projectID);
@@ -337,10 +343,12 @@ class task extends control
                     }
                 }
             }
+            $this->loadModel('score')->create('ajax', 'batchOther');
             die(js::locate($this->session->taskList, 'parent'));
         }
 
         $taskIDList = $this->post->taskIDList ? $this->post->taskIDList : die(js::locate($this->session->taskList, 'parent'));
+        $taskIDList = array_unique($taskIDList);
 
         /* The tasks of project. */
         if($projectID)
@@ -424,10 +432,21 @@ class task extends control
             die(js::locate($this->createLink('task', 'view', "taskID=$taskID"), 'parent'));
         }
 
+        $task = $this->task->getByID($taskID);
+
+        $members = $this->project->getTeamMemberPairs($projectID, 'nodeleted');
+
+        /* Compute next assignedTo. */
+        if(!empty($task->team))
+        {
+            $task->assignedTo = $this->task->getNextUser(array_keys($task->team), $task->assignedTo);
+            $members = $this->task->getMemberPairs($task);
+        }
+
         $this->view->title      = $this->view->project->name . $this->lang->colon . $this->lang->task->assign;
         $this->view->position[] = $this->lang->task->assign;
-
-        $this->view->users = $this->project->getTeamMemberPairs($projectID);
+        $this->view->task       = $task;
+        $this->view->users      = $members;
         $this->display();
     }
 
@@ -443,6 +462,7 @@ class task extends control
         if($this->post->taskIDList)
         {
             $taskIDList = $this->post->taskIDList;
+            $taskIDList = array_unique($taskIDList);
             unset($_POST['taskIDList']);
             $allChanges = $this->task->batchChangeModule($taskIDList, $moduleID);
             if(dao::isError()) die(js::error(dao::getError()));
@@ -453,6 +473,7 @@ class task extends control
                 $this->action->logHistory($actionID, $changes);
                 $this->task->sendmail($taskID, $actionID);
             }
+            if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         }
         die(js::reload('parent'));
     }
@@ -469,8 +490,10 @@ class task extends control
         if(!empty($_POST))
         {
             $taskIDList = $this->post->taskIDList;
+            $taskIDList = array_unique($taskIDList);
             unset($_POST['taskIDList']);
             if(!is_array($taskIDList)) die(js::locate($this->createLink('project', 'task', "projectID=$project"), 'parent'));
+            $taskIDList = array_unique($taskIDList);
             foreach($taskIDList as $taskID)
             {
                 $this->loadModel('action');
@@ -480,14 +503,15 @@ class task extends control
                 $this->action->logHistory($actionID, $changes);
                 $this->task->sendmail($taskID, $actionID);
             }
-            die(js::locate($this->createLink('project', 'task', "projectID=$project"), 'parent'));
+            if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
+            die(js::reload('parent'));
         }
     }
 
     /**
      * View a task.
-     * 
-     * @param  int    $taskID 
+     *
+     * @param  int    $taskID
      * @access public
      * @return void
      */
@@ -514,6 +538,8 @@ class task extends control
             $task->storyVerify   = empty($story) ? '' : $this->loadModel('file')->setImgSize($story->verify);
             $task->storyFiles    = $this->loadModel('file')->getByObject('story', $task->story);
         }
+
+        if($task->team) $this->lang->task->assign = $this->lang->task->transfer;
 
         /* Update action. */
         if($task->assignedTo == $this->app->user->account) $this->loadModel('action')->read('task', $taskID);
@@ -641,6 +667,7 @@ class task extends control
         }
 
         $this->session->set('estimateList', $this->app->getURI(true));
+        if(isonlybody() && $this->config->requestType != 'GET') $this->session->set('estimateList', $this->app->getURI(true) . '?onlybody=yes');
 
         $this->view->task      = $this->task->getById($taskID);
         $this->view->estimates = $this->task->getTaskEstimate($taskID);
@@ -748,10 +775,19 @@ class task extends control
             die(js::locate($this->createLink('task', 'view', "taskID=$taskID"), 'parent'));
         }
 
+        $task    = $this->view->task;
+        $members = $this->loadModel('user')->getPairs('noletter');
+
+        if(!empty($task->team))
+        {
+            $task->openedBy   = $this->task->getNextUser(array_keys($task->team), $task->assignedTo);
+            $members          = $this->task->getMemberPairs($task);
+            $task->myConsumed = $this->dao->select('consumed')->from(TABLE_TEAM)->where('task')->eq($taskID)->andWhere('account')->eq($task->assignedTo)->fetch('consumed');
+        }
+
         $this->view->title      = $this->view->project->name . $this->lang->colon .$this->lang->task->finish;
         $this->view->position[] = $this->lang->task->finish;
-        $this->view->date       = strftime("%Y-%m-%d %X", strtotime('now'));
-        $this->view->users      = $this->loadModel('user')->getPairs('noletter');
+        $this->view->members    = $members;
        
         $this->display();
     }
@@ -852,7 +888,7 @@ class task extends control
         $this->view->title      = $this->view->project->name . $this->lang->colon .$this->lang->task->finish;
         $this->view->position[] = $this->lang->task->finish;
         $this->view->users      = $this->loadModel('user')->getPairs('noletter'); 
-        
+
         $this->display();
 
     }
@@ -869,6 +905,7 @@ class task extends control
         if($this->post->taskIDList)
         {
             $taskIDList = $this->post->taskIDList;
+            $taskIDList = array_unique($taskIDList);
             unset($_POST['taskIDList']);
             unset($_POST['assignedTo']);
             $this->loadModel('action');
@@ -902,6 +939,7 @@ class task extends control
         if($this->post->taskIDList or $skipTaskIdList)
         {
             $taskIDList = $this->post->taskIDList;
+            $taskIDList = array_unique($taskIDList);
             if($skipTaskIdList) $taskIDList = $skipTaskIdList;
             unset($_POST['taskIDList']);
             unset($_POST['assignedTo']);
@@ -933,6 +971,7 @@ class task extends control
                 $cancelURL  = $this->server->HTTP_REFERER;
                 die(js::confirm(sprintf($this->lang->task->error->skipClose, $skipTasks), $confirmURL, $cancelURL, 'self', 'parent'));
             }
+            if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchOther');
         }
         die(js::reload('parent'));
     }
@@ -1086,7 +1125,7 @@ class task extends control
      */
     public function report($projectID, $browseType = 'all')
     {
-        
+
         $this->loadModel('report');
         $this->view->charts   = array();
 
@@ -1148,6 +1187,39 @@ class task extends control
                 $tasks = $this->dao->select('*')->from(TABLE_TASK)->alias('t1')->where($this->session->taskQueryCondition)
                     ->beginIF($this->post->exportType == 'selected')->andWhere('t1.id')->in($this->cookie->checkedItem)->fi()
                     ->orderBy($orderBy)->fetchAll('id');
+
+                $taskList = array_keys($tasks);
+                if(!empty($taskList)) $children = $this->dao->select('*')->from(TABLE_TASK)->where('parent')->in($taskList)->fetchGroup('parent');
+
+                foreach($tasks as $key => $task)
+                {
+                    /* Compute task progress. */
+                    if($task->consumed == 0 and $task->left == 0)
+                    {
+                        $task->progress = 0;
+                    }
+                    elseif($task->consumed != 0 and $task->left == 0)
+                    {
+                        $task->progress = 100;
+                    }
+                    else
+                    {
+                        $task->progress = round($task->consumed / ($task->consumed + $task->left), 2) * 100;
+                    }
+
+                    $task->progress .= '%';
+
+                    $tasks[$key] = $task;
+
+                    if(isset($children[$task->id])) 
+                    {
+                        foreach($children[$task->id] as $child)
+                        {
+                            $child->name       = '[' . $taskLang->childrenAB . '] ' . $child->name;
+                            $tasks[$child->id] = $child;
+                        }
+                    }
+                }
             }
             else
             {
@@ -1207,7 +1279,7 @@ class task extends control
                     $task->files = '';
                     foreach($relatedFiles[$task->id] as $file)
                     {
-                        $fileURL = common::getSysURL() . $this->file->webPath . $file->pathname;
+                        $fileURL = common::getSysURL() . $this->file->webPath . $this->file->getRealPathName($file->pathname);
                         $task->files .= html::a($fileURL, $file->title, '_blank') . '<br />';
                     }
                 }

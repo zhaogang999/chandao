@@ -25,6 +25,7 @@ class testsuiteModel extends model
     {
         $this->loadModel('product')->setMenu($products, $productID);
         $selectHtml = $this->select($products, $productID, 'testsuite', 'browse');
+        if(strpos($selectHtml, 'currentBranch') !== false) $selectHtml = substr($selectHtml, 0, strrpos($selectHtml, '<li>'));
         foreach($this->lang->testsuite->menu as $key => $value)
         {
             $replace = ($key == 'product') ? $selectHtml : $productID;
@@ -133,7 +134,7 @@ class testsuiteModel extends model
             ->add('addedDate', helper::now())
             ->remove('uid')
             ->get();
-        $suite = $this->loadModel('file')->processEditor($suite, $this->config->testsuite->editor->create['id'], $this->post->uid);
+        $suite = $this->loadModel('file')->processImgURL($suite, $this->config->testsuite->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_TESTSUITE)->data($suite)
             ->batchcheck($this->config->testsuite->create->requiredFields, 'notempty')
             ->exec();
@@ -176,8 +177,9 @@ class testsuiteModel extends model
      */
     public function getById($suiteID, $setImgSize = false)
     {
-        $suite = $this->dao->select("*")->from(TABLE_TESTSUITE)->where('id')->eq((int)$suiteID)->fetch();
-        if($setImgSize) $suite->desc = $this->loadModel('file')->setImgSize($suite->desc);
+        $suite = $this->dao->select('*')->from(TABLE_TESTSUITE)->where('id')->eq((int)$suiteID)->fetch();
+        $suite = $this->loadModel('file')->replaceImgURL($suite, 'desc');
+        if($setImgSize) $suite->desc = $this->file->setImgSize($suite->desc);
         return $suite;
     }
 
@@ -190,14 +192,14 @@ class testsuiteModel extends model
      */
     public function update($suiteID)
     {
-        $oldSuite = $this->getById($suiteID);
+        $oldSuite = $this->dao->select("*")->from(TABLE_TESTSUITE)->where('id')->eq((int)$suiteID)->fetch();
         $suite    = fixer::input('post')
             ->stripTags($this->config->testsuite->editor->edit['id'], $this->config->allowedTags)
             ->add('lastEditedBy', $this->app->user->account)
             ->add('lastEditedDate', helper::now())
             ->remove('uid')
             ->get();
-        $suite = $this->loadModel('file')->processEditor($suite, $this->config->testsuite->editor->edit['id'], $this->post->uid);
+        $suite = $this->loadModel('file')->processImgURL($suite, $this->config->testsuite->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_TESTSUITE)->data($suite)
             ->autoCheck()
             ->batchcheck($this->config->testsuite->edit->requiredFields, 'notempty')
@@ -351,7 +353,7 @@ class testsuiteModel extends model
             ->add('addedDate', helper::now())
             ->remove('uid')
             ->get();
-        $lib = $this->loadModel('file')->processEditor($lib, $this->config->testsuite->editor->create['id'], $this->post->uid);
+        $lib = $this->loadModel('file')->processImgURL($lib, $this->config->testsuite->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_TESTSUITE)->data($lib)
             ->batchcheck($this->config->testsuite->createlib->requiredFields, 'notempty')
             ->check('name', 'unique', "deleted = '0'")
@@ -441,7 +443,7 @@ class testsuiteModel extends model
      * @access public
      * @return array
      */
-    public function getNotImportedCases($productID, $libID, $orderBy = 'id_desc', $pager = null)
+    public function getNotImportedCases($productID, $libID, $orderBy = 'id_desc', $pager = null, $browseType = '', $queryID = 0)
     {
         $importedCases = $this->dao->select('fromCaseID')->from(TABLE_CASE)
             ->where('product')->eq($productID)
@@ -449,11 +451,37 @@ class testsuiteModel extends model
             ->andWhere('fromCaseID')->ne('')
             ->andWhere('deleted')->eq(0)
             ->fetchPairs('fromCaseID', 'fromCaseID');
-        return $this->dao->select('*')->from(TABLE_CASE)
-            ->where('lib')->eq($libID)
+
+        $query = '';
+        if($browseType == 'bysearch')
+        {
+            if($queryID)
+            {
+                $this->session->set('testsuiteQuery', ' 1 = 1');
+                $query = $this->loadModel('search')->getQuery($queryID);
+                if($query)
+                {
+                    $this->session->set('testsuiteQuery', $query->sql);
+                    $this->session->set('testsuiteForm', $query->form);
+                }
+            }
+            else
+            {
+                if($this->session->testsuiteQuery == false) $this->session->set('testsuiteQuery', ' 1 = 1');
+            }
+
+            $query  = $this->session->testsuiteQuery;
+            $allLib = "`lib` = 'all'";
+            $withAllLib = strpos($query, $allLib) !== false;
+            if($withAllLib)  $query  = str_replace($allLib, 1, $query);
+            if(!$withAllLib) $query .= " AND `lib` = '$libID'";
+        }
+        
+        return $this->dao->select('*')->from(TABLE_CASE)->where('deleted')->eq(0)
+            ->beginIF($browseType != 'bysearch')->andWhere('lib')->eq($libID)->fi()
+            ->beginIF($browseType == 'bysearch')->andWhere($query)->fi()
             ->andWhere('product')->eq(0)
             ->andWhere('id')->notIN($importedCases)
-            ->andWhere('deleted')->eq(0)
             ->orderBy($orderBy)
             ->page($pager)
             ->fetchAll('id');
@@ -584,7 +612,7 @@ class testsuiteModel extends model
             $cases[$key] = $caseData;
         }
 
-        $forceReview = $this->testcase->forceReview();
+        $forceNotReview = $this->testcase->forceNotReview();
         foreach($cases as $key => $caseData)
         {
             if(!empty($_POST['id'][$key]) and empty($_POST['insert']))
@@ -639,7 +667,7 @@ class testsuiteModel extends model
                 {
                     $caseData->lastEditedBy   = $this->app->user->account;
                     $caseData->lastEditedDate = $now;
-                    if($stepChanged and $forceReview) $caseData->status = 'wait';
+                    if($stepChanged and !$forceNotReview) $caseData->status = 'wait';
                     $this->dao->update(TABLE_CASE)->data($caseData)->where('id')->eq($caseID)->autoCheck()->exec();
                     if($stepChanged)
                     {
@@ -672,7 +700,7 @@ class testsuiteModel extends model
                 $caseData->version    = 1;
                 $caseData->openedBy   = $this->app->user->account;
                 $caseData->openedDate = $now;
-                $caseData->status     = $forceReview ? 'wait' : 'normal';
+                $caseData->status     = $forceNotReview ? 'normal' : 'wait';
                 $this->dao->insert(TABLE_CASE)->data($caseData)->autoCheck()->exec();
 
                 if(!dao::isError())
@@ -740,7 +768,7 @@ class testsuiteModel extends model
             $cases->pri[$i]    = $pri;
         }
 
-        $forceReview = $this->testcase->forceReview();
+        $forceNotReview = $this->testcase->forceNotReview();
         for($i = 0; $i < $batchNum; $i++)
         {
             if($cases->type[$i] != '' and $cases->title[$i] != '')
@@ -757,7 +785,7 @@ class testsuiteModel extends model
                 $data[$i]->keywords     = $cases->keywords[$i];
                 $data[$i]->openedBy     = $this->app->user->account;
                 $data[$i]->openedDate   = $now;
-                $data[$i]->status       = $forceReview ? 'wait' : 'normal';
+                $data[$i]->status       = $forceNotReview ? 'normal' : 'wait';
                 $data[$i]->version      = 1;
 
                 $this->dao->insert(TABLE_CASE)->data($data[$i])

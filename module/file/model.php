@@ -51,8 +51,9 @@ class fileModel extends model
             ->fetchAll('id');
         foreach($files as $file)
         {
-            $file->webPath  = $this->webPath . $file->pathname;
-            $file->realPath = $this->app->getAppRoot() . "www/data/upload/{$this->app->company->id}/" . $file->pathname;
+            $realPathName   = $this->getRealPathName($file->pathname);
+            $file->realPath = $this->savePath . $realPathName;
+            $file->webPath  = $this->webPath . $realPathName;
         }
         return $files;
     }
@@ -67,8 +68,10 @@ class fileModel extends model
     public function getById($fileID)
     {
         $file = $this->dao->findById($fileID)->from(TABLE_FILE)->fetch();
-        $file->webPath  = $this->webPath . $file->pathname;
-        $file->realPath = $this->app->getAppRoot() . "www/data/upload/{$this->app->company->id}/" . $file->pathname;
+
+        $realPathName   = $this->getRealPathName($file->pathname);
+        $file->realPath = $this->savePath . $realPathName;
+        $file->webPath  = $this->webPath . $realPathName;
         return $file;
     }
 
@@ -92,7 +95,8 @@ class fileModel extends model
         foreach($files as $id => $file)
         {
             if($file['size'] == 0) continue;
-            move_uploaded_file($file['tmpname'], $this->savePath . $file['pathname']);
+            if(!move_uploaded_file($file['tmpname'], $this->savePath . $this->getSaveName($file['pathname']))) return false;
+
             $file = $this->compressImage($file);
 
             $file['objectType'] = $objectType;
@@ -144,6 +148,7 @@ class fileModel extends model
             {
                 if(empty($filename)) continue;
                 if(!validater::checkFileName($filename)) continue;
+
                 $title             = isset($_POST[$labelsName][$id]) ? $_POST[$labelsName][$id] : '';
                 $file['extension'] = $this->getExtension($filename);
                 $file['pathname']  = $this->setPathName($id, $file['extension']);
@@ -151,7 +156,7 @@ class fileModel extends model
                 $file['title']     = $purifier->purify($file['title']);
                 $file['size']      = $size[$id];
                 $file['tmpname']   = $tmp_name[$id];
-                $files[]           = $file;
+                $files[] = $file;
             }
         }
         else
@@ -204,6 +209,11 @@ class fileModel extends model
         $file['chunks']    = isset($_POST['chunks']) ? intval($_POST['chunks']) : 0;
         $file['chunk']     = isset($_POST['chunk'])  ? intval($_POST['chunk'])  : 0;
 
+        if(stripos($this->config->file->allowed, ',' . $file['extension'] . ',') === false)
+        {
+            $file['pathname'] = $file['pathname'] . '.notAllowed';
+        }
+
         return $file;
     }
 
@@ -226,6 +236,7 @@ class fileModel extends model
         if(!is_dir($tmpFileSavePath)) mkdir($tmpFileSavePath);
 
         $fileName = basename($file['pathname']);
+        $fileName = strpos($fileName, '.') === false ? $fileName : substr($fileName, 0, strpos($fileName, '.'));
         $file['realpath'] = $tmpFileSavePath . $fileName;
 
         if($file['chunks'] > 1)
@@ -284,9 +295,38 @@ class fileModel extends model
     public function getExtension($filename)
     {
         $extension = trim(strtolower(pathinfo($filename, PATHINFO_EXTENSION)));
-        if(empty($extension) or strpos(",{$this->config->file->dangers},", ",{$extension},") !== false) return 'txt';
+        if(empty($extension) or stripos(",{$this->config->file->dangers},", ",{$extension},") !== false) return 'txt';
+        if(empty($extension) or stripos(",{$this->config->file->allowed},", ",{$extension},") === false) return 'txt';
         if($extension == 'php') return 'txt';
         return $extension;
+    }
+
+    /**
+     * Get save name.
+     * 
+     * @param  string    $pathName 
+     * @access public
+     * @return string
+     */
+    public function getSaveName($pathName)
+    {
+        $saveName = strpos($pathName, '.') === false ? $pathName : substr($pathName, 0, strpos($pathName, '.'));
+        return $saveName;
+    }
+
+    /**
+     * Get real path name.
+     * 
+     * @param  string    $pathName 
+     * @access public
+     * @return string
+     */
+    public function getRealPathName($pathName)
+    {
+        $realPath = $this->savePath . $pathName;
+        if(file_exists($realPath)) return $pathName;
+
+        return $this->getSaveName($pathName);
     }
 
     /**
@@ -380,7 +420,13 @@ class fileModel extends model
      */
     public function setImgSize($content, $maxSize = 0)
     {
-        return str_replace('src="data/upload', 'onload="setImageSize(this,' . $maxSize . ')" src="data/upload', $content);
+        if(empty($content)) return $content;
+
+        $readLinkReg = str_replace(array('%fileID%', '/', '.', '?'), array('[0-9]+', '\/', '\.', '\?'), helper::createLink('file', 'read', 'fileID=(%fileID%)', '\w+'));
+
+        $content = preg_replace('/ src="(' . $readLinkReg . ')" /', ' onload="setImageSize(this,' . $maxSize . ')" src="$1" ', $content);
+        $content = preg_replace('/ src="{([0-9]+)(\.(\w+))?}" /', ' onload="setImageSize(this,' . $maxSize . ')" src="' . helper::createLink('file', 'read', "fileID=$1", "$3") . '" ', $content);
+        return str_replace(' src="data/upload', ' onload="setImageSize(this,' . $maxSize . ')" src="data/upload', $content);
     }
 
     /**
@@ -396,7 +442,7 @@ class fileModel extends model
             $file = $files[0];
             $filePath = $this->dao->select('pathname')->from(TABLE_FILE)->where('id')->eq($fileID)->fetch();
             $pathName = $filePath->pathname;
-            $realPathName= $this->savePath . $pathName;
+            $realPathName = $this->savePath . $this->getRealPathName($pathName);
             if(!is_dir(dirname($realPathName)))mkdir(dirname($realPathName));
             move_uploaded_file($file['tmpname'], $realPathName);
 
@@ -444,11 +490,12 @@ class fileModel extends model
             $file['addedDate'] = helper::today();
             $file['title']     = basename($file['pathname']);
 
-            file_put_contents($this->savePath . $file['pathname'], $imageData);
+            file_put_contents($this->savePath . $this->getSaveName($file['pathname']), $imageData);
             $this->dao->insert(TABLE_FILE)->data($file)->exec();
-            if($uid) $_SESSION['album'][$uid][] = $this->dao->lastInsertID();
+            $fileID = $this->dao->lastInsertID();
+            if($uid) $_SESSION['album'][$uid][] = $fileID;
 
-            $data = str_replace($out[1][$key], $this->webPath . $file['pathname'], $data);
+            $data = str_replace($out[1][$key], helper::createLink('file', 'read', "fileID=$fileID", $file['extension']), $data);
         }
 
         return $data;
@@ -577,13 +624,38 @@ class fileModel extends model
      * @access public
      * @return object
      */
-    public function processEditor($data, $editorList, $uid = '')
+    public function processImgURL($data, $editorList, $uid = '')
     {
-        foreach(explode(',', $editorList) as $editorID)
+        if(is_string($editorList)) $editorList = explode(',', str_replace(' ', '', $editorList));
+        if(empty($editorList)) return $data;
+
+        $readLinkReg = helper::createLink('file', 'read', 'fileID=(%fileID%)', '(%viewType%)');
+        $readLinkReg = str_replace(array('%fileID%', '%viewType%', '?', '/'), array('[0-9]+', '\w+', '\?', '\/'), $readLinkReg);
+        $imageIdList = array();
+        foreach($editorList as $editorID)
         {
-            $editorID = trim($editorID);
-            if(empty($editorID) or !isset($data->$editorID)) continue;
-            $data->$editorID = $this->pasteImage($data->$editorID, $uid);
+            if(empty($editorID) or empty($data->$editorID)) continue;
+
+            $imgURL = $this->config->requestType == 'GET' ? '{$2.$1}' : '{$1.$2}';
+
+            $content = $this->pasteImage($data->$editorID, $uid);
+            if($content) $data->$editorID = $content;
+            $data->$editorID = preg_replace("/ src=\"$readLinkReg\" /", ' src="' . $imgURL . '" ', $data->$editorID);
+            $data->$editorID = preg_replace("/ src=\"" . htmlspecialchars($readLinkReg) . "\" /", ' src="' . $imgURL . '" ', $data->$editorID);
+
+            preg_match_all('/ src="{([0-9]+)\.\w+}"/', $data->$editorID, $matchs);
+            if($matchs[1])
+            {
+                foreach($matchs[1] as $imageID) $imageIdList[$imageID] = $imageID;
+            }
+        }
+
+        if(!empty($_SESSION['album'][$uid]))
+        {
+            foreach($_SESSION['album'][$uid] as $i => $imageID)
+            {
+                if(isset($imageIdList[$imageID])) $_SESSION['album']['used'][$uid][$imageID] = $imageID;
+            }
         }
         return $data;
     }
@@ -600,8 +672,8 @@ class fileModel extends model
         if(!extension_loaded('gd') or !function_exists('imagecreatefromjpeg')) return $file;
 
         $pathName    = $file['pathname'];
-        $fileName    = $this->savePath . $pathName;
-        $suffix      = strrchr($fileName, '.');
+        $fileName    = $this->savePath . $this->getSaveName($pathName);
+        $suffix      = $file['extension'];
         $lowerSuffix = strtolower($suffix);
 
         if(!in_array($lowerSuffix, $this->config->file->image2Compress)) return $file;
@@ -611,12 +683,11 @@ class fileModel extends model
         $compressedName = str_replace($suffix, $newSuffix, $pathName);
 
         $res  = $lowerSuffix == '.bmp' ? $this->imagecreatefrombmp($fileName) : imagecreatefromjpeg($fileName);
-        imagejpeg($res, $this->savePath . $compressedName, $quality);
-        if($fileName != $this->savePath . $compressedName) unlink($fileName);
+        imagejpeg($res, $fileName, $quality);
 
-        $file['pathname']   = $compressedName;
-        $file['extension']  = ltrim($newSuffix, '.');
-        $file['size']       = filesize($this->savePath . $compressedName);
+        $file['pathname']  = $compressedName;
+        $file['extension'] = ltrim($newSuffix, '.');
+        $file['size']      = filesize($fileName);
         return $file;
     }
 
@@ -702,9 +773,51 @@ class fileModel extends model
         if(isset($_SESSION['album'][$uid]) and $_SESSION['album'][$uid])
         {
             $this->dao->update(TABLE_FILE)->data($data)->where('id')->in($_SESSION['album'][$uid])->exec();
-            if(dao::isError()) return false;
-            unset($_SESSION['album'][$uid]);
             return !dao::isError();
+        }
+    }
+
+    /**
+     * Revert real src. 
+     * 
+     * @param  object    $data 
+     * @param  string    $fields 
+     * @access public
+     * @return object
+     */
+    public function replaceImgURL($data, $fields)
+    {
+        if(is_string($fields)) $fields = explode(',', str_replace(' ', '', $fields));
+        foreach($fields as $field)
+        {
+            if(empty($field) or empty($data->$field)) continue;
+            $data->$field = preg_replace('/ src="{([0-9]+)(\.(\w+))?}" /', ' src="' . helper::createLink('file', 'read', "fileID=$1", "$3") . '" ', $data->$field);
+        }
+        return $data;
+
+    }
+
+    /**
+     * Auto delete useless image.
+     * 
+     * @param  int    $uid 
+     * @access public
+     * @return void
+     */
+    public function autoDelete($uid)
+    {
+        if(!empty($_SESSION['album'][$uid]))
+        {
+            foreach($_SESSION['album'][$uid] as $i => $imageID)
+            {
+                if(!isset($_SESSION['album']['used'][$uid][$imageID]))
+                {
+                    $file = $this->getById($imageID);
+                    $this->dao->delete()->from(TABLE_FILE)->where('id')->eq($imageID)->exec();
+                    @unlink($file->realPath);
+                }
+            }
+            unset($_SESSION['album'][$uid]);
         }
     }
 }

@@ -180,7 +180,10 @@ class productModel extends model
     public function getById($productID)
     {
         if(defined('TUTORIAL')) return $this->loadModel('tutorial')->getProduct();
-        return $this->dao->findById($productID)->from(TABLE_PRODUCT)->fetch();
+        $product = $this->dao->findById($productID)->from(TABLE_PRODUCT)->fetch();
+        if(!$product) return false;
+
+        return $this->loadModel('file')->replaceImgURL($product, 'desc');
     }
 
     /**
@@ -200,15 +203,24 @@ class productModel extends model
      * 
      * @param  string $status 
      * @param  int    $limit 
+     * @param  int    $line
      * @access public
      * @return array
      */
-    public function getList($status = 'all', $limit = 0)
+    public function getList($status = 'all', $limit = 0, $line = 0)
     {
         return $this->dao->select('*')->from(TABLE_PRODUCT)
             ->where('deleted')->eq(0)
+            ->beginIF($line > 0)->andWhere('line')->eq($line)->fi()
             ->beginIF($status == 'noclosed')->andWhere('status')->ne('closed')->fi()
-            ->beginIF($status != 'all' and $status != 'noclosed')->andWhere('status')->in($status)->fi()
+            ->beginIF($status != 'all' and $status != 'noclosed' and $status != 'involved')->andWhere('status')->in($status)->fi()
+            ->beginIF($status == 'involved')
+            ->andWhere('PO', true)->eq($this->app->user->account)
+            ->orWhere('QD')->eq($this->app->user->account)
+            ->orWhere('RD')->eq($this->app->user->account)
+            ->orWhere('createdBy')->eq($this->app->user->account)
+            ->markRight(1)
+            ->fi()
             ->beginIF($limit > 0)->limit($limit)->fi()
             ->orderBy('`order` desc')
             ->fetchAll('id');
@@ -225,7 +237,6 @@ class productModel extends model
         if(defined('TUTORIAL')) return $this->loadModel('tutorial')->getProductPairs();
 
         $orderBy  = !empty($this->config->product->orderBy) ? $this->config->product->orderBy : 'isClosed';
-        $mode    .= $this->cookie->productMode;
         $products = $this->dao->select('*,  IF(INSTR(" closed", status) < 2, 0, 1) AS isClosed')
             ->from(TABLE_PRODUCT)
             ->where('deleted')->eq(0)
@@ -241,9 +252,9 @@ class productModel extends model
     }
 
     /**
-     * Get products by project. 
-     * 
-     * @param  int    $projectID 
+     * Get products by project.
+     *
+     * @param  int    $projectID
      * @access public
      * @return array
      */
@@ -256,6 +267,7 @@ class productModel extends model
             ->leftJoin(TABLE_PRODUCT)->alias('t2')
             ->on('t1.product = t2.id')
             ->where('t1.project')->eq($projectID)
+            ->orderBy('t2.order desc')
             ->fetchPairs();
     }
 
@@ -288,9 +300,9 @@ class productModel extends model
             ->stripTags($this->config->product->editor->create['id'], $this->config->allowedTags)
             ->remove('uid')
             ->get();
-        $product = $this->loadModel('file')->processEditor($product, $this->config->product->editor->create['id'], $this->post->uid);
+        $product = $this->loadModel('file')->processImgURL($product, $this->config->product->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_PRODUCT)->data($product)->autoCheck()
-            ->batchCheck('name,code', 'notempty')
+            ->batchCheck($this->config->product->create->requiredFields, 'notempty')
             ->check('name', 'unique', "deleted = '0'")
             ->check('code', 'unique', "deleted = '0'")
             ->exec();
@@ -321,16 +333,16 @@ class productModel extends model
     public function update($productID)
     {
         $productID  = (int)$productID;
-        $oldProduct = $this->getById($productID);
+        $oldProduct = $this->dao->findById($productID)->from(TABLE_PRODUCT)->fetch();
         $product = fixer::input('post')
             ->setIF($this->post->acl != 'custom', 'whitelist', '')
             ->join('whitelist', ',')
             ->stripTags($this->config->product->editor->edit['id'], $this->config->allowedTags)
             ->remove('uid')
             ->get();
-        $product = $this->loadModel('file')->processEditor($product, $this->config->product->editor->edit['id'], $this->post->uid);
+        $product = $this->loadModel('file')->processImgURL($product, $this->config->product->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_PRODUCT)->data($product)->autoCheck()
-            ->batchCheck('name,code', 'notempty')
+            ->batchCheck($this->config->product->edit->requiredFields, 'notempty')
             ->check('name', 'unique', "id != $productID and deleted = '0'")
             ->check('code', 'unique', "id != $productID and deleted = '0'")
             ->where('id')->eq($productID)
@@ -654,19 +666,21 @@ class productModel extends model
 
     /**
      * Get product stats.
-     * 
-     * @param  string $orderBy 
-     * @param  int    $pager 
+     *
+     * @param  string $orderBy
+     * @param  object $pager
+     * @param  string $status
+     * @param  int    $line
      * @access public
-     * @return array 
+     * @return array
      */
-    public function getStats($orderBy = 'order_desc', $pager = null, $status = 'noclosed')
+    public function getStats($orderBy = 'order_desc', $pager = null, $status = 'noclosed', $line = 0)
     {
         $this->loadModel('report');
         $this->loadModel('story');
         $this->loadModel('bug');
 
-        $products = $this->getList($status);
+        $products = $this->getList($status, $limit = 0, $line);
         foreach($products as $productID => $product)
         {
             if(!$this->checkPriv($product)) unset($products[$productID]);

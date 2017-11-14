@@ -13,7 +13,7 @@ class commonModel extends model
 {
     /**
      * The construc method, to do some auto things.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -23,7 +23,6 @@ class commonModel extends model
         if(!defined('FIRST_RUN'))
         {
             define('FIRST_RUN', true);
-            $this->startSession();
             $this->sendHeader();
             $this->setCompany();
             $this->setUser();
@@ -35,21 +34,8 @@ class commonModel extends model
     }
 
     /**
-     * Start the session.
-     * 
-     * @access public
-     * @return void
-     */
-    public function startSession()
-    {
-        session_name($this->config->sessionVar);
-        if(isset($_GET[$this->config->sessionVar])) session_id($_GET[$this->config->sessionVar]);
-        session_start();
-    }
-
-    /**
      * Set the header info.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -68,7 +54,7 @@ class commonModel extends model
      * @return void
      */
     public function setCompany()
-    {        
+    {
         $httpHost = $this->server->http_host;
 
         if($this->session->company)
@@ -126,13 +112,13 @@ class commonModel extends model
         $this->config->personal = isset($config[$account]) ? $config[$account] : array();
 
         /* Overide the items defined in config/config.php and config/my.php. */
-        if(isset($this->config->system->common)) helper::mergeConfig($this->config->system->common, 'common');
-        if(isset($this->config->personal->common)) helper::mergeConfig($this->config->personal->common, 'common');
+        if(isset($this->config->system->common)) $this->app->mergeConfig($this->config->system->common, 'common');
+        if(isset($this->config->personal->common)) $this->app->mergeConfig($this->config->personal->common, 'common');
     }
 
     /**
      * Load custom lang from db.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -148,9 +134,9 @@ class commonModel extends model
 
     /**
      * Juage a method of one module is open or not?
-     * 
-     * @param  string $module 
-     * @param  string $method 
+     *
+     * @param  string $module
+     * @param  string $method
      * @access public
      * @return bool
      */
@@ -169,6 +155,7 @@ class commonModel extends model
         if($module == 'sso' and $method == 'bind') return true;
         if($module == 'sso' and $method == 'gettodolist') return true;
         if($module == 'block' and $method == 'main') return true;
+        if($module == 'file' and $method == 'read') return true;
 
         if($this->loadModel('user')->isLogon() or ($this->app->company->guest and $this->app->user->account == 'guest'))
         {
@@ -262,9 +249,7 @@ class commonModel extends model
                 echo "<li class='divider'></li>";
             }
 
-            $isLeft = ($app->company->website and $app->company->backyard) ? '' : ' left';
-
-            echo "<li class='dropdown-submenu{$isLeft}'>";
+            echo "<li class='dropdown-submenu left'>";
             echo "<a href='javascript:;'>" . $lang->theme . "</a><ul class='dropdown-menu'>";
             foreach ($app->lang->themes as $key => $value)
             {
@@ -272,7 +257,7 @@ class commonModel extends model
             }
             echo '</ul></li>';
 
-            echo "<li class='dropdown-submenu{$isLeft}'>";
+            echo "<li class='dropdown-submenu left'>";
             echo "<a href='javascript:;'>" . $lang->lang . "</a><ul class='dropdown-menu'>";
             foreach ($app->config->langs as $key => $value)
             {
@@ -307,7 +292,7 @@ class commonModel extends model
 
     /**
      * Create menu item link
-     * 
+     *
      * @param  object   $menuItemLink
      * @param  boolean  $isTutorialMode
      * @access public
@@ -334,8 +319,8 @@ class commonModel extends model
 
     /**
      * Print the main menu.
-     * 
-     * @param  string $moduleName 
+     *
+     * @param  string $moduleName
      * @static
      * @access public
      * @return void
@@ -367,7 +352,7 @@ class commonModel extends model
 
     /**
      * Print the search box.
-     * 
+     *
      * @static
      * @access public
      * @return void
@@ -392,7 +377,7 @@ class commonModel extends model
             $searchObject = $methodName;
         }
         if(empty($lang->searchObjects[$searchObject]))
-        {   
+        {
             $searchObject = 'bug';
             if($config->global->flow == 'onlyStory') $searchObject = 'story';
             if($config->global->flow == 'onlyTask')  $searchObject = 'task';
@@ -601,21 +586,21 @@ class commonModel extends model
      * Print link to an modules' methd.
      *
      * Before printing, check the privilege first. If no privilege, return fasle. Else, print the link, return true.
-     * 
+     *
      * @param  string $module   the module name
      * @param  string $method   the method
      * @param  string $vars     vars to be passed
      * @param  string $label    the label of the link
      * @param  string $target   the target of the link
      * @param  string $misc     others
-     * @param  bool   $newline 
+     * @param  bool   $newline
      * @static
      * @access public
      * @return bool
      */
-    public static function printLink($module, $method, $vars = '', $label, $target = '', $misc = '', $newline = true, $onlyBody = false)
+    public static function printLink($module, $method, $vars = '', $label, $target = '', $misc = '', $newline = true, $onlyBody = false, $object = null)
     {
-        if(!commonModel::hasPriv($module, $method)) return false;
+        if(!commonModel::hasPriv($module, $method, $object)) return false;
         echo html::a(helper::createLink($module, $method, $vars, '', $onlyBody), $label, $target, $misc, $newline);
         return true;
     }
@@ -640,29 +625,29 @@ class commonModel extends model
      * @access public
      * @return void
      */
-    public static function printCommentIcon($module)
+    public static function printCommentIcon($module, $object = null)
     {
         if(isonlybody()) return false;
 
         global $lang;
 
-        if(!commonModel::hasPriv($module, 'edit')) return false;
+        if(!commonModel::hasPriv($module, 'edit', $object)) return false;
         echo html::a('#commentBox', '<i class="icon-comment-alt"></i>', '', "title='$lang->comment' onclick='setComment()' class='btn'");
     }
 
     /**
      * Build icon button.
-     * 
-     * @param  string $module 
-     * @param  string $method 
-     * @param  string $vars 
-     * @param  object $object 
-     * @param  string $type button|list 
-     * @param  string $icon 
-     * @param  string $target 
-     * @param  string $extraClass 
-     * @param  bool   $onlyBody 
-     * @param  string $misc 
+     *
+     * @param  string $module
+     * @param  string $method
+     * @param  string $vars
+     * @param  object $object
+     * @param  string $type button|list
+     * @param  string $icon
+     * @param  string $target
+     * @param  string $extraClass
+     * @param  bool   $onlyBody
+     * @param  string $misc
      * @static
      * @access public
      * @return void
@@ -689,7 +674,7 @@ class commonModel extends model
         if(strtolower($module) == 'story'    and strtolower($method) == 'createcase') ($module = 'testcase') and ($method = 'create');
         if(strtolower($module) == 'bug'      and strtolower($method) == 'tostory')    ($module = 'story') and ($method = 'create');
         if(strtolower($module) == 'bug'      and strtolower($method) == 'createcase') ($module = 'testcase') and ($method = 'create');
-        if(!commonModel::hasPriv($module, $method)) return false;
+        if(!commonModel::hasPriv($module, $method, $object)) return false;
         $link = helper::createLink($module, $method, $vars, '', $onlyBody);
 
         /* Set the icon title, try search the $method defination in $module's lang or $common's lang. */
@@ -751,17 +736,17 @@ class commonModel extends model
 
     /**
      * Print link icon.
-     * 
-     * @param  string $module 
-     * @param  string $method 
-     * @param  string $vars 
-     * @param  object $object 
-     * @param  string $type button|list 
-     * @param  string $icon 
-     * @param  string $target 
-     * @param  string $extraClass 
-     * @param  bool   $onlyBody 
-     * @param  string $misc 
+     *
+     * @param  string $module
+     * @param  string $method
+     * @param  string $vars
+     * @param  object $object
+     * @param  string $type button|list
+     * @param  string $icon
+     * @param  string $target
+     * @param  string $extraClass
+     * @param  bool   $onlyBody
+     * @param  string $misc
      * @static
      * @access public
      * @return void
@@ -773,9 +758,9 @@ class commonModel extends model
 
     /**
      * Print backLink and preLink and nextLink.
-     * 
-     * @param  string $backLink 
-     * @param  object $preAndNext 
+     *
+     * @param  string $backLink
+     * @param  object $preAndNext
      * @access public
      * @return void
      */
@@ -827,9 +812,12 @@ class commonModel extends model
             if(strtolower($key) == 'editedby')       continue;
             if(strtolower($key) == 'editeddate')     continue;
             if(strtolower($key) == 'uid')            continue;
+            if(strtolower($key) == 'finisheddate' && $value == '')  continue;
+            if(strtolower($key) == 'canceleddate' && $value == '')  continue;
+            if(strtolower($key) == 'closeddate'   && $value == '')  continue;
 
             if($magicQuote) $value = stripslashes($value);
-            if($value != stripslashes($old->$key))
+            if(isset($old->$key) and $value != stripslashes($old->$key))
             { 
                 $diff = '';
                 if(substr_count($value, "\n") > 1     or 
@@ -999,7 +987,7 @@ class commonModel extends model
         $orderBy = isset($orderBy[1]) ? $orderBy[1] : '';
         if($orderBy)
         {
-            $orderBy = explode('limit', $orderBy);
+            $orderBy = explode('LIMIT', $orderBy);
             $orderBy = $orderBy[0];
             if($onlyCondition) $orderBy = str_replace('t1.', '', $orderBy);
         }
@@ -1130,27 +1118,29 @@ class commonModel extends model
 
     /**
      * Check the user has permisson of one method of one module.
-     * 
-     * @param  string $module 
-     * @param  string $method 
+     *
+     * @param  string $module
+     * @param  string $method
      * @static
      * @access public
      * @return bool
      */
-    public static function hasPriv($module, $method)
+    public static function hasPriv($module, $method, $object = null)
     {
         global $app, $lang;
 
         /* Check is the super admin or not. */
-        if($app->user->admin) return true; 
-
+        if(!empty($app->user->admin)) return true;
         /* If not super admin, check the rights. */
         $rights  = $app->user->rights['rights'];
         $acls    = $app->user->rights['acls'];
         $module  = strtolower($module);
         $method  = strtolower($method);
+
         if(isset($rights[$module][$method]))
         {
+            if(!commonModel::hasDBPriv($object, $module, $method)) return false;
+
             if(empty($acls['views'])) return true;
             $menu = isset($lang->menugroup->$module) ? $lang->menugroup->$module : $module;
             $menu = strtolower($menu);
@@ -1159,22 +1149,79 @@ class commonModel extends model
             if($module == 'company' and $method == 'dynamic') return true;
             if($module == 'action' and $method == 'editcomment') return true;
             if(!isset($acls['views'][$menu])) return false;
+
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Check db priv. 
+     * 
+     * @param  object $object 
+     * @param  string $module 
+     * @param  string $method 
+     * @static
+     * @access public
+     * @return void
+     */
+    public static function hasDBPriv($object, $module = '', $method = '')
+    {
+        global $app;
+
+        if(!empty($app->user->admin)) return true;
+        if($module == 'todo' and ($method == 'create' or $method == 'batchcreate')) return true;
+        if($module == 'effort' and $method == 'batchcreate') return true;
+
+        // limited project
+        $limitedProject = false;
+        if(!empty($module) && $module == 'task' && !empty($object->project) or
+           !empty($module) && $module == 'project' && !empty($object->id))
+        {
+            $objectID = '';
+            if(!empty($object->id)) $objectID = $object->id;
+            if(!empty($object->id) && !empty($object->project)) $objectID = $object->project;
+
+            $limitedProjects = !empty($_SESSION['limitedProjects']) ? $_SESSION['limitedProjects'] : '';
+            if(strpos(",{$limitedProjects},", ",$objectID,") !== false) $limitedProject = true;
+        }
+
+        if(empty($app->user->rights['rights']['my']['limited']) && !$limitedProject) return true;
+
+        if(!is_null($method) && strpos($method, 'batch')  === 0) return false;
+        if(!is_null($method) && strpos($method, 'link')   === 0) return false;
+        if(!is_null($method) && strpos($method, 'create') === 0) return false;
+        if(!is_null($method) && strpos($method, 'import') === 0) return false;
+
+        if(is_null($object)) return true;
+
+        if(!empty($object->openedBy)     && $object->openedBy     == $app->user->account or
+           !empty($object->addedBy)      && $object->addedBy      == $app->user->account or
+           !empty($object->assignedTo)   && $object->assignedTo   == $app->user->account or
+           !empty($object->finishedBy)   && $object->finishedBy   == $app->user->account or
+           !empty($object->canceledBy)   && $object->canceledBy   == $app->user->account or
+           !empty($object->closedBy)     && $object->closedBy     == $app->user->account or
+           !empty($object->lastEditedBy) && $object->lastEditedBy == $app->user->account)
+        {
+           return true;
+        }
+
         return false;
     }
 
     /**
      * Check whether IP in white list.
      *
+     * @param  string $ipWhiteList
      * @access public
      * @return bool
      */
-    public function checkIP()
+    public function checkIP($ipWhiteList = '')
     {
         $ip = $this->server->remote_addr;
 
-        $ipWhiteList = $this->config->ipWhiteList;
+        if(!$ipWhiteList) $ipWhiteList = $this->config->ipWhiteList;
 
         /* If the ip white list is '*'. */
         if($ipWhiteList == '*') return true;
@@ -1315,6 +1362,66 @@ class commonModel extends model
         foreach($items as $item) $convertedItems[$item] = zget($allConverted, $item, null);
 
         return $convertedItems;
+    }
+
+    /**
+     * Check an entry. 
+     * 
+     * @access public
+     * @return void
+     */
+    public function checkEntry()
+    {
+        if($this->session->valid_entry)
+        {
+            if(!$this->session->entry_code) $this->response(SESSION_CODE_MISSING);
+            if($this->session->valid_entry != md5(md5($this->get->code) . $this->server->remote_addr)) $this->response(SESSION_VERIFY_FAILED);
+            return true;
+        }
+
+        if(!$this->get->code)  $this->response(PARAM_CODE_MISSING);
+        if(!$this->get->token) $this->response(PARAM_TOKEN_MISSING);
+
+        $entry = $this->loadModel('entry')->getByCode($this->get->code);
+        if(!$entry)                              $this->response(INVALID_ENTRY);
+        if(!$entry->key)                         $this->response(EMPTY_KEY);
+        if(!$this->checkIP($entry->ip))          $this->response(IP_DENIED);
+        if(!$this->checkEntryToken($entry->key)) $this->response(INVALID_TOKEN);
+
+        $this->session->set('ENTRY_CODE', $this->get->code);
+        $this->session->set('VALID_ENTRY', md5(md5($this->get->code) . $this->server->remote_addr));
+        $this->loadModel('entry')->saveLog($entry->id, $this->server->request_uri);
+    }
+
+    /**
+     * Check token of an entry. 
+     * 
+     * @param  string $key 
+     * @access public
+     * @return void
+     */
+    public function checkEntryToken($key)
+    {
+        parse_str($this->server->query_String, $queryString);
+        unset($queryString['token']);
+        $queryString = http_build_query($queryString);
+        return $this->get->token == md5(md5($queryString) . $key);
+    }
+
+    /**
+     * Response. 
+     * 
+     * @param  int    $code 
+     * @access public
+     * @return void
+     */
+    public function response($code)
+    {
+        $response = new stdclass();
+        $response->errcode = $code;
+        $response->errmsg  = $this->lang->error->entry[$code];
+
+        die(helper::jsonEncode($response));
     }
 }
 

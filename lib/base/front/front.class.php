@@ -77,7 +77,6 @@ class baseHTML
     {
         $class = empty($class) ? ('icon-' . $name) : ('icon-' . $name . ' ' . $class);
         return "<i class='$class'></i>";
-
     }
 
     /**
@@ -110,15 +109,9 @@ class baseHTML
     static public function a($href = '', $title = '', $misc = '', $newline = true)
     {
         global $config;
+
         if(empty($title)) $title = $href;
         $newline = $newline ? "\n" : '';
-
-        /* if page has onlybody param then add this param in all link. the param hide header and footer. */
-        if(strpos($href, 'onlybody=yes') === false and isonlybody())
-        {
-            $onlybody = strpos($href, '?') === false ? "?onlybody=yes" : "&onlybody=yes";
-            $href .= $onlybody;
-        }
 
         return "<a href='$href' $misc>$title</a>$newline";
     }
@@ -491,7 +484,7 @@ class baseHTML
      */
     public static function backButton($label = '', $misc = '', $class = '')
     {
-        if(isonlybody()) return false;
+        if(helper::inOnlyBodyMode()) return false;
 
         global $lang;
         if(empty($label))
@@ -537,14 +530,9 @@ class baseHTML
     {
         global $config, $lang;
 
-        if(isonlybody() and $lang->goback == $label) return false;
+        if(helper::inOnlyBodyMode() and $lang->goback == $label) return false;
+        $link = helper::processOnlyBodyParam($link);
 
-        /* if page has onlybody param then add this param in all link. the param hide header and footer. */
-        if(strpos($link, 'onlybody=') === false and isonlybody())
-        {
-            $onlybody = strpos($link, '?') === false ? "?onlybody=yes" : "&onlybody=yes";
-            $link .= $onlybody;
-        }
         return " <button type='button' class='$class' $misc onclick='$target.location.href=\"$link\"'>$label</button>";
     }
 
@@ -703,7 +691,7 @@ EOT;
         $string .= "<a id='allchecker' class='btn btn-select-all check-all $appendClass' data-scope='$scope' href='javascript:;' >{$lang->selectAll}</a>";
         $string .= "<a id='reversechecker' class='btn btn-select-reverse check-inverse $appendClass' data-scope='$scope' href='javascript:;'>{$lang->selectReverse}</a>";
         if($asGroup) $string .= "</div>";
-        return  $string;
+        return $string;
     }
 
     /**

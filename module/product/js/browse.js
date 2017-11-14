@@ -23,4 +23,11 @@ $(function()
     $('.popoverStage').mouseout(function(){$(this).popover('hide')});
     setTimeout(function(){fixedTfootAction('#productStoryForm')}, 100);
     setTimeout(function(){fixedTheadOfList('#storyList')}, 100);
+
+    if($('#storyList thead th.w-title').width() < 150) $('#storyList thead th.w-title').width(150);
 })
+
+function setQueryBar(queryID, title)
+{
+    $('#bysearchTab').before("<li id='QUERY" + queryID + "Tab' class='active'><a href='" + createLink('product', 'browse', "productID=" + productID + "&branch=" + branch + "&browseType=bysearch&param=" + queryID) + "'>" + title + "</a></li>");
+}

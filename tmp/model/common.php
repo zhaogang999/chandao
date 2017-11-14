@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\common\model.php');
+helper::import('module\common\model.php');
 helper::cd();
 class extcommonModel extends commonModel 
 {

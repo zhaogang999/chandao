@@ -52,7 +52,7 @@ class testreportModel extends model
                     $viewName = $scope == 'local'? $products[$productID] : $this->lang->testtask->all;
 
                     $replace  = '<li>';
-                    $replace .= "<a data-toggle='dropdown'>{$viewName} <span class='caret'></span></a>";
+                    $replace .= "<a href='###' data-toggle='dropdown'>{$viewName} <span class='caret'></span></a>";
                     $replace .= "<ul class='dropdown-menu' style='max-height:240px;overflow-y:auto'>";
                     $replace .= "<li>" . html::a(helper::createLink('testtask', 'browse', "productID=$productID&branch=$branch&type=all,$status"), $this->lang->testtask->all) . "</li>";
                     $replace .= "<li>" . html::a(helper::createLink('testtask', 'browse', "productID=$productID&branch=$branch&type=local,$status"), $products[$productID]) . "</li>";
@@ -89,14 +89,17 @@ class testreportModel extends model
             ->join('members', ',')
             ->remove('files,labels,uid')
             ->get();
+        $data->members = trim($data->members, ',');
+
+        $data = $this->loadModel('file')->processImgURL($data, $this->config->testreport->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_TESTREPORT)->data($data)->autocheck()
              ->batchCheck($this->config->testreport->create->requiredFields, 'notempty')
-             ->batchCheck('start,end', 'notempty')
-             ->check('end', 'ge', $data->start)
+             ->batchCheck('begin,end', 'notempty')
+             ->check('end', 'ge', $data->begin)
              ->exec();
         if(dao::isError()) return false;
         $reportID = $this->dao->lastInsertID();
-        $this->loadModel('file')->updateObjectID($this->post->uid, $reportID, 'testreport');
+        $this->file->updateObjectID($this->post->uid, $reportID, 'testreport');
         $this->file->saveUpload('testreport', $reportID);
         return $reportID;
     }
@@ -120,15 +123,18 @@ class testreportModel extends model
             ->join('members', ',')
             ->remove('files,labels,uid')
             ->get();
+        $data->members = trim($data->members, ',');
+
+        $data = $this->loadModel('file')->processImgURL($data, $this->config->testreport->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_TESTREPORT)->data($data)->autocheck()
              ->batchCheck($this->config->testreport->edit->requiredFields, 'notempty')
-             ->batchCheck('start,end', 'notempty')
-             ->check('end', 'ge', $data->start)
+             ->batchCheck('begin,end', 'notempty')
+             ->check('end', 'ge', $data->begin)
              ->where('id')->eq($reportID)
              ->exec();
         if(dao::isError()) return false;
 
-        $this->loadModel('file')->updateObjectID($this->post->uid, $reportID, 'testreport');
+        $this->file->updateObjectID($this->post->uid, $reportID, 'testreport');
         return common::createChanges($report, $data);
     }
 
@@ -142,7 +148,8 @@ class testreportModel extends model
     public function getById($reportID)
     {
         $report = $this->dao->select('*')->from(TABLE_TESTREPORT)->where('id')->eq($reportID)->fetch();
-        $report->files = $this->loadModel('file')->getByObject('testreport', $reportID);
+        $report = $this->loadModel('file')->replaceImgURL($report, 'report');
+        $report->files = $this->file->getByObject('testreport', $reportID);
         return $report;
     }
 
@@ -182,38 +189,46 @@ class testreportModel extends model
      */
     public function getBugInfo($tasks, $productIdList, $begin, $end, $builds)
     {
-        $bugsByTask     = $this->dao->select('*')->from(TABLE_BUG)->where('testtask')->in(array_keys($tasks))->andWhere('testtask')->ne(0)->andWhere('deleted')->eq(0)->fetchAll('id');
-        $severityGroups = $statusGroups = $openedByGroups = $resolvedByGroups = $resolutionGroups = $moduleGroups = array();
-        $resolvedBugs   = 0;
-        foreach($bugsByTask as $bug)
+        $allNewBugs  = $this->dao->select('*')->from(TABLE_BUG)->where('product')->in($productIdList)->andWhere('openedDate')->ge($begin)->andWhere('openedDate')->le("$end 23:59:59")->andWhere('deleted')->eq(0)->fetchAll();
+        $foundBugs   = array();
+        $legacyBugs  = array();
+        $byCaseNum   = 0;
+        $buildIdList = array_keys($builds);
+        $taskIdList  = array_keys($tasks);
+
+        foreach($allNewBugs as $bug)
         {
-            $severityGroups[$bug->severity] = isset($severityGroups[$bug->severity])     ? $severityGroups[$bug->severity]     + 1 : 1;
-            $statusGroups[$bug->status]     = isset($statusGroups[$bug->status])         ? $statusGroups[$bug->status]         + 1 : 1;
-            $openedByGroups[$bug->openedBy] = isset($openedByGroups[$bug->openedBy])     ? $openedByGroups[$bug->openedBy]     + 1 : 1;
-            $moduleGroups[$bug->module]     = isset($moduleGroups[$bug->module])         ? $moduleGroups[$bug->module]         + 1 : 1;
+            if(!array_diff(explode(',', $bug->openedBuild), $buildIdList))
+            {
+                $foundBugs[$bug->id] = $bug;
+                if($bug->status == 'active' or $bug->resolvedDate > "$end 23:59:59") $legacyBugs[$bug->id] = $bug;
+                if($bug->case and !empty($bug->testtask) and in_array($bug->testtask, $taskIdList)) $byCaseNum ++;
+            }
+        }
+
+        $severityGroups = $statusGroups = $openedByGroups = $resolvedByGroups = $resolutionGroups = $moduleGroups = $typeGroups = array();
+        $resolvedBugs   = 0;
+        foreach($foundBugs as $bug)
+        {
+            $severityGroups[$bug->severity] = isset($severityGroups[$bug->severity]) ? $severityGroups[$bug->severity] + 1 : 1;
+            $typeGroups[$bug->type]         = isset($typeGroups[$bug->type])         ? $typeGroups[$bug->type]         + 1 : 1;
+            $statusGroups[$bug->status]     = isset($statusGroups[$bug->status])     ? $statusGroups[$bug->status]     + 1 : 1;
+            $openedByGroups[$bug->openedBy] = isset($openedByGroups[$bug->openedBy]) ? $openedByGroups[$bug->openedBy] + 1 : 1;
+            $moduleGroups[$bug->module]     = isset($moduleGroups[$bug->module])     ? $moduleGroups[$bug->module]     + 1 : 1;
+
             if($bug->resolvedBy) $resolvedByGroups[$bug->resolvedBy] = isset($resolvedByGroups[$bug->resolvedBy]) ? $resolvedByGroups[$bug->resolvedBy] + 1 : 1;
             if($bug->resolution) $resolutionGroups[$bug->resolution] = isset($resolutionGroups[$bug->resolution]) ? $resolutionGroups[$bug->resolution] + 1 : 1;
             if($bug->status == 'resolved' or $bug->status == 'closed') $resolvedBugs ++;
         }
 
-        $newBugs     = $this->dao->select('*')->from(TABLE_BUG)->where('product')->in($productIdList)->andWhere('openedDate')->ge($begin)->andWhere('openedDate')->le("$end 23:59:59")->andWhere('deleted')->eq(0)->fetchAll();
-        $legacyBugs  = array();
-        $byCaseNum   = 0;
-        $buildIdList = array_keys($builds) + array('trunk' => 'trunk');
-        foreach($newBugs as $bug)
-        {
-            if(!array_diff(explode(',', $bug->openedBuild), $buildIdList) and ($bug->status == 'active' OR $bug->resolvedDate > "$end 23:59:59")) $legacyBugs[$bug->id] = $bug;
-            if($bug->case) $byCaseNum ++;
-        }
-
-
+        $bugInfo['foundBugs']           = count($foundBugs);
         $bugInfo['legacyBugs']          = $legacyBugs;
-        $bugInfo['countBugByTask']      = count($bugsByTask);
+        $bugInfo['countBugByTask']      = $byCaseNum;
         $bugInfo['bugConfirmedRate']    = empty($resolvedBugs) ? 0 : round((zget($resolutionGroups, 'fixed', 0) + zget($resolutionGroups, 'postponed', 0)) / $resolvedBugs * 100, 2);
-        $bugInfo['bugCreateByCaseRate'] = empty($byCaseNum) ? 0 : round($byCaseNum / count($newBugs) * 100, 2);
+        $bugInfo['bugCreateByCaseRate'] = empty($byCaseNum) ? 0 : round($byCaseNum / count($foundBugs) * 100, 2);
 
         $this->app->loadLang('bug');
-        $users = $this->loadModel('user')->getPairs('noclosed|nodeleted|noletter');
+        $users = $this->loadModel('user')->getPairs('noclosed|noletter|nodeleted');
         $data  = array();
         foreach($severityGroups as $severity => $count)
         {
@@ -223,7 +238,16 @@ class testreportModel extends model
         }
         $bugInfo['bugSeverityGroups'] = $data;
 
-        $data  = array();
+        $data = array();
+        foreach($typeGroups as $type => $count)
+        {
+            $data[$type] = new stdclass();
+            $data[$type]->name  = zget($this->lang->bug->typeList, $type);
+            $data[$type]->value = $count;
+        }
+        $bugInfo['bugTypeGroups'] = $data;
+
+        $data = array();
         foreach($statusGroups as $status => $count)
         {
             $data[$status] = new stdclass();
@@ -232,7 +256,7 @@ class testreportModel extends model
         }
         $bugInfo['bugStatusGroups'] = $data;
 
-        $data  = array();
+        $data = array();
         foreach($resolutionGroups as $resolution => $count)
         {
             $data[$resolution] = new stdclass();
@@ -241,7 +265,7 @@ class testreportModel extends model
         }
         $bugInfo['bugResolutionGroups'] = $data;
 
-        $data  = array();
+        $data = array();
         foreach($openedByGroups as $openedBy => $count)
         {
             $data[$openedBy] = new stdclass();
@@ -263,7 +287,7 @@ class testreportModel extends model
         }
         $bugInfo['bugModuleGroups'] = $data;
 
-        $data  = array();
+        $data = array();
         foreach($resolvedByGroups as $resolvedBy => $count)
         {
             $data[$resolvedBy] = new stdclass();

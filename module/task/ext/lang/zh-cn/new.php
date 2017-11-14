@@ -61,7 +61,7 @@ $lang->task->performModeList['other']   = '其他';
 
 $lang->task->performSystemList['']        = '';
 $lang->task->performSystemList['windows'] = 'windows';
-$lang->task->performSystemList['linus']   = 'linus';
+$lang->task->performSystemList['linux']   = 'linux';
 
 $lang->task->ATList['']                 = '';
 $lang->task->ATList['pass']             = '通过';

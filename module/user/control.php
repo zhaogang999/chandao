@@ -414,6 +414,7 @@ class user extends control
         $this->view->groupList = $groupList;
         $this->view->roleGroup = $roleGroup;
         $this->view->deptID    = $deptID;
+        $this->view->rand      = $this->user->updateSessionRandom();
 
         $this->display();
     }
@@ -460,6 +461,7 @@ class user extends control
         $this->view->deptID    = $deptID;
         $this->view->groupList = $groupList;
         $this->view->roleGroup = $roleGroup;
+        $this->view->rand      = $this->user->updateSessionRandom();
 
         $this->display();
     }
@@ -493,8 +495,9 @@ class user extends control
         $this->view->user       = $user;
         $this->view->depts      = $this->dept->getOptionMenu();
         $this->view->userGroups = implode(',', array_keys($userGroups));
-        $this->view->groups     = $this->loadModel('group')->getPairs();
- 
+        $this->view->groups     = $this->dao->select('id, name')->from(TABLE_GROUP)->fetchPairs('id', 'name');
+
+        $this->view->rand = $this->user->updateSessionRandom();
         $this->display();
     }
 
@@ -528,6 +531,8 @@ class user extends control
         $this->view->title      = $this->lang->company->common . $this->lang->colon . $this->lang->user->batchEdit;
         $this->view->position[] = $this->lang->user->batchEdit;
         $this->view->depts      = $this->dept->getOptionMenu();
+        $this->view->rand       = $this->user->updateSessionRandom();
+
         $this->display();
     }
 
@@ -545,7 +550,7 @@ class user extends control
         if($this->app->user->admin and $this->app->user->account == $user->account) return;
         if($_POST)
         {
-            if(md5($this->post->verifyPassword) != $this->app->user->password) die(js::alert($this->lang->user->error->verifyPassword));
+            if($this->post->verifyPassword != md5($this->app->user->password . $this->session->rand)) die(js::alert($this->lang->user->error->verifyPassword));
             $this->user->delete(TABLE_USER, $userID);
             if(!dao::isError())
             {
@@ -571,6 +576,7 @@ class user extends control
             die(js::locate($this->session->userList, 'parent.parent'));
         }
 
+        $this->view->rand = $this->user->updateSessionRandom();
         $this->display();
     }
 
@@ -685,7 +691,7 @@ class user extends control
                 $this->session->set('user', $user);
                 $this->app->user = $this->session->user;
                 $this->loadModel('action')->create('user', $user->id, 'login');
-
+                $this->loadModel('score')->create('user', 'login');
                 /* Keep login. */
                 if($this->post->keepLogin) $this->user->keepLogin($user);
 
@@ -693,10 +699,7 @@ class user extends control
                 if(isset($this->config->safe->mode) and $this->user->computePasswordStrength($password) < $this->config->safe->mode) echo js::alert($this->lang->user->weakPassword);
 
                 /* Go to the referer. */
-                if($this->post->referer and 
-                   strpos($this->post->referer, $loginLink) === false and 
-                   strpos($this->post->referer, $denyLink)  === false 
-                )
+                if($this->post->referer and strpos($this->post->referer, $loginLink) === false and strpos($this->post->referer, $denyLink) === false)
                 {
                     if($this->app->getViewType() == 'json')
                     {
@@ -760,10 +763,10 @@ class user extends control
             }
         }
         else
-        { 
+        {
             if(!empty($this->config->global->showDemoUsers))
             {
-                $demoUsers = $this->user->getPairs('nodeleted, noletter, noempty, noclosed');
+                $demoUsers = $this->user->getPairs('noletter|noempty|noclosed|nodeleted');
                 $this->view->demoUsers = $demoUsers;
             }
 
@@ -773,6 +776,7 @@ class user extends control
             $this->view->referer   = $this->referer;
             $this->view->s         = zget($this->config->global, 'sn', '');
             $this->view->keepLogin = $this->cookie->keepLogin ? $this->cookie->keepLogin : 'off';
+            $this->view->rand      = $this->user->updateSessionRandom();
             $this->display();
         }
     }
@@ -833,7 +837,6 @@ class user extends control
         }
 
         $resetFileName = $this->session->resetFileName;
-        $this->view->title = $this->lang->user->resetPassword;
 
         $needCreateFile = false;
         if(!file_exists($resetFileName) or (time() - filemtime($resetFileName)) > 60 * 2) $needCreateFile = true;
@@ -852,11 +855,18 @@ class user extends control
             die(js::locate(inlink('logout', $referer), 'parent'));
         }
 
+        /* Remove the real path for security reason. */
+        $pathPos       = strrpos($this->app->getBasePath(), DIRECTORY_SEPARATOR, -2);
+        $resetFileName = substr($resetFileName, $pathPos+1);
+
+        $this->view->title          = $this->lang->user->resetPassword;
         $this->view->status         = 'reset';
         $this->view->needCreateFile = $needCreateFile;
+        $this->view->resetFileName  = $resetFileName;
+
         $this->display();
     }
-    
+
     /**
      * User dynamic.
      * 
@@ -899,7 +909,7 @@ class user extends control
 
         /* Assign. */
         $this->view->period  = $period;
-        $this->view->users   = $this->loadModel('user')->getPairs('nodeleted|noletter');
+        $this->view->users   = $this->loadModel('user')->getPairs('noletter');
         $this->view->account = $account;
         $this->view->user    = $this->user->getById($account);
         $this->view->actions = $this->loadModel('action')->getDynamic($account, $period, $orderBy, $pager);
@@ -933,7 +943,7 @@ class user extends control
      */
     public function ajaxGetContactUsers($contactListID)
     {
-        $users = $this->user->getPairs('nodeleted,devfirst');
+        $users = $this->user->getPairs('devfirst|nodeleted');
         if(!$contactListID) return print(html::select('mailto[]', $users, '', "class='form-control' multiple data-placeholder='{$this->lang->chooseUsersToMail}'"));
         $list = $this->user->getContactListByID($contactListID);
         return print(html::select('mailto[]', $users, $list->userList, "class='form-control' multiple data-placeholder='{$this->lang->chooseUsersToMail}'"));

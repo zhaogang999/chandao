@@ -70,8 +70,8 @@ class docModel extends model
         $selectHtml .= "<div id='libMenu'>";
         $selectHtml .= "<div id='libMenuHeading'><input id='searchLib' type='search' placeholder='{$this->lang->doc->searchDoc}' class='form-control'></div>";
         $selectHtml .= "<div id='libMenuGroups' class='clearfix'>";
-        if($this->config->global->flow != 'onlyTask')  $selectHtml .= "<div class='lib-menu-group' id='libMenuProductGroup'><div class='lib-menu-list-heading' data-type='product'>{$this->lang->doc->libTypeList['product']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
-        if($this->config->global->flow != 'onlyStory' and $this->config->global->flow != 'onlyTest') $selectHtml .= "<div class='lib-menu-group' id='libMenuProjectGroup'><div class='lib-menu-list-heading' data-type='project'>{$this->lang->doc->libTypeList['project']}<i class='icon icon-remove'></i></div><div class='lib-menu-project-done'>{$this->lang->project->statusList['done']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
+        if($this->config->global->flow != 'onlyTask' and isset($this->lang->doc->libTypeList['product']))  $selectHtml .= "<div class='lib-menu-group' id='libMenuProductGroup'><div class='lib-menu-list-heading' data-type='product'>{$this->lang->doc->libTypeList['product']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
+        if($this->config->global->flow != 'onlyStory' and $this->config->global->flow != 'onlyTest' and isset($this->lang->doc->libTypeList['project'])) $selectHtml .= "<div class='lib-menu-group' id='libMenuProjectGroup'><div class='lib-menu-list-heading' data-type='project'>{$this->lang->doc->libTypeList['project']}<i class='icon icon-remove'></i></div><div class='lib-menu-project-done'>{$this->lang->project->statusList['done']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
         $selectHtml .= "<div class='lib-menu-group' id='libMenuCustomGroup'><div class='lib-menu-list-heading' data-type='custom'>{$this->lang->doc->libTypeList['custom']}<i class='icon icon-remove'></i></div><div class='lib-menu-list clearfix'></div></div>";
         $selectHtml .= "</div></div></div>";
         common::setMenuVars($this->lang->doc->menu, 'list', $selectHtml);
@@ -161,7 +161,11 @@ class docModel extends model
         $libID  = (int)$libID;
         $oldLib = $this->getLibById($libID);
         $lib = fixer::input('post')->join('groups', ',')->join('users', ',')->get();
-        if($lib->acl == 'private') $lib->users = $this->app->user->account;
+        if($lib->acl == 'private')
+        {
+            $libCreatedBy = $this->dao->select('*')->from(TABLE_ACTION)->where('objectType')->eq('doclib')->andWhere('objectID')->eq($libID)->andWhere('action')->eq('created')->fetch('actor');
+            $lib->users   = $libCreatedBy ? $libCreatedBy : $this->app->user->account;
+        }
         $this->dao->update(TABLE_DOCLIB)->data($lib)->autoCheck()
             ->batchCheck('name', 'notempty')
             ->where('id')->eq($libID)
@@ -259,13 +263,13 @@ class docModel extends model
 
     /**
      * Get docs.
-     * 
-     * @param  int|string   $libID 
-     * @param  int          $productID 
-     * @param  int          $projectID 
-     * @param  int          $module 
-     * @param  string       $orderBy 
-     * @param  object       $pager 
+     *
+     * @param  int|string   $libID
+     * @param  int          $productID
+     * @param  int          $projectID
+     * @param  int          $module
+     * @param  string       $orderBy
+     * @param  object       $pager
      * @access public
      * @return void
      */
@@ -282,9 +286,9 @@ class docModel extends model
 
     /**
      * Get priv docs.
-     * 
-     * @param  int    $libID 
-     * @param  int    $module 
+     *
+     * @param  int    $libID
+     * @param  int    $module
      * @access public
      * @return void
      */
@@ -294,6 +298,7 @@ class docModel extends model
             ->where('deleted')->eq(0)
             ->beginIF($libID)->andWhere('lib')->in($libID)->fi()
             ->beginIF($module)->andWhere('module')->in($module)->fi()
+            ->beginIF($this->cookie->browseType == 'bymenu')->andWhere('module')->in($module)->fi()
             ->query();
 
         $docIdList = array();
@@ -306,9 +311,9 @@ class docModel extends model
 
     /**
      * Get doc info by id.
-     * 
-     * @param  int    $docID 
-     * @param  bool   $setImgSize 
+     *
+     * @param  int    $docID
+     * @param  bool   $setImgSize
      * @access public
      * @return void
      */
@@ -331,8 +336,9 @@ class docModel extends model
         $docFiles = array();
         foreach($files as $file)
         {
-            $file->webPath  = $this->file->webPath . $file->pathname;
-            $file->realPath = $this->file->savePath . $file->pathname;
+            $pathName = $this->file->getRealPathName($file->pathname);
+            $file->webPath  = $this->file->webPath . $pathName;
+            $file->realPath = $this->file->savePath . $pathName;
             if(strpos(",{$docContent->files},", ",{$file->id},") !== false) $docFiles[$file->id] = $file;
         }
 
@@ -351,7 +357,9 @@ class docModel extends model
         $doc->digest      = isset($docContent->digest)  ? $docContent->digest  : '';
         $doc->content     = isset($docContent->content) ? $docContent->content : '';
         $doc->contentType = isset($docContent->type)    ? $docContent->type : '';
-        if($setImgSize) $doc->content = $this->loadModel('file')->setImgSize($doc->content);
+
+        $doc = $this->loadModel('file')->replaceImgURL($doc, 'content');
+        if($setImgSize) $doc->content = $this->file->setImgSize($doc->content);
         $doc->files = $docFiles;
 
         $doc->productName = '';
@@ -391,7 +399,7 @@ class docModel extends model
         if($result['stop']) return array('status' => 'exists', 'id' => $result['duplicate']);
 
         $lib = $this->getLibByID($doc->lib);
-        $doc = $this->loadModel('file')->processEditor($doc, $this->config->doc->editor->create['id'], $this->post->uid);
+        $doc = $this->loadModel('file')->processImgURL($doc, $this->config->doc->editor->create['id'], $this->post->uid);
         $doc->product = $lib->product;
         $doc->project = $lib->project;
         if($doc->type == 'url')
@@ -406,12 +414,11 @@ class docModel extends model
         $docContent->type    = $doc->contentType;
         $docContent->version = 1;
         if($doc->contentType == 'markdown') $docContent->content = str_replace('&gt;', '>', $docContent->content);
-        unset($doc->content);
         unset($doc->contentMarkdown);
         unset($doc->contentType);
         unset($doc->url);
 
-        $this->dao->insert(TABLE_DOC)->data($doc)->autoCheck()
+        $this->dao->insert(TABLE_DOC)->data($doc, 'content')->autoCheck()
             ->batchCheck($this->config->doc->create->requiredFields, 'notempty')
             ->exec();
         if(!dao::isError())
@@ -423,6 +430,7 @@ class docModel extends model
             $docContent->doc   = $docID;
             $docContent->files = join(',', array_keys($files));
             $this->dao->insert(TABLE_DOCCONTENT)->data($docContent)->exec();
+            $this->loadModel('score')->create('doc', 'create', $docID);
             return array('status' => 'new', 'id' => $docID);
         }
         return false;
@@ -437,7 +445,7 @@ class docModel extends model
      */
     public function update($docID)
     {
-        $oldDoc = $this->getById($docID);
+        $oldDoc = $this->dao->select('*')->from(TABLE_DOC)->where('id')->eq((int)$docID)->fetch();
         $now = helper::now();
         $doc = fixer::input('post')->setDefault('module', 0)
             ->stripTags($this->config->doc->editor->edit['id'], $this->config->allowedTags)
@@ -449,10 +457,20 @@ class docModel extends model
             ->remove('comment,files,labels,uid')
             ->get();
         if($doc->acl == 'private') $doc->users = $oldDoc->addedBy;
-        if($oldDoc->contentType == 'markdown') $doc->content = str_replace('&gt;', '>', $doc->content);
+
+        $oldDocContent = $this->dao->select('*')->from(TABLE_DOCCONTENT)->where('doc')->eq($docID)->andWhere('version')->eq($oldDoc->version)->fetch();
+        if($oldDocContent)
+        {
+            $oldDoc->title       = $oldDocContent->title;
+            $oldDoc->digest      = $oldDocContent->digest;
+            $oldDoc->content     = $oldDocContent->content;
+            $oldDoc->contentType = $oldDocContent->type;
+
+            if($oldDocContent->type == 'markdown') $doc->content = str_replace('&gt;', '>', $doc->content);
+        }
 
         $lib = $this->getLibByID($doc->lib);
-        $doc = $this->loadModel('file')->processEditor($doc, $this->config->doc->editor->edit['id'], $this->post->uid);
+        $doc = $this->loadModel('file')->processImgURL($doc, $this->config->doc->editor->edit['id'], $this->post->uid);
         $doc->product = $lib->product;
         $doc->project = $lib->project;
         if($doc->type == 'url') $doc->content = $doc->url;
@@ -469,24 +487,22 @@ class docModel extends model
 
         if($changed)
         {
-            $oldDocContent = $this->dao->select('files,type')->from(TABLE_DOCCONTENT)->where('doc')->eq($docID)->andWhere('version')->eq($oldDoc->version)->fetch();
             $doc->version  = $oldDoc->version + 1;
             $docContent = new stdclass();
             $docContent->doc     = $docID;
             $docContent->title   = $doc->title;
             $docContent->content = $doc->content;
             $docContent->version = $doc->version;
-            $docContent->digest  = $doc->digest;
             $docContent->type    = $oldDocContent->type;
             $docContent->files   = $oldDocContent->files;
+            if(isset($doc->digest)) $docContent->digest  = $doc->digest;
             if($files) $docContent->files .= ',' . join(',', array_keys($files));
             $docContent->files   = trim($docContent->files, ',');
             $this->dao->insert(TABLE_DOCCONTENT)->data($docContent)->exec();
         }
-        unset($doc->content);
         unset($doc->contentType);
 
-        $this->dao->update(TABLE_DOC)->data($doc)
+        $this->dao->update(TABLE_DOC)->data($doc, 'content')
             ->autoCheck()
             ->batchCheck($this->config->doc->edit->requiredFields, 'notempty')
             ->where('id')->eq((int)$docID)
@@ -602,11 +618,16 @@ class docModel extends model
      */
     public function checkPriv($object, $type = 'lib')
     {
+        if($this->app->user->admin) return true;
+
+        $acls = $this->app->user->rights['acls'];
+        if(!empty($object->product) and !empty($acls['products']) and !in_array($object->product, $acls['products'])) return false;
+        if(!empty($object->project) and !empty($acls['projects']) and !in_array($object->project, $acls['projects'])) return false;
+
         if($object->acl == 'open') return true;
 
         $account = ',' . $this->app->user->account . ',';
         if(isset($object->addedBy) and $object->addedBy == $this->app->user->account) return true;
-        if($this->app->user->admin) return true;
         if($object->acl == 'private' and strpos(",$object->users,", $account) !== false) return true;
         if($object->acl == 'custom')
         {
@@ -901,13 +922,13 @@ class docModel extends model
 
     /**
      * Get lib files.
-     * 
-     * @param  string $type 
-     * @param  int    $objectID 
+     *
+     * @param  string $type
+     * @param  int    $objectID
      * @access public
      * @return array
      */
-    public function getLibFiles($type, $objectID, $pager = null)
+    public function getLibFiles($type, $objectID, $orderBy, $pager = null)
     {
         if($type != 'project' and $type != 'product') return true;
         $this->loadModel('file');
@@ -929,6 +950,7 @@ class docModel extends model
                 ->orWhere("(objectType = 'productplan' and objectID in ($planIdList))")
                 ->markRight(1)
                 ->beginIF($searchTitle)->andWhere('title')->like("%{$searchTitle}%")->fi()
+                ->orderBy($orderBy)
                 ->page($pager)
                 ->fetchAll('id');
         }
@@ -944,14 +966,16 @@ class docModel extends model
                 ->orWhere("(objectType = 'build' and objectID in ($buildIdList))")
                 ->markRight(1)
                 ->beginIF($searchTitle)->andWhere('title')->like("%{$searchTitle}%")->fi()
+                ->orderBy($orderBy)
                 ->page($pager)
                 ->fetchAll('id');
         }
 
         foreach($files as $fileID => $file)
         {
-            $file->realPath = $this->file->savePath . $file->pathname;
-            $file->webPath  = $this->file->webPath . $file->pathname;
+            $pathName = $this->file->getRealPathName($file->pathname);
+            $file->realPath = $this->file->savePath . $pathName;
+            $file->webPath  = $this->file->webPath . $pathName;
         }
 
         return $files;
@@ -1007,6 +1031,7 @@ class docModel extends model
 
         $node->type = 'module';
         $docs = isset($docGroups[$node->id]) ? $docGroups[$node->id] : array();
+        $menu = !empty($node->children) ? $node->children : array();
         if(!empty($docs))
         {
             $docItems = array();
@@ -1023,174 +1048,18 @@ class docModel extends model
                 if(common::hasPriv('doc', 'delete'))$buttons .= html::a(helper::createLink('doc', 'delete', "docID=$doc->id"), "<i class='icon icon-remove'></i>", 'hiddenwin', "class='btn-icon' title='{$this->lang->doc->delete}'");
                 $docItem->buttons = $buttons;
                 $docItem->actions = false;
-                $docItems[] = $docItem;
+                $docItems[]       = $docItem;
             }
-            $node->docsCount = count($docItems);
-            $node->children  = $docItems;
+
+            /* Reorder children. The doc is top of menu. */
+            if($menu) $docItems = array_merge($docItems, $menu);
+
+            $node->children = $docItems;
         }
 
-        $node->actions = false;
+        $node->docsCount = isset($node->children) ? count($node->children) : 0;
+        $node->actions   = false;
         return $node;
-    }
-
-    /**
-     * Diff doc. 
-     * 
-     * @param  string $text1 
-     * @param  string $text2 
-     * @access public
-     * @return array
-     */
-    public function diff($text1, $text2)
-    {
-        $text1     = explode("\n", trim($text1));
-        $text2     = explode("\n", trim($text2));
-        $text1Len  = count($text1);
-        $text2Len  = count($text2);
-        $trace     = array();
-        $trace[-1] = array_fill(-1, $text2Len + 1, +1);
-        $lcs0      = array_fill(-1, $text2Len + 1, 0);
-        $lcs1[-1]  = 0;
-
-        foreach($text1 as $line)
-        {
-            $temp     = array();
-            $temp[-1] = -1;
-            for($i = 0; $i < $text2Len; $i++)
-            {
-                if($line == $text2[$i])
-                {
-                    $lcs1[$i] = $lcs0[$i - 1] + 1;
-                    $temp[$i] = 0;
-                }
-                elseif($lcs0[$i] > $lcs1[$i - 1])
-                {
-                    $lcs1[$i] = $lcs0[$i];
-                    $temp[$i] = -1;
-                }
-                else
-                {
-                    $lcs1[$i] = $lcs1[$i - 1];
-                    $temp[$i] = +1;
-                }
-            }
-            array_push($trace, $temp);
-            $temp = $lcs1;
-            $lcs1 = $lcs0;
-            $lcs0 = $temp;
-        }
-
-        $same = 0;
-        $out  = false;
-        $ret  = array();
-        for($i = $text1Len - 1, $j = $text2Len - 1; $i != -1 || $j != -1;)
-        {
-            if($trace[$i][$j] == 0)
-            {
-                $same++;
-                if($out && $same > 0)
-                {
-                    $outbegina = $i + $same;
-                    $outbeginb = $j + $same;
-                    for($k = $i + $same - 1; $k >= $outbegina; $k--) array_push($ret, array('cmd' => ' ', 'dat' => $text1[$k]));
-                    $dat = array($outbegina, $outenda - $outbegina + 1, $outbeginb, $outendb - $outbeginb + 1);
-                    array_push($ret, array('cmd' => '@', 'dat'=> $dat));
-                    $out = false;
-                }
-                $i--;
-                $j--;
-            }
-            else
-            {
-                if(!$out)
-                {
-                    $same    = min($same, 0);
-                    $out     = true;
-                    $outenda = $i + $same;
-                    $outendb = $j + $same;
-                }
-                for($k = $i + $same; $k > $i; $k--) array_push($ret, array('cmd' => ' ', 'dat' => $text1[$k]));
-                $same = 0;
-                if($trace[$i][$j] == -1)
-                {
-                    array_push($ret, array('cmd' => '-', 'dat' => $text1[$i]));
-                    $i--;
-                }
-                else
-                {
-                    array_push($ret, array('cmd' => '+', 'dat' => $text2[$j]));
-                    $j--;
-                }
-            }
-        }
-
-        if($out)
-        {
-            $outbegina = max(0, $same);
-            $outbeginb = max(0, $same);
-            for($k = $same - 1; $k >= $outbegina; $k--) array_push($ret, array('cmd' => ' ', 'dat' => $text1[$k]));
-            $dat = array($outbegina, $outenda - $outbegina + 1, $outbeginb, $outendb - $outbeginb + 1);
-            array_push($ret, array('cmd' => '@', 'dat'=> $dat));
-        }
-
-        $diffs = array_reverse($ret);  
-        if(empty($diffs)) return array();
-
-        $processedDiff = array();
-        foreach($diffs as $i => $diff)
-        {
-            if($diff['cmd'] == '@')
-            {
-                $max = max($diff['dat'][1], $diff['dat'][3]);
-                for($number = 0; $number < $max; $number++)
-                {
-                    $oldLineNO = $diff['dat'][0] + $number;
-                    $newLineNO = $diff['dat'][2] + $number;
-                    $oldLine = '';
-                    $newLine = '';
-                    if($diff['dat'][1] > 0 and $diff['dat'][1] >= $number + 1) $oldLine = $diffs[$i + $number + 1]['dat'];
-                    if($diff['dat'][3] > 0 and $diff['dat'][3] >= $number + 1) $newLine = $diffs[$i + $number + 1 + $diff['dat'][1]]['dat'];
-                    $processedDiff['old'][$oldLineNO] = $oldLine;
-                    $processedDiff['new'][$newLineNO] = $newLine;
-                }
-
-            }
-        }
-        return $processedDiff;
-    }
-
-    /**
-     * Get line number by diff.
-     * 
-     * @param  array  $diff 
-     * @param  int    $i 
-     * @param  int    $lineNO 
-     * @access public
-     * @return array
-     */
-    public function getLineNumber($diff, $i, $lineNO)
-    {
-        $action = '';
-        if(isset($diff[$i]))
-        {
-            if(empty($diff[$i]))
-            {
-                $showNumber = '';
-                $action     = '';
-            }
-            else
-            {
-                $showNumber = $lineNO + 1;
-                $action     = 'diff';
-            }
-        }
-        else
-        {
-            $showNumber = $lineNO + 1;
-            $action     = '';
-        }
-
-        return array($showNumber, $action, 'number' => $showNumber, 'action' => $action);
     }
 
     /**

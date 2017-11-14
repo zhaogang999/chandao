@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\project\model.php');
+helper::import('module\project\model.php');
 helper::cd();
 class extprojectModel extends projectModel 
 {
@@ -83,8 +83,7 @@ public function buildBugSearchForm($products, $queryID, $actionURL)
     $this->config->bug->search['params']['status'] = array('operator' => '=', 'control' => 'select', 'values' => $this->lang->bug->statusList);
 
     $this->loadModel('search')->setSearchParams($this->config->bug->search);
-}
-/**
+}/**
  * Build story search form.
  *
  * @param  array  $products
@@ -152,8 +151,7 @@ public function buildStorySearchForm($products, $branchGroups, $modules, $queryI
     $this->config->product->search['params']['status'] = array('operator' => '=', 'control' => 'select', 'values' => $this->lang->story->statusList);
 
     $this->loadModel('search')->setSearchParams($this->config->product->search);
-}
-/**
+}/**
  * Build task search form.
  *
  * @param  int    $projectID
@@ -175,8 +173,7 @@ public function buildTaskSearchForm($projectID, $projects, $queryID, $actionURL)
     $this->config->project->search['params']['module']['values']  = array('' => '') + $this->loadModel('tree')->getTaskOptionMenu($projectID, $startModuleID = 0);
 
     $this->loadModel('search')->setSearchParams($this->config->project->search);
-}
-/**
+}/**
  * Created by PhpStorm.
  * User: 月下亭中人
  * Date: 2017/9/26

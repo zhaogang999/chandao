@@ -17,12 +17,14 @@ js::set('browseType',    $browseType);
 js::set('moduleID',      $moduleID);
 js::set('bugBrowseType', ($browseType == 'bymodule' and $this->session->bugBrowseType == 'bysearch') ? 'all' : $this->session->bugBrowseType);
 js::set('flow', $this->config->global->flow);
+js::set('productID', $productID);
+js::set('branch', $branch);
 ?>
 <?php if($this->config->global->flow == 'onlyTest'):?>
 <div id='featurebar'>
   <ul class='submenu hidden'>
     <li id='moreMenus' class='hidden'>
-      <a class='dropdown-toggle' data-toggle='dropdown'>
+      <a href='###' class='dropdown-toggle' data-toggle='dropdown'>
         <?php echo $lang->more;?> <span class='caret'></span>
       </a>
       <ul class='dropdown-menu right'>
@@ -35,16 +37,15 @@ js::set('flow', $this->config->global->flow);
         $misc = common::hasPriv('bug', 'create') ? "class='btn btn-primary'" : "class='btn btn-primary disabled'";
         $link = common::hasPriv('bug', 'create') ?  $this->createLink('bug', 'create', "productID=$productID&branch=$branch&extra=moduleID=$moduleID") : '#';
         echo html::a($link, "<i class='icon icon-plus'></i>" . $lang->bug->create, '', $misc);
+
+        $misc = common::hasPriv('bug', 'batchCreate') ? '' : "disabled";
+        $link = common::hasPriv('bug', 'batchCreate') ?  $this->createLink('bug', 'batchCreate', "productID=$productID&branch=$branch&projectID=0&moduleID=$moduleID") : '#';
         ?>
-        <button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+        <button type='button' class='btn btn-primary dropdown-toggle <?php echo $misc?>' data-toggle='dropdown'>
           <span class='caret'></span>
         </button>
         <ul class='dropdown-menu right'>
-        <?php
-        $misc = common::hasPriv('bug', 'batchCreate') ? '' : "class=disabled";
-        $link = common::hasPriv('bug', 'batchCreate') ?  $this->createLink('bug', 'batchCreate', "productID=$productID&branch=$branch&projectID=0&moduleID=$moduleID") : '#';
-        echo "<li>" . html::a($link, $lang->bug->batchCreate, '', $misc) . "</li>";
-        ?>
+        <?php echo "<li>" . html::a($link, $lang->bug->batchCreate, '', "class='$misc'") . "</li>";?>
         </ul>
       </div>
     </li>
@@ -52,7 +53,7 @@ js::set('flow', $this->config->global->flow);
       <?php common::printLink('bug', 'report', "productID=$productID&browseType=$browseType&branchID=$branch&moduleID=$moduleID", "<i class='icon-common-report icon-bar-chart'></i> " . $lang->bug->report->common); ?>
     </li>
     <li class='right'>
-      <a class='dropdown-toggle' data-toggle='dropdown'>
+      <a href='###' class='dropdown-toggle' data-toggle='dropdown'>
         <i class='icon-download-alt'></i> <?php echo $lang->export ?>
         <span class='caret'></span>
       </a>
@@ -127,15 +128,16 @@ js::set('flow', $this->config->global->flow);
             $link = common::hasPriv('bug', 'create') ?  $this->createLink('bug', 'create', "productID=$productID&branch=$branch&extra=moduleID=$moduleID") : '#';
             echo html::a($link, "<i class='icon icon-plus'></i>" . $lang->bug->create, '', $misc);
         }
+
+        $misc = common::hasPriv('bug', 'batchCreate') ? '' : "disabled";
+        $link = common::hasPriv('bug', 'batchCreate') ?  $this->createLink('bug', 'batchCreate', "productID=$productID&branch=$branch&projectID=0&moduleID=$moduleID") : '#';
         ?>
-        <button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+        <button type='button' class='btn btn-primary dropdown-toggle <?php echo $misc?>' data-toggle='dropdown'>
           <span class='caret'></span>
         </button>
         <ul class='dropdown-menu pull-right'>
         <?php
-        $misc = common::hasPriv('bug', 'batchCreate') ? '' : "class=disabled";
-        $link = common::hasPriv('bug', 'batchCreate') ?  $this->createLink('bug', 'batchCreate', "productID=$productID&branch=$branch&projectID=0&moduleID=$moduleID") : '#';
-        echo "<li>" . html::a($link, $lang->bug->batchCreate, '', $misc) . "</li>";
+        echo "<li>" . html::a($link, $lang->bug->batchCreate, '', "class='$misc'") . "</li>";
         ?>
         </ul>
       </div>
@@ -166,16 +168,37 @@ js::set('flow', $this->config->global->flow);
     <?php
     $datatableId  = $this->moduleName . ucfirst($this->methodName);
     $useDatatable = (isset($this->config->datatable->$datatableId->mode) and $this->config->datatable->$datatableId->mode == 'datatable');
-    $file2Include = $useDatatable ?  dirname(__FILE__) . '/datatabledata.html.php' : dirname(__FILE__) . '/browsedata.html.php';
     $vars         = "productID=$productID&branch=$branch&browseType=$browseType&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
-    include $file2Include;
+    if($useDatatable) include '../../common/view/datatable.html.php';
+
+    $setting = $this->datatable->getSetting('bug');
+    $widths  = $this->datatable->setFixedFieldWidth($setting);
+    $columns = 0;
     ?>
+    <table class='table table-condensed table-hover table-striped tablesorter table-fixed <?php echo $useDatatable ? 'datatable' : ''?>' id='bugList' data-checkable='true' data-fixed-left-width='<?php echo $widths['leftWidth']?>' data-fixed-right-width='<?php echo $widths['rightWidth']?>' data-custom-menu='true' data-checkbox-name='bugIDList[]'>
+      <thead>
+        <tr>
+        <?php
+        foreach($setting as $key => $value)
+        {
+            if($value->show)
+            {
+                $this->datatable->printHead($value, $orderBy, $vars);
+                $columns ++;
+            }
+        }
+        ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($bugs as $bug):?>
+        <tr class='text-center' data-id='<?php echo $bug->id?>'>
+          <?php foreach($setting as $key => $value) $this->bug->printCell($value, $bug, $users, $builds, $branches, $modulePairs, $projects, $plans, $stories, $tasks, $useDatatable ? 'datatable' : 'table');?>
+        </tr>
+        <?php endforeach;?>
+      </tbody>
       <tfoot>
         <tr>
-          <?php
-          $columns = $this->cookie->windowWidth >= $this->config->wideSize ? 13 : 11;
-          if($browseType == 'needconfirm') $columns = 8;
-          ?>
           <td colspan='<?php echo $columns;?>'>
             <?php if(!empty($bugs)):?>
             <div class='table-actions clearfix'>
@@ -191,12 +214,16 @@ js::set('flow', $this->config->global->flow);
                   <?php
                   $class = "class='disabled'";
                   $actionLink = $this->createLink('bug', 'batchConfirm');
-                  $misc = common::hasPriv('bug', 'batchConfirm') ? "onclick=\"setFormAction('$actionLink','hiddenwin')\"" : $class;
+                  $misc = common::hasPriv('bug', 'batchConfirm') ? "onclick=\"setFormAction('$actionLink', 'hiddenwin')\"" : $class;
                   if($misc) echo "<li>" . html::a('javascript:;', $lang->bug->confirmBug, '', $misc) . "</li>";
 
                   $actionLink = $this->createLink('bug', 'batchClose');
-                  $misc = common::hasPriv('bug', 'batchClose') ? "onclick=\"setFormAction('$actionLink','hiddenwin')\"" : $class;
+                  $misc = common::hasPriv('bug', 'batchClose') ? "onclick=\"setFormAction('$actionLink', 'hiddenwin')\"" : $class;
                   if($misc) echo "<li>" . html::a('javascript:;', $lang->bug->close, '', $misc) . "</li>";
+
+                  $actionLink = $this->createLink('bug', 'batchActivate', "productID=$productID&branch=$branch");
+                  $misc = common::hasPriv('bug', 'batchActivate') ? "onclick=\"setFormAction('$actionLink')\"" : $class;
+                  if($misc) echo "<li>" . html::a('javascript:;', $lang->bug->activate, '', $misc) . "</li>";
 
                   if(common::hasPriv('bug', 'batchChangeModule'))
                   {

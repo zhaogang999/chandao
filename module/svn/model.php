@@ -388,7 +388,7 @@ class svnModel extends model
         foreach($encodings as $encoding)
         {
             if($encoding == 'utf-8') continue;
-            $result = @iconv($encoding, 'utf-8', $comment);
+            $result = helper::convertEncoding($comment, $encoding);
             if($result) return $result;
         }
 
@@ -417,8 +417,12 @@ class svnModel extends model
         $url = str_replace('%2F', '/', urlencode($url));
         $url = str_replace('%3A', ':', $url);
 
-        $cmd = $this->client . " diff -r $oldRevision:$revision $url";
+        $cmd = $this->client . " diff -r $oldRevision:$revision $url 2>&1";
         $diff = `$cmd`;
+
+        $encoding = isset($repo->encoding) ? $repo->encoding : 'utf-8';
+        if($encoding and $encoding != 'utf-8') $diff = helper::convertEncoding($diff, $encoding);
+
         return $diff;
     }
 
@@ -443,8 +447,12 @@ class svnModel extends model
         $url = str_replace('%2F', '/', urlencode($url));
         $url = str_replace('%3A', ':', $url);
 
-        $cmd  = $this->client . " cat $url@$revision";
+        $cmd  = $this->client . " cat $url@$revision 2>&1";
         $code = `$cmd`;
+
+        $encoding = isset($repo->encoding) ? $repo->encoding : 'utf-8';
+        if($encoding and $encoding != 'utf-8') $code = helper::convertEncoding($code, $encoding);
+
         return $code;
     }
 

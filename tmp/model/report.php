@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\report\model.php');
+helper::import('module\report\model.php');
 helper::cd();
 class extreportModel extends reportModel 
 {
@@ -32,8 +32,7 @@ public function bugBranchStatistics($product)
     $data->bugs = $bugsPerBranch;
 
     return $data;
-}
-/**
+}/**
 * bug解决周期&bug响应时间
 *
 * @access public
@@ -118,8 +117,7 @@ public function getBugStatisticsData($productID)
     }
 
     return $data;
-}
-/**
+}/**
 * 获得bug统计数据
 *
 * @access public
@@ -194,8 +192,7 @@ public function getBugSum($productIDs,$sort)
         $newData[$val->product][$val->$sort]= $val->bugSum;
     }
     return $newData;
-}
-/**
+}/**
 * get info of burnup
 *
  * @param $data object
@@ -212,8 +209,7 @@ public function burnUp($data)
     $burnUpData = $this->dao->select('*')->from(TABLE_BURNUP)->where('project')->eq($data['project'])->andWhere('date')->between($begin,$end)->orderBy('date')->fetchAll('date');
 
     return $burnUpData;
-}
-/**
+}/**
 * get info of dailyBugStatistics
 *
 * @param $data array
@@ -226,8 +222,7 @@ public function dailyBugStatistics($data)
     $result = $this->dao->select('*')->from(TABLE_BUGREPORT)->where('product')->eq($data['product'])->andWhere('date')->between($data['begin'],$data['end'])->orderBy('date')->fetchAll('date');
 
     return $result;
-}
-/**
+}/**
  * Build a search form
  *
  * @param $actionURL  string
@@ -341,8 +336,7 @@ public function updateScript($scriptID)
 public function undelete($scriptID)
 {
     $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(0)->where('id')->eq($scriptID)->exec();
-}
-/**
+}/**
  * get info of storyCycleSummary
  *
  * @param $project
@@ -416,8 +410,7 @@ public function storyCycleSummary($project)
     }
     
     return $data;
-}
-/**
+}/**
 * get info of projectStory
 *
 * @access public
@@ -547,8 +540,7 @@ public function getZeroTaskStories($stories, $projectID, $type='')
     }
 
     return $zeroTaskStories;
-}
-/**
+}/**
 * get info of storyTask
 *
 * @access public
@@ -584,8 +576,7 @@ public function storyTaskSummary()
 
     krsort($info);
     return $info;
-}
-/**
+}/**
 * get info of taskPlan
 *
 * @access public
@@ -733,8 +724,7 @@ public function taskPlanSummary()
     }
     
     return $tasksum;
-}
-/**
+}/**
 * get info of task
 *
 * @access public

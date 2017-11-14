@@ -70,7 +70,8 @@ function shortcut()
     objectValue = $('#searchQuery').attr('value');
     if(objectType && objectValue)
     {
-        location.href=createLink(objectType, 'view', "id=" + objectValue);
+        method = objectType == 'testsuite' ? 'library' : 'view';
+        location.href=createLink(objectType, method, "id=" + objectValue);
     }
 }
 
@@ -90,22 +91,28 @@ function showSearchMenu(objectType, objectID, module, method, extra)
     var $toggle = $(objectType == 'branch' ? '#currentBranch' : (objectType == 'tree' ? '#currentModule' : '#currentItem')).closest('li').toggleClass('show');
     if(!$toggle.hasClass('show')) return;
     var $menu = $toggle.find('#dropMenu');
-    var uuid = $.zui.uuid();
+    var uuid  = $.zui.uuid();
+    if(!$.cookie('ajax_quickJump'))
+    {
+        $.cookie('ajax_quickJump', 'on', {expires: config.cookieLife, path: config.webRoot});
+        $.get(createLink('score', 'ajax', "method=quickJump"));
+    }
     if(!$menu.data('initData'))
     {
         var remoteUrl = createLink(objectType, 'ajaxGetDropMenu', "objectID=" + objectID + "&module=" + module + "&method=" + method + "&extra=" + extra);
         $.get(remoteUrl, function(data)
         {
             var $search = $menu.html(data).find('#search').focus();
-            var $items = $menu.find('#searchResult ul > li:not(.heading)');
-            var items = [];
+            var $items  = $menu.find('#searchResult ul > li:not(.heading)');
+            var items   = [];
             $items.each(function()
             {
                 var $item = $(this).removeClass('active');
-                var item = $item.data();
+                var item  = $item.data();
+
                 item.uuid = 'searchItem-' + (uuid++);
-                item.key = (item.key || '') + $item.text();
-                item.tag = (item.tag || '') + '#' + item.id;
+                item.key  = (item.key || '') + $item.text();
+                item.tag  = (item.tag || '') + '#' + item.id;
                 $item.attr('id', item.uuid);
                 items.push(item);
             });
@@ -143,8 +150,8 @@ function showSearchMenu(objectType, objectID, module, method, extra)
                 searchCallTask = setTimeout(searchItems, 200);
             }).on('keydown', function(e)
             {
-                var code = e.which;
-                var isSearching = $menu.hasClass('searching');
+                var code         = e.which;
+                var isSearching  = $menu.hasClass('searching');
                 var $resultItems = isSearching ? $items.filter('.show-search') : $items;
                 var resultLength = $resultItems.length;
                 if(!resultLength) return;
@@ -415,6 +422,7 @@ function setTreeBox()
 function selectLang(lang)
 {
     $.cookie('lang', lang, {expires:config.cookieLife, path:config.webRoot});
+    $.get(createLink('score', 'ajax', "method=selectLang"));
     location.href = removeAnchor(location.href);
 }
 
@@ -427,6 +435,7 @@ function selectLang(lang)
 function selectTheme(theme)
 {
     $.cookie('theme', theme, {expires:config.cookieLife, path:config.webRoot});
+    $.get(createLink('score', 'ajax', "method=selectTheme"));
     location.href = removeAnchor(location.href);
 }
 
@@ -546,27 +555,21 @@ function setFormAction(actionLink, hiddenwin, obj)
 
     $form.attr('action', actionLink);
 
-    // Check safari is for bug #1000, see http://pms.zentao.net/bug-view-1000.html
-    var isSafari = navigator.userAgent.indexOf('AppleWebKit') > -1;
+    // Check safari for bug #1000, see http://pms.zentao.net/bug-view-1000.html
+    var userAgent = navigator.userAgent;
+    var isSafari = userAgent.indexOf('AppleWebKit') > -1 && userAgent.indexOf('Safari') > -1 && userAgent.indexOf('Chrome') < 0;
     if(isSafari)
     {
         var idPreffix = 'checkbox-fix-' + $.zui.uuid();
-        $form.find('input[type="checkbox"]').each(function()
+        $form.find('[data-fix-checkbox]').remove();
+        $form.find('input[type="checkbox"]:not(.rows-selector)').each(function()
         {
             var $checkbox = $(this);
             var checkboxId = idPreffix + $checkbox.val();
-            $checkbox.attr('data-fix-checkbox', checkboxId).after('<div id="' + checkboxId + '"/>').appendTo($form);
+            $checkbox.clone().attr('data-fix-checkbox', checkboxId).css('display', 'none').after('<div id="' + checkboxId + '"/>').appendTo($form);
         });
     }
     $form.submit();
-    if(isSafari)
-    {
-        $form.find('[data-fix-checkbox]').each(function()
-        {
-            var $checkbox = $(this);
-            $('#' + $checkbox.data('fixCheckbox')).after($checkbox).remove();
-        });
-    }
 }
 
 /**
@@ -696,14 +699,19 @@ function checkTable($table)
     {
         if(document.activeElement.type != 'select-one' && document.activeElement.type != 'text')
         {
-            var $this = $(this);
-            var $tr = $this.closest('tr');
+            var $this     = $(this);
+            var $tr       = $this.closest('tr');
             var $checkbox = $tr.find(':checkbox');
             if($checkbox.size() == 0) return;
 
             var isChecked = $checkbox.prop('checked');
             if(!$this.is(':checkbox'))
             {
+                if(!$.cookie('ajax_dragSelected') && $checkbox.size() > 2)
+                {
+                    $.cookie('ajax_dragSelected', 'on', {expires: config.cookieLife, path: config.webRoot});
+                    $.get(createLink('score', 'ajax', "method=dragSelected"));
+                }
                 isChecked = checked === true || checked === false  ? checked : !isChecked;
                 $checkbox.prop('checked', isChecked);
             }
@@ -713,7 +721,6 @@ function checkTable($table)
             $tr.closest('.table').find('.rows-selector').prop('checked', false);
         }
     };
-
     var isSelectableTable = $table.hasClass('table-selectable');
 
     $table.selectable(
@@ -1153,45 +1160,49 @@ function setModal()
         try
         {
             var frame$ = window.frames[options.name].$;
-            if(frame$('#titlebar').length)
+            frame$(function()
             {
-                modal.addClass('with-titlebar');
-                if(options.size == 'fullscreen')
+                if(frame$('#titlebar').length)
                 {
-                    modalBody.css('height', options.height);
-                }
-            }
-            if(options.height == 'auto')
-            {
-                var $framebody = frame$('body');
-                setTimeout(function()
-                {
-                    modal.removeClass('fade');
-                    var fbH = $framebody.addClass('body-modal').outerHeight();
-                    frame$('#titlebar > .heading a').each(function()
+                    modal.addClass('with-titlebar');
+                    if(options.size == 'fullscreen')
                     {
-                        var $a = frame$(this);
-                        $a.replaceWith("<strong class='heading-title'>" + $a.text() + "</strong>");
-                    });
-                    if(typeof fbH == 'object') fbH = $framebody.height();
-                    modalBody.css('height', fbH);
-                    ajustModalPosition();
-                    if(modal.data('first')) modal.data('first', false);
-                    modal.removeClass('modal-loading').addClass('fade');
-                }, 100);
+                        modalBody.css('height', options.height);
+                    }
+                }
 
-                $framebody.resize(function()
+                if(options.height == 'auto')
                 {
-                    var fbH = $framebody.outerHeight();
-                    if(typeof fbH == 'object') fbH = $framebody.height();
-                    modalBody.css('height', fbH);
-                    ajustModalPosition();
-                });
-            }
-            else
-            {
-                modal.removeClass('modal-loading');
-            }
+                    var $framebody = frame$('body');
+                    setTimeout(function()
+                    {
+                        modal.removeClass('fade');
+                        var fbH = $framebody.addClass('body-modal').outerHeight();
+                        frame$('#titlebar > .heading a').each(function()
+                        {
+                            var $a = frame$(this);
+                            $a.replaceWith("<strong class='heading-title'>" + $a.text() + "</strong>");
+                        });
+                        if(typeof fbH == 'object') fbH = $framebody.height();
+                        modalBody.css('height', fbH);
+                        ajustModalPosition();
+                        if(modal.data('first')) modal.data('first', false);
+                        modal.removeClass('modal-loading').addClass('fade');
+                    }, 100);
+
+                    $framebody.resize(function()
+                    {
+                        var fbH = $framebody.outerHeight();
+                        if(typeof fbH == 'object') fbH = $framebody.height();
+                        modalBody.css('height', fbH);
+                        ajustModalPosition();
+                    });
+                }
+                else
+                {
+                    modal.removeClass('modal-loading');
+                }
+            })
 
             if(frame$)
             {
@@ -1471,6 +1482,7 @@ function fixedTfootAction(formID)
         tableOffset,
         hasFixed;
     if(!$tbody.length) return false;
+    if(typeof(ssoRedirect) != "undefined") pageFooterHeight = 0;
     function fixTfoot()
     {
         tableWidth   = $table.width();
@@ -1739,11 +1751,21 @@ function initHotKey()
     {
         /* left, go to pre object. */
         var preLink = $('#pre').attr('href');
+        if(!$.cookie('ajax_lastNext'))
+        {
+            $.cookie('ajax_lastNext', 'on', {expires: config.cookieLife, path: config.webRoot});
+            $.get(createLink('score', 'ajax', "method=lastNext"));
+        }
         if(preLink) location.href = preLink;
     }).bind('keydown', 'right', function()
     {
         /* right, go to next object. */
         var nextLink = $('#next').attr('href');
+        if(!$.cookie('ajax_lastNext'))
+        {
+            $.cookie('ajax_lastNext', 'on', {expires: config.cookieLife, path: config.webRoot});
+            $.get(createLink('score', 'ajax', "method=lastNext"));
+        }
         if(nextLink) location.href = nextLink;
     });
 }

@@ -36,13 +36,16 @@ function loadList(type, id)
 
     if(type == 'bug' || type == 'task')
     {
-        $.get(link,function(data,status) {
-            if(data) { 
+        $.get(link, function(data, status)
+        {
+            if(data != ' ')
+            {
                 $(divClass).html(data);
-            } else {
-                alert(noTodo);
+            }
+            else
+            {
                 $("#type").val("custom");
-                $(divClass).html($(divID).html());
+                $(divClass).html("<select id='bugs' class='form-control'></select>");
             }
         });
     }

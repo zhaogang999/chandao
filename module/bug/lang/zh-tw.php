@@ -32,6 +32,7 @@ $lang->bug->status           = 'Bug狀態';
 $lang->bug->statusAB         = '狀態';
 $lang->bug->activatedCount   = '激活次數';
 $lang->bug->activatedCountAB = '激活次數';
+$lang->bug->activatedDate    = '激活日期';
 $lang->bug->confirmed        = '是否確認';
 $lang->bug->toTask           = '轉任務';
 $lang->bug->toStory          = '轉需求';
@@ -50,6 +51,7 @@ $lang->bug->resolvedBuild    = '解決版本';
 $lang->bug->resolvedDate     = '解決日期';
 $lang->bug->resolvedDateAB   = '解決日期';
 $lang->bug->deadline         = '截止日期';
+$lang->bug->plan             = '所屬計劃';
 $lang->bug->closedBy         = '由誰關閉';
 $lang->bug->closedDate       = '關閉日期';
 $lang->bug->duplicateBug     = '重複ID';
@@ -85,6 +87,7 @@ $lang->bug->resolve            = '解決';
 $lang->bug->batchResolve       = '批量解決';
 $lang->bug->close              = '關閉';
 $lang->bug->activate           = '激活';
+$lang->bug->batchActivate      = '批量激活';
 $lang->bug->reportChart        = '報表統計';
 $lang->bug->export             = '導出數據';
 $lang->bug->delete             = '刪除';
@@ -149,9 +152,9 @@ $lang->bug->applyTemplate         = '應用模板';
 $lang->bug->confirmDeleteTemplate = '您確認要刪除該模板嗎？';
 
 /* 模板。*/
-$lang->bug->tplStep   = "<p>[步驟]</p>\n";
-$lang->bug->tplResult = "<p>[結果]</p>\n";
-$lang->bug->tplExpect = "<p>[期望]</p>";
+$lang->bug->tplStep   = "<p>[步驟]</p>";
+$lang->bug->tplResult = "</br><p>[結果]</p>";
+$lang->bug->tplExpect = "</br><p>[期望]</p>";
 
 /* 各個欄位取值列表。*/
 $lang->bug->severityList[3] = '3';
@@ -341,9 +344,9 @@ $lang->bug->report->bugHistories->graph->xAxisName          = '處理步驟';
 
 /* 操作記錄。*/
 $lang->bug->action = new stdclass();
-$lang->bug->action->resolved          = array('main' => '$date, 由 <strong>$actor</strong> 解決，方案為 <strong>$extra</strong> $appendLink。', 'extra' => 'resolutionList');
-$lang->bug->action->tostory           = array('main' => '$date, 由 <strong>$actor</strong> 轉為<strong>需求</strong>，編號為 <strong>$extra</strong>。');
-$lang->bug->action->totask            = array('main' => '$date, 由 <strong>$actor</strong> 導入為<strong>任務</strong>，編號為 <strong>$extra</strong>。');
+$lang->bug->action->resolved            = array('main' => '$date, 由 <strong>$actor</strong> 解決，方案為 <strong>$extra</strong> $appendLink。', 'extra' => 'resolutionList');
+$lang->bug->action->tostory             = array('main' => '$date, 由 <strong>$actor</strong> 轉為<strong>需求</strong>，編號為 <strong>$extra</strong>。');
+$lang->bug->action->totask              = array('main' => '$date, 由 <strong>$actor</strong> 導入為<strong>任務</strong>，編號為 <strong>$extra</strong>。');
 $lang->bug->action->linked2plan         = array('main' => '$date, 由 <strong>$actor</strong> 關聯到計劃 <strong>$extra</strong>。');
 $lang->bug->action->unlinkedfromplan    = array('main' => '$date, 由 <strong>$actor</strong> 從計劃 <strong>$extra</strong> 移除。');
 $lang->bug->action->linked2build        = array('main' => '$date, 由 <strong>$actor</strong> 關聯到版本 <strong>$extra</strong>。');

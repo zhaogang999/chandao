@@ -29,12 +29,12 @@ $config->story->editor->activate = array('id' => 'comment', 'tools' => 'simpleTo
 
 $config->story->list = new stdclass();
 $config->story->list->exportFields      = '
-    id, product, branch, module, plan, source, title, spec, verify, keywords, 
-    pri, estimate, status, stage,
-    openedBy, openedDate, assignedTo, assignedDate, mailto, 
-    reviewedBy, reviewedDate, 
+    id, product, branch, module, plan, source, sourceNote, title, spec, verify, keywords,
+    pri, estimate, status, stage, taskCountAB, bugCountAB, caseCountAB,
+    openedBy, openedDate, assignedTo, assignedDate, mailto,
+    reviewedBy, reviewedDate,
     closedBy, closedDate, closedReason,
-    lastEditedBy, lastEditedDate, 
+    lastEditedBy, lastEditedDate,
     childStories, linkStories, duplicateStory, files';
 
 $config->story->list->customCreateFields      = 'source,verify,pri,estimate,mailto,keywords';
@@ -47,7 +47,7 @@ $config->story->custom->batchCreateFields = 'module,plan,spec,pri,estimate,revie
 $config->story->custom->batchEditFields   = 'branch,module,plan,estimate,pri,source,stage,closedBy,closedReason';
 
 $config->story->datatable = new stdclass();
-$config->story->datatable->defaultField = array('id', 'pri', 'title', 'plan', 'source', 'openedBy', 'assignedTo', 'estimate', 'status', 'stage', 'taskCount', 'bugCount', 'caseCount', 'actions');
+$config->story->datatable->defaultField = array('id', 'pri', 'title', 'plan', 'openedBy', 'assignedTo', 'estimate', 'status', 'stage', 'taskCount', 'bugCount', 'caseCount', 'actions');
 
 $config->story->datatable->fieldList['id']['title']    = 'idAB';
 $config->story->datatable->fieldList['id']['fixed']    = 'left';
@@ -64,6 +64,16 @@ $config->story->datatable->fieldList['title']['fixed']    = 'left';
 $config->story->datatable->fieldList['title']['width']    = 'auto';
 $config->story->datatable->fieldList['title']['required'] = 'yes';
 
+$config->story->datatable->fieldList['branch']['title']    = 'branch';
+$config->story->datatable->fieldList['branch']['fixed']    = 'no';
+$config->story->datatable->fieldList['branch']['width']    = '100';
+$config->story->datatable->fieldList['branch']['required'] = 'no';
+
+$config->story->datatable->fieldList['keywords']['title']    = 'keywords';
+$config->story->datatable->fieldList['keywords']['fixed']    = 'no';
+$config->story->datatable->fieldList['keywords']['width']    = '100';
+$config->story->datatable->fieldList['keywords']['required'] = 'no';
+
 $config->story->datatable->fieldList['plan']['title']    = 'planAB';
 $config->story->datatable->fieldList['plan']['fixed']    = 'no';
 $config->story->datatable->fieldList['plan']['width']    = '90';
@@ -74,38 +84,25 @@ $config->story->datatable->fieldList['source']['fixed']    = 'no';
 $config->story->datatable->fieldList['source']['width']    = '90';
 $config->story->datatable->fieldList['source']['required'] = 'no';
 
+$config->story->datatable->fieldList['sourceNote']['title']    = 'sourceNote';
+$config->story->datatable->fieldList['sourceNote']['fixed']    = 'no';
+$config->story->datatable->fieldList['sourceNote']['width']    = '90';
+$config->story->datatable->fieldList['sourceNote']['required'] = 'no';
+
 $config->story->datatable->fieldList['status']['title']    = 'statusAB';
 $config->story->datatable->fieldList['status']['fixed']    = 'no';
-$config->story->datatable->fieldList['status']['width']    = '80';
+$config->story->datatable->fieldList['status']['width']    = '50';
 $config->story->datatable->fieldList['status']['required'] = 'no';
 
 $config->story->datatable->fieldList['estimate']['title']    = 'estimateAB';
 $config->story->datatable->fieldList['estimate']['fixed']    = 'no';
-$config->story->datatable->fieldList['estimate']['width']    = '80';
+$config->story->datatable->fieldList['estimate']['width']    = '50';
 $config->story->datatable->fieldList['estimate']['required'] = 'no';
 
 $config->story->datatable->fieldList['stage']['title']    = 'stageAB';
 $config->story->datatable->fieldList['stage']['fixed']    = 'no';
-$config->story->datatable->fieldList['stage']['width']    = '90';
+$config->story->datatable->fieldList['stage']['width']    = '70';
 $config->story->datatable->fieldList['stage']['required'] = 'no';
-
-$config->story->datatable->fieldList['taskCount']['title']    = 'taskCount';
-$config->story->datatable->fieldList['taskCount']['fixed']    = 'no';
-$config->story->datatable->fieldList['taskCount']['width']    = '90';
-$config->story->datatable->fieldList['taskCount']['required'] = 'no';
-$config->story->datatable->fieldList['taskCount']['sort']     = 'no';
-
-$config->story->datatable->fieldList['bugCount']['title']    = 'bugCount';
-$config->story->datatable->fieldList['bugCount']['fixed']    = 'no';
-$config->story->datatable->fieldList['bugCount']['width']    = '90';
-$config->story->datatable->fieldList['bugCount']['required'] = 'no';
-$config->story->datatable->fieldList['bugCount']['sort']     = 'no';
-
-$config->story->datatable->fieldList['caseCount']['title']    = 'caseCount';
-$config->story->datatable->fieldList['caseCount']['fixed']    = 'no';
-$config->story->datatable->fieldList['caseCount']['width']    = '90';
-$config->story->datatable->fieldList['caseCount']['required'] = 'no';
-$config->story->datatable->fieldList['caseCount']['sort']     = 'no';
 
 $config->story->datatable->fieldList['openedBy']['title']    = 'openedByAB';
 $config->story->datatable->fieldList['openedBy']['fixed']    = 'no';
@@ -152,12 +149,49 @@ $config->story->datatable->fieldList['closedReason']['fixed']    = 'no';
 $config->story->datatable->fieldList['closedReason']['width']    = '90';
 $config->story->datatable->fieldList['closedReason']['required'] = 'no';
 
+$config->story->datatable->fieldList['lastEditedBy']['title']    = 'lastEditedBy';
+$config->story->datatable->fieldList['lastEditedBy']['fixed']    = 'no';
+$config->story->datatable->fieldList['lastEditedBy']['width']    = '80';
+$config->story->datatable->fieldList['lastEditedBy']['required'] = 'no';
+
+$config->story->datatable->fieldList['lastEditedDate']['title']    = 'lastEditedDate';
+$config->story->datatable->fieldList['lastEditedDate']['fixed']    = 'no';
+$config->story->datatable->fieldList['lastEditedDate']['width']    = '90';
+$config->story->datatable->fieldList['lastEditedDate']['required'] = 'no';
+
+$config->story->datatable->fieldList['mailto']['title']    = 'mailto';
+$config->story->datatable->fieldList['mailto']['fixed']    = 'no';
+$config->story->datatable->fieldList['mailto']['width']    = '100';
+$config->story->datatable->fieldList['mailto']['required'] = 'no';
+
+$config->story->datatable->fieldList['version']['title']    = 'version';
+$config->story->datatable->fieldList['version']['fixed']    = 'no';
+$config->story->datatable->fieldList['version']['width']    = '60';
+$config->story->datatable->fieldList['version']['required'] = 'no';
+
+global $lang;
+$config->story->datatable->fieldList['taskCount']['title']    = 'T';
+$config->story->datatable->fieldList['taskCount']['fixed']    = 'no';
+$config->story->datatable->fieldList['taskCount']['width']    = '30';
+$config->story->datatable->fieldList['taskCount']['required'] = 'no';
+$config->story->datatable->fieldList['taskCount']['sort']     = 'no';
+$config->story->datatable->fieldList['taskCount']['name']     = $lang->story->taskCount;
+
+$config->story->datatable->fieldList['bugCount']['title']    = 'B';
+$config->story->datatable->fieldList['bugCount']['fixed']    = 'no';
+$config->story->datatable->fieldList['bugCount']['width']    = '30';
+$config->story->datatable->fieldList['bugCount']['required'] = 'no';
+$config->story->datatable->fieldList['bugCount']['sort']     = 'no';
+$config->story->datatable->fieldList['bugCount']['name']     = $lang->story->bugCount;
+
+$config->story->datatable->fieldList['caseCount']['title']    = 'C';
+$config->story->datatable->fieldList['caseCount']['fixed']    = 'no';
+$config->story->datatable->fieldList['caseCount']['width']    = '30';
+$config->story->datatable->fieldList['caseCount']['required'] = 'no';
+$config->story->datatable->fieldList['caseCount']['sort']     = 'no';
+$config->story->datatable->fieldList['caseCount']['name']     = $lang->story->caseCount;
+
 $config->story->datatable->fieldList['actions']['title']    = 'actions';
 $config->story->datatable->fieldList['actions']['fixed']    = 'right';
 $config->story->datatable->fieldList['actions']['width']    = '140';
 $config->story->datatable->fieldList['actions']['required'] = 'yes';
-
-$config->story->datatable->fieldList['branch']['title']    = 'branch';
-$config->story->datatable->fieldList['branch']['fixed']    = 'left';
-$config->story->datatable->fieldList['branch']['width']    = '100';
-$config->story->datatable->fieldList['branch']['required'] = 'no';

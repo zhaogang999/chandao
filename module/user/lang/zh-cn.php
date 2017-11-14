@@ -68,16 +68,16 @@ $lang->user->asGuest         = "游客访问";
 $lang->user->goback          = "返回前一页";
 $lang->user->deleted         = '(已删除)';
 
-$lang->user->profile      = '档案';
-$lang->user->project      = $lang->projectCommon;
-$lang->user->task         = '任务';
-$lang->user->bug          = '缺陷';
-$lang->user->test         = '测试';
-$lang->user->testTask     = '测试任务';
-$lang->user->testCase     = '测试用例';
-$lang->user->todo         = '待办';
-$lang->user->story        = '需求';
-$lang->user->dynamic      = '动态';
+$lang->user->profile     = '档案';
+$lang->user->project     = $lang->projectCommon;
+$lang->user->task        = '任务';
+$lang->user->bug         = '缺陷';
+$lang->user->test        = '测试';
+$lang->user->testTask    = '测试任务';
+$lang->user->testCase    = '测试用例';
+$lang->user->todo        = '待办';
+$lang->user->story       = '需求';
+$lang->user->dynamic     = '动态';
 
 $lang->user->openedBy    = '由他创建';
 $lang->user->assignedTo  = '指派给他';
@@ -121,13 +121,19 @@ $lang->user->statusList['delete'] = '删除';
 $lang->user->keepLogin['on']      = '保持登录';
 $lang->user->loginWithDemoUser    = '使用demo帐号登录：';
 
+$lang->user->tpl = new stdclass();
+$lang->user->tpl->type    = '类型';
+$lang->user->tpl->title   = '模板名';
+$lang->user->tpl->content = '内容';
+$lang->user->tpl->public  = '是否公开';
+
 $lang->user->placeholder = new stdclass();
-$lang->user->placeholder->account   = '英文、数字和下划线的组合，三位以上';
-$lang->user->placeholder->password1 = '六位以上';
-$lang->user->placeholder->role      = '职位影响内容和用户列表的顺序。';
-$lang->user->placeholder->group     = '分组决定用户的权限列表。';
-$lang->user->placeholder->commiter  = '版本控制系统(subversion)中的帐号';
-$lang->user->placeholder->verify    = '需要输入你的密码加以验证';
+$lang->user->placeholder->account     = '英文、数字和下划线的组合，三位以上';
+$lang->user->placeholder->password1   = '六位以上';
+$lang->user->placeholder->role        = '职位影响内容和用户列表的顺序。';
+$lang->user->placeholder->group       = '分组决定用户的权限列表。';
+$lang->user->placeholder->commiter    = '版本控制系统(subversion)中的帐号';
+$lang->user->placeholder->verify      = '需要输入你的密码加以验证';
 
 $lang->user->placeholder->passwordStrength[1] = '6位以上，包含大小写字母，数字。';
 $lang->user->placeholder->passwordStrength[2] = '10位以上，包含大小写字母，数字，特殊字符。';
@@ -146,6 +152,7 @@ $lang->user->error->originalPassword = "原密码不正确";
 $lang->user->contacts = new stdclass();
 $lang->user->contacts->common   = '联系人';
 $lang->user->contacts->listName = '列表名称';
+$lang->user->contacts->userList = '用户列表';
 
 $lang->user->contacts->manage        = '维护列表';
 $lang->user->contacts->contactsList  = '已有列表';
@@ -159,7 +166,7 @@ $lang->user->contacts->or            = ' 或者 ';
 $lang->user->resetFail       = "重置密码失败，检查用户名是否存在！";
 $lang->user->resetSuccess    = "重置密码成功，请用新密码登录。";
 $lang->user->noticeResetFile = "<h5>普通用户请联系管理员重置密码</h5>
-    <h5>管理员请登录禅道所在的服务器，创建<span>%s</span>文件。</h5>
+    <h5>管理员请登录禅道所在的服务器，创建<span> '%s' </span>文件。</h5>
     <p>注意：</p>
     <ol>
     <li>文件内容为空。</li>

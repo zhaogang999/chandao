@@ -31,6 +31,14 @@ $lang->action->textDiff       = 'Text Format';
 $lang->action->original       = 'Original Format';
 $lang->action->confirmHideAll = 'Do you want to hide all the records?';
 $lang->action->needEdit       = '%s you want to restore has already existed. Please edit it.';
+$lang->action->historyEdit    = 'The history editor cannot be empty.';
+
+$lang->action->history = new stdclass();
+$lang->action->history->action = 'Bound action';
+$lang->action->history->field  = 'Field';
+$lang->action->history->old    = 'Old value';
+$lang->action->history->new    = 'New value';
+$lang->action->history->diff   = 'Diff';
 
 $lang->action->dynamic = new stdclass();
 $lang->action->dynamic->today      = 'Today';
@@ -55,7 +63,7 @@ $lang->action->objectTypes['bug']         = 'Bug';
 $lang->action->objectTypes['case']        = 'Case';
 $lang->action->objectTypes['caseresult']  = 'Case Result';
 $lang->action->objectTypes['stepresult']  = 'Case Steps';
-$lang->action->objectTypes['testtask']    = 'Test Task';
+$lang->action->objectTypes['testtask']    = 'Test Build';
 $lang->action->objectTypes['user']        = 'User';
 $lang->action->objectTypes['doc']         = 'Document';
 $lang->action->objectTypes['doclib']      = 'Doc Lib';
@@ -65,6 +73,8 @@ $lang->action->objectTypes['module']      = 'Module';
 $lang->action->objectTypes['testsuite']   = 'Suite';
 $lang->action->objectTypes['caselib']     = 'Library';
 $lang->action->objectTypes['testreport']  = 'Report';
+$lang->action->objectTypes['entry']       = 'Entry';
+$lang->action->objectTypes['webhook']     = 'Webhook';
 
 /* 用来描述操作历史记录。*/
 $lang->action->desc = new stdclass();
@@ -102,9 +112,11 @@ $lang->action->desc->svncommited    = '$date, submitted by <strong>$actor</stron
 $lang->action->desc->gitcommited    = '$date, submitted by <strong>$actor</strong> and the version is <strong>#$extra</strong>.' . "\n";
 $lang->action->desc->finished       = '$date, finished by <strong>$actor</strong>.' . "\n";
 $lang->action->desc->paused         = '$date, paused by <strong>$actor</strong>.' . "\n";
+$lang->action->desc->verified       = '$date, verified by <strong>$actor</strong>.' . "\n";
 $lang->action->desc->diff1          = '<strong><i>%s</i></strong> has been changed. Its value was "%s" and the new value is "%s".<br />' . "\n";
 $lang->action->desc->diff2          = '<strong><i>%s</i></strong> has been changed. The difference is ' . "\n" . "<blockquote>%s</blockquote>" . "\n<div class='hidden'>%s</div>";
 $lang->action->desc->diff3          = 'File Name %s was changed to %s .' . "\n";
+$lang->action->desc->linked2bug     = '$date Link to build <strong>$extra</strong> by <strong>$actor</strong>';
 
 /* 关联用例和移除用例时的历史操作记录。*/
 $lang->action->desc->linkrelatedcase   = '$date, <strong>$actor</strong> linked relevant use case <strong>$extra</strong>.' . "\n";
@@ -162,11 +174,14 @@ $lang->action->label->editestimate        = 'Edited Man-Hour';
 $lang->action->label->canceled            = 'Cancelled';
 $lang->action->label->finished            = 'Finished';
 $lang->action->label->paused              = 'Paused';
+$lang->action->label->verified            = 'Verified';
 $lang->action->label->delayed             = 'Delayed';
 $lang->action->label->suspended           = 'Suspended';
 $lang->action->label->login               = 'Login';
 $lang->action->label->logout              = "Logout";
 $lang->action->label->deleteestimate      = "Deleted Man-Hour";
+$lang->action->label->linked2build        = "Linked";
+$lang->action->label->linked2bug          = "Linked";
 
 /* 用来生成相应对象的链接。*/
 $lang->action->label->product     = $lang->productCommon . '|product|view|productID=%s';
@@ -186,6 +201,8 @@ $lang->action->label->doclib      = 'Doc Lib|doc|browse|libID=%s';
 $lang->action->label->doc         = 'Document|doc|view|docID=%s';
 $lang->action->label->user        = 'User|user|view|account=%s';
 $lang->action->label->testreport  = 'Report|testreport|view|report=%s';
+$lang->action->label->entry       = 'Entry|entry|browse|';
+$lang->action->label->webhook     = 'Webhook|webhook|browse|';
 $lang->action->label->space       = ' ';
 
 /* Object type. */
@@ -251,5 +268,6 @@ $lang->action->search->label['editestimate']        = $lang->action->label->edit
 $lang->action->search->label['canceled']            = $lang->action->label->canceled;
 $lang->action->search->label['finished']            = $lang->action->label->finished;
 $lang->action->search->label['paused']              = $lang->action->label->paused;
+$lang->action->search->label['verified']            = $lang->action->label->verified;
 $lang->action->search->label['login']               = $lang->action->label->login;
 $lang->action->search->label['logout']              = $lang->action->label->logout;

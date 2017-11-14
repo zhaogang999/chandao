@@ -21,10 +21,10 @@ class report extends control
     {
         $this->locate(inlink('productSummary')); 
     }
-    
+
     /**
      * Project deviation report.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -135,12 +135,16 @@ class report extends control
 
         if(empty($workday))$workday = $this->config->project->defaultWorkhours;
         $diffDays = helper::diffDate($end, $begin);
-        $weekDay = $beginWeekDay;
-        $days    = $diffDays;
-        for($i = 0; $i < $diffDays; $i++,$weekDay++)
+        if($days > $diffDays) $days = $diffDays;
+        if(empty($days))
         {
-            $weekDay = $weekDay % 7;
-            if(($this->config->project->weekend == 2 and $weekDay == 6) or $weekDay == 0) $days --;
+            $weekDay = $beginWeekDay;
+            $days    = $diffDays;
+            for($i = 0; $i < $diffDays; $i++,$weekDay++)
+            {
+                $weekDay = $weekDay % 7;
+                if(($this->config->project->weekend == 2 and $weekDay == 6) or $weekDay == 0) $days --;
+            }
         }
 
         $this->view->title      = $this->lang->report->workload;
@@ -150,7 +154,7 @@ class report extends control
         $this->view->users    = $this->loadModel('user')->getPairs('noletter|noclosed|nodeleted');
         $this->view->depts    = $this->loadModel('dept')->getOptionMenu();
         $this->view->begin    = $begin;
-        $this->view->end      = $end;
+        $this->view->end      = date('Y-m-d', strtotime($end) - 24 * 3600);
         $this->view->days     = $days;
         $this->view->workday  = $workday;
         $this->view->dept     = $dept;
@@ -197,15 +201,17 @@ class report extends control
             /* Reset $this->output. */
             $this->clear();
 
-            $mailTitle   = $this->lang->report->mailTitle->begin;
-            $mailTitle  .= isset($mail->bugs)  ? sprintf($this->lang->report->mailTitle->bug,  count($mail->bugs))  : '';
-            $mailTitle  .= isset($mail->tasks) ? sprintf($this->lang->report->mailTitle->task, count($mail->tasks)) : '';
-            $mailTitle  .= isset($mail->todos) ? sprintf($this->lang->report->mailTitle->todo, count($mail->todos)) : '';
-            $mailTitle  .= isset($mail->testTasks) ? sprintf($this->lang->report->mailTitle->testTask, count($mail->testTasks)) : '';
-            $mailTitle   = rtrim($mailTitle, ',');
+            $mailTitle  = $this->lang->report->mailTitle->begin;
+            $mailTitle .= isset($mail->bugs)  ? sprintf($this->lang->report->mailTitle->bug,  count($mail->bugs))  : '';
+            $mailTitle .= isset($mail->tasks) ? sprintf($this->lang->report->mailTitle->task, count($mail->tasks)) : '';
+            $mailTitle .= isset($mail->todos) ? sprintf($this->lang->report->mailTitle->todo, count($mail->todos)) : '';
+            $mailTitle .= isset($mail->testTasks) ? sprintf($this->lang->report->mailTitle->testTask, count($mail->testTasks)) : '';
+            $mailTitle  = rtrim($mailTitle, ',');
 
             /* Get email content and title.*/
-            $this->view->mail = $mail;
+            $this->view->mail      = $mail;
+            $this->view->mailTitle = $mailTitle;
+
             $oldViewType = $this->viewType;
             if($oldViewType == 'json') $this->viewType = 'html';
             $mailContent = $this->parse('report', 'dailyreminder');

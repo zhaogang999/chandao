@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\testcase\model.php');
+helper::import('module\testcase\model.php');
 helper::cd();
 class exttestcaseModel extends testcaseModel 
 {
@@ -38,8 +38,7 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     $this->config->testcase->search['queryID']   = $queryID;
 
     $this->loadModel('search')->setSearchParams($this->config->testcase->search);
-}
-/**
+}/**
  * Create a case.
  *
  * @param int $bugID
@@ -95,8 +94,7 @@ function create($bugID)
         }
         return array('status' => 'created', 'id' => $caseID);
     }
-}
-public function setListValue($productID, $branch = 0)
+}public function setListValue($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->setListValue($productID, $branch);
 }
@@ -104,8 +102,7 @@ public function setListValue($productID, $branch = 0)
 public function createFromImport($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->createFromImport($productID, $branch);
-}
-/**
+}/**
  * Update a case.
  *
  * @param  int    $caseID

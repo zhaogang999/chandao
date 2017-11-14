@@ -31,7 +31,8 @@ class buildModel extends model
             ->fetch();
         if(!$build) return false;
 
-        $build->files = $this->loadModel('file')->getByObject('build', $buildID);
+        $build = $this->loadModel('file')->replaceImgURL($build, 'desc');
+        $build->files = $this->file->getByObject('build', $buildID);
         if($setImgSize) $build->desc = $this->file->setImgSize($build->desc);
         return $build;
     }
@@ -65,7 +66,7 @@ class buildModel extends model
             ->where('t1.project')->eq((int)$projectID)
             ->andWhere('t1.deleted')->eq(0)
             ->orderBy('t1.date DESC, t1.id desc')
-            ->fetchAll();
+            ->fetchAll('id');
     }
 
     /**
@@ -199,8 +200,9 @@ class buildModel extends model
             ->stripTags($this->config->build->editor->create['id'], $this->config->allowedTags)
             ->remove('resolvedBy,allchecker,files,labels,uid')
             ->get();
+        if($this->config->global->flow == 'onlyTest') $build->project = 0;
 
-        $build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->create['id'], $this->post->uid);
+        $build = $this->loadModel('file')->processImgURL($build, $this->config->build->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_BUILD)->data($build)
             ->autoCheck()
             ->batchCheck($this->config->build->create->requiredFields, 'notempty')
@@ -211,6 +213,7 @@ class buildModel extends model
             $buildID = $this->dao->lastInsertID();
             $this->file->updateObjectID($this->post->uid, $buildID, 'build');
             $this->file->saveUpload('build', $buildID);
+            $this->loadModel('score')->create('build', 'create', $buildID);
             return $buildID;
         }
     }
@@ -224,13 +227,13 @@ class buildModel extends model
      */
     public function update($buildID)
     {
-        $oldBuild = $this->getByID($buildID);
-        $build = fixer::input('post')->stripTags($this->config->build->editor->edit['id'], $this->config->allowedTags)
+        $oldBuild = $this->dao->select('*')->from(TABLE_BUILD)->where('id')->eq((int)$buildID)->fetch();
+        $build    = fixer::input('post')->stripTags($this->config->build->editor->edit['id'], $this->config->allowedTags)
             ->remove('allchecker,resolvedBy,files,labels,uid')
             ->get();
         if(!isset($build->branch)) $build->branch = $oldBuild->branch;
 
-        $build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->edit['id'], $this->post->uid);
+        $build = $this->loadModel('file')->processImgURL($build, $this->config->build->editor->edit['id'], $this->post->uid);
         $this->dao->update(TABLE_BUILD)->data($build)
             ->autoCheck()
             ->batchCheck($this->config->build->edit->requiredFields, 'notempty')
@@ -362,7 +365,7 @@ class buildModel extends model
         $this->dao->update(TABLE_BUILD)->set('bugs')->eq($build->bugs)->where('id')->eq((int)$buildID)->exec();
         foreach($this->post->bugs as $bugID)
         {
-            $this->loadModel('action')->create('bug', $bugID, 'linked2build', '', $buildID);
+            $this->loadModel('action')->create('bug', $bugID, 'linked2bug', '', $buildID);
         }
     }
 

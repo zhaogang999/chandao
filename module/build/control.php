@@ -28,6 +28,8 @@ class build extends control
             die(js::locate($this->createLink('build', 'view', "buildID=$buildID"), 'parent'));
         }
 
+        $this->session->set('buildCreate', $this->app->getURI(true));
+
         /* Load these models. */
         $this->loadModel('project');
         $this->loadModel('user');
@@ -37,6 +39,7 @@ class build extends control
             $product  = $this->loadModel('product')->getByID($projectID);
             $products = $this->product->getPairs();
             $this->product->setMenu($products, $projectID);
+            $this->lang->build->menu = $this->lang->product->menu;
 
             $productGroups   = array();
             $product->branch = 0;
@@ -110,6 +113,7 @@ class build extends control
             $product  = $this->loadModel('product')->getById($build->product);
             $products = $this->product->getPairs();
             $this->product->setMenu($products, $build->product);
+            $this->lang->build->menu = $this->lang->product->menu;
 
             $productGroups   = array();
             $product->branch = 0;
@@ -158,7 +162,7 @@ class build extends control
 
         $this->view->productGroups = $productGroups;
         $this->view->products      = $products;
-        $this->view->users         = $this->loadModel('user')->getPairs();
+        $this->view->users         = $this->loadModel('user')->getPairs('noletter', $build->builder);
         $this->view->build         = $build;
         $this->display();
     }
@@ -191,6 +195,7 @@ class build extends control
         {
             $products = $this->loadModel('product')->getPairs();
             $this->product->setMenu($products, $build->product);
+            $this->lang->build->menu = $this->lang->product->menu;
 
             $this->view->title      = "BUILD #$build->id $build->name - " . $build->productName;
             $this->view->position[] = html::a($this->createLink('product', 'build', "productID=$build->product"), $build->productName);

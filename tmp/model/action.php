@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\action\model.php');
+helper::import('module\action\model.php');
 helper::cd();
 class extactionModel extends actionModel 
 {
@@ -147,8 +147,7 @@ public function getList($objectType, $objectID)
     }
 
     return $actions;
-}
-/**
+}/**
  * Get product and project of an object.
  *
  * @param  string $objectType
@@ -212,8 +211,7 @@ public function getProductAndProject($objectType, $objectID)
         return $emptyRecord;
     }
     return $emptyRecord;
-}
-/**
+}/**
  * Print changes of every action.
  *
  * @param  string    $objectType
@@ -279,8 +277,7 @@ public function printChanges($objectType, $histories)
             printf($this->lang->action->desc->diff1, $history->fieldLabel, $history->old, $history->new);
         }
     }
-}
-/**
+}/**
  * Created by PhpStorm.
  * User: 月下亭中人
  * Date: 2017/11/1

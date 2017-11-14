@@ -4,16 +4,20 @@ include 'header.lite.html.php';
 include 'chosen.html.php';
 //include 'validation.html.php';
 ?>
+<?php
+/* Load hook files for current page. */
+$extPath      = $this->app->getModuleRoot() . '/common/ext/view/';
+$extHookRule  = $extPath . 'header.*.hook.php';
+$extHookFiles = glob($extHookRule);
+if($extHookFiles) foreach($extHookFiles as $extHookFile) include $extHookFile;
+?>
 <?php if(empty($_GET['onlybody']) or $_GET['onlybody'] != 'yes'):?>
 <?php $this->app->loadConfig('sso');?>
-<style>
-  .nav li,.nav a{
-         border:0px solid;
-         border-radius:5px;
-       }
-</style>
+<?php 
+    if(!empty($this->config->sso->redirect)) js::set('ssoRedirect', $this->config->sso->redirect);
+?>
 <header id='header'>
-<?php if(empty($this->config->sso->turnon)):?>
+<?php if(empty($this->config->sso->redirect)):?>
   <div id='topbar'>
     <div class='pull-right' id='topnav'><?php commonModel::printTopBar();?></div>
     <h5 id='companyname'>
@@ -22,7 +26,7 @@ include 'chosen.html.php';
   </div>
 <?php endif;?>
 <?php
-if(!empty($this->config->sso->turnon))
+if(!empty($this->config->sso->redirect))
 {
     css::import($defaultTheme . 'bindranzhi.css');
     js::import($jsRoot . 'bindranzhi.js');
@@ -30,7 +34,7 @@ if(!empty($this->config->sso->turnon))
 ?>
   <nav id='mainmenu'>
     <?php commonModel::printMainmenu($this->moduleName); commonModel::printSearchBox();?>
-    <?php if(!empty($this->config->sso->turnon)):?>
+    <?php if(!empty($this->config->sso->redirect)):?>
     <div class='pull-right' id='topnav'><?php commonModel::printTopBar();?></div>
     <?php endif;?>
   </nav>
@@ -39,6 +43,6 @@ if(!empty($this->config->sso->turnon))
   </nav>
 </header>
 
-<div id='wrap'>
+<div id='wrap' <?php if(!empty($this->config->sso->redirect)) echo "class='ranzhiFixedTfootAction'";?> >
 <?php endif;?>
   <div class='outer'>

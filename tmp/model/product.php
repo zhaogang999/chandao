@@ -98,6 +98,7 @@ public function getProductLink($module, $method, $extra, $branch = false)
     {
         $link = helper::createLink('doc', 'objectLibs', "type=product&objectID=%s&from=product");
     }
+    //补丁版本产品列表下拉菜单
     else if ($module == 'patchbuild')
     {
         $link = helper::createLink('patchbuild', 'patchbuild', "productID=%s&type=$extra");

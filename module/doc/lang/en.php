@@ -36,6 +36,13 @@ $lang->doc->whiteList      = 'White List';
 $lang->doc->contentType    = 'Document Format';
 $lang->doc->separator      = "<i class='icon-angle-right'></i>";
 $lang->doc->fileTitle      = 'File Title';
+$lang->doc->filePath       = 'File Path';
+$lang->doc->extension      = 'Extension';
+$lang->doc->size           = 'Size';
+$lang->doc->download       = 'Download';
+$lang->doc->acl            = 'Right';
+$lang->doc->groups         = 'Groups';
+$lang->doc->users          = 'Users';
 
 $lang->doc->moduleDoc      = 'By Module';
 $lang->doc->searchDoc      = 'By Search';
@@ -103,6 +110,7 @@ $lang->doc->browseType             = 'Categories';
 $lang->doc->browseTypeList['list'] = 'List';
 $lang->doc->browseTypeList['menu'] = 'Menu';
 $lang->doc->browseTypeList['tree'] = 'Tree';
+$lang->doc->browseTypeList['card'] = 'Card';
 
 $lang->doc->confirmDelete      = "Do you want to delete this document?";
 $lang->doc->confirmDeleteLib   = "Do you want to delete this Doc Lib?";

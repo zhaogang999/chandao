@@ -54,7 +54,8 @@
       </tr>
       <?php endforeach;?>
       <?php endif;?>
-      <?php if($task->status == 'wait' or $task->status =='pause' or $task->status == 'doing'):?>
+      <?php if(in_array($task->status, array('wait', 'pause', 'doing'))):?>
+      <?php if(empty($task->team) || (!empty($task->team) && $task->assignedTo == $this->app->user->account)) :?>
       <thead>
         <tr class='text-center'>
           <th class="w-id"><?php echo $lang->idAB;?></th>
@@ -65,13 +66,13 @@
           <th class='w-10px'></th>
         </tr>
       </thead>
-      <?php for($i = 1; $i <= 5; $i++):?>
+      <?php for($i = 1; $i <= 3; $i++):?>
       <tr class="text-center">
         <td><?php echo $i . html::hidden("id[$i]", $i);?></td>
         <td><?php echo html::input("dates[$i]", '', "class='form-control text-center form-date'");?></td>
         <td><?php echo html::input("consumed[$i]", '', "class='form-control text-center' autocomplete='off'");?></td>
         <td><?php echo html::input("left[$i]", '', "class='form-control text-center left' autocomplete='off'");?></td>
-        <td class="text-left"><?php echo html::textarea("work[$i]", '', "class='form-control' rows='1'");?></td>
+        <td class="text-left"><?php echo html::textarea("work[$i]", '', "class='form-control' rows='2'");?></td>
         <td></td>
       </tr>
       <?php endfor;?>
@@ -79,6 +80,7 @@
         <td colspan='6' class='text-center'><?php echo html::submitButton() . html::backButton();?></td>
       </tr>
     </table>
+    <?php endif;?>
     <?php endif;?>
   </form>
 </div>

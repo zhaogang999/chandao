@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\admin\model.php');
+helper::import('module\admin\model.php');
 helper::cd();
 class extadminModel extends adminModel 
 {
@@ -52,8 +52,7 @@ public function getBurnUpData()
         $this->dao->insert(TABLE_BURNUP)->data($data)->exec();
         unset($data);
     }
-}
-/**
+}/**
  * 每日bug情况统计数据
  *
  * @access public
@@ -118,8 +117,7 @@ public function getDailyBugStatistics()
 
         $this->dao->insert(TABLE_BUGREPORT)->data($data)->exec();
     }
-}
-/**
+}/**
  * 获取未完成任务的统计数据
  * 
  * @return void

@@ -54,7 +54,7 @@ class file extends control
         if($file)
         {
             if($file['size'] == 0) die(json_encode(array('error' => 1, 'message' => $this->lang->file->errorFileUpload)));
-            if(@move_uploaded_file($file['tmpname'], $this->file->savePath . $file['pathname']))
+            if(@move_uploaded_file($file['tmpname'], $this->file->savePath . $this->file->getSaveName($file['pathname'])))
             {
                 /* Compress image for jpg and bmp. */
                 $file = $this->file->compressImage($file);
@@ -64,8 +64,9 @@ class file extends control
                 unset($file['tmpname']);
                 $this->dao->insert(TABLE_FILE)->data($file)->exec();
 
-                $url = $this->file->webPath . $file['pathname'];
-                if($uid) $_SESSION['album'][$uid][] = $this->dao->lastInsertID();
+                $fileID = $this->dao->lastInsertID();
+                $url    = $this->createLink('file', 'read', "fileID=$fileID", $file['extension']);
+                if($uid) $_SESSION['album'][$uid][] = $fileID;
                 die(json_encode(array('error' => 0, 'url' => $url)));
             }
             else
@@ -94,7 +95,7 @@ class file extends control
         if($file)
         {
             if($file['size'] == 0) die(json_encode(array('state' => $this->lang->file->errorFileUpload)));
-            if(@move_uploaded_file($file['tmpname'], $this->file->savePath . $file['pathname']))
+            if(@move_uploaded_file($file['tmpname'], $this->file->savePath . $this->file->getSaveName($file['pathname'])))
             {
                 /* Compress image for jpg and bmp. */
                 $file = $this->file->compressImage($file);
@@ -104,8 +105,9 @@ class file extends control
                 unset($file['tmpname']);
                 $this->dao->insert(TABLE_FILE)->data($file)->exec();
 
-                $url = $this->file->webPath . $file['pathname'];
-                if($uid) $_SESSION['album'][$uid][] = $this->dao->lastInsertID();
+                $fileID = $this->dao->lastInsertID();
+                $url    = $this->createLink('file', 'read', "fileID=$fileID", $file['extension']);
+                if($uid) $_SESSION['album'][$uid][] = $fileID;
                 die(json_encode(array('state' => 'SUCCESS', 'url' => $url)));
             }
             else
@@ -468,5 +470,31 @@ class file extends control
     {
         $this->dao->delete()->from(TABLE_USERTPL)->where('id')->eq($templateID)->andWhere('account')->eq($this->app->user->account)->exec();
         die();
+    }
+
+    /**
+     * Read file. 
+     * 
+     * @param  int    $fileID 
+     * @access public
+     * @return void
+     */
+    public function read($fileID)
+    {
+        $file = $this->file->getById($fileID);
+        if(empty($file) or !file_exists($file->realPath)) return false;
+
+        $obLevel = ob_get_level();
+        for($i = 0; $i < $obLevel; $i++) ob_end_clean();
+
+        $mime = in_array($file->extension, $this->config->file->imageExtensions) ? "image/{$file->extension}" : $this->config->file->mimes['default'];
+        header("Content-type: $mime");
+
+        $handle = fopen($file->realPath, "r");
+        if($handle)
+        {
+            while(!feof($handle)) echo fgets($handle);
+            fclose($handle);
+        }
     }
 }

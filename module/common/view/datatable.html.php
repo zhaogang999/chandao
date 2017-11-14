@@ -2,7 +2,7 @@
 <?php if(!empty($lang->datatable)):?>
 <style>
 .table-datatable tbody > tr td,
-.table-datatable thead > tr th {height: 34px; line-height: 20px;}
+.table-datatable thead > tr th {height: 35px; line-height: 20px;}
 .table-datatable tbody > tr td .btn-icon > i {line-height: 19px;}
 .hide-side .table-datatable thead > tr > th.check-btn i {visibility: hidden;}
 .hide-side .side-handle {line-height: 33px}
@@ -54,9 +54,25 @@ $(document).ready(function()
         selectable    : 
         {
             clickBehavior: 'multi',
+            start: function(e) 
+            {
+                var $target = $(e.target);
+                if ($target.closest('.task-toggle').length) return false;
+                var $checkRow = $target.closest('.check-row, .check-btn');
+                if($checkRow.length)
+                {
+                    if($checkRow.is('.check-row'))
+                    {
+                        toggleRowClass($checkRow);
+                        syncChecks();
+                    }
+                    return false;
+                }
+            },
             startDrag: function(e)
             {
-                if(!this.multiKey && !$(e.target).closest('td[data-index="0"]').length) return false;
+                var $target = $(e.target);
+                if(!this.multiKey && !$target.closest('td[data-index="0"]').length) return false;
             }
         },
         fixedHeader: true,
@@ -84,16 +100,17 @@ $(document).ready(function()
         }
     });
 
-    window.saveDatatableConfig = function(name, value, reload)
+    window.saveDatatableConfig = function(name, value, reload, global)
     {
+        if('<?php echo $this->app->user->account?>' == 'guest') return;
         var datatableId = '<?php echo $datatableId;?>';
         if(typeof value === 'object') value = JSON.stringify(value);
-        if('<?php echo $this->app->user->account?>' == 'guest') return;
+        if(typeof global === 'undefined') global = 0;
         $.ajax(
         {
             type: "POST",
             dataType: 'json',
-            data: {target: datatableId, name: name, value: value},
+            data: {target: datatableId, name: name, value: value, global: global},
             success:function(e){if(reload) window.location.reload();},
             url: '<?php echo $this->createLink('datatable', 'ajaxSave')?>'
         });
@@ -121,10 +138,12 @@ function fixScroll()
     if($('div.datatable.head-fixed').size() == 0) scrollOffset -= '34';
     var windowH = $(window).height();
     var bottom  = $tfoot.hasClass('fixedTfootAction') ? 53 + $tfoot.height() : 53;
+    if(typeof(ssoRedirect) != "undefined") bottom = 53;
     if(scrollOffset > windowH + $(window).scrollTop()) $scrollwrapper.css({'position': 'fixed', 'bottom': bottom + 'px'});
     $(window).scroll(function()
     {
-        newBottom = $tfoot.hasClass('fixedTfootAction') ? 53 + $tfoot.height() : 53;
+       newBottom = $tfoot.hasClass('fixedTfootAction') ? 53 + $tfoot.height() : 53;
+       if(typeof(ssoRedirect) != "undefined") newBottom = 53;
        if(scrollOffset <= windowH + $(window).scrollTop()) 
        {    
            $scrollwrapper.css({'position':'relative', 'bottom': '0px'});

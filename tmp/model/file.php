@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\file\model.php');
+helper::import('module\file\model.php');
 helper::cd();
 class extfileModel extends fileModel 
 {

@@ -1,6 +1,7 @@
 $(document).ready(function()
 {
     if(browseType == 'bysearch') ajaxGetSearchForm();
+    if($('#bugList thead th.w-title').width() < 150) $('#bugList thead th.w-title').width(150);
 
     $('.dropdown-menu .with-search .menu-search').click(function(e)
     {
@@ -57,3 +58,8 @@ $(document).ready(function()
         })
     }
 });
+
+function setQueryBar(queryID, title)
+{
+    $('#bysearchTab').before("<li id='QUERY" + queryID + "Tab' class='active'><a href='" + createLink('bug', 'browse', "productID=" + productID + "&branch=" + branch + "&browseType=bysearch&param=" + queryID) + "'>" + title + "</a></li>");
+}

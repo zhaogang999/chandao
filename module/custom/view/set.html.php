@@ -10,8 +10,8 @@
  * @link        http://www.zentao.net
  */
 ?>
-<?php include '../../common/view/header.html.php';?>
-<?php 
+<?php include 'header.html.php';?>
+<?php
 $itemRow = <<<EOT
   <tr class='text-center'>
     <td>
@@ -31,23 +31,6 @@ EOT;
 <?php js::set('itemRow', $itemRow)?>
 <?php js::set('module',  $module)?>
 <?php js::set('field',   $field)?>
-<div id='featurebar'>
-  <ul class='nav'>
-  <?php
-  foreach($lang->custom->object as $object => $name)
-  {
-      echo "<li id='{$object}Tab'>"; 
-      common::printLink('custom', 'set', "module=$object",  $name); 
-      echo '</li>';
-  }
-  echo '<li>'; 
-  common::printLink('custom', 'flow', "",  $lang->custom->flow); 
-  echo '</li><li>'; 
-  common::printLink('custom', 'working', '',  $lang->custom->working); 
-  echo '</li>';
-  ?>
-  </ul>
-</div>
 <div class='side'>
   <div class='list-group'>
     <?php 
@@ -76,6 +59,13 @@ EOT;
           <td><?php echo html::select('forceReview[]', $users, $forceReview, "class='form-control chosen' multiple");?></td>
           <td class='w-180px'><?php printf($lang->custom->notice->forceReview, $lang->$module->common);?></td>
         </tr>
+        <?php if($module == 'testcase'):?>
+        <tr <?php if(!$needReview) echo "class='hidden'"?>>
+          <th><?php echo $lang->custom->forceNotReview;?></th>
+          <td><?php echo html::select('forceNotReview[]', $users, $forceNotReview, "class='form-control chosen' multiple");?></td>
+          <td class='w-180px'><?php printf($lang->custom->notice->forceNotReview, $lang->$module->common);?></td>
+        </tr>
+        <?php endif;?>
         <tr>
           <td></td>
           <td><?php echo html::submitButton();?></td>
@@ -116,6 +106,17 @@ EOT;
         <tr>
           <th class='w-100px'><?php echo $lang->custom->block->fields['closed'];?></th>
           <td><?php echo html::select('closed[]', $blockPairs, $closedBlock, "class='form-control chosen' multiple");?></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><?php echo html::submitButton();?></td>
+        </tr>
+      </table>
+      <?php elseif($module == 'user' and $field == 'deleted'):?>
+      <table class='table table-form mw-600px'>
+        <tr>
+          <th class='w-100px'><?php echo $lang->custom->user->fields['deleted'];?></th>
+          <td><?php echo html::radio('showDeleted', $lang->custom->deletedList, $showDeleted);?></td>
         </tr>
         <tr>
           <td></td>
@@ -171,10 +172,12 @@ $(function()
         if($(this).val() == 0)
         {
             $('#forceReview').closest('tr').removeClass('hidden');
+            $('#forceNotReview').closest('tr').addClass('hidden');
         }
         else
         {
             $('#forceReview').closest('tr').addClass('hidden');
+            $('#forceNotReview').closest('tr').removeClass('hidden');
         }
     })
 })

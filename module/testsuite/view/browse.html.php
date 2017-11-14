@@ -37,6 +37,7 @@
     <td><?php echo sprintf('%03d', $suite->id);?></td>
     <td class='text-left' title="<?php echo $suite->name?>">
       <?php if($suite->type == 'public') echo "<span class='label label-info'>{$lang->testsuite->authorList['public']}</span> ";?>
+      <?php if($suite->type == 'private') echo "<span class='label label-warning'>{$lang->testsuite->authorList['private']}</span> ";?>
       <?php echo html::a(inlink('view', "suiteID=$suite->id"), $suite->name);?>
     </td>
     <td><?php echo $suite->desc;?></td>
@@ -44,10 +45,10 @@
     <td><?php echo $suite->addedDate;?></td>
     <td class='text-center'>
       <?php
-      common::printIcon('testsuite', 'linkCase', "suiteID=$suite->id", '', 'list', 'link');
-      common::printIcon('testsuite', 'edit',     "suiteID=$suite->id", '', 'list');
+      common::printIcon('testsuite', 'linkCase', "suiteID=$suite->id", $suite, 'list', 'link');
+      common::printIcon('testsuite', 'edit',     "suiteID=$suite->id", $suite, 'list');
 
-      if(common::hasPriv('testsuite', 'delete'))
+      if(common::hasPriv('testsuite', 'delete', $suite))
       {
           $deleteURL = $this->createLink('testsuite', 'delete', "suiteID=$suite->id&confirm=yes");
           echo html::a("javascript:ajaxDelete(\"$deleteURL\",\"suiteList\",confirmDelete)", '<i class="icon-remove"></i>', '', "title='{$lang->testsuite->delete}' class='btn-icon'");

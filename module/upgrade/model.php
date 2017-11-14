@@ -23,8 +23,8 @@ class upgradeModel extends model
 
     /**
      * The execute method. According to the $fromVersion call related methods.
-     * 
-     * @param  string $fromVersion 
+     *
+     * @param  string $fromVersion
      * @access public
      * @return void
      */
@@ -179,6 +179,20 @@ class upgradeModel extends model
                 $this->processCustomMenus();
                 $this->adjustPriv9_2();
             case '9_2':
+            case '9_2_1':
+            case '9_3_beta':
+                $this->execSQL($this->getUpgradeFile('9.3.beta'));
+            case '9_4':
+                $this->execSQL($this->getUpgradeFile('9.4'));
+                $this->adjustPriv9_4();
+            case '9_5':
+                $this->execSQL($this->getUpgradeFile('9.5'));
+            case '9_5_1':
+                $this->execSQL($this->getUpgradeFile('9.5.1'));
+                $this->initProjectStoryOrder();
+            case '9_6':
+                $this->execSQL($this->getUpgradeFile('9.6'));
+                $this->fixDatatableColsConfig();
         }
 
         $this->deletePatch();
@@ -272,6 +286,12 @@ class upgradeModel extends model
         case '9_1_1':     $confirmContent .= file_get_contents($this->getUpgradeFile('9.1.1'));
         case '9_1_2':     $confirmContent .= file_get_contents($this->getUpgradeFile('9.1.2'));
         case '9_2':
+        case '9_2_1':
+        case '9_3_beta':  $confirmContent .= file_get_contents($this->getUpgradeFile('9.3.beta'));
+        case '9_4':       $confirmContent .= file_get_contents($this->getUpgradeFile('9.4'));
+        case '9_5':       $confirmContent .= file_get_contents($this->getUpgradeFile('9.5'));
+        case '9_5_1':     $confirmContent .= file_get_contents($this->getUpgradeFile('9.5.1'));
+        case '9_6':       $confirmContent .= file_get_contents($this->getUpgradeFile('9.6'));
         }
         return str_replace('zt_', $this->config->db->prefix, $confirmContent);
     }
@@ -317,7 +337,7 @@ class upgradeModel extends model
 
         $bugs = $this->dao->select('id, steps')->from(TABLE_BUG)->fetchAll();
         $userTemplates = $this->dao->select('id, content')->from($this->config->db->prefix . 'userTPL')->fetchAll();
-            
+
         foreach($bugs as $id => $bug)
         {
             $bug->steps = ubb::parseUBB($bug->steps);
@@ -332,7 +352,7 @@ class upgradeModel extends model
 
     /**
      * Update nl to br from 1.2 version.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -991,7 +1011,7 @@ class upgradeModel extends model
         foreach($tables2Rename as $oldTable => $newTable)
         {
             if(!isset($tablesExists[$oldTable])) continue;
-            
+
             $upgradebak = $newTable . '_othertablebak';
             if(isset($tablesExists[$upgradebak])) $this->dbh->query("DROP TABLE `$upgradebak`");
             if(isset($tablesExists[$newTable])) $this->dbh->query("RENAME TABLE `$newTable` TO `$upgradebak`");
@@ -1324,7 +1344,7 @@ class upgradeModel extends model
             {
                 $result['type']   = 'doc';
                 $result['count']  = count($comments);
-				$result['lastID'] = 0;
+                $result['lastID'] = 0;
             }
             else
             {
@@ -1392,7 +1412,7 @@ class upgradeModel extends model
                     }
                 }
                 $result['type']   = empty($nextType) ? 'finish' : $nextType;
-				$result['count']  = count($objects);
+                $result['count']  = count($objects);
                 $result['lastID'] = 0;
             }
             else
@@ -1651,7 +1671,7 @@ class upgradeModel extends model
 
     /**
      * Adjust priv for 9.2.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -1694,8 +1714,27 @@ class upgradeModel extends model
     }
 
     /**
+     * Adjust priv for 9.4.
+     *
+     * @access public
+     * @return bool 
+     */
+    public function adjustPriv9_4()
+    {
+        $groups = $this->dao->select('`group`')->from(TABLE_GROUPPRIV)->where('module')->eq('bug')->andWhere('method')->eq('activate')->fetchPairs('group', 'group');
+        foreach($groups as $groupID)
+        {
+            $data = new stdclass();
+            $data->group  = $groupID;
+            $data->module = 'bug';
+            $data->method = 'batchActivate';
+        }
+        return true;
+    }
+
+    /**
      * Judge any error occers.
-     * 
+     *
      * @access public
      * @return bool
      */
@@ -1725,6 +1764,7 @@ class upgradeModel extends model
      */
     public function checkSafeFile()
     {
+        if($this->app->getModuleName() == 'upgrade' and $this->app->getMethodName() == 'ajaxupdatefile') return false;
         $statusFile = $this->app->getAppRoot() . 'www' . DIRECTORY_SEPARATOR . 'ok.txt';
         return (!file_exists($statusFile) or (time() - filemtime($statusFile)) > 3600) ? $statusFile : false;
     }
@@ -1737,10 +1777,10 @@ class upgradeModel extends model
      */
     public function checkProcess()
     {
-		$fromVersion = $this->config->installedVersion;
-		$needProcess = array();
+        $fromVersion = $this->config->installedVersion;
+        $needProcess = array();
         if(strpos($fromVersion, 'pro') === false ? $fromVersion < '8.3' : $fromVersion < 'pro5.4') $needProcess['updateFile'] = true;
-		return $needProcess;
+        return $needProcess;
     }
 
     /**
@@ -1760,5 +1800,58 @@ class upgradeModel extends model
         }
 
         return !dao::isError();
+    }
+
+    /**
+     * Init project story order.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function initProjectStoryOrder()
+    {
+        $storyGroup = $this->dao->select('t1.*')->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story=t2.id')
+            ->orderBy('t2.pri_desc,t1.story_asc')
+            ->fetchGroup('project', 'story');
+
+        foreach($storyGroup as $projectID => $stories)
+        {
+            $order = 1;
+            foreach($stories as $storyID => $projectStory)
+            {
+                $this->dao->update(TABLE_PROJECTSTORY)->set('`order`')->eq($order)->where('project')->eq($projectID)->andWhere('story')->eq($storyID)->exec();
+                $order++;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Fix datatable cols config.
+     * 
+     * @access public
+     * @return bool
+     */
+    public function fixDatatableColsConfig()
+    {
+        $config = $this->dao->select('*')->from(TABLE_CONFIG)
+            ->where('module')->eq('datatable')
+            ->andWhere('section')->eq('projectTask')
+            ->andWhere('`key`')->eq('cols')
+            ->fetchAll('id');
+
+        foreach($config as $datatableCols)
+        {
+            $cols = json_decode($datatableCols->value);
+            foreach($cols as $i => $col)
+            {
+                if($col->id == 'progess') $col->id = 'progress';
+                if($col->id == 'actions' and $col->width == 'auto') $col->width =  '180px';
+            }
+            $this->dao->update(TABLE_CONFIG)->set('value')->eq(json_encode($cols))->where('id')->eq($datatableCols->id)->exec();
+        }
+
+        return true;
     }
 }

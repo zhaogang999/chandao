@@ -32,6 +32,8 @@ $lang->group->noticeVisit        = 'N/A means access is not restricted.';
 $lang->group->id       = 'ID';
 $lang->group->name     = 'Name';
 $lang->group->desc     = 'Description';
+$lang->group->role     = 'Role';
+$lang->group->acl      = 'Right';
 $lang->group->users    = 'Users';
 $lang->group->module   = 'Module';
 $lang->group->method   = 'Method';
@@ -46,6 +48,8 @@ $lang->group->copyOptions['copyPriv'] = 'Copy Privilege';
 $lang->group->copyOptions['copyUser'] = 'Copy User';
 
 $lang->group->versions['']          = 'History';
+$lang->group->versions['9_6']       = 'ZenTao9.6';
+$lang->group->versions['9_5']       = 'ZenTao9.5';
 $lang->group->versions['9_2']       = 'ZenTao9.2';
 $lang->group->versions['9_1']       = 'ZenTao9.1';
 $lang->group->versions['9_0']       = 'ZenTao9.0';
