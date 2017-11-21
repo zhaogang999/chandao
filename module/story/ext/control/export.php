@@ -2,12 +2,19 @@
 helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
 class mystory extends story
 {
-    public function export($productID, $orderBy, $projectID=0)
+    /**
+     * get data to export
+     *
+     * @param  int $productID
+     * @param  string $orderBy
+     * @access public
+     * @return void
+     */
+    public function export($productID, $orderBy)
     {
         /* format the fields of every story in order to export data. */
         if($_POST)
         {
-            $this->story->setListValue($productID);
             $this->loadModel('file');
             $this->loadModel('branch');
             $storyLang   = $this->lang->story;
@@ -33,7 +40,6 @@ class mystory extends story
             else
             {
                 $stmt = $this->dbh->query($this->session->storyQueryCondition . ($this->post->exportType == 'selected' ? " AND t2.id IN({$this->cookie->checkedItem})" : '') . " ORDER BY " . strtr($orderBy, '_', ' '));
-
                 while($row = $stmt->fetch()) $stories[$row->id] = $row;
             }
 
@@ -47,6 +53,7 @@ class mystory extends story
             $relatedStoryIdList   = array();
             $relatedPlanIdList    = array();
             $relatedBranchIdList  = array();
+            $relatedStoryIDs      = array();
 
             foreach($stories as $story)
             {
@@ -54,6 +61,7 @@ class mystory extends story
                 $relatedModuleIdList[$story->module]   = $story->module;
                 $relatedPlanIdList[$story->plan]       = $story->plan;
                 $relatedBranchIdList[$story->branch]   = $story->branch;
+                $relatedStoryIDs[$story->id]           = $story->id;
 
                 /* Process related stories. */
                 $relatedStories = $story->childStories . ',' . $story->linkStories . ',' . $story->duplicateStory;
@@ -64,6 +72,10 @@ class mystory extends story
                 }
             }
 
+            $storyTasks = $this->loadModel('task')->getStoryTaskCounts($relatedStoryIDs);
+            $storyBugs  = $this->loadModel('bug')->getStoryBugCounts($relatedStoryIDs);
+            $storyCases = $this->loadModel('testcase')->getStoryCaseCounts($relatedStoryIDs);
+
             /* Get related objects title or names. */
             $productsType   = $this->dao->select('id, type')->from(TABLE_PRODUCT)->where('id')->in($relatedProductIdList)->fetchPairs();
             $relatedModules = $this->dao->select('id, name')->from(TABLE_MODULE)->where('id')->in($relatedModuleIdList)->fetchPairs();
@@ -72,27 +84,7 @@ class mystory extends story
             $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedSpecs   = $this->dao->select('*')->from(TABLE_STORYSPEC)->where('`story`')->in(@array_keys($stories))->orderBy('version desc')->fetchGroup('story');
             $relatedBranch  = array('0' => $this->lang->branch->all) + $this->dao->select('id, name')->from(TABLE_BRANCH)->where('id')->in($relatedBranchIdList)->fetchPairs();
-            
-            //需求1197 项目需求导出时，增加TBC字段的内容；
-            if ($projectID != 0)
-            {
-                /* Count T B C */
-                $storiesAB = $this->loadModel('story')->getProjectStories($projectID);
-                $storyIdList = array_keys($storiesAB);
-                $taskCount = $this->loadModel('task')->getStoryTaskCounts($storyIdList,$projectID);
-                $bugCount  = $this->loadModel('bug')->getStoryBugCounts($storyIdList,$projectID);
-                $caseCount = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
-            }
-            else
-            {
-                /* Get related tasks, bugs, cases count of each story. */
-                $storyIdList = array();
-                foreach($stories as $story) $storyIdList[$story->id] = $story->id;
-                $taskCount = $this->loadModel('task')->getStoryTaskCounts($storyIdList);
-                $bugCount  = $this->loadModel('bug')->getStoryBugCounts($storyIdList);
-                $caseCount = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
-            }
-            
+
             foreach($stories as $story)
             {
                 $story->spec   = '';
@@ -138,11 +130,16 @@ class mystory extends story
                 if(isset($storyLang->stageList[$story->stage]))         $story->stage        = $storyLang->stageList[$story->stage];
                 if(isset($storyLang->reasonList[$story->closedReason])) $story->closedReason = $storyLang->reasonList[$story->closedReason];
                 if(isset($storyLang->sourceList[$story->source]))       $story->source       = $storyLang->sourceList[$story->source];
+                if(isset($storyLang->sourceList[$story->sourceNote]))   $story->sourceNote   = $storyLang->sourceList[$story->sourceNote];
 
                 if(isset($users[$story->openedBy]))     $story->openedBy     = $users[$story->openedBy];
                 if(isset($users[$story->assignedTo]))   $story->assignedTo   = $users[$story->assignedTo];
                 if(isset($users[$story->lastEditedBy])) $story->lastEditedBy = $users[$story->lastEditedBy];
                 if(isset($users[$story->closedBy]))     $story->closedBy     = $users[$story->closedBy];
+
+                if(isset($storyTasks[$story->id]))     $story->taskCountAB = $storyTasks[$story->id];
+                if(isset($storyBugs[$story->id]))      $story->bugCountAB  = $storyBugs[$story->id];
+                if(isset($storyCases[$story->id]))     $story->caseCountAB = $storyCases[$story->id];
 
                 $story->openedDate     = substr($story->openedDate, 0, 10);
                 $story->assignedDate   = substr($story->assignedDate, 0, 10);
@@ -156,7 +153,9 @@ class mystory extends story
                     foreach($linkStoriesIdList as $linkStoryID)
                     {
                         $linkStoryID = trim($linkStoryID);
+                        //
                         $tmpLinkStories[] = isset($relatedStories[$linkStoryID]) ? $relatedStories[$linkStoryID] . "(#$linkStoryID)" : $linkStoryID;
+
                     }
                     $story->linkStories = join("; \n", $tmpLinkStories);
                 }
@@ -168,7 +167,9 @@ class mystory extends story
                     foreach($childStoriesIdList as $childStoryID)
                     {
                         $childStoryID = trim($childStoryID);
+                        //
                         $tmpChildStories[] = isset($relatedStories[$childStoryID]) ? $relatedStories[$childStoryID] . "(#$childStoryID)" : $childStoryID;
+
                     }
                     $story->childStories = join("; \n", $tmpChildStories);
                 }
@@ -179,7 +180,7 @@ class mystory extends story
                 {
                     foreach($relatedFiles[$story->id] as $file)
                     {
-                        $fileURL = common::getSysURL() . $this->file->webPath . $file->pathname;
+                        $fileURL = common::getSysURL() . $this->file->webPath . $this->file->getRealPathName($file->pathname);
                         $story->files .= html::a($fileURL, $file->title, '_blank') . '<br />';
                     }
                 }
@@ -202,9 +203,6 @@ class mystory extends story
                     if(isset($users[$reviewedBy])) $story->reviewedBy .= $users[$reviewedBy] . ',';
                 }
 
-               $story->taskCountAB = $taskCount[$story->id];
-               $story->bugCountAB = $bugCount[$story->id];
-               $story->caseCountAB = $caseCount[$story->id];
             }
 
             if(!(in_array('platform', $productsType) or in_array('branch', $productsType))) unset($fields['branch']);// If products's type are normal, unset branch field.
@@ -214,9 +212,6 @@ class mystory extends story
             $this->post->set('kind', 'story');
             $this->fetch('file', 'export2' . $this->post->fileType, $_POST);
         }
-
-        //需求1197 项目需求导出时，增加TBC字段的内容；如果是项目下需求导出，增加T,B,C字段；
-            $this->config->story->list->exportFields = str_replace('stage,', 'stage, taskCountAB, bugCountAB, caseCountAB,', $this->config->story->list->exportFields);
 
         $this->view->allExportFields = $this->config->story->list->exportFields;
         $this->view->customExport    = true;

@@ -28,8 +28,8 @@ public function update($taskID)
     $emptyReviewDetail->action = '';
     $emptyReviewDetail->chkd = '';
 
-    $oldTask = $this->getById($taskID);
-    if(isset($_POST['lastEditedDate']) and $oldTask->lastEditedDate != $this->post->lastEditedDate)
+    $oldTask = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq((int)$taskID)->fetch();
+    if(!empty($_POST['lastEditedDate']) and $oldTask->lastEditedDate != $this->post->lastEditedDate)
     {
         dao::$errors[] = $this->lang->error->editedByOther;
         return false;
@@ -38,7 +38,10 @@ public function update($taskID)
     $now  = helper::now();
     $task = fixer::input('post')
         ->setDefault('story, estimate, left, consumed', 0)
+        ->setDefault('estStarted', '0000-00-00')
         ->setDefault('deadline', '0000-00-00')
+        ->setIF(strpos($this->config->task->edit->requiredFields, 'estStarted') !== false, 'estStarted', $this->post->estStarted)
+        ->setIF(strpos($this->config->task->edit->requiredFields, 'deadline') !== false, 'deadline', $this->post->deadline)
         ->setIF($this->post->story != false and $this->post->story != $oldTask->story, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
 
         ->setIF($this->post->status == 'done', 'left', 0)
@@ -62,8 +65,45 @@ public function update($taskID)
         ->add('lastEditedDate', $now)
         ->stripTags($this->config->task->editor->edit['id'], $this->config->allowedTags)
         ->join('mailto', ',')
-        ->remove('comment,files,labels,uid')
+        ->remove('comment,files,labels,uid,multiple,team,teamEstimate,teamConsumed,teamLeft')
         ->get();
+
+    $teams = array();
+    if($this->post->multiple)
+    {
+        $estimate = 0;
+        $left     = 0;
+        foreach($this->post->team as $row => $account)
+        {
+            if(empty($account) or isset($team[$account])) continue;
+            $member = new stdClass();
+            $member->project  = 0;
+            $member->account  = $account;
+            $member->role     = $task->assignedTo;
+            $member->join     = helper::today();
+            $member->task     = $taskID;
+            $member->estimate = $this->post->teamEstimate[$row] ? $this->post->teamEstimate[$row] : 0;
+            $member->consumed = $this->post->teamConsumed[$row] ? $this->post->teamConsumed[$row] : 0;
+            $member->left     = $member->estimate - $member->consumed;
+            $member->order    = $row;
+            $teams[$account]  = $member;
+
+            $estimate += (float)$member->eatimate;
+            $left     += (float)$member->left;
+        }
+
+        if(!empty($teams))
+        {
+            $task->estimate = $estimate;
+            $task->left     = $left;
+            if(!isset($task->assignedTo))
+            {
+                $firstMember      = reset($teams);
+                $task->assignedTo = $firstMember->account;
+            }
+        }
+    }
+
     //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
     if($task->status == 'done' || $task->status == 'doing')
     {
@@ -88,7 +128,7 @@ public function update($taskID)
         $this->addTaskEstimate($estimate);
     }
 
-    $task = $this->loadModel('file')->processEditor($task, $this->config->task->editor->edit['id'], $this->post->uid);
+    $task = $this->loadModel('file')->processImgURL($task, $this->config->task->editor->edit['id'], $this->post->uid);
 
     //任务数据新增
     $taskDetail->module = $task->module;
@@ -417,7 +457,15 @@ public function update($taskID)
     }
 
     $this->dao->commit();
+    $this->computeWorkingHours($oldTask->parent);
+
+    /* Save team. */
+    $this->dao->delete()->from(TABLE_TEAM)->where('task')->eq($taskID)->exec();
+    if(!empty($teams)) foreach($teams as $member) $this->dao->insert(TABLE_TEAM)->data($member)->autoCheck()->exec();
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
+    
+    if($task->status == 'done')   $this->loadModel('score')->create('task', 'finish', $taskID);
+    if($task->status == 'closed') $this->loadModel('score')->create('task', 'close', $taskID);
     $this->file->updateObjectID($this->post->uid, $taskID, 'task');
     return $changes;
 }

@@ -25,3 +25,8 @@ $config->story->datatable->fieldList['customPlan']['title']    = 'customPlan';
 $config->story->datatable->fieldList['customPlan']['fixed']    = 'no';
 $config->story->datatable->fieldList['customPlan']['width']    = '100';
 $config->story->datatable->fieldList['customPlan']['required'] = 'no';
+
+$config->story->datatable->fieldList['specialPlan']['title']    = 'specialPlan';
+$config->story->datatable->fieldList['specialPlan']['fixed']    = 'no';
+$config->story->datatable->fieldList['specialPlan']['width']    = '100';
+$config->story->datatable->fieldList['specialPlan']['required'] = 'no';

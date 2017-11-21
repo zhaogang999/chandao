@@ -13,6 +13,7 @@
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/kindeditor.html.php';?>
 <?php include '../../../common/view/form.html.php';?>
+<?php include '../../../common/view/datepicker.html.php';?>
 <?php js::set('holders', $lang->story->placeholder); ?>
 <div class='container mw-1400px'>
   <div id='titlebar'>
@@ -31,7 +32,8 @@
         <td class='w-p45-f'>
           <div class='input-group'>
             <?php echo html::select('product', $products, $productID, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
-            <?php if($product->type != 'normal') echo html::select('branch', $branches, $branch, "onchange='loadBranch();' class='form-control' style='width:120px'");?>
+            <?php if($product->type != 'normal') echo html::select('branch', $branches, $branch, "onchange='loadBranch();' class='form-control chosen' style='width:120px'");?>
+
           </div>
         </td>
         <td>
@@ -56,7 +58,14 @@
         <th><?php echo $lang->story->customPlan;?></th>
         <td>
           <div class='input-group'>
-        <?php echo html::select('customPlan', $plans, '', "class='form-control chosen'");?>
+        <?php echo html::select('customPlan', $plans, '', "class='form-control chosen' data-placeholder='{$this->lang->story->build}'");?>
+          </div>
+        </td>
+        <!--2603 需求增加字段“特殊发版期望”-->
+        <td>
+          <div class='input-group'>
+            <span class='input-group-addon'><?php echo $lang->story->specialPlan;?></span>
+            <?php echo html::input('specialPlan', '', "class='form-control form-date' placeholder='{$lang->story->specialPlanAB}'");?>
           </div>
         </td>
       </tr>
@@ -91,7 +100,7 @@
           <div class='row-table'>
             <div class='col-table'>
               <div class="input-group w-p100">
-                <input type='hidden' id='color' name='color' data-provide='colorpicker' data-wrapper='input-group-btn' data-pull-menu-right='false' data-btn-tip='<?php echo $lang->story->colorTag ?>' data-update-text='#title'>
+                <input type='hidden' id='color' name='color' data-provide='colorpicker' data-wrapper='input-group-btn' data-pull-menu-right='false' data-btn-tip='<?php echo $lang->story->colorTag ?>' data-update-text='#title' value='<?php echo $color;?>'>
                 <?php echo html::input('title', $storyTitle, "class='form-control' autocomplete='off'");?>
               </div>
             </div>

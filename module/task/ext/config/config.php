@@ -20,6 +20,6 @@ $config->task->datatable->fieldList['plan']['sort']    = 'no';
 $config->task->datatable->fieldList['plan']['width']    = '70';
 $config->task->datatable->fieldList['plan']['required'] = 'no';
 
-$config->task->editor->create   = array('id' => 'desc,notice', 'tools' => 'simpleTools');
+//$config->task->editor->create   = array('id' => 'desc,notice', 'tools' => 'simpleTools');
 $config->task->editor->edit     = array('id' => 'desc,comment,notice', 'tools' => 'simpleTools');
 $config->task->editor->finish   = array('id' => 'comment,notice', 'tools' => 'simpleTools');

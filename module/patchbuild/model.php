@@ -94,14 +94,32 @@ class patchbuildModel extends model
      * @param  int    $projectID
      * @param  string    $orderBy
      * @param  string    $type
+     * @param  int    $queryID
      * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProjectPatchBuild($projectID, $orderBy = 'id_desc', $type  = 'byModule', $pager = null)
+    public function getProjectPatchBuild($projectID, $orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
     {
         if ($type == 'bySearch')
         {
+            if($queryID)
+            {
+                $query = $this->loadModel('search')->getQuery($queryID);
+                if($query)
+                {
+                    $this->session->set('patchbuildQuery', $query->sql);
+                    $this->session->set('patchbuildForm', $query->form);
+                }
+                else
+                {
+                    $this->session->set('patchbuildQuery', ' 1 = 1');
+                }
+            }
+           /* else
+            {
+                if($this->session->taskQuery == false) $this->session->set('patchbuildQuery', ' 1 = 1');
+            }*/
             $patchBuildQuery = $this->session->patchbuildQuery;
             $patchBuildQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $patchBuildQuery);
 
@@ -175,23 +193,42 @@ class patchbuildModel extends model
      * @param  int    $productID
      * @param  string    $orderBy
      * @param  string    $type
+     * @param  int    $queryID
      * @param  object    $pager
      * @access public
      * @return array
      */
-    public function getProductPatchBuild($productID, $orderBy = 'id_desc', $type  = 'byModule', $pager = null)
+    public function getProductPatchBuild($productID, $orderBy = 'id_desc', $type  = 'byModule', $queryID = 0, $pager = null)
     {
         if ($type == 'bySearch')
         {
+            if($queryID)
+            {
+                $query = $this->loadModel('search')->getQuery($queryID);
+                if($query)
+                {
+                    $this->session->set('patchbuildQuery', $query->sql);
+                    $this->session->set('patchbuildForm', $query->form);
+                }
+                else
+                {
+                    $this->session->set('patchbuildQuery', ' 1 = 1');
+                }
+            }
+            /*else
+            {
+                if($this->session->taskQuery == false) $this->session->set('patchbuildQuery', ' 1 = 1');
+            }*/
+
             $patchBuildQuery = $this->session->patchbuildQuery;
             $patchBuildQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $patchBuildQuery);
-            
+
             return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
                 ->from(TABLE_PATCHBUILD)->alias('t1')
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
-                ->where('t1.product')->eq((int)$productID)
-                ->andWhere('t1.deleted')->eq(0)
+                ->where('t1.deleted')->eq(0)
+                ->beginIF($productID)->andWhere('t1.product')->eq((int)$productID)->fi()
                 ->andwhere($patchBuildQuery)
                 ->orderBy($orderBy)
                 ->page($pager)
@@ -203,8 +240,8 @@ class patchbuildModel extends model
                 ->from(TABLE_PATCHBUILD)->alias('t1')
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
-                ->where('t1.product')->eq((int)$productID)
-                ->andWhere('t1.deleted')->eq(0)
+                ->where('t1.deleted')->eq(0)
+                ->beginIF($productID)->andWhere('t1.product')->eq((int)$productID)->fi()
                 ->orderBy($orderBy)
                 ->page($pager)
                 ->fetchAll();
@@ -216,12 +253,17 @@ class patchbuildModel extends model
      *
      * @param  array  $products
      * @param  int    $productID
-     * @param  int    $branch
      * @access public
      * @return void
      */
     public function setMenu($products, $productID)
     {
+        //var_dump($objectID);die;
+        if ($productID == '0')
+        {
+            $productID = 2;
+        }
+
         $this->loadModel('product')->setMenu($products, $productID);
         $selectHtml = $this->product->select($products, $productID, 'patchbuild', 'patchbuild', 'qa');
         foreach($this->lang->patchbuild->menu as $key => $menu)
@@ -229,6 +271,7 @@ class patchbuildModel extends model
             $replace = ($key == 'product') ? $selectHtml : $productID;
             common::setMenuVars($this->lang->patchbuild->menu, $key, $replace);
         }
+
     }
 
     /**

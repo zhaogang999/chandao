@@ -51,10 +51,19 @@ class myTask extends task
             die(js::locate($this->createLink('task', 'view', "taskID=$taskID"), 'parent'));
         }
 
+        $task    = $this->view->task;
+        $members = $this->loadModel('user')->getPairs('noletter');
+
+        if(!empty($task->team))
+        {
+            $task->openedBy   = $this->task->getNextUser(array_keys($task->team), $task->assignedTo);
+            $members          = $this->task->getMemberPairs($task);
+            $task->myConsumed = $this->dao->select('consumed')->from(TABLE_TEAM)->where('task')->eq($taskID)->andWhere('account')->eq($task->assignedTo)->fetch('consumed');
+        }
+
         $this->view->title      = $this->view->project->name . $this->lang->colon .$this->lang->task->finish;
         $this->view->position[] = $this->lang->task->finish;
-        $this->view->date       = strftime("%Y-%m-%d %X", strtotime('now'));
-        $this->view->users      = $this->loadModel('user')->getPairs('noletter');
+        $this->view->members    = $members;
         
         //测试类型的任务增加文字模板
         if ($this->view->task->type == 'test')

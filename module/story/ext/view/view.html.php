@@ -12,6 +12,11 @@
 ?>
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/kindeditor.html.php';?>
+<script language="Javascript">
+    $(function(){
+        $(".article-content table").width('100%');
+    })
+</script>
 <div id='titlebar'>
   <div class='heading'>
     <span class='prefix'><?php echo html::icon($lang->icons['story']);?> <strong><?php echo $story->id;?></strong></span>
@@ -64,7 +69,7 @@
             echo "<ul class='dropdown-menu' id='createCaseActionMenu'>";
             $misc = "data-toggle='modal' data-type='iframe' data-width='95%'";
             $link = $this->createLink('testcase', 'create', "productID=$story->product&branch=$story->branch&moduleID=0&from=&param=0&storyID=$story->id", '', true);
-            if(common::hasPriv('testcase', 'create')) echo "<li>" . html::a($link, $lang->testcase->create, '', $misc) . "</li>";
+            if(common::hasPriv('testcase', 'create', $story)) echo "<li>" . html::a($link, $lang->testcase->create, '', $misc) . "</li>";
             $misc = "data-toggle='modal' data-type='iframe' data-width='95%'";
             $link = $this->createLink('testcase', 'batchCreate', "productID=$story->product&branch=$story->branch&moduleID=0&storyID=$story->id", '', true);
             if(common::hasPriv('testcase', 'batchCreate')) echo "<li>" . html::a($link, $lang->testcase->batchCreate, '', $misc) . "</li>";
@@ -72,14 +77,14 @@
             echo "</div>";
         }
 
-        if($from == 'project') common::printIcon('task', 'create', "project=$param&storyID=$story->id&moduleID=$story->module", '', 'button', 'smile');
+        if($from == 'project') common::printIcon('task', 'create', "project=$param&storyID=$story->id&moduleID=$story->module", $story, 'button', 'smile');
         echo '</div>';
 
         echo "<div class='btn-group'>";
-        common::printIcon('story', 'edit', "storyID=$story->id");
-        common::printCommentIcon('story');
-        common::printIcon('story', 'create', "productID=$story->product&branch=$story->branch&moduleID=$story->module&storyID=$story->id", '', 'button', 'copy');
-        common::printIcon('story', 'delete', "storyID=$story->id", '', 'button', '', 'hiddenwin');
+        common::printIcon('story', 'edit', "storyID=$story->id", $story);
+        common::printCommentIcon('story', $story);
+        common::printIcon('story', 'create', "productID=$story->product&branch=$story->branch&moduleID=$story->module&storyID=$story->id", $story, 'button', 'copy');
+        common::printIcon('story', 'delete', "storyID=$story->id", $story, 'button', '', 'hiddenwin');
         echo '</div>';
 
         echo "<div class='btn-group'>";
@@ -189,7 +194,11 @@
               </tr>
               <tr>
                 <th><?php echo $lang->story->source;?></th>
-                <td id='source'><?php echo $lang->story->sourceList[$story->source] . ' ' . $story->sourceNote;?></td>
+                  <td id='source'><?php echo $lang->story->sourceList[$story->source];?></td>
+              </tr>
+              <tr>
+                <th><?php echo $lang->story->sourceNO;?></th>
+                <td><?php echo $story->sourceNote;?></td>
               </tr>
               <tr>
                 <th><?php echo $lang->story->status;?></th>
@@ -236,6 +245,11 @@
               <tr>
                 <th><?php echo $lang->story->customPlan;?></th>
                 <td><?php echo $customPlan;?></td>
+              </tr>
+                <!--2603 需求增加字段“特殊发版期望”-->
+              <tr>
+                <th><?php echo $lang->story->specialPlan;?></th>
+                <td><?php echo $story->specialPlan;?></td>
               </tr>
             </table>
           </div>

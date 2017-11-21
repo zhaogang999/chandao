@@ -2,6 +2,7 @@
 $lang->patchbuild->common       = '补丁版本';
 $lang->patchbuild->patchBuild   = '补丁版本';
 $lang->patchbuild->product      = '所属产品';
+$lang->patchbuild->project      = '所属项目';
 
 $lang->patchbuild->basicInfo    = '基本信息';
 $lang->patchbuild->view   = '版本详情';

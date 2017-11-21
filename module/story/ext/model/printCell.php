@@ -14,8 +14,9 @@
  * @access public
  * @return void
  */
-public function printCell($col, $story, $users, $branches, $storyStages, $modulePairs = array(), $storyTasks, $storyBugs, $storyCases)
+public function printCell($col, $story, $users, $branches, $storyStages, $modulePairs = array(), $storyTasks = array(), $storyBugs = array(), $storyCases = array(), $mode = 'datatable')
 {
+    $canView   = common::hasPriv('story', 'view');
     $storyLink = helper::createLink('story', 'view', "storyID=$story->id");
     $account   = $this->app->user->account;
     $id        = $col->id;
@@ -24,6 +25,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $class = '';
         if($id == 'status') $class .= ' story-' . $story->status;
         if($id == 'title') $class .= ' text-left';
+        if($id == 'id')     $class .= ' cell-id';
         if($id == 'assignedTo' && $story->assignedTo == $account) $class .= ' red';
 
         $title = '';
@@ -31,6 +33,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         if($id == 'plan')  $title = $story->planTitle;
         //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
         if($id == 'customPlan') $title = $story->customPlan;
+        if($id == 'specialPlan') $title = $story->specialPlan;
         //需求指派多人
         if($id == 'assignedTo')
         {
@@ -40,10 +43,11 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         }
 
         echo "<td class='" . $class . "' title='$title'>";
-        switch ($id)
+        switch($id)
         {
             case 'id':
-                echo html::a($storyLink, sprintf('%03d', $story->id));
+                if($mode == 'table') echo "<input type='checkbox' name='storyIDList[{$story->id}]' value='{$story->id}' />";
+                echo $canView ? html::a($storyLink, sprintf('%03d', $story->id)) : sprintf('%03d', $story->id);
                 break;
             case 'pri':
                 echo "<span class='pri" . zget($this->lang->story->priList, $story->pri, $story->pri) . "'>";
@@ -53,13 +57,17 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'title':
                 if($story->branch) echo "<span class='label label-info label-badge'>{$branches[$story->branch]}</span> ";
                 if($modulePairs and $story->module) echo "<span class='label label-info label-badge'>{$modulePairs[$story->module]}</span> ";
-                echo html::a($storyLink, $story->title, null, "style='color: $story->color'");
+                echo $canView ? html::a($storyLink, $story->title, '', "style='color: $story->color'") : "<span style='color: $story->color'>{$story->title}</span>";
+
                 break;
             case 'plan':
                 echo $story->planTitle;
                 break;
             case 'branch':
                 echo $branches[$story->branch];
+                break;
+            case 'keywords':
+                echo $story->keywords;
                 break;
             //1522 增加产品需求所关联的需求和已细分需求的显示
             case 'childStories':
@@ -72,8 +80,14 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'customPlan':
                 echo $story->customPlan;
                 break;
+            case 'specialPlan':
+                echo $story->specialPlan;
+                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
+                break;
+            case 'sourceNote':
+                echo $story->sourceNote;
                 break;
             case 'status':
                 echo $this->lang->story->statusList[$story->status];
@@ -132,6 +146,24 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 break;
             case 'closedReason':
                 echo zget($this->lang->story->reasonList, $story->closedReason, $story->closedReason);
+                break;
+            case 'lastEditedBy':
+                echo zget($users, $story->lastEditedBy, $story->lastEditedBy);
+                break;
+            case 'lastEditedDate':
+                echo substr($story->lastEditedDate, 5, 11);
+                break;
+            case 'mailto':
+                $mailto = explode(',', $story->mailto);
+                foreach($mailto as $account)
+                {
+                    $account = trim($account);
+                    if(empty($account)) continue;
+                    echo zget($users, $account) . ' &nbsp;';
+                }
+                break;
+            case 'version':
+                echo $story->version;
                 break;
             case 'actions':
                 $vars = "story={$story->id}";

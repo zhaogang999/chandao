@@ -51,11 +51,11 @@ function create($bugID)
     $case = fixer::input('post')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)
-        ->add('status', $this->forceReview() ? 'wait' : 'normal')
+        ->add('status', $this->forceNotReview() || $this->post->forceNotReview ? 'normal' : 'wait')
         ->add('version', 1)
         ->add('fromBug', $bugID)
         ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion((int)$this->post->story))
-        ->remove('steps,expects,files,labels,stepType')
+        ->remove('steps,expects,files,labels,stepType,forceNotReview')
         ->setDefault('story', 0)
         ->join('stage', ',')
         ->get();
@@ -74,6 +74,7 @@ function create($bugID)
         $caseID = $this->dao->lastInsertID();
         $this->loadModel('file')->saveUpload('testcase', $caseID);
         $parentStepID = 0;
+        $this->loadModel('score')->create('testcase', 'create', $caseID);
         foreach($this->post->steps as $stepID => $stepDesc)
         {
             if(empty($stepDesc)) continue;
@@ -111,8 +112,8 @@ public function createFromImport($productID, $branch = 0)
  */
 public function update($caseID)
 {
-    $oldCase     = $this->getById($caseID);
-    if(isset($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
+    $oldCase = $this->getById($caseID);
+    if(!empty($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
     {
         dao::$errors[] = $this->lang->error->editedByOther;
         return false;
@@ -159,7 +160,7 @@ public function update($caseID)
         ->join('stage', ',')
         ->remove('comment,steps,expects,files,labels,stepType')
         ->get();
-    if($this->forceReview() and $stepChanged) $case->status = 'wait';
+    if(!$this->forceNotReview() and $stepChanged) $case->status = 'wait';
     $this->dao->update(TABLE_CASE)->data($case)->autoCheck()->batchCheck($this->config->testcase->edit->requiredFields, 'notempty')->where('id')->eq((int)$caseID)->exec();
     if(!$this->dao->isError())
     {

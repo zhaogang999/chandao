@@ -112,5 +112,6 @@ public function batchUpdate()
         }
     }
 
+    if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchEdit');
     return $allChanges;
 }

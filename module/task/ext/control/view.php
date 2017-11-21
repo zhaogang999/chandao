@@ -63,6 +63,8 @@ class myTask extends task
             $task->storyFiles    = $this->loadModel('file')->getByObject('story', $task->story);
         }
 
+        if($task->team) $this->lang->task->assign = $this->lang->task->transfer;
+
         /* Update action. */
         if($task->assignedTo == $this->app->user->account) $this->loadModel('action')->read('task', $taskID);
 

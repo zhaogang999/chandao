@@ -37,9 +37,10 @@ public function batchUpdate()
     }
 
     /* Initialize tasks from the post data.*/
+    $oldTasks = $taskIDList ? $this->getByList($taskIDList) : array();
     foreach($taskIDList as $taskID)
     {
-        $oldTask = $this->getById($taskID);
+        $oldTask = $oldTasks[$taskID];
 
         $task = new stdclass();
         $task->color          = $data->colors[$taskID];
@@ -92,38 +93,47 @@ public function batchUpdate()
         switch($task->status)
         {
             case 'done':
-            {
                 //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
                 if ($task->type == 'review') die(js::error($this->lang->task->error->reviewError));
                 if ($task->realStarted =='0000-00-00') die(js::error($this->lang->task->error->doneError));
-                
+
                 $task->left = 0;
-                if(!$task->finishedBy)   $task->finishedBy = $this->app->user->account;
-                if($task->closedReason)  $task->closedDate = $now;
+                if(!$task->finishedBy)  $task->finishedBy = $this->app->user->account;
+                if($task->closedReason) $task->closedDate = $now;
                 $task->finishedDate = $oldTask->status == 'done' ?  $oldTask->finishedDate : $now;
-            }
+
+                $task->canceledBy   = '';
+                $task->canceledDate = '';
                 break;
             case 'cancel':
-            {
                 $task->assignedTo   = $oldTask->openedBy;
                 $task->assignedDate = $now;
 
                 if(!$task->canceledBy)   $task->canceledBy   = $this->app->user->account;
                 if(!$task->canceledDate) $task->canceledDate = $now;
-            }
+
+                $task->finishedBy   = '';
+                $task->finishedDate = '';
                 break;
             case 'closed':
-            {
                 if(!$task->closedBy)   $task->closedBy   = $this->app->user->account;
                 if(!$task->closedDate) $task->closedDate = $now;
-            }
                 break;
             case 'wait':
-            {
                 if($task->consumed > 0 and $task->left > 0) $task->status = 'doing';
                 if($task->left == $oldTask->left and $task->consumed == 0) $task->left = $task->estimate;
-            }
-            default:break;
+
+                $task->canceledDate = '';
+                $task->finishedDate = '';
+                $task->closedDate   = '';
+                break;
+            case 'doing':
+                $task->canceledDate = '';
+                $task->finishedDate = '';
+                $task->closedDate   = '';
+                break;
+            case 'pause':
+                $task->finishedDate = '';
         }
         if($task->assignedTo) $task->assignedDate = $now;
 
@@ -134,7 +144,7 @@ public function batchUpdate()
             ->checkIF($task->estimate != false, 'estimate', 'float')
             ->checkIF($task->consumed != false, 'consumed', 'float')
             ->checkIF($task->left     != false, 'left',     'float')
-            ->checkIF($task->left == 0 and $task->status != 'cancel' and $task->status != 'closed' and $task->consumed != 0, 'status', 'equal', 'done')
+            ->checkIF($task->left     == 0 and $task->status != 'cancel' and $task->status != 'closed' and $task->status != 'wait' and $task->consumed != 0, 'status', 'equal', 'done')
 
             ->batchCheckIF($task->status == 'wait' or $task->status == 'doing', 'finishedBy, finishedDate,canceledBy, canceledDate, closedBy, closedDate, closedReason', 'empty')
 
@@ -152,6 +162,9 @@ public function batchUpdate()
         if($oldTask->story != false) $this->loadModel('story')->setStage($oldTask->story);
         if(!dao::isError())
         {
+            $this->computeWorkingHours($oldTask->parent);
+            if($task->status == 'done')   $this->loadModel('score')->create('task', 'finish', $taskID);
+            if($task->status == 'closed') $this->loadModel('score')->create('task', 'close', $taskID);
             $allChanges[$taskID] = common::createChanges($oldTask, $task);
         }
         else
@@ -159,6 +172,6 @@ public function batchUpdate()
             die(js::error('task#' . $taskID . dao::getError(true)));
         }
     }
-
+    if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchEdit');
     return $allChanges;
 }

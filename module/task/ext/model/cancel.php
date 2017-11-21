@@ -24,7 +24,8 @@ public function cancel($taskID)
         ->setDefault('finishedDate', '0000-00-00')
         ->setDefault('canceledBy, lastEditedBy', $this->app->user->account)
         ->setDefault('canceledDate, lastEditedDate', $now)
-        ->remove('comment')->get();
+        ->remove('comment')
+        ->get();
 
     $this->dao->update(TABLE_TASK)->data($task)->autoCheck()->where('id')->eq((int)$taskID)->exec();
 

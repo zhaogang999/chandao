@@ -44,6 +44,10 @@
         <?php endif;?>
       </tr>
       <tr>
+        <th><?php echo $lang->patchbuild->project;?></th>
+        <td><?php echo html::select('project', $projects, $build->project, 'class="form-control chosen"');?></td>
+      </tr>
+      <tr>
         <th><?php echo $lang->patchbuild->workSeason;?></th>
         <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, $build->workSeason, 'class="form-control chosen"');?></td>
       </tr>

@@ -20,24 +20,24 @@ js::set('kuid', $uid);
 var editor = <?php echo json_encode($editor);?>;
 //增加multiimage配置项
 var bugTools =
-[ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|', 
-'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
+    [ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|',
+        'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
+        'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
 //增加multiimage配置项
-var simpleTools = 
-[ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|', 
-'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
+var simpleTools =
+    [ 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic','underline', '|',
+        'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', '|',
+        'emoticons', 'image', 'multiimage', 'code', 'link', '|', 'removeformat','undo', 'redo', 'fullscreen', 'source', 'about'];
 //增加multiimage配置项
-var fullTools = 
-[ 'formatblock', 'fontname', 'fontsize', 'lineheight', '|', 'forecolor', 'hilitecolor', '|', 'bold', 'italic','underline', 'strikethrough', '|',
-'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
-'insertorderedlist', 'insertunorderedlist', '|',
-'emoticons', 'image', 'multiimage', 'insertfile', 'hr', '|', 'link', 'unlink', '/',
-'undo', 'redo', '|', 'selectall', 'cut', 'copy', 'paste', '|', 'plainpaste', 'wordpaste', '|', 'removeformat', 'clearhtml','quickformat', '|',
-'indent', 'outdent', 'subscript', 'superscript', '|',
-'table', 'code', '|', 'pagebreak', 'anchor', '|', 
-'fullscreen', 'source', 'preview', 'about'];
+var fullTools =
+    [ 'formatblock', 'fontname', 'fontsize', 'lineheight', '|', 'forecolor', 'hilitecolor', '|', 'bold', 'italic','underline', 'strikethrough', '|',
+        'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+        'insertorderedlist', 'insertunorderedlist', '|',
+        'emoticons', 'image', 'multiimage', 'insertfile', 'hr', '|', 'link', 'unlink', '/',
+        'undo', 'redo', '|', 'selectall', 'cut', 'copy', 'paste', '|', 'plainpaste', 'wordpaste', '|', 'removeformat', 'clearhtml','quickformat', '|',
+        'indent', 'outdent', 'subscript', 'superscript', '|',
+        'table', 'code', '|', 'pagebreak', 'anchor', '|',
+        'fullscreen', 'source', 'preview', 'about'];
 
 $(document).ready(initKindeditor);
 function initKindeditor(afterInit)
@@ -55,14 +55,15 @@ function initKindeditor(afterInit)
         var placeholderText = $editor.attr('placeholder');
         if(placeholderText == undefined) placeholderText = '';
         var pasted;
-        var options = 
+        var options =
         {
             cssPath:[themeRoot + 'zui/css/min.css'],
             width:'100%',
+            height:'200px',
             items:editorTool,
-            filterMode: true, 
+            filterMode: true,
             bodyClass:'article-content',
-            urlType:'relative', 
+            urlType:'absolute',
             uploadJson: createLink('file', 'ajaxUpload', 'uid=' + kuid),
             allowFileManager:true,
             langType:'<?php echo $editorLang?>',
@@ -70,8 +71,8 @@ function initKindeditor(afterInit)
             afterCreate : function()
             {
                 var frame = this.edit;
-                var doc   = this.edit.doc; 
-                var cmd   = this.edit.cmd; 
+                var doc   = this.edit.doc;
+                var cmd   = this.edit.cmd;
                 pasted    = true;
                 if(!K.WEBKIT && !K.GECKO)
                 {
@@ -111,8 +112,11 @@ function initKindeditor(afterInit)
                         var file     = original.clipboardData.items[0].getAsFile();
                         if(file)
                         {
+                            $('#submit').attr('disabled', 'disabled');
+                            $("body").click(function(){$('#submit').removeAttr('disabled');});
+
                             var reader = new FileReader();
-                            reader.onload = function(evt) 
+                            reader.onload = function(evt)
                             {
                                 var result = evt.target.result;
                                 var arr    = result.split(",");
@@ -120,13 +124,17 @@ function initKindeditor(afterInit)
                                 var contentType = arr[0].split(";")[0].split(":")[1];
 
                                 html = '<img src="' + result + '" alt="" />';
-                                $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data){cmd.inserthtml(data);});
+                                $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data)
+                                {
+                                    cmd.inserthtml(data);
+                                    $('#submit').removeAttr('disabled');
+                                });
                             };
                             reader.readAsDataURL(file);
                         }
                     });
                 }
-                /* Paste in firefox and other firefox.*/
+                /* Paste in firefox and other firefox. */
                 else
                 {
                     K(doc.body).bind('paste', function(ev)
@@ -136,10 +144,13 @@ function initKindeditor(afterInit)
                             var html = K(doc.body).html();
                             if(html.search(/<img src="data:.+;base64,/) > -1)
                             {
+                                $('#submit').attr('disabled', 'disabled');
+                                $("body").click(function(){$('#submit').removeAttr('disabled');});
                                 $.post(createLink('file', 'ajaxPasteImage', 'uid=' + kuid), {editor: html}, function(data)
                                 {
                                     if(data.indexOf('<img') == 0) data = '<p>' + data + '</p>';
                                     frame.html(data);
+                                    $('#submit').removeAttr('disabled');
                                 });
                             }
                         }, 80);

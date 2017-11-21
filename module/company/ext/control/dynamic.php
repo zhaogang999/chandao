@@ -59,7 +59,7 @@ class myCompany extends company
         $this->view->projects = $projects;
 
         /* Get users.*/
-        $users = $this->loadModel('user')->getPairs('nodeleted|noclosed');
+        $users = $this->loadModel('user')->getPairs('noclosed|nodeleted');
         $users[''] = $this->lang->company->user;
         $this->view->users    = $users;
 

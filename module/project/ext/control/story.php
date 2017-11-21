@@ -10,12 +10,14 @@ class myProject extends project
      * @access public
      * @return void
      */
-    public function story($projectID = 0, $orderBy = '', $type = 'byModule', $param = 0, $recTotal = 0, $recPerPage = 50, $pageID = 1)
+    public function story($projectID = 0, $orderBy = 'order_desc', $type = 'byModule', $param = 0, $recTotal = 0, $recPerPage = 50, $pageID = 1)
     {
         /* Load these models. */
         $this->loadModel('story');
         $this->loadModel('user');
         $this->app->loadLang('testcase');
+
+        $this->project->getLimitedProject();
 
         /* Save session. */
         $this->app->session->set('storyList', $this->app->getURI(true));
@@ -94,6 +96,7 @@ class myProject extends project
         $this->view->title        = $title;
         $this->view->position     = $position;
         $this->view->productID    = $productID;
+        $this->view->project      = $project;
         //2085 项目需求中增加需求所属计划的显示
         $this->view->stories      = $this->loadModel('story')->mergePlanTitle($productID, $stories);
         $this->view->plans         = $this->loadModel('productplan')->getPairs($productID);

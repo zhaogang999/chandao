@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\story\model.php');
+helper::import('module\story\model.php');
 helper::cd();
 class extstoryModel extends storyModel 
 {
@@ -52,8 +52,7 @@ public function batchChangePlan($storyIDList, $planID, $oldPlanID = 0)
         if(!dao::isError()) $allChanges[$storyID] = common::createChanges($oldStory, $story);
     }
     return $allChanges;
-}
-/**
+}/**
  * Batch update stories.
  *
  * @access public
@@ -166,9 +165,9 @@ public function batchUpdate()
         }
     }
 
+    if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchEdit');
     return $allChanges;
-}
-/**
+}/**
  * Created by PhpStorm.
  * User: 月下亭中人
  * Date: 2017/9/28
@@ -188,6 +187,7 @@ public function create($projectID = 0, $bugID = 0)
         ->cleanFloat('estimate')
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
+        ->setDefault('specialPlan', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)
         ->add('assignedDate', 0)
@@ -209,7 +209,7 @@ public function create($projectID = 0, $bugID = 0)
 
     if($this->checkForceReview()) $story->status = 'draft';
     if($story->status == 'draft') $story->stage   = $this->post->plan > 0 ? 'planned' : 'wait';
-    $story = $this->loadModel('file')->processEditor($story, $this->config->story->editor->create['id'], $this->post->uid);
+    $story = $this->loadModel('file')->processImgURL($story, $this->config->story->editor->create['id'], $this->post->uid);
     $this->dao->insert(TABLE_STORY)->data($story, 'spec,verify')->autoCheck()->batchCheck($this->config->story->create->requiredFields, 'notempty')->exec();
     if(!dao::isError())
     {
@@ -227,11 +227,13 @@ public function create($projectID = 0, $bugID = 0)
 
         if($projectID != 0 and $story->status != 'draft')
         {
+            $lastOrder = (int)$this->dao->select('*')->from(TABLE_PROJECTSTORY)->where('project')->eq($projectID)->orderBy('order_desc')->limit(1)->fetch('order');
             $this->dao->insert(TABLE_PROJECTSTORY)
                 ->set('project')->eq($projectID)
                 ->set('product')->eq($this->post->product)
                 ->set('story')->eq($storyID)
                 ->set('version')->eq(1)
+                ->set('order')->eq($lastOrder + 1)
                 ->exec();
         }
         //2262 bug转需求之后，bug自动关闭，无法再跟进验证，希望转需求后，bug状态呈现已解决，而非关闭
@@ -271,8 +273,7 @@ public function create($projectID = 0, $bugID = 0)
         return array('status' => 'created', 'id' => $storyID);
     }
     return false;
-}
-public function setListValue($productID, $branch = 0)
+}public function setListValue($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->setListValue($productID, $branch);
 }
@@ -280,8 +281,7 @@ public function setListValue($productID, $branch = 0)
 public function createFromImport($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->createFromImport($productID, $branch);
-}
-/**
+}/**
  * Get stories by assignedTo.
  *
  * @param  int    $productID
@@ -295,8 +295,7 @@ public function getByAssignedTo($productID, $branch, $modules, $account, $orderB
 {
     //需求可以指派给多个人；查询自拍给用like
     return $this->getByField($productID, $branch, $modules, 'assignedTo', $account, $orderBy, $pager, 'include');
-}
-/**
+}/**
  * Get stories of a user.
  *
  * @param  string $account
@@ -327,8 +326,7 @@ public function getUserStories($account, $type = 'assignedTo', $orderBy = 'id_de
     foreach($stories as $story) $productIdList[$story->product] = $story->product;
 
     return $this->mergePlanTitle($productIdList, $stories);
-}
-/**
+}/**
  * Link stories.
  *
  * @param  int    $storyID
@@ -364,8 +362,7 @@ public function linkStories($storyID, $type = 'linkStories')
             $this->loadModel('action')->create('story', $val, $action, '', $storyID);
         }
     }
-}
-/**
+}/**
  * Merge plan title.
  *
  * @param  int|array    $productID
@@ -409,8 +406,7 @@ public function mergePlanTitle($productID, $stories, $branch = 0)
     $this->dao->sqlobj->sql = $query;
 
     return $stories;
-}
-/**
+}/**
  * Print cell data
  *
  * @param  object $col
@@ -425,8 +421,9 @@ public function mergePlanTitle($productID, $stories, $branch = 0)
  * @access public
  * @return void
  */
-public function printCell($col, $story, $users, $branches, $storyStages, $modulePairs = array(), $storyTasks, $storyBugs, $storyCases)
+public function printCell($col, $story, $users, $branches, $storyStages, $modulePairs = array(), $storyTasks = array(), $storyBugs = array(), $storyCases = array(), $mode = 'datatable')
 {
+    $canView   = common::hasPriv('story', 'view');
     $storyLink = helper::createLink('story', 'view', "storyID=$story->id");
     $account   = $this->app->user->account;
     $id        = $col->id;
@@ -435,6 +432,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         $class = '';
         if($id == 'status') $class .= ' story-' . $story->status;
         if($id == 'title') $class .= ' text-left';
+        if($id == 'id')     $class .= ' cell-id';
         if($id == 'assignedTo' && $story->assignedTo == $account) $class .= ' red';
 
         $title = '';
@@ -442,6 +440,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         if($id == 'plan')  $title = $story->planTitle;
         //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
         if($id == 'customPlan') $title = $story->customPlan;
+        if($id == 'specialPlan') $title = $story->specialPlan;
         //需求指派多人
         if($id == 'assignedTo')
         {
@@ -451,10 +450,11 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         }
 
         echo "<td class='" . $class . "' title='$title'>";
-        switch ($id)
+        switch($id)
         {
             case 'id':
-                echo html::a($storyLink, sprintf('%03d', $story->id));
+                if($mode == 'table') echo "<input type='checkbox' name='storyIDList[{$story->id}]' value='{$story->id}' />";
+                echo $canView ? html::a($storyLink, sprintf('%03d', $story->id)) : sprintf('%03d', $story->id);
                 break;
             case 'pri':
                 echo "<span class='pri" . zget($this->lang->story->priList, $story->pri, $story->pri) . "'>";
@@ -464,13 +464,17 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'title':
                 if($story->branch) echo "<span class='label label-info label-badge'>{$branches[$story->branch]}</span> ";
                 if($modulePairs and $story->module) echo "<span class='label label-info label-badge'>{$modulePairs[$story->module]}</span> ";
-                echo html::a($storyLink, $story->title, null, "style='color: $story->color'");
+                echo $canView ? html::a($storyLink, $story->title, '', "style='color: $story->color'") : "<span style='color: $story->color'>{$story->title}</span>";
+
                 break;
             case 'plan':
                 echo $story->planTitle;
                 break;
             case 'branch':
                 echo $branches[$story->branch];
+                break;
+            case 'keywords':
+                echo $story->keywords;
                 break;
             //1522 增加产品需求所关联的需求和已细分需求的显示
             case 'childStories':
@@ -483,8 +487,14 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'customPlan':
                 echo $story->customPlan;
                 break;
+            case 'specialPlan':
+                echo $story->specialPlan;
+                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
+                break;
+            case 'sourceNote':
+                echo $story->sourceNote;
                 break;
             case 'status':
                 echo $this->lang->story->statusList[$story->status];
@@ -544,6 +554,24 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'closedReason':
                 echo zget($this->lang->story->reasonList, $story->closedReason, $story->closedReason);
                 break;
+            case 'lastEditedBy':
+                echo zget($users, $story->lastEditedBy, $story->lastEditedBy);
+                break;
+            case 'lastEditedDate':
+                echo substr($story->lastEditedDate, 5, 11);
+                break;
+            case 'mailto':
+                $mailto = explode(',', $story->mailto);
+                foreach($mailto as $account)
+                {
+                    $account = trim($account);
+                    if(empty($account)) continue;
+                    echo zget($users, $account) . ' &nbsp;';
+                }
+                break;
+            case 'version':
+                echo $story->version;
+                break;
             case 'actions':
                 $vars = "story={$story->id}";
                 common::printIcon('story', 'change',     $vars, $story, 'list', 'random');
@@ -555,8 +583,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
         }
         echo '</td>';
     }
-}
-/**
+}/**
  * Get stories through search.
  *
  * @access public
@@ -667,8 +694,7 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
         $stories[] = $story;
     }
     return $stories;
-}
-/**
+}/**
  * Send mail
  *
  * @param  int    $storyID
@@ -758,8 +784,7 @@ public function sendmail($storyID, $actionID)
     /* Send it. */
     $this->mail->send($toList, 'STORY #' . $story->id . ' ' . $story->title . ' - ' . $productName, $mailContent, $ccList);
     if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
-}
-/**
+}/**
  * Set stage of a story.
  *
  * @param  int    $storyID
@@ -917,8 +942,7 @@ public function setStage($storyID)
     }
 
     return;
-}
-/**
+}/**
  * Update a story.
  *
  * @param  int    $storyID
@@ -928,8 +952,8 @@ public function setStage($storyID)
 public function update($storyID)
 {
     $now      = helper::now();
-    $oldStory = $this->getById($storyID);
-    if(isset($_POST['lastEditedDate']) and $oldStory->lastEditedDate != $this->post->lastEditedDate)
+    $oldStory = $this->dao->select('*')->from(TABLE_STORY)->where('id')->eq($storyID)->fetch();
+    if(!empty($_POST['lastEditedDate']) and $oldStory->lastEditedDate != $this->post->lastEditedDate)
     {
         dao::$errors[] = $this->lang->error->editedByOther;
         return false;
@@ -940,10 +964,11 @@ public function update($storyID)
         ->add('assignedDate', $oldStory->assignedDate)
         ->add('lastEditedBy', $this->app->user->account)
         ->add('lastEditedDate', $now)
+        ->setDefault('specialPlan', '0000-00-00')
         ->setDefault('status', $oldStory->status)
         ->setDefault('product', $oldStory->product)
-        ->setDefault('plan', 0)
-        ->setDefault('branch', 0)
+        ->setDefault('plan', $oldStory->plan)
+        ->setDefault('branch', $oldStory->branch)
         ->setIF($this->post->assignedTo   != $oldStory->assignedTo, 'assignedDate', $now)
         ->setIF($this->post->closedBy     != false and $oldStory->closedDate == '', 'closedDate', $now)
         ->setIF($this->post->closedReason != false and $oldStory->closedDate == '', 'closedDate', $now)
@@ -982,6 +1007,7 @@ public function update($storyID)
                 $this->dao->replace(TABLE_PROJECTPRODUCT)->data($data)->exec();
             }
         }
+        if(isset($story->closedReason) and $story->closedReason == 'done') $this->loadModel('score')->create('story', 'close');
         return common::createChanges($oldStory, $story);
     }
 }

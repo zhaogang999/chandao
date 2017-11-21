@@ -16,3 +16,9 @@ $first_array = array_splice ($config->product->search['fields'], 0, 11);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
 
 $config->product->search['params']['customPlan']  = array('operator' => '=', 'control' => 'select',  'values' => '');
+
+$insert_array = array('specialPlan' =>$lang->story->specialPlan);
+$first_array = array_splice ($config->product->search['fields'], 0, 12);
+$config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
+
+$config->product->search['params']['specialPlan']  = array('operator' => '=', 'control' => 'input',  'values' => '', 'class' => 'date');

@@ -8,7 +8,7 @@
  */
 public function create($projectID)
 {
-    $tasksID  = array();
+    $taskIdList  = array();
     $taskFiles = array();
     $taskDetail = new stdClass();
 
@@ -17,17 +17,19 @@ public function create($projectID)
         ->add('project', (int)$projectID)
         //->setDefault('estimate, left, story', 0)
         ->setDefault('story', 0)
-        ->setDefault('estStarted', '0000-00-00')
-        ->setDefault('deadline', '0000-00-00')
         ->setDefault('status', 'wait')
         ->setIF($this->post->estimate != false, 'left', $this->post->estimate)
         ->setIF($this->post->story != false, 'storyVersion', $this->loadModel('story')->getVersion($this->post->story))
+        ->setDefault('estStarted', '0000-00-00')
+        ->setDefault('deadline', '0000-00-00')
+        ->setIF(strpos($this->config->task->create->requiredFields, 'estStarted') !== false, 'estStarted', $this->post->estStarted)
+        ->setIF(strpos($this->config->task->create->requiredFields, 'deadline') !== false, 'deadline', $this->post->deadline)
         ->setDefault('openedBy',   $this->app->user->account)
         ->setDefault('openedDate', helper::now())
         ->setDefault('releasedDate', '0000-00-00')
         ->stripTags($this->config->task->editor->create['id'], $this->config->allowedTags)
         ->join('mailto', ',')
-        ->remove('after,files,labels,assignedTo,uid')
+        ->remove('after,files,labels,assignedTo,uid,storyEstimate,storyDesc,storyPri,team,teamEstimate,teamMember,multiple,teams')
         ->get();
 
     foreach($this->post->assignedTo as $assignedTo)
@@ -38,18 +40,50 @@ public function create($projectID)
         $task->assignedTo = $assignedTo;
         if($assignedTo) $task->assignedDate = helper::now();
 
+        $teams = array();
+        if($this->post->multiple)
+        {
+            $estimate = 0;
+            $left     = 0;
+            foreach($this->post->team as $row => $account)
+            {
+                if(empty($account) or isset($team[$account])) continue;
+                $member = new stdClass();
+                $member->project  = 0;
+                $member->account  = $account;
+                $member->role     = $assignedTo;
+                $member->join     = helper::today();
+                $member->estimate = $this->post->teamEstimate[$row] ? (float)$this->post->teamEstimate[$row] : 0;
+                $member->left     = $member->estimate;
+                $member->order    = $row;
+                $teams[$account]  = $member;
+
+                $estimate += (float)$member->estimate;
+                $left     += (float)$member->left;
+            }
+
+            if(!empty($teams))
+            {
+                $firstMember        = reset($teams);
+                $task->assignedTo   = $firstMember->account;
+                $task->assignedDate = helper::now();
+                $task->estimate     = $estimate;
+                $task->left         = $left;
+            }
+        }
+
         /* Check duplicate task. */
         if($task->type != 'affair')
         {
-            $result = $this->loadModel('common')->removeDuplicate('task', $task, "project=$projectID");
+            $result = $this->loadModel('common')->removeDuplicate('task', $task, "project=$projectID and story=$task->story");
             if($result['stop'])
             {
-                $tasksID[$assignedTo] = array('status' => 'exists', 'id' => $result['duplicate']);
+                $taskIdList[$assignedTo] = array('status' => 'exists', 'id' => $result['duplicate']);
                 continue;
             }
         }
 
-        $task = $this->file->processEditor($task, $this->config->task->editor->create['id'], $this->post->uid);
+        $task = $this->file->processImgURL($task, $this->config->task->editor->create['id'], $this->post->uid);
 
         //任务数据新增
         $taskDetail->source = $task->source;
@@ -105,7 +139,18 @@ public function create($projectID)
                 $taskFiles = $this->dao->select('*')->from(TABLE_FILE)->where('id')->in(array_keys($taskFileTitle))->fetchAll('id');
                 foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
             }
-            $tasksID[$assignedTo] = array('status' => 'created', 'id' => $taskID);
+
+            if(!empty($teams))
+            {
+                foreach($teams as $team)
+                {
+                    $team->task = $taskID;
+                    $this->dao->insert(TABLE_TEAM)->data($team)->autoCheck()->exec();
+                }
+            }
+
+            if(!dao::isError()) $this->loadModel('score')->create('task', 'create', $taskID);
+            $taskIdList[$assignedTo] = array('status' => 'created', 'id' => $taskID);
         }
         else
         {
@@ -167,5 +212,5 @@ public function create($projectID)
             }
         }
     }
-    return $tasksID;
+    return $taskIdList;
 }

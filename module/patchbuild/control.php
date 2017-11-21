@@ -27,13 +27,14 @@ class patchbuild extends control
      * @param int $recPerPage
      * @param int $pageID
      */
-    public function patchBuild($objectID, $from, $type = 'byModule', $param = 0,$orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function patchBuild($objectID, $from, $type = 'byModule', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         $this->loadModel('project');
         $this->loadModel('product');
         $this->loadModel('qa');
 
         $this->session->set('patchbuildList', $this->app->getURI(true));
+        $queryID   = ($type == 'bySearch')  ? (int)$param : 0;
 
         $table  = $from == 'qa' ? TABLE_PRODUCT : TABLE_PROJECT;
         $object = $this->dao->select('id,name')->from($table)->where('id')->eq($objectID)->fetch();
@@ -55,7 +56,7 @@ class patchbuild extends control
             $this->view->product       = $object;
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
-            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $pager);
+            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $queryID, $pager);
             $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=$object->id&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
@@ -68,11 +69,11 @@ class patchbuild extends control
             $this->view->products      = $this->project->getProducts($object->id);
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
-            $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $type, $pager);
+            $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $type, $queryID, $pager);
             $actionURL    = $this->createLink('patchBuild', 'patchBuild', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
         }
-        $this->config->patchbuild->search['onMenuBar'] = 'yes';
-        $queryID   = ($type == 'bySearch')  ? (int)$param : 0;
+        //$this->config->patchbuild->search['onMenuBar'] = 'yes';
+
         $this->patchbuild->buildPatchBuildSearchForm($actionURL, $queryID);
         /* Header and position. */
         $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
@@ -174,6 +175,8 @@ class patchbuild extends control
      */
     public function editpatchbuild($buildID, $objectID, $from)
     {
+        $this->loadModel('project');
+        
         if(!empty($_POST))
         {
             $changes = $this->patchbuild->updateBatchBuild($buildID);
@@ -192,11 +195,11 @@ class patchbuild extends control
             }
             if ($from == 'project')
             {
-                die(js::locate($this->createLink('patchbuild', 'patchBuild', "objectID=$objectID&from=project"), 'parent'));
+                die(js::locate($this->createLink('patchbuild', 'view', "buildID=$buildID&from=project"), 'parent'));
             }
             else
             {
-                die(js::locate($this->createLink('patchbuild', 'patchBuild', "objectID=$objectID&from=qa"), 'parent'));
+                die(js::locate($this->createLink('patchbuild', 'view', "buildID=$buildID&from=qa"), 'parent'));
             }
         }
 
@@ -233,8 +236,6 @@ class patchbuild extends control
         }
         else
         {
-            $this->loadModel('project');
-
             /* Set menu. */
             //$this->project->setMenu($this->project->getPairs(), $build->project, '');
 
@@ -266,7 +267,8 @@ class patchbuild extends control
             $this->view->branches   = (isset($productGroups[$build->product]) and $productGroups[$build->product]->type == 'normal') ? array() : $this->loadModel('branch')->getPairs($build->product);
             $this->view->orderBy    = $orderBy;
         }
-        
+
+        $this->view->projects      = $this->project->getPairs('noclosed,nocode');
         $this->view->productGroups = $productGroups;
         $this->view->products      = $products;
         $this->view->users         = $this->loadModel('user')->getPairs();

@@ -8,8 +8,8 @@
  */
 public function update($caseID)
 {
-    $oldCase     = $this->getById($caseID);
-    if(isset($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
+    $oldCase = $this->getById($caseID);
+    if(!empty($_POST['lastEditedDate']) and $oldCase->lastEditedDate != $this->post->lastEditedDate)
     {
         dao::$errors[] = $this->lang->error->editedByOther;
         return false;
@@ -56,7 +56,7 @@ public function update($caseID)
         ->join('stage', ',')
         ->remove('comment,steps,expects,files,labels,stepType')
         ->get();
-    if($this->forceReview() and $stepChanged) $case->status = 'wait';
+    if(!$this->forceNotReview() and $stepChanged) $case->status = 'wait';
     $this->dao->update(TABLE_CASE)->data($case)->autoCheck()->batchCheck($this->config->testcase->edit->requiredFields, 'notempty')->where('id')->eq((int)$caseID)->exec();
     if(!$this->dao->isError())
     {

@@ -65,10 +65,12 @@ class myTask extends task
                     }
                 }
             }
+            $this->loadModel('score')->create('ajax', 'batchOther');
             die(js::locate($this->session->taskList, 'parent'));
         }
 
         $taskIDList = $this->post->taskIDList ? $this->post->taskIDList : die(js::locate($this->session->taskList, 'parent'));
+        $taskIDList = array_unique($taskIDList);
 
         /* The tasks of project. */
         if($projectID)

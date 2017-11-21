@@ -1,7 +1,7 @@
 <?php
 global $app;
 helper::cd($app->getBasePath());
-helper::import('.\module\search\model.php');
+helper::import('module\search\model.php');
 helper::cd();
 class extsearchModel extends searchModel 
 {

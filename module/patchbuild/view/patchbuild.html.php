@@ -28,7 +28,7 @@
   <thead>
   <?php
 
-  $vars = "objectID=$objectID&from=$from&type=$type&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
+  $vars = "objectID=$objectID&from=$from&type=$type&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
   ?>
     <tr class='colhead'>
       <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>
@@ -70,7 +70,7 @@
     <?php endif;?>
     <td>
       <?php
-      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$object->id&type=$from", '','list', 'pencil', '', '', false, '', $lang->patchbuild->editpatchbuild);
+      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$build->product&type=$from", '','list', 'pencil', '', '', false, '', $lang->patchbuild->editpatchbuild);
       if ($from == 'project')
       {
         if(common::hasPriv('patchbuild', 'deletePatchBuild'))

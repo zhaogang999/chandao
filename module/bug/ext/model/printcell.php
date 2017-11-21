@@ -7,11 +7,18 @@
  * @param  array  $users
  * @param  array  $builds
  * @param  array  $branches
+ * @param  array  $modulePairs
+ * @param  array  $projects
+ * @param  array  $plans
+ * @param  array  $stories
+ * @param  array  $tasks
+ * @param  string $mode
  * @access public
  * @return void
  */
-public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
+public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, $projects = array(), $plans = array(), $stories = array(), $tasks = array(), $mode = 'datatable')
 {
+    $canView = common::hasPriv('bug', 'view');
     $bugLink = inlink('view', "bugID=$bug->id");
     $account = $this->app->user->account;
     $id = $col->id;
@@ -19,15 +26,17 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
     {
         $class = '';
         if($id == 'status') $class .= ' bug-' . $bug->status;
-        if($id == 'title') $class .= ' text-left';
+        if($id == 'title')  $class .= ' text-left';
+        if($id == 'id')     $class .= ' cell-id';
         if($id == 'assignedTo' && $bug->assignedTo == $account) $class .= ' red';
         if($id == 'deadline' && isset($bug->delay)) $class .= ' delayed';
 
         echo "<td class='" . $class . "'" . ($id=='title' ? " title='{$bug->title}'" : '') . ">";
-        switch ($id)
+        switch($id)
         {
             case 'id':
-                echo html::a($bugLink, sprintf('%03d', $bug->id));
+                if($mode == 'table') echo "<input type='checkbox' name='bugIDList[{$bug->id}]'  value='{$bug->id}'/> ";
+                echo $canView ? html::a($bugLink, sprintf('%03d', $bug->id)) : sprintf('%03d', $bug->id);
                 break;
             case 'severity':
                 echo "<span class='severity" . zget($this->lang->bug->severityList, $bug->severity, $bug->severity) . "'>";
@@ -44,7 +53,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
                 echo "<span class='$class'>[{$this->lang->bug->confirmedList[$bug->confirmed]}]</span> ";
                 if($bug->branch)echo "<span class='label label-info label-badge'>{$branches[$bug->branch]}</span> ";
                 if($modulePairs and $bug->module)echo "<span class='label label-info label-badge'>{$modulePairs[$bug->module]}</span> ";
-                echo html::a($bugLink, $bug->title, null, "style='color: $bug->color'");
+                echo $canView ? html::a($bugLink, $bug->title, null, "style='color: $bug->color'") : "<span style='color: $bug->color'>{$bug->title}</span>";
                 break;
 
             //2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索
@@ -55,6 +64,18 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
             case 'branch':
                 echo $branches[$bug->branch];
                 break;
+            case 'project':
+                echo zget($projects, $bug->project, '');
+                break;
+            case 'plan':
+                echo zget($plans, $bug->plan, '');
+                break;
+            case 'story':
+                echo zget($stories, $bug->story, '');
+                break;
+            case 'task':
+                echo zget($tasks, $bug->task, '');
+                break;
             case 'type':
                 echo zget($this->lang->bug->typeList, $bug->type);
                 break;
@@ -64,6 +85,30 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
             case 'activatedCount':
                 echo $bug->activatedCount;
                 break;
+            case 'activatedDate':
+                echo substr($bug->activatedDate, 5, 11);
+                break;
+            case 'keywords':
+                echo $bug->keywords;
+                break;
+            case 'os':
+                echo zget($this->lang->bug->osList, $bug->os);
+                break;
+            case 'browser':
+                echo zget($this->lang->bug->browserList, $bug->browser);
+                break;
+            case 'mailto':
+                $mailto = explode(',', $bug->mailto);
+                foreach($mailto as $account)
+                {
+                    $account = trim($account);
+                    if(empty($account)) continue;
+                    echo zget($users, $account) . " &nbsp;";
+                }
+                break;
+            case 'found':
+                echo zget($users, $bug->found);
+                break;
             case 'openedBy':
                 echo zget($users, $bug->openedBy);
                 break;
@@ -71,7 +116,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
                 echo substr($bug->openedDate, 5, 11);
                 break;
             case 'openedBuild':
-                foreach(explode(',', $bug->openedBuild) as $build) echo zget($builds, $build) . '<br />';
+                foreach(explode(',', $bug->openedBuild) as $build) echo zget($builds, $build) . ' ';
                 break;
             case 'assignedTo':
                 echo zget($users, $bug->assignedTo, $bug->assignedTo);
@@ -97,16 +142,19 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs)
             case 'closedBy':
                 echo zget($users, $bug->closedBy);
                 break;
-            case 'lastEditedDate':
-                echo substr($bug->lastEditedDate, 5, 11);
-                break;
             case 'closedDate':
                 echo substr($bug->closedDate, 5, 11);
+                break;
+            case 'lastEditedBy':
+                echo zget($users, $bug->lastEditedBy);
+                break;
+            case 'lastEditedDate':
+                echo substr($bug->lastEditedDate, 5, 11);
                 break;
             case 'actions':
                 $params = "bugID=$bug->id";
                 common::printIcon('bug', 'confirmBug', $params, $bug, 'list', 'search', '', 'iframe', true);
-                common::printIcon('bug', 'assignTo',   $params, '',   'list', '', '', 'iframe', true);
+                common::printIcon('bug', 'assignTo',   $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'resolve',    $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'close',      $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'edit',       $params, $bug, 'list');

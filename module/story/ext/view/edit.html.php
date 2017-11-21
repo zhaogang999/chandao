@@ -13,6 +13,12 @@
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/kindeditor.html.php';?>
 <?php include '../../../common/view/form.html.php';?>
+<?php include '../../../common/view/datepicker.html.php';?>
+<script language="Javascript">
+  $(function(){
+    $(".article-content table").width('100%');
+  })
+</script>
 <form class='form-condensed' method='post' enctype='multipart/form-data' target='hiddenwin' id='dataform'>
 <div id='titlebar'>
   <div class='heading'>
@@ -65,10 +71,10 @@
         <legend><?php echo $lang->story->legendBasicInfo;?></legend>
         <table class='table table-form'>
           <tr>
-            <th class='w-80px' style="table-layout:fixed" ><?php echo $lang->story->product;?></th>
-            <td width="200" style="table-layout:fixed">
+            <th class='w-80px'><?php echo $lang->story->product;?></th>
+            <td>
               <div class='input-group'>
-                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen' style='width:65px'");?>
+                <?php echo html::select('product', $products, $story->product, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
                 <?php if($product->type != 'normal') echo html::select('branch', $branches, $story->branch, "onchange='loadBranch();' class='form-control' style='width:65px'");?>
               </div>
             </td>
@@ -110,16 +116,11 @@
           </tr>
           <tr>
             <th><?php echo $lang->story->source;?></th>
-            <td>
-              <div class='row-table'>
-                <div class='col-table w-90px'><?php echo html::select('source', $lang->story->sourceList, $story->source, 'class=form-control');?></div>
-                <div class='col-table'>
-                  <div class='input-group'>
-                    <span class='input-group-addon fix-border'><?php echo $lang->comment?></span>
-                    <?php echo html::input('sourceNote', $story->sourceNote, "class='form-control' autocomplete='off'");?>
-                  </div>
-                </div>
-              </div>
+            <td><?php echo html::select('source', $lang->story->sourceList, $story->source, 'class=form-control');?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->story->sourceNO;?></th>
+            <td><?php echo html::input('sourceNote', $story->sourceNote, "class='form-control' autocomplete='off'");?>
             </td>
           </tr>
           <tr>
@@ -151,7 +152,12 @@
           <!--需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划-->
           <tr>
             <th><?php echo $lang->story->customPlan;?></th>
-            <td><?php echo html::select('customPlan', $plans, $story->customPlan, "class='form-control chosen'");?></td>
+            <td><?php echo html::select('customPlan', $plans, $story->customPlan, "class='form-control chosen' data-placeholder='{$this->lang->story->build}'");?></td>
+          </tr>
+          <!--2603 需求增加字段“特殊发版期望”-->
+          <tr>
+            <th><?php echo $lang->story->specialPlan;?></th>
+            <td><?php echo html::input('specialPlan', $story->specialPlan, "class='form-control form-date' placeholder='{$lang->story->specialPlanAB}'");?></td>
           </tr>
 
         </table>
