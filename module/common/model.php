@@ -815,7 +815,6 @@ class commonModel extends model
             if(strtolower($key) == 'finisheddate' && $value == '')  continue;
             if(strtolower($key) == 'canceleddate' && $value == '')  continue;
             if(strtolower($key) == 'closeddate'   && $value == '')  continue;
-            if(strtolower($key) == 'resolveddate'   && $value == '')  continue;
 
             if($magicQuote) $value = stripslashes($value);
             if(isset($old->$key) and $value != stripslashes($old->$key))

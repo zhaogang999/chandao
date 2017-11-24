@@ -54,7 +54,7 @@ $(document).ready(function()
         selectable    : 
         {
             clickBehavior: 'multi',
-            /*start: function(e)
+            start: function(e) 
             {
                 var $target = $(e.target);
                 if ($target.closest('.task-toggle').length) return false;
@@ -68,7 +68,7 @@ $(document).ready(function()
                     }
                     return false;
                 }
-            },*/
+            },
             startDrag: function(e)
             {
                 var $target = $(e.target);

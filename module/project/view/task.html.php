@@ -70,7 +70,7 @@ js::set('browseType', $browseType);
       <tbody>
         <?php foreach($tasks as $task):?>
         <tr class='text-center' data-id='<?php echo $task->id;?>'>
-          <?php foreach($customFields as $field) $this->task->printCell($field, $task, $users, $browseType, $branchGroups, $modulePairs, $useDatatable ? 'datatable' : 'table', $task->parent);?>
+          <?php foreach($customFields as $field) $this->task->printCell($field, $task, $users, $browseType, $branchGroups, $modulePairs, $useDatatable ? 'datatable' : 'table');?>
         </tr>
         <?php if(!empty($task->children)):?>
         <?php foreach($task->children as $key => $child):?>
