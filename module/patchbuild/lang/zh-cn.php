@@ -58,7 +58,8 @@ $lang->patchbuild->platformList['crowdsourcing']     = '众包';
 $lang->patchbuild->platformList['multisource ']      = '多源';
 $lang->patchbuild->platformList['dealership']        = '代理店';
 $lang->patchbuild->platformList['tips']              = 'tips转mark';
-$lang->patchbuild->platformList['script']              = '脚本';
+$lang->patchbuild->platformList['script']            = '脚本';
+$lang->patchbuild->platformList['limitLineNumber']   = '限行限号平台';
 $lang->patchbuild->platformList['other']             = '其他';
 
 $lang->patchbuild->reasonList['']                = '';

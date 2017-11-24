@@ -220,6 +220,7 @@
                 <th class="x-label">ios</th>
                 <th class="x-label">android</th>
                 <th class="x-label">sdk</th>
+                <th class="x-label">脚本</th>
             </tr>
             </thead>
             <tbody>
@@ -232,6 +233,7 @@
                     <td class="taskData"><?php echo isset($undoneTaskByType[$id]['ios'])?$undoneTaskByType[$id]['ios']->taskSum:0;?></td>
                     <td class="taskData"><?php echo isset($undoneTaskByType[$id]['android'])?$undoneTaskByType[$id]['android']->taskSum:0;?></td>
                     <td class="taskData"><?php echo isset($undoneTaskByType[$id]['sdk'])?$undoneTaskByType[$id]['sdk']->taskSum:0;?></td>
+                    <td class="taskData"><?php echo isset($undoneTaskByType[$id]['script'])?$undoneTaskByType[$id]['script']->taskSum:0;?></td>
                 </tr>
             <?php endforeach;?>
             </tbody>

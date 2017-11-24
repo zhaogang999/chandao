@@ -57,7 +57,7 @@ class patchbuild extends control
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
             $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $queryID, $pager);
-            $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=$object->id&from=qa&type=bySearch&param=myQueryID");
+            $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=0&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
         {

@@ -1,7 +1,7 @@
 <?php
 //禅道任务增加关键字字段；需求：858
 $lang->task->keywords = '关键字';
-$lang->task->plan     = '所属计划';
+$lang->task->plan     = '提测计划';
 
 $lang->task->error->doneError = '『实际开始』不能为空';
 $lang->task->error->reviewError = '『评审』类型的任务不能批量完成';
@@ -67,6 +67,7 @@ $lang->task->ATList['']                 = '';
 $lang->task->ATList['pass']             = '通过';
 $lang->task->ATList['noPass']           = '不通过';
 $lang->task->ATList['partPass']         = '部分通过';
+$lang->task->ATList['withoutApproval']  = '免验收';
 
 $lang->task->releasedList['']            = '';
 $lang->task->releasedList['release']    = '已发布';

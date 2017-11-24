@@ -41,7 +41,7 @@ public function storySummary()
         $projectAB = $this->project->getById($project);
 
         $zeroTaskStories = $this->getZeroTaskStories($stories,$project);
-        $zeroDevelTaskStories = $this->getZeroTaskStories($stories,$project, "fos, devel, sdk, web, ios, android");
+        $zeroDevelTaskStories = $this->getZeroTaskStories($stories,$project, "fos, devel, sdk, web, ios, android, script");
         $zeroTestTaskStories = $this->getZeroTaskStories($stories,$project, 'test');
 
         $storyCountByTime = $this->getStoryOpenDateReport($stories, $projectAB->begin);
