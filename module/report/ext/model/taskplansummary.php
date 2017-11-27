@@ -18,7 +18,7 @@ public function taskPlanSummary()
             LEFT JOIN zt_project AS p
             ON a.project=p.id
             WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') 
-            AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+            AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
             ) 
             l GROUP BY l.objectID
             )
@@ -33,7 +33,7 @@ public function taskPlanSummary()
         LEFT JOIN zt_project AS p
         ON a.project=p.id
         WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') 
-        AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+        AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
         ) 
         l GROUP BY l.objectID
         )
@@ -47,7 +47,7 @@ public function taskPlanSummary()
         ON a.objectID=t.id
         LEFT JOIN zt_project AS p
         ON a.project=p.id
-        WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+        WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
         ) 
         l GROUP BY l.objectID
         )
@@ -55,14 +55,14 @@ public function taskPlanSummary()
 
     $noPlanTaskSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
           LEFT JOIN zt_project  as p ON t.project = p.id
-          WHERE t.deadline = '0000-00-00' AND t.deleted='0' AND t.`status` IN('wait','pause','doing')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+          WHERE t.deadline = '0000-00-00' AND t.deleted='0' AND t.`status` IN('wait','pause','doing') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
 
     $undoneAbnormalPlanTasksSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
             LEFT JOIN zt_project  as p ON t.project = p.id
-            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('wait','pause','doing')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('wait','pause','doing') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
     $doneAbnormalPlanTasksSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
             LEFT JOIN zt_project  as p ON t.project = p.id
-            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('done','closed')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('done','closed') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
 
     $sum = $this->dao->query($sumSql)->fetchAll();
     $delay = $this->dao->query($delaySql)->fetchAll();

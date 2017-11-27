@@ -22,6 +22,7 @@ public function storyCycleSummary($project)
             ->from(TABLE_TASK)
             ->where('story')->eq((int)$storyID)
             ->andWhere('deleted')->eq(0)
+            ->andWhere('parent')->eq(0)
             ->andWhere('project')->eq($project)
             ->fetchAll('id');
 

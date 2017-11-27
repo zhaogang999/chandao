@@ -359,6 +359,7 @@ public function storyCycleSummary($project)
             ->from(TABLE_TASK)
             ->where('story')->eq((int)$storyID)
             ->andWhere('deleted')->eq(0)
+            ->andWhere('parent')->eq(0)
             ->andWhere('project')->eq($project)
             ->fetchAll('id');
 
@@ -556,7 +557,11 @@ public function storyTaskSummary()
 
     $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
 
-    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetchAll();
+    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)
+        ->where('status')->ne('done')
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->fetchAll();
 
     $projects = explode(',', $projects->ids);
     $projectSum =count($projects);
@@ -595,7 +600,7 @@ public function taskPlanSummary()
             LEFT JOIN zt_project AS p
             ON a.project=p.id
             WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') 
-            AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+            AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
             ) 
             l GROUP BY l.objectID
             )
@@ -610,7 +615,7 @@ public function taskPlanSummary()
         LEFT JOIN zt_project AS p
         ON a.project=p.id
         WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') 
-        AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+        AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
         ) 
         l GROUP BY l.objectID
         )
@@ -624,7 +629,7 @@ public function taskPlanSummary()
         ON a.objectID=t.id
         LEFT JOIN zt_project AS p
         ON a.project=p.id
-        WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') AND t.deleted='0' AND p.deleted='0' AND p.`status`!='done'
+        WHERE a.objectType='task' AND h.field='deadline' AND t.`status` IN('wait','doing','pause') AND t.deleted='0' AND t.parent=0 AND p.deleted='0' AND p.`status`!='done'
         ) 
         l GROUP BY l.objectID
         )
@@ -632,14 +637,14 @@ public function taskPlanSummary()
 
     $noPlanTaskSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
           LEFT JOIN zt_project  as p ON t.project = p.id
-          WHERE t.deadline = '0000-00-00' AND t.deleted='0' AND t.`status` IN('wait','pause','doing')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+          WHERE t.deadline = '0000-00-00' AND t.deleted='0' AND t.`status` IN('wait','pause','doing') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
 
     $undoneAbnormalPlanTasksSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
             LEFT JOIN zt_project  as p ON t.project = p.id
-            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('wait','pause','doing')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('wait','pause','doing') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
     $doneAbnormalPlanTasksSql = "SELECT t.project,COUNT(DISTINCT t.id) AS taskCount,GROUP_CONCAT(t.id) AS ids FROM zt_task AS t
             LEFT JOIN zt_project  as p ON t.project = p.id
-            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('done','closed')  AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
+            WHERE TIMESTAMPDIFF(day,t.estStarted,t.deadline)>7 AND t.deleted='0' AND t.`status` IN('done','closed') AND t.parent=0 AND p.`status`!='done' AND p.deleted = '0' GROUP BY t.project";
 
     $sum = $this->dao->query($sumSql)->fetchAll();
     $delay = $this->dao->query($delaySql)->fetchAll();
@@ -742,11 +747,29 @@ public function taskSummary($data)
     asort($projects);
     $projects = trim(implode(',', $projects), ',');
 
-    $taskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN(" .$projects . ") AND deleted='0' GROUP BY `project`";
-    $develTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("fos,devel,sdk,web,ios,android,script")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
-    $testStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("test")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
-    $storyTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)->where('project')->in("$projects")->andWhere('type')->in("ra")->andWhere('deleted')->eq('0')->groupBy('project,status')->fetchGroup('project','status');
-    $delayedTaskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND curdate()>deadline AND `status` not IN ('done','closed','cancel') AND deadline != '0000-00-00' AND deleted='0' GROUP BY `project`";
+    $taskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN(" .$projects . ") AND deleted='0' AND parent = 0 GROUP BY `project`";
+    $develTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)
+        ->where('project')->in("$projects")
+        ->andWhere('type')->in("fos,devel,sdk,web,ios,android,script")
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->groupBy('project,status')
+        ->fetchGroup('project','status');
+    $testStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)
+        ->where('project')->in("$projects")
+        ->andWhere('type')->in("test")
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->groupBy('project,status')
+        ->fetchGroup('project','status');
+    $storyTaskStatusSum = $this->dao->select(" `project`,`status`,COUNT( `id` ) AS taskSum")->from(TABLE_TASK)
+        ->where('project')->in("$projects")
+        ->andWhere('type')->in("ra")
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->groupBy('project,status')
+        ->fetchGroup('project','status');
+    $delayedTaskSumSql = "SELECT `project`,COUNT(`id`) AS taskSum FROM zt_task WHERE `project` IN (" .$projects . ") AND curdate()>deadline AND `status` not IN ('done','closed','cancel') AND deadline != '0000-00-00' AND deleted='0' AND parent = 0 GROUP BY `project`";
 
     $taskSum = $this->dao->query($taskSumSql)->fetchAll();
     $delayedTaskSum = $this->dao->query($delayedTaskSumSql)->fetchAll();
@@ -761,9 +784,15 @@ public function taskSummary($data)
     $delayedTaskSum = $this->transform($delayedTaskSum);
 
     $undoneTaskCount = $this->undoneTaskCount($projects, $begin, $end);
-    //var_dump($undoneTaskCount);die;
-    //$undoneTaskByType = $this->undoneTaskByType($projects);
-    $undoneTaskByType = $this->dao->select('project,type,COUNT(id) as taskSum')->from(TABLE_TASK)->where('project')->in($projects)->andWhere('deleted')->eq('0')->andWhere('type')->in('fos,devel,sdk,web,ios,android,script')->andWhere('status')->in('wait,doing,pause')->groupBy('project,type')->fetchGroup('project','type');
+
+    $undoneTaskByType = $this->dao->select('project,type,COUNT(id) as taskSum')->from(TABLE_TASK)
+        ->where('project')->in($projects)
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->andWhere('type')->in('fos,devel,sdk,web,ios,android,script')
+        ->andWhere('status')->in('wait,doing,pause')
+        ->groupBy('project,type')
+        ->fetchGroup('project','type');
     $finishedTasksPerDay = $this->finishedTasksPerDay($projects, $begin, $end);
     
     $projects = explode(',', $projects);
@@ -810,7 +839,15 @@ public function taskSummary($data)
  */
 public function finishedTasksPerDay($projects, $begin, $end)
 {
-    $finishedTasksPerDay = $this->dao->select("project,DATE_FORMAT(finishedDate,'%Y-%m-%d') AS date, COUNT(id) AS value")->from(TABLE_TASK)->where('project')->in($projects)->andWhere('deleted')->eq('0')->andWhere('type')->in('fos,devel,sdk,web,ios,android,script')->groupBy('finishedDate')->having("date != '0000-00-00' AND date>='$begin' AND date<='$end'")->orderBy('project,finishedDate')->fetchGroup('date','project');
+    $finishedTasksPerDay = $this->dao->select("project,DATE_FORMAT(finishedDate,'%Y-%m-%d') AS date, COUNT(id) AS value")->from(TABLE_TASK)
+        ->where('project')->in($projects)
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->andWhere('type')->in('fos,devel,sdk,web,ios,android,script')
+        ->groupBy('finishedDate')
+        ->having("date != '0000-00-00' AND date>='$begin' AND date<='$end'")
+        ->orderBy('project,finishedDate')
+        ->fetchGroup('date','project');
     
     $begin = strtotime($begin);
     $end = strtotime($end);
@@ -841,7 +878,10 @@ public function finishedTasksPerDay($projects, $begin, $end)
  */
 public function undoneTaskCount($projects, $begin, $end)
 {
-    $undoneTaskCount = $this->dao->select('*')->from(TABLE_UNDONETASKREPORT)->where('project')->in($projects)->andWhere('date')->between($begin,$end)->fetchGroup('date','project');
+    $undoneTaskCount = $this->dao->select('*')->from(TABLE_UNDONETASKREPORT)
+        ->where('project')->in($projects)
+        ->andWhere('date')->between($begin,$end)
+        ->fetchGroup('date','project');
     $projects = explode(',', $projects);
 
     foreach ($undoneTaskCount as $date => $value)
@@ -890,8 +930,8 @@ public function taskStatusCount($type, $projects)
 {
     $result = array();
 
-    $taskCountSql = "SELECT COUNT(`id`) AS taskSum FROM zt_task WHERE deleted='0' AND `project` IN (" .$projects . ") AND `status`!='cancel' AND `type` IN (" . $type . ")";
-    $doneTaskCountSql = "SELECT COUNT(id) AS  taskSum FROM zt_task WHERE deleted='0' AND `project` IN (" .$projects . ") AND `status`!='cancel' AND `status` IN ('done','closed') AND `type` IN (" . $type . ")";
+    $taskCountSql = "SELECT COUNT(`id`) AS taskSum FROM zt_task WHERE deleted='0' AND parent = 0  AND `project` IN (" .$projects . ") AND `status`!='cancel' AND `type` IN (" . $type . ")";
+    $doneTaskCountSql = "SELECT COUNT(id) AS  taskSum FROM zt_task WHERE deleted='0' AND parent = 0  AND `project` IN (" .$projects . ") AND `status`!='cancel' AND `status` IN ('done','closed') AND `type` IN (" . $type . ")";
     $taskCount = $this->dao->query($taskCountSql)->fetch();
     $doneTaskCount = $this->dao->query($doneTaskCountSql)->fetch();
 

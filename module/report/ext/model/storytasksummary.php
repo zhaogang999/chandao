@@ -15,7 +15,11 @@ public function storyTaskSummary()
 
     $storyTaskStatusSum = $this->dao->query($storyTaskStatusSumSql)->fetchAll();
 
-    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetchAll();
+    $projectInfo = $this->dao->select("id,name")->from(TABLE_PROJECT)
+        ->where('status')->ne('done')
+        ->andWhere('deleted')->eq('0')
+        ->andWhere('parent')->eq(0)
+        ->fetchAll();
 
     $projects = explode(',', $projects->ids);
     $projectSum =count($projects);

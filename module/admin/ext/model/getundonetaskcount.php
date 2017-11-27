@@ -7,9 +7,30 @@
 public function getUndoneTaskCount()
 {
     $projects = $this->dao->select("GROUP_CONCAT(`id`) AS ids")->from(TABLE_PROJECT)->where('status')->ne('done')->andWhere('deleted')->eq('0')->fetch();
-    $undoneStoryTaskCount = $this->dao->select('project, count(id) as undoneStoryCount')->from(TABLE_TASK)->where('deleted')->eq('0')->andWhere('status')->in('wait, doing, pause')->andWhere('type')->in('ra')->andWhere('project')->in($projects->ids)->groupBy('project')->fetchAll('project');
-    $undoneDevelTaskCount = $this->dao->select('project, count(id) as undoneDevelCount')->from(TABLE_TASK)->where('deleted')->eq('0')->andWhere('status')->in('wait, doing, pause')->andWhere('type')->in('fos, devel, sdk, web, ios, android')->andWhere('project')->in($projects->ids)->groupBy('project')->fetchAll('project');
-    $undoneTestTaskCount = $this->dao->select('project, count(id) as undoneTestCount')->from(TABLE_TASK)->where('deleted')->eq('0')->andWhere('status')->in('wait, doing, pause')->andWhere('type')->in('test')->andWhere('project')->in($projects->ids)->groupBy('project')->fetchAll('project');
+    $undoneStoryTaskCount = $this->dao->select('project, count(id) as undoneStoryCount')->from(TABLE_TASK)
+        ->where('deleted')->eq('0')
+        ->where('parent')->eq(0)
+        ->andWhere('status')->in('wait, doing, pause')
+        ->andWhere('type')->in('ra')
+        ->andWhere('project')->in($projects->ids)
+        ->groupBy('project')
+        ->fetchAll('project');
+    $undoneDevelTaskCount = $this->dao->select('project, count(id) as undoneDevelCount')->from(TABLE_TASK)
+        ->where('deleted')->eq('0')
+        ->where('parent')->eq(0)
+        ->andWhere('status')->in('wait, doing, pause')
+        ->andWhere('type')->in('fos, devel, sdk, web, ios, android')
+        ->andWhere('project')->in($projects->ids)
+        ->groupBy('project')
+        ->fetchAll('project');
+    $undoneTestTaskCount = $this->dao->select('project, count(id) as undoneTestCount')->from(TABLE_TASK)
+        ->where('deleted')->eq('0')
+        ->where('parent')->eq(0)
+        ->andWhere('status')->in('wait, doing, pause')
+        ->andWhere('type')->in('test')
+        ->andWhere('project')->in($projects->ids)
+        ->groupBy('project')
+        ->fetchAll('project');
 
     $projects = explode(',', $projects->ids);
     foreach($projects as $project)
