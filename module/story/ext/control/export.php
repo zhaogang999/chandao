@@ -52,6 +52,9 @@ class mystory extends story
             $relatedModuleIdList  = array();
             $relatedStoryIdList   = array();
             $relatedPlanIdList    = array();
+            //2670 需求导出列表中，需要增加需求的期望发版时间字段
+            
+            $relatedCustomPlanIdList    = array();
             $relatedBranchIdList  = array();
             $relatedStoryIDs      = array();
 
@@ -60,6 +63,9 @@ class mystory extends story
                 $relatedProductIdList[$story->product] = $story->product;
                 $relatedModuleIdList[$story->module]   = $story->module;
                 $relatedPlanIdList[$story->plan]       = $story->plan;
+                //2670 需求导出列表中，需要增加需求的期望发版时间字段
+                $relatedCustomPlanIdList[$story->customPlan]       = $story->customPlan;
+                
                 $relatedBranchIdList[$story->branch]   = $story->branch;
                 $relatedStoryIDs[$story->id]           = $story->id;
 
@@ -80,6 +86,9 @@ class mystory extends story
             $productsType   = $this->dao->select('id, type')->from(TABLE_PRODUCT)->where('id')->in($relatedProductIdList)->fetchPairs();
             $relatedModules = $this->dao->select('id, name')->from(TABLE_MODULE)->where('id')->in($relatedModuleIdList)->fetchPairs();
             $relatedPlans   = $this->dao->select('id, title')->from(TABLE_PRODUCTPLAN)->where('id')->in(join(',', $relatedPlanIdList))->fetchPairs();
+            //2670 需求导出列表中，需要增加需求的期望发版时间字段
+            $relatedCustomPlans   = $this->dao->select('id, title')->from(TABLE_PRODUCTPLAN)->where('id')->in(join(',', $relatedCustomPlanIdList))->fetchPairs();
+            
             $relatedStories = $this->dao->select('id,title')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchPairs();
             $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedSpecs   = $this->dao->select('*')->from(TABLE_STORYSPEC)->where('`story`')->in(@array_keys($stories))->orderBy('version desc')->fetchGroup('story');
@@ -123,6 +132,19 @@ class mystory extends story
                     }
                     $story->plan = $plans;
                 }
+
+                //2670 需求导出列表中，需要增加需求的期望发版时间字段
+                if(isset($story->customPlan))
+                {
+                    $customPlans = '';
+                    foreach(explode(',', $story->customPlan) as $planID)
+                    {
+                        if(empty($planID)) continue;
+                        if(isset($relatedCustomPlans[$planID]))$customPlans .= $relatedCustomPlans[$planID] . "(#$planID) ";
+                    }
+                    $story->customPlan = $customPlans;
+                }
+
                 if(isset($relatedStories[$story->duplicateStory])) $story->duplicateStory = $relatedStories[$story->duplicateStory];
 
                 if(isset($storyLang->priList[$story->pri]))             $story->pri          = $storyLang->priList[$story->pri];

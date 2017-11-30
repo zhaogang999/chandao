@@ -323,7 +323,12 @@ public function getUserStories($account, $type = 'assignedTo', $orderBy = 'id_de
 
     $this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story');
     $productIdList = array();
-    foreach($stories as $story) $productIdList[$story->product] = $story->product;
+    //2828 我的地盘--指派给我的需求（点击需求可以直接定位到可以拆任务的界面）
+    foreach($stories as $story)
+    {
+        $productIdList[$story->product] = $story->product;
+        $story->projectID = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($story->id)->fetch('project');
+    }
 
     return $this->mergePlanTitle($productIdList, $stories);
 }/**

@@ -4,6 +4,7 @@ $lang->story->parentStory   = '(父)';
 
 //1084 产品需求下增加溯源号及搜索
 $lang->story->sourceNO      = '溯源号';
+$lang->story->sourceNote      = '溯源号';
 
 //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
 $lang->story->customPlan    = '期望实现';

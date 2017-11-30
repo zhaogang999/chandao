@@ -23,6 +23,7 @@ $lang->report->bugResponseTimeStatistics = 'bug解决&响应时间';
 
 $lang->report->projectID        = '项目ID';
 $lang->report->productID        = '产品ID';
+$lang->report->taskID           = '任务ID';
 $lang->report->projectName      = '项目名称';
 $lang->report->storySum         = '需求数';
 $lang->report->date             = '日期';

@@ -70,17 +70,17 @@
         </tr>
         <tr>
           <th><?php echo $lang->task->scriptPath;?></th>
-          <td><?php echo html::input('scriptPath', $script->scriptPath, "class='form-control'");?></td>
-          <td>
-            <div class="input-group">
-              <span class='input-group-addon'><?php echo $lang->task->releasedDate;?></span>
-              <?php echo html::input('releasedDate', $script->releasedDate, "class='form-control form-date'");?>
-            </div>
-          </td>
+          <td colspan="2"><?php echo html::input('scriptPath', $script->scriptPath, "class='form-control'");?></td>
         </tr>
         <tr>
           <th><?php echo $lang->task->tester;?></th>
-          <td><?php echo html::select('tester', $users, $script->tester, "class='form-control chosen'");?></td>
+          <td>
+            <div class="input-group">
+              <?php echo html::select('tester', $users, $script->tester, "class='form-control chosen'");?>
+              <span class='input-group-addon fix-border br-0'><?php echo $lang->task->releasedDate;?></span>
+              <?php echo html::input('releasedDate', $script->releasedDate, "class='form-control form-date'; style='width:100px';");?>
+            </div>
+          </td>
           <td>
             <div class="input-group">
               <span class='input-group-addon'><?php echo $lang->task->AT;?></span>
