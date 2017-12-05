@@ -71,7 +71,7 @@
           <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <th class='w-100px {sorter:false}'>          <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
+          <th class='w-140px {sorter:false}'>          <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
           <th class='w-user {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
           <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
           <th class='w-hour {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
@@ -115,7 +115,9 @@
             <?php echo html::a($storyLink,$story->title, null, "style='color: $story->color'");?>
           </td>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <td title="<?php echo $story->planTitle;?>"><?php echo $story->planTitle;?></td>
+          <td title="<?php echo $story->planTitle;?>"><?php
+            //var_dump($story->specialPlan !== '0000-00-00');die;
+            echo ($story->planTitle == ' ' && $story->specialPlan != '0000-00-00')?$story->specialPlan:$story->planTitle;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
 
           <!--需求可以指派多个人-->

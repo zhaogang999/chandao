@@ -1,6 +1,7 @@
 <?php
 $config->patchbuild = new stdclass();
 $config->patchbuild->createpatchbuild   = new stdclass();
+$config->patchbuild->editpatchbuild     = new stdclass();
 
 $config->patchbuild->editor   = new stdclass();
 $config->patchbuild->editor->createpatchbuild = array('id' => 'patchContent,influence,config,notice', 'tools' => 'simpleTools');

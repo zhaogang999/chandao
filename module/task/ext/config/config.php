@@ -17,7 +17,7 @@ $config->task->datatable->fieldList['keywords']['required'] = 'no';
 $config->task->datatable->fieldList['plan']['title']    = 'plan';
 $config->task->datatable->fieldList['plan']['fixed']    = 'no';
 $config->task->datatable->fieldList['plan']['sort']    = 'no';
-$config->task->datatable->fieldList['plan']['width']    = '70';
+$config->task->datatable->fieldList['plan']['width']    = '140';
 $config->task->datatable->fieldList['plan']['required'] = 'no';
 
 //$config->task->editor->create   = array('id' => 'desc,notice', 'tools' => 'simpleTools');

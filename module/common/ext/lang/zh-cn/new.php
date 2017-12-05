@@ -14,5 +14,12 @@ $lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|p
 //9312 补丁版本下增加各字段的搜索功能
 $lang->searchObjects['patchbuild']         = '补丁版本';
 
-//$lang->menu->customstory    = '用户需求|customstory|index';
 $lang->report->menu->scripttask   = array('link' => '脚本任务|report|scripttask', 'alias' => 'viewscript,editscript');
+
+$lang->storyreview = new stdclass();
+
+$lang->project->menu->storyreview = array('link' => '需求评审表|storyreview|storyreview|objectID=%s&from=project', 'alias' => 'storyreview,createstoryreview,editstoryreview,', 'subModule' => 'storyreview');
+
+$lang->qa->menu->storyreview = array('link' => '补丁版本|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
+$lang->bug->menu->patchbuild = array('link' => '补丁版本|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
+$lang->testcase->menu->patchbuild = array('link' => '补丁版本|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');

@@ -1,6 +1,6 @@
 <?php
 include '../../control.php';
-class myAdmin extends admin
+class myMy extends my
 {
     /**
      * 每日抓取report数据
@@ -9,9 +9,9 @@ class myAdmin extends admin
      */
     public function getReportData()
     {
-        $this->admin->getBurnUpData();
-        $this->admin->getDailyBugStatistics();
-        $this->admin->getUndoneTaskCount();
+        $this->my->getBurnUpData();
+        $this->my->getDailyBugStatistics();
+        $this->my->getUndoneTaskCount();
         echo "ok\n";
     }
 }

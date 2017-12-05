@@ -261,8 +261,11 @@ public function printChanges($objectType, $histories)
                 $oldHistory = $this->loadModel('productplan')->getByID($history->old);
                 $history->old = '#' . $history->old . ' ' . $oldHistory->title;
             }
-            $newHistory = $this->loadModel('productplan')->getByID($history->new);
-            $history->new = '#' . $history->new . ' ' . $newHistory->title;
+            if ($history->new != '' && $history->new != 0)
+            {
+                $newHistory = $this->loadModel('productplan')->getByID($history->new);
+                $history->new = '#' . $history->new . ' ' . $newHistory->title;
+            }
         }
         if ($fieldName == 'module')
         {

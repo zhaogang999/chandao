@@ -22,7 +22,7 @@ public function linkBugs($bugID)
     foreach ($bugs2Link as $val)
     {
         $linkbugs = $this->dao->select('linkBug')->FROM(TABLE_BUG)->where('id')->eq(trim($val, ','))->fetch();
-        $linkBugsAB = $linkbugs->linkBugs .','. $bugID;
+        $linkBugsAB = $linkbugs->linkBug .','. $bugID;
 
         $this->dao->update(TABLE_BUG)->set('linkBug')->eq(trim($linkBugsAB, ','))->where('id')->eq(trim($val, ','))->exec();
         if(dao::isError()) die(js::error(dao::getError()));

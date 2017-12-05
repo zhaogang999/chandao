@@ -19,7 +19,7 @@ if(!defined('TABLE_PATCHBUILD')) define('TABLE_PATCHBUILD', '`' . $config->db->p
 if(!defined('TABLE_BURNUP')) define('TABLE_BURNUP', '`' . $config->db->prefix . 'burnup`');
 if(!defined('TABLE_BUGREPORT')) define('TABLE_BUGREPORT', '`' . $config->db->prefix . 'bugreport`');
 if(!defined('TABLE_SCRIPT')) define('TABLE_SCRIPT', '`' . $config->db->prefix . 'script`');
-
+    if(!defined('TABLE_STORYREVIEW')) define('TABLE_STORYREVIEW', '`' . $config->db->prefix . 'storyreview`');
 $config->timeout       = 60000;
 
 $config->objectTables['patchbuild']       = TABLE_PATCHBUILD;

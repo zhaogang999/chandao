@@ -54,9 +54,11 @@ class patchbuild extends control
             $this->patchbuild->setMenu($this->product->getPairs(), $objectID);
             $this->lang->set('menugroup.patchbuild', 'qa');
             $this->view->product       = $object;
-            $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
+            //$this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
-            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$object->id, $sort, $type, $queryID, $pager);
+            /* Header and position. */
+            $this->view->title      = $this->lang->colon . $this->lang->patchbuild->patchBuild;
+            $this->view->patchBuilds = $this->patchbuild->getproductPatchBuild((int)$objectID, $sort, $type, $queryID, $pager);
             $actionURL    = $this->createLink('patchbuild', 'patchbuild', "productID=0&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
@@ -67,6 +69,8 @@ class patchbuild extends control
             $this->lang->set('menugroup.patchbuild', 'project');
             $this->view->project       = $object;
             $this->view->products      = $this->project->getProducts($object->id);
+            /* Header and position. */
+            $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
             $this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[] = $this->lang->patchbuild->patchBuild;
             $this->view->patchBuilds = $this->patchbuild->getProjectPatchBuild((int)$object->id, $sort, $type, $queryID, $pager);
@@ -75,9 +79,7 @@ class patchbuild extends control
         //$this->config->patchbuild->search['onMenuBar'] = 'yes';
 
         $this->patchbuild->buildPatchBuildSearchForm($actionURL, $queryID);
-        /* Header and position. */
-        $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
-        //$this->view->position[] = $this->lang->project->patchBuild;
+
         $this->view->users  = $this->loadModel('user')->getPairs('noletter');
         $this->view->from   = $from;
         $this->view->type   = $type;
