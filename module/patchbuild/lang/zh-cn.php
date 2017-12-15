@@ -40,6 +40,8 @@ $lang->patchbuild->workSeasonList['']   = '';
 $lang->patchbuild->workSeasonList['1']   = '17冬';
 $lang->patchbuild->workSeasonList['2']   = '18春';
 $lang->patchbuild->workSeasonList['3']   = '17冬+18春';
+$lang->patchbuild->workSeasonList['4']   = '18夏';
+$lang->patchbuild->workSeasonList['5']   = '18春+18夏';
 
 $lang->patchbuild->patchTypeList['']              = '';
 $lang->patchbuild->patchTypeList['alpha']         = '内测';

@@ -32,3 +32,20 @@ $lang->build->methodOrder[10] = 'editpatchbuild';
 $lang->build->methodOrder[15] = 'deletePatchBuild';
 $lang->build->methodOrder[20] = 'patchBuild';
 $lang->build->methodOrder[25] = 'view';
+
+/* storyreview. */
+$lang->moduleOrder[205] = 'storyreview';
+$lang->resource->storyreview = new stdclass();
+$lang->resource->storyreview->storyreview   = 'storyreview';
+$lang->resource->storyreview->create        = 'create';
+$lang->resource->storyreview->edit          = 'edit';
+$lang->resource->storyreview->delete        = 'delete';
+$lang->resource->storyreview->view          = 'view';
+
+$lang->storyreview->methodOrder[5]  = 'create';
+$lang->storyreview->methodOrder[10] = 'edit';
+$lang->storyreview->methodOrder[15] = 'delete';
+$lang->storyreview->methodOrder[20] = 'storyreview';
+$lang->storyreview->methodOrder[25] = 'view';
+
+$lang->resource->story->batchStoryReview = 'batchStoryReview';

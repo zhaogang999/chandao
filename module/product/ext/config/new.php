@@ -22,3 +22,6 @@ $first_array = array_splice ($config->product->search['fields'], 0, 12);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
 
 $config->product->search['params']['specialPlan']  = array('operator' => '=', 'control' => 'input',  'values' => '', 'class' => 'date');
+
+$config->product->search['fields']['reviewed']      = $lang->story->reviewed;
+$config->product->search['params']['reviewed']            = array('operator' => '=',       'control' => 'select', 'values' => $lang->story->storyReviewedList);

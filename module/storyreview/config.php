@@ -1,7 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 月下亭中人
- * Date: 2017/12/5
- * Time: 16:04
- */
+$config->storyreview = new stdclass();
+
+$config->storyreview->editor   = new stdclass();
+
+$config->storyreview->editor->create   = array('id' => 'comment', 'tools' => 'simpleTools');
+$config->storyreview->editor->edit     = array('id' => 'comment', 'tools' => 'simpleTools');

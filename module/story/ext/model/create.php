@@ -8,6 +8,8 @@
 /**
  * Create a story.
  *
+ * @param $projectID int
+ * @param $bugID int
  * @access public
  * @return int|bool the id of the created story or false when error.
  */
@@ -19,6 +21,7 @@ public function create($projectID = 0, $bugID = 0)
         ->cleanFloat('estimate')
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
+        ->setDefault('reviewed', '0')        //创建需求时评审状态设置为未评审
         ->setDefault('specialPlan', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)

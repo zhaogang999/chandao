@@ -184,7 +184,6 @@
                 {
                     foreach($story->planTitle as $planID => $planTitle)
                     {
-                        //$planTitle少字母p
                         if(!common::printLink('productplan', 'view', "planID=$planID", $planTitle)) echo $planTitle;
                         echo '<br />';
                     }
@@ -251,6 +250,26 @@
                 <th><?php echo $lang->story->specialPlan;?></th>
                 <td><?php echo $story->specialPlan;?></td>
               </tr>
+            <!--2912 需求评审单的开发-->
+            <tr>
+                <th><?php echo $lang->story->reviewed;?></th>
+                <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
+            </tr>
+            <tr>
+                <th><?php echo $lang->story->storyReviewID;?></th>
+                <td>
+                <?php
+                if(isset($story->storyReview))
+                {
+                    foreach($story->storyReview as $storyReviewID => $storyReviewTitle)
+                    {
+                        if(!common::printLink('storyreview', 'view', "storyReviewID=$storyReviewID&from=project", $storyReviewTitle)) echo $storyReviewTitle;
+                        echo '<br />';
+                    }
+                }
+                ?>
+                </td>
+            </tr>
             </table>
           </div>
           <div class='tab-pane' id='legendLifeTime'>

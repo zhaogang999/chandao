@@ -29,7 +29,8 @@ js::set('productID' , $bug->product);
   <table class='table table-form'>
     <tr>
       <th class='w-80px'><?php echo $lang->bug->resolution;?></th>
-      <td class='w-p35-f'><?php echo html::select('resolution', $lang->bug->resolutionList, '', 'class=form-control onchange=setDuplicate(this.value)');?></td>
+      <!--调整表单宽度；解决版本名显示不全的问题-->
+      <td class='w-500px'><?php echo html::select('resolution', $lang->bug->resolutionList, '', 'class=form-control onchange=setDuplicate(this.value)');?></td>
       <td></td>
     </tr>
     <tr id='duplicateBugBox' class='hide'>

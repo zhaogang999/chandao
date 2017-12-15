@@ -22,34 +22,26 @@
     </div>
   </div>
   <form class='form-condensed' method='post' target='hiddenwin' id='dataform' enctype='multipart/form-data'>
-    <table class='table table-form'> 
+    <table class='table table-form'>
+      <?php if ($from == 'project'):?>
       <tr>
         <th class='w-110px'><?php echo $lang->patchbuild->product;?></th>
-        <?php if($products):?>
         <td>
           <div class='input-group'>
             <?php echo html::select('product', $products, $product->id, "onchange='loadBranches(this.value);' class='form-control chosen'");?>
-            <?php
-            /*if($product->type != 'normal')
-            {
-                if($product->branch) $branches = array($product->branch => $branches[$product->branch]);
-                echo "<span class='input-group-addon fix-padding fix-border'></span>" . html::select('branch', $branches, $product->branch, "class='form-control' style='width:100px; display:inline-block;'");
-            }*/
-            ?>
           </div>
         </td>
         <td></td>
-        <?php else:?>
-        <td colspan='2'><?php if(empty($products)) printf($lang->build->noProduct, $this->createLink('project', 'manageproducts', "projectID=$projectID"));?></td>
-        <?php endif;?>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->project;?></th>
         <td><?php echo html::select('project', $projects, $build->project, 'class="form-control chosen"');?></td>
       </tr>
+      <?php endif;?>
       <tr>
-        <th><?php echo $lang->patchbuild->workSeason;?></th>
+        <th  class='w-110px'><?php echo $lang->patchbuild->workSeason;?></th>
         <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, $build->workSeason, 'class="form-control chosen"');?></td>
+        <td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->patchType;?></th>

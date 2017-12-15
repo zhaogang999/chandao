@@ -10,6 +10,7 @@ $config->db->password    = 'root';
 $config->db->prefix      = 'zt_';
 $config->webRoot         = getWebRoot();
 $config->default->lang   = 'zh-cn';
+$config->timeout       = 60000;
 
 if(!defined('TABLE_REVIEW')) define('TABLE_REVIEW', '`' . $config->db->prefix . 'review`');
 if(!defined('TABLE_REVIEWDETAIL')) define('TABLE_REVIEWDETAIL', '`' . $config->db->prefix . 'reviewDetail`');
@@ -19,7 +20,7 @@ if(!defined('TABLE_PATCHBUILD')) define('TABLE_PATCHBUILD', '`' . $config->db->p
 if(!defined('TABLE_BURNUP')) define('TABLE_BURNUP', '`' . $config->db->prefix . 'burnup`');
 if(!defined('TABLE_BUGREPORT')) define('TABLE_BUGREPORT', '`' . $config->db->prefix . 'bugreport`');
 if(!defined('TABLE_SCRIPT')) define('TABLE_SCRIPT', '`' . $config->db->prefix . 'script`');
-    if(!defined('TABLE_STORYREVIEW')) define('TABLE_STORYREVIEW', '`' . $config->db->prefix . 'storyreview`');
-$config->timeout       = 60000;
+if(!defined('TABLE_STORYREVIEW')) define('TABLE_STORYREVIEW', '`' . $config->db->prefix . 'storyreview`');
 
 $config->objectTables['patchbuild']       = TABLE_PATCHBUILD;
+$config->objectTables['storyreview']      = TABLE_STORYREVIEW;

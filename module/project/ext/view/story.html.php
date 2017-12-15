@@ -70,13 +70,14 @@
           <?php endif;?>
           <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
+          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewed',      $orderBy, $vars, $lang->story->reviewed);?></th>
           <!--2085 项目需求中增加需求所属计划的显示-->
           <th class='w-140px {sorter:false}'>          <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
-          <th class='w-user {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
+          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
           <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
-          <th class='w-hour {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
-          <th class='w-hour {sorter:false}'>   <?php common::printOrderLink('status',     $orderBy, $vars, $lang->statusAB);?></th>
-          <th class='w-70px {sorter:false}'> <?php common::printOrderLink('stage',      $orderBy, $vars, $lang->story->stageAB);?></th>
+          <th class='w-40px {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
+          <th class='w-45px {sorter:false}'>   <?php common::printOrderLink('status',     $orderBy, $vars, $lang->statusAB);?></th>
+          <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',      $orderBy, $vars, $lang->story->stageAB);?></th>
           <th title='<?php echo $lang->story->taskCount?>' class='w-30px'><?php echo $lang->story->taskCountAB;?></th>
           <th title='<?php echo $lang->story->bugCount?>' class='w-30px'><?php echo $lang->story->bugCountAB;?></th>
           <th title='<?php echo $lang->story->caseCount?>' class='w-30px'><?php echo $lang->story->caseCountAB;?></th>
@@ -91,8 +92,8 @@
         //判断是否有需求批量转项目的权限
         $canBatchChangeProject = common::hasPriv('project', 'batchChangeProject');
         //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
-        $canBatchChangePlan = common::hasPriv('story', 'batchChangePlan')
-        
+        $canBatchChangePlan = common::hasPriv('story', 'batchChangePlan');
+        $batchStoryReview   = common::hasPriv('story', 'batchStoryReview');
         ?>
         <?php foreach($stories as $key => $story):?>
         <?php
@@ -114,9 +115,9 @@
             <?php if(isset($branchGroups[$story->product][$story->branch])) echo "<span class='label label-info label-badge'>" . $branchGroups[$story->product][$story->branch] . '</span>';?>
             <?php echo html::a($storyLink,$story->title, null, "style='color: $story->color'");?>
           </td>
+          <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
           <!--2085 项目需求中增加需求所属计划的显示-->
           <td title="<?php echo $story->planTitle;?>"><?php
-            //var_dump($story->specialPlan !== '0000-00-00');die;
             echo ($story->planTitle == ' ' && $story->specialPlan != '0000-00-00')?$story->specialPlan:$story->planTitle;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
 
@@ -247,6 +248,25 @@
                 echo '</div></li>';
               }
 
+              if($batchStoryReview)
+              {
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->reviewed, '', "id='reviewedItem'");
+                echo "<ul class='dropdown-menu'>";
+                unset($lang->story->storyReviewedList['']);
+                //unset($lang->story->reviewResultList['revert']);
+                //var_dump($lang->story->storyReviewedList);die;
+                foreach($lang->story->storyReviewedList as $key => $result)
+                {
+                  $actionLink = $this->createLink('story', 'batchStoryReview', "result=$key");
+                  echo '<li>' . html::a('#', $result, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . '</li>';
+                }
+                echo '</ul></li>';
+              }
+              else
+              {
+                echo '<li>' . html::a('javascript:;', $lang->story->reviewed,  '', $class) . '</li>';
+              }
 
                 echo '</ul></div>';
                 $storyInfo = $summary;

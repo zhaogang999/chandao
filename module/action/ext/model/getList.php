@@ -13,7 +13,7 @@ public function getList($objectType, $objectID)
     $actions   = $this->dao->select('*')->from(TABLE_ACTION)
         ->beginIF($objectType == 'project')
         //1951 补丁版本增加详情页面，并增加历史记录信息
-        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild')")
+        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild', 'storyreview')")
         ->andWhere('project')->eq($objectID)
         ->fi()
         ->beginIF($objectType != 'project')
@@ -29,6 +29,7 @@ public function getList($objectType, $objectID)
         $this->app->loadLang('build');
         //1951 补丁版本增加详情页面，并增加历史记录信息
         $this->app->loadLang('patchbuild');
+        $this->app->loadLang('storyreview');
 
         $this->app->loadLang('testtask');
         $actions = $this->processProjectActions($actions);

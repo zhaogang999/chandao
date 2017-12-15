@@ -100,3 +100,22 @@ function setOwners(result)
         $('.scriptTask').hide();
     }
 }
+
+function copyStoryTitle()
+{
+    var storyTitle = $('#story option:selected').text();
+    startPosition = storyTitle.indexOf(':') + 1;
+    endPosition   = storyTitle.lastIndexOf('(');
+    storyTitle = storyTitle.substr(startPosition, endPosition - startPosition);
+
+    $('#name').attr('value', storyTitle);
+    $('#estimate').val($('#storyEstimate').val());
+    $('#desc').val($('#storyDesc').val());
+
+    $('.pri-text span:first').removeClass().addClass('pri' + $('#storyPri').val()).text($('#storyPri').val());
+    $('select#pri').val($('#storyPri').val());
+
+    //创建任务点击同需求；任务描述不复制需求描述
+    /*$(window.editor.desc.edit.doc).find('span.kindeditor-ph').remove();
+    window.editor.desc.html($('#storyDesc').val());*/
+}

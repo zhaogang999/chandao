@@ -19,7 +19,7 @@ public function getList($objectType, $objectID)
     $actions   = $this->dao->select('*')->from(TABLE_ACTION)
         ->beginIF($objectType == 'project')
         //1951 补丁版本增加详情页面，并增加历史记录信息
-        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild')")
+        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild', 'storyreview')")
         ->andWhere('project')->eq($objectID)
         ->fi()
         ->beginIF($objectType != 'project')
@@ -35,6 +35,7 @@ public function getList($objectType, $objectID)
         $this->app->loadLang('build');
         //1951 补丁版本增加详情页面，并增加历史记录信息
         $this->app->loadLang('patchbuild');
+        $this->app->loadLang('storyreview');
 
         $this->app->loadLang('testtask');
         $actions = $this->processProjectActions($actions);
@@ -191,7 +192,7 @@ public function getProductAndProject($objectType, $objectID)
 
     /* Only process these object types. */
     //增加patchbuild模块
-    if(strpos('story, productplan, release, task, build. bug, case, testtask, doc, patchbuild', $objectType) !== false)
+    if(strpos('story, productplan, release, task, build. bug, case, testtask, doc, patchbuild, storyreview', $objectType) !== false)
     {
         if(!isset($this->config->objectTables[$objectType])) return $emptyRecord;
 
