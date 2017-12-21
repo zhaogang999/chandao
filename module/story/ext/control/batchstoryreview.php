@@ -17,7 +17,6 @@ class myStory extends story
     public function batchStoryReview($result)
     {
         $story = new stdClass();
-
         $storyIDList = $this->post->storyIDList ? $this->post->storyIDList : die(js::locate($this->session->storyList, 'parent'));
         $storyIDList = implode(',', array_keys(array_unique($storyIDList)));
         $story->reviewed = $result;

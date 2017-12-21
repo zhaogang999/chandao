@@ -16,6 +16,7 @@ $lang->storyreview->storyreview = '需求评审';
 $lang->storyreview->basicInfo   = '基本信息';
 $lang->storyreview->product     = '所属产品';
 $lang->storyreview->project     = '所属项目';
+$lang->storyreview->id          = '评审单号';
 
 $lang->storyreview->title           = '评审内容';
 $lang->storyreview->reviewStories   = '评审需求';

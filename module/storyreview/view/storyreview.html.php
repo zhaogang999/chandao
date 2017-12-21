@@ -20,7 +20,7 @@
     <?php common::printIcon('storyreview', 'create', "project=$object->id", "", "button", "plus");?>
   </div>
   <?php endif;?>
-  <!--<div id='querybox' class='show'></div>-->
+  <div id='querybox' class='show'></div>
 </div>
 
 <table class='table tablesorter table-fixed' id='storyReviewList'>
@@ -122,7 +122,7 @@
 <script language="JavaScript">
   $(function()
   {
-    setTimeout(function(){fixedTheadOfList('#storyreviewForm')}, 100);
+    setTimeout(function(){fixedTheadOfList('#storyReviewList')}, 100);
   })
 </script>
 <?php include '../../common/view/footer.html.php';?>

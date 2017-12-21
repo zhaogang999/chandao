@@ -23,10 +23,15 @@ $config->story->custom->batchCreateFields = 'module,spec,pri,estimate,review';
 //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
 $config->story->datatable->fieldList['customPlan']['title']    = 'customPlan';
 $config->story->datatable->fieldList['customPlan']['fixed']    = 'no';
-$config->story->datatable->fieldList['customPlan']['width']    = '100';
+$config->story->datatable->fieldList['customPlan']['width']    = '120';
 $config->story->datatable->fieldList['customPlan']['required'] = 'no';
 
-$config->story->datatable->fieldList['specialPlan']['title']    = 'specialPlan';
-$config->story->datatable->fieldList['specialPlan']['fixed']    = 'no';
-$config->story->datatable->fieldList['specialPlan']['width']    = '100';
-$config->story->datatable->fieldList['specialPlan']['required'] = 'no';
+$config->story->datatable->fieldList['testDate']['title']    = 'testDate';
+$config->story->datatable->fieldList['testDate']['fixed']    = 'no';
+$config->story->datatable->fieldList['testDate']['width']    = '70';
+$config->story->datatable->fieldList['testDate']['required'] = 'no';
+
+$config->story->datatable->fieldList['releasedDate']['title']    = 'releasedDate';
+$config->story->datatable->fieldList['releasedDate']['fixed']    = 'no';
+$config->story->datatable->fieldList['releasedDate']['width']    = '90';
+$config->story->datatable->fieldList['releasedDate']['required'] = 'no';

@@ -14,11 +14,11 @@ $config->task->datatable->fieldList['keywords']['width']    = '40';
 $config->task->datatable->fieldList['keywords']['required'] = 'no';
 
 //在任务列表页面增加任务关联需求的所属计划字段;title:高级表标题；fixed：left|right|no 是否固定在左右两侧；sort：yes|no 是否排序；width：数字 该字段所占宽度；required：yes|no 是否为必选项
-$config->task->datatable->fieldList['plan']['title']    = 'plan';
-$config->task->datatable->fieldList['plan']['fixed']    = 'no';
-$config->task->datatable->fieldList['plan']['sort']    = 'no';
-$config->task->datatable->fieldList['plan']['width']    = '140';
-$config->task->datatable->fieldList['plan']['required'] = 'no';
+$config->task->datatable->fieldList['testDate']['title']    = 'testDate';
+$config->task->datatable->fieldList['testDate']['fixed']    = 'no';
+$config->task->datatable->fieldList['testDate']['sort']    = 'no';
+$config->task->datatable->fieldList['testDate']['width']    = '80';
+$config->task->datatable->fieldList['testDate']['required'] = 'no';
 
 //$config->task->editor->create   = array('id' => 'desc,notice', 'tools' => 'simpleTools');
 $config->task->editor->edit     = array('id' => 'desc,comment,notice', 'tools' => 'simpleTools');

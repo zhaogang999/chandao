@@ -42,12 +42,11 @@
       <?php endif;?>
       <tr>
         <th><?php echo $lang->storyreview->storySource;?></th>
-        <td width="350"><?php echo html::input('storySource', $storyReview->storySource, "class='form-control' autocomplete='off'");?></td>
-        <td colspan="2">
-          <div class="input-group">
-            <span class='input-group-addon'><?php echo $lang->storyreview->solvedProblem;?></span>
-            <?php echo html::input('solvedProblem', $storyReview->solvedProblem, "class='form-control' autocomplete='off'");?>
-        </td>
+        <td colspan="3"><?php echo html::input('storySource', $storyReview->storySource, "class='form-control' autocomplete='off'");?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->storyreview->solvedProblem;?></th>
+        <td colspan="3"><?php echo html::textarea('solvedProblem', $storyReview->solvedProblem, "rows='3' class='form-control'");?></td>
       </tr>
       <tr>
         <th><?php echo $lang->storyreview->storyReviewers;?></th>
@@ -102,14 +101,16 @@
         <td colspan="3"><?php echo html::textarea('problemTracking', $storyReview->problemTracking, "rows='5' class='form-control' placeholder='{$lang->storyreview->problemTrackingAB}'");?></td>
       </tr>
       <tr>
+        <th><?php echo $lang->storyreview->risk;?></th>
+        <td colspan="3"><?php echo html::textarea('risk', $storyReview->risk, "rows='3' class='form-control'");?></td>
+      </tr>
+      <tr>
         <th><?php echo $lang->storyreview->deliverables;?></th>
         <td><?php echo html::input('deliverables', $storyReview->deliverables, "class='form-control' autocomplete='off' placeholder={$lang->storyreview->deliverablesAB}");?></td>
         <td colspan="2">
           <div class="input-group">
             <span class='input-group-addon'><?php echo $lang->storyreview->needTest;?></span>
             <?php echo html::select('needTest', $lang->storyreview->needTestList, $storyReview->needTest, 'class="form-control"');?>
-            <span class='input-group-addon fix-border br-0'><?php echo $lang->storyreview->risk;?></span>
-            <?php echo html::input('risk', $storyReview->risk, "class='form-control' autocomplete='off'");?>
           </div>
         </td>
       </tr>

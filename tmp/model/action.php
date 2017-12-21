@@ -192,7 +192,7 @@ public function getProductAndProject($objectType, $objectID)
 
     /* Only process these object types. */
     //增加patchbuild模块
-    if(strpos('story, productplan, release, task, build. bug, case, testtask, doc, patchbuild, storyreview', $objectType) !== false)
+    if(strpos('story, productplan, release, task, build. bug, case, testtask, doc, patchbuild', $objectType) !== false)
     {
         if(!isset($this->config->objectTables[$objectType])) return $emptyRecord;
 

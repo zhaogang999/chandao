@@ -61,11 +61,13 @@
         <?php echo html::select('customPlan', $plans, '', "class='form-control chosen' data-placeholder='{$this->lang->story->build}'");?>
           </div>
         </td>
-        <!--2603 需求增加字段“特殊发版期望”-->
+        <!--2911 优化需求提测计划、发版计划等内容-->
         <td>
           <div class='input-group'>
-            <span class='input-group-addon'><?php echo $lang->story->specialPlan;?></span>
-            <?php echo html::input('specialPlan', '', "class='form-control form-date' placeholder='{$lang->story->specialPlanAB}'");?>
+            <span class='input-group-addon'><?php echo $lang->story->testDate?></span>
+            <?php echo html::input('testDate', '', "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?>
+            <span class='input-group-addon fix-border'><?php echo $lang->story->releasedDate;?></span>
+            <?php echo html::input('releasedDate', '', "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?>
           </div>
         </td>
       </tr>
@@ -203,7 +205,7 @@
 <script language='Javascript'>
   function loadProduct(productID)
   {
-    loadProductBranches(productID)
+    loadProductBranches(productID);
     loadProductModules(productID);
     loadProductPlans(productID);
   }
@@ -212,6 +214,7 @@
   {
     var branchName = $('#branch').find("option:selected").text();
     branchName =  branchName.replace(/\s+/g,"");
+    //脚本任务增加默认文本
     if(branchName == '脚本')
     {
       $(document.getElementsByTagName("iframe")[0].contentWindow.document.body).html("<p>[执行前提]</p><p>[脚本输入]</p><p>[测试验证]</p><p>[脚本输出]</p><p>[使用频率]</p><p>[性能需求]</p><p>[发版计划]</p><p>[遗留问题或风险]</p><p>[脚本具体业务原则]</p>");

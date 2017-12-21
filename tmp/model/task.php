@@ -1392,8 +1392,8 @@ public function finish($taskID)
 public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modules = 0, $orderBy = 'status_asc, id_desc', $pager = null)
 {
     if(is_string($type)) $type = strtolower($type);
-    //在任务列表页面增加任务关联需求的所属计划字段
-    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t4.title AS plan, t3.realname AS assignedToRealName')
+    //2911 优化需求提测计划、发版计划等内容
+    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t2.testDate, t3.realname AS assignedToRealName')
         ->from(TABLE_TASK)->alias('t1')
         ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
         ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
@@ -1418,7 +1418,8 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
     $taskList = array_keys($tasks);
     if(!empty($taskList))
     {
-        $children = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t4.title AS plan, t3.realname AS assignedToRealName')
+        //2911 优化需求提测计划、发版计划等内容
+        $children = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t2.testDate, t3.realname AS assignedToRealName')
             ->from(TABLE_TASK)->alias('t1')
             ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
             ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
@@ -1447,8 +1448,8 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
  */
 public function getTasksByModule($projectID = 0, $moduleIdList = 0, $orderBy = 'id_desc', $pager = null)
 {
-    //增加plan
-    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t4.title AS plan, t3.realname AS assignedToRealName')
+    //2911 优化需求提测计划、发版计划等内容
+    $tasks = $this->dao->select('t1.*, t2.id AS storyID, t2.title AS storyTitle, t2.product, t2.branch, t2.version AS latestStoryVersion, t2.status AS storyStatus, t2.testDate, t3.realname AS assignedToRealName')
         ->from(TABLE_TASK)->alias('t1')
         ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
         ->leftJoin(TABLE_USER)->alias('t3')->on('t1.assignedTo = t3.account')
@@ -1559,8 +1560,8 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 echo $task->keywords;
                 break;
             //在任务列表页面增加任务关联需求的所属字段
-            case 'plan':
-                echo $task->plan;
+            case 'testDate':
+                echo $task->testDate;
                 break;
 
             case 'status':

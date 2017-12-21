@@ -49,3 +49,4 @@ $lang->storyreview->methodOrder[20] = 'storyreview';
 $lang->storyreview->methodOrder[25] = 'view';
 
 $lang->resource->story->batchStoryReview = 'batchStoryReview';
+$lang->resource->story->batchEditDate    = 'batchEditDate';

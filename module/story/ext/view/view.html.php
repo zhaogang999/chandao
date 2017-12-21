@@ -177,21 +177,6 @@
                 <td title='<?php echo $moduleTitle?>'><?php echo $printModule?></td>
               </tr>
               <tr>
-                <th><?php echo $lang->story->plan;?></th>
-                <td>
-                <?php
-                if(isset($story->planTitle))
-                {
-                    foreach($story->planTitle as $planID => $planTitle)
-                    {
-                        if(!common::printLink('productplan', 'view', "planID=$planID", $planTitle)) echo $planTitle;
-                        echo '<br />';
-                    }
-                }
-                ?>
-                </td>
-              </tr>
-              <tr>
                 <th><?php echo $lang->story->source;?></th>
                   <td id='source'><?php echo $lang->story->sourceList[$story->source];?></td>
               </tr>
@@ -245,11 +230,30 @@
                 <th><?php echo $lang->story->customPlan;?></th>
                 <td><?php echo $customPlan;?></td>
               </tr>
-                <!--2603 需求增加字段“特殊发版期望”-->
+                <tr>
+                    <th><?php echo $lang->story->plan;?></th>
+                    <td>
+                        <?php
+                        if(isset($story->planTitle))
+                        {
+                            foreach($story->planTitle as $planID => $planTitle)
+                            {
+                                if(!common::printLink('productplan', 'view', "planID=$planID", $planTitle)) echo $planTitle;
+                                echo '<br />';
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <!--2911 优化需求提测计划、发版计划等内容-->
               <tr>
-                <th><?php echo $lang->story->specialPlan;?></th>
-                <td><?php echo $story->specialPlan;?></td>
+                <th><?php echo $lang->story->testDate;?></th>
+                <td><?php echo $story->testDate;?></td>
               </tr>
+                <tr>
+                    <th><?php echo $lang->story->releasedDate;?></th>
+                    <td><?php echo $story->releasedDate;?></td>
+                </tr>
             <!--2912 需求评审单的开发-->
             <tr>
                 <th><?php echo $lang->story->reviewed;?></th>
@@ -259,13 +263,10 @@
                 <th><?php echo $lang->story->storyReviewID;?></th>
                 <td>
                 <?php
-                if(isset($story->storyReview))
+                if($story->storyReviewID != 0)
                 {
-                    foreach($story->storyReview as $storyReviewID => $storyReviewTitle)
-                    {
-                        if(!common::printLink('storyreview', 'view', "storyReviewID=$storyReviewID&from=project", $storyReviewTitle)) echo $storyReviewTitle;
-                        echo '<br />';
-                    }
+                    $value = $story->storyReviewID;
+                        common::printLink('storyreview', 'view', "storyReviewID=$story->storyReviewID&from=project", $story->storyReviewID);
                 }
                 ?>
                 </td>

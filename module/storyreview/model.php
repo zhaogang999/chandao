@@ -9,6 +9,20 @@
 class storyreviewModel extends model
 {
     /**
+     * Build a search form
+     *
+     * @param $actionURL  string
+     * @param int $queryID
+     * @access public
+     * @return void
+     */
+    public function buildStoryReviewSearchForm($actionURL, $queryID)
+    {
+        $this->config->storyreview->search['queryID']   = $queryID;
+        $this->config->storyreview->search['actionURL'] = $actionURL;
+        $this->loadModel('search')->setSearchParams($this->config->storyreview->search);
+    }
+    /**
      * Create a storyreview
      *
      * @param  int    $projectID
@@ -20,6 +34,12 @@ class storyreviewModel extends model
         $productID = $this->dao->select('product')->from(TABLE_PROJECTPRODUCT)
             ->where('project')->eq($projectID)
             ->fetch('product');
+
+        $_POST['solvedProblem'] = str_replace("\r\n","<br />",trim($_POST['solvedProblem']));
+        $_POST['risk'] = str_replace("\r\n","<br />",$_POST['risk']);
+        $_POST['result'] = str_replace("\r\n","<br />",$_POST['result']);
+        $_POST['influence'] = str_replace("\r\n","<br />",$_POST['influence']);
+        $_POST['problemTracking'] = str_replace("\r\n","<br />",$_POST['problemTracking']);
 
         $storyReview = fixer::input('post')
             ->setDefault('reviewDate', helper::today())
@@ -35,7 +55,7 @@ class storyreviewModel extends model
             ->join('teamDev', ',')
             ->add('product', (int)$productID)
             ->add('project', (int)$projectID)
-            ->stripTags($this->config->storyreview->editor->create['id'], $this->config->allowedTags)
+            ->stripTags($this->config->storyreview->editor->create['id'] . ',solvedProblem,risk,result,influence,problemTracking', $this->config->allowedTags)
             ->remove('uid')
             ->get();
 
@@ -120,8 +140,15 @@ class storyreviewModel extends model
     public function update($storyReviewID)
     {
         $oldStoryReview = $this->getStoryReviewById($storyReviewID);
+
+        $_POST['solvedProblem'] = str_replace("\r\n","<br />",trim($_POST['solvedProblem']));
+        $_POST['risk'] = str_replace("\r\n","<br />",$_POST['risk']);
+        $_POST['result'] = str_replace("\r\n","<br />",$_POST['result']);
+        $_POST['influence'] = str_replace("\r\n","<br />",$_POST['influence']);
+        $_POST['problemTracking'] = str_replace("\r\n","<br />",$_POST['problemTracking']);
+
         $storyReview = fixer::input('post')
-            ->stripTags($this->config->storyreview->editor->edit['id'], $this->config->allowedTags)
+            ->stripTags($this->config->storyreview->editor->edit['id'] . ',solvedProblem,risk,result,influence,problemTracking', $this->config->allowedTags)
             ->join('mailto', ',')
             ->join('reviewStories', ',')
             ->join('storyReviewers', ',')
@@ -311,9 +338,16 @@ class storyreviewModel extends model
      * @param $project
      * @return array
      */
-    public function getStoryPairs($project)
+    public function getStoryPairs($project, $linkStoryIDs)
     {
-        $stories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
+        $linkStories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
+            ->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
+            ->where('t1.project')->eq((int)$project)
+            ->andWhere('id')->in(trim($linkStoryIDs, ','))
+            ->orderBy('t1.`order` desc')
+            ->fetchAll();
+        $unLinkStories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
             ->from(TABLE_PROJECTSTORY)->alias('t1')
             ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
             ->where('t1.project')->eq((int)$project)
@@ -322,6 +356,8 @@ class storyreviewModel extends model
             ->andWhere('t2.deleted')->eq(0)
             ->orderBy('t1.`order` desc')
             ->fetchAll();
+        $stories = $linkStories +$unLinkStories;
+        
         return $this->loadModel('story')->formatStories($stories, 'full');
     }
 }

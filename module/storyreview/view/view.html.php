@@ -151,10 +151,6 @@ tfoot tr td .table-actions .btn{display:none;}
             <td style='word-break:break-all;'><?php echo $lang->storyreview->needTestList[$storyReview->needTest];?></td>
           </tr>
           <tr>
-            <th><?php echo $lang->storyreview->risk;?></th>
-            <td style='word-break:break-all;'><?php echo $storyReview->risk;?></td>
-          </tr>
-          <tr>
             <th><?php echo $lang->storyreview->testDate;?></th>
             <td style='word-break:break-all;'><?php echo $storyReview->testDate;?></td>
           </tr>

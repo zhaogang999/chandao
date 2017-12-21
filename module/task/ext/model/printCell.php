@@ -62,8 +62,8 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 echo $task->keywords;
                 break;
             //在任务列表页面增加任务关联需求的所属字段
-            case 'plan':
-                echo $task->plan;
+            case 'testDate':
+                echo $task->testDate;
                 break;
 
             case 'status':

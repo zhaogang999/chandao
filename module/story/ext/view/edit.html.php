@@ -98,23 +98,6 @@
             </td>
           </tr>
           <tr>
-            <th><?php echo $lang->story->plan;?></th>
-            <td>
-              <div class='input-group' id='planIdBox'>
-              <?php $multiple = ($this->session->currentProductType != 'normal' and empty($story->branch)) ? true : false;?>
-              <?php echo html::select($multiple ? 'plan[]' : 'plan', $plans, $story->plan, "class='form-control chosen'" . ($multiple ? ' multiple' : ''));
-              if(count($plans) == 1) 
-              {
-                  echo "<span class='input-group-addon'>";
-                  echo html::a($this->createLink('productplan', 'create', "productID=$story->product&branch=$story->branch"), $lang->productplan->create, '_blank');
-                  echo html::a("javascript:loadProductPlans($story->product)", $lang->refresh);
-                  echo '</span>';
-              }
-              ?>
-              </div>
-            </td>
-          </tr>
-          <tr>
             <th><?php echo $lang->story->source;?></th>
             <td><?php echo html::select('source', $lang->story->sourceList, $story->source, 'class=form-control');?></td>
           </tr>
@@ -154,12 +137,32 @@
             <th><?php echo $lang->story->customPlan;?></th>
             <td><?php echo html::select('customPlan', $plans, $story->customPlan, "class='form-control chosen' data-placeholder='{$this->lang->story->build}'");?></td>
           </tr>
-          <!--2603 需求增加字段“特殊发版期望”-->
           <tr>
-            <th><?php echo $lang->story->specialPlan;?></th>
-            <td><?php echo html::input('specialPlan', $story->specialPlan, "class='form-control form-date' placeholder='{$lang->story->specialPlanAB}'");?></td>
+            <th><?php echo $lang->story->plan;?></th>
+            <td>
+              <div class='input-group' id='planIdBox'>
+                <?php $multiple = ($this->session->currentProductType != 'normal' and empty($story->branch)) ? true : false;?>
+                <?php echo html::select($multiple ? 'plan[]' : 'plan', $plans, $story->plan, "class='form-control chosen'" . ($multiple ? ' multiple' : ''));
+                if(count($plans) == 1)
+                {
+                  echo "<span class='input-group-addon'>";
+                  echo html::a($this->createLink('productplan', 'create', "productID=$story->product&branch=$story->branch"), $lang->productplan->create, '_blank');
+                  echo html::a("javascript:loadProductPlans($story->product)", $lang->refresh);
+                  echo '</span>';
+                }
+                ?>
+              </div>
+            </td>
           </tr>
-
+          <!--2911 优化需求提测计划、发版计划等内容-->
+          <tr>
+            <th><?php echo $lang->story->testDate;?></th>
+            <td><?php echo html::input('testDate', $story->testDate, "class='form-control form-date' placeholder='{$lang->story->testDateAB}'");?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->story->releasedDate;?></th>
+            <td><?php echo html::input('releasedDate', $story->releasedDate, "class='form-control form-date' placeholder='{$lang->story->releasedDateAB}'");?></td>
+          </tr>
         </table>
       </fieldset>
       <fieldset>

@@ -8,13 +8,13 @@
 class patchbuildModel extends model
 {
     /**
-     * Build a search form
-     * 
-     * @param $actionURL  string
-     * @param int $queryID
-     * @access public
-     * @return void
-     */
+ * Build a search form
+ *
+ * @param $actionURL  string
+ * @param int $queryID
+ * @access public
+ * @return void
+ */
     public function buildPatchBuildSearchForm($actionURL, $queryID)
     {
         $this->config->patchbuild->search['queryID']   = $queryID;

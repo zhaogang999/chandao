@@ -13,6 +13,7 @@
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/tablesorter.html.php';?>
 <?php include '../../../common/view/sortable.html.php';?>
+<?php include '../../../common/view/datepicker.html.php';?>
 <?php js::set('moduleID', ($type == 'byModule' ? $param : 0));?>
 <?php js::set('productID', ($type == 'byProduct' ? $param : 0));?>
 <?php js::set('confirmUnlinkStory', $lang->project->confirmUnlinkStory)?>
@@ -66,13 +67,16 @@
         <?php $vars = "projectID={$project->id}&orderBy=%s&type=$type&param=$param&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}"; ?>
           <th class='w-id  {sorter:false}'>    <?php common::printOrderLink('id',         $orderBy, $vars, $lang->idAB);?></th>
           <?php if($canOrder):?>
-          <th class='w-50px {sorter:false}'> <?php common::printOrderLink('order',      $orderBy, $vars, $lang->project->updateOrder);?></th>
+          <th class='w-40px {sorter:false}'> <?php common::printOrderLink('order',      $orderBy, $vars, $lang->project->updateOrder);?></th>
           <?php endif;?>
           <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
           <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewed',      $orderBy, $vars, $lang->story->reviewed);?></th>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <th class='w-140px {sorter:false}'>          <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
+          <th class='w-140px {sorter:false}'>  <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
+          <!--2911 优化需求提测计划、发版计划等内容-->
+          <th class='w-70px {sorter:false}'>  <?php common::printOrderLink('testDate',      $orderBy, $vars, $lang->story->testDate);?></th>
+          <th class='w-90px {sorter:false}'>  <?php common::printOrderLink('releasedDate',      $orderBy, $vars, $lang->story->releasedDate);?></th>
           <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
           <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
           <th class='w-40px {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
@@ -94,6 +98,8 @@
         //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
         $canBatchChangePlan = common::hasPriv('story', 'batchChangePlan');
         $batchStoryReview   = common::hasPriv('story', 'batchStoryReview');
+        /*2911 优化需求提测计划、发版计划等内容*/
+        $batchEditDate      = common::hasPriv('story', 'batchEditDate');
         ?>
         <?php foreach($stories as $key => $story):?>
         <?php
@@ -118,7 +124,10 @@
           <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
           <!--2085 项目需求中增加需求所属计划的显示-->
           <td title="<?php echo $story->planTitle;?>"><?php
-            echo ($story->planTitle == ' ' && $story->specialPlan != '0000-00-00')?$story->specialPlan:$story->planTitle;?></td>
+            echo ($story->planTitle == ' ' && $story->releasedDate != '0000-00-00')?$story->releasedDate:$story->planTitle;?></td>
+          <!--2911 优化需求提测计划、发版计划等内容-->
+          <td><?php echo $story->testDate;?></td>
+          <td><?php echo $story->releasedDate;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
 
           <!--需求可以指派多个人-->
@@ -197,6 +206,17 @@
                 }
                 echo "<button id='moreAction' type='button' class='btn dropdown-toggle' data-toggle='dropdown'><span class='caret'></span></button>";
                 echo "<ul class='dropdown-menu' id='moreActionMenu'>";
+              //2911 优化需求提测计划、发版计划等内容
+              if($batchEditDate)
+              {
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->testDate, '', "class ='change-date'");
+                echo '</li>';
+
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->releasedDate, '', "class ='change-date'");
+                echo '</li>';
+              }
 
               //9012 项目需求中增加需求所属计划的显示;可以批量关联计划
               if($canBatchChangePlan)

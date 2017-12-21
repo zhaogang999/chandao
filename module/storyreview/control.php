@@ -78,7 +78,7 @@ class storyreview extends control
             $actionURL    = $this->createLink('storyreview', 'storyreview', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
         }
 
-        //$this->storyreview->buildStoryReviewSearchForm($actionURL, $queryID);
+        $this->storyreview->buildStoryReviewSearchForm($actionURL, $queryID);
 
         $this->view->users      = $this->loadModel('user')->getPairs('noletter');
         $this->view->from       = $from;
@@ -182,19 +182,14 @@ class storyreview extends control
         }
 
         $storyReview = $this->storyreview->getStoryReviewById((int)$storyReviewID);
+
+        $storyReview->solvedProblem   = str_replace("<br />","\n",trim($storyReview->solvedProblem));
+        $storyReview->risk            = str_replace("<br />","\n",$storyReview->risk);
+        $storyReview->result          = str_replace("<br />","\n",$storyReview->result);
+        $storyReview->influence       = str_replace("<br />","\n",$storyReview->influence);
+        $storyReview->problemTracking = str_replace("<br />","\n",$storyReview->problemTracking);
+
         $orderBy     = 'status_asc, stage_asc, id_desc';
-
-        /* Assign. */
-
-        /*$productGroups = $this->project->getProducts($storyReview->project);
-
-        $products      = array();
-        foreach($productGroups as $product) $products[$product->id] = $product->name;
-        if(empty($productGroups) and $storyReview->product)
-        {
-            $product = $this->loadModel('product')->getById($storyReview->product);
-            $products[$product->id] = $product->name;
-        }*/
 
         if ($from == 'project')
         {
@@ -213,7 +208,7 @@ class storyreview extends control
 
             $this->view->position[] = html::a($this->createLink('storyreview', 'storyreview', "objectID=$storyReview->project&from=project"), $project->name);
 
-            $this->view->stories    = $this->storyreview->getStoryPairs($objectID);
+            $this->view->stories    = $this->storyreview->getStoryPairs($objectID, $storyReview->reviewStories);
 
             $noclosedProjects = $this->project->getPairs('noclosed,nocode');
             unset($noclosedProjects[$storyReview->project]);

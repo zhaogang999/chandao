@@ -22,7 +22,8 @@ public function create($projectID = 0, $bugID = 0)
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
         ->setDefault('reviewed', '0')        //创建需求时评审状态设置为未评审
-        ->setDefault('specialPlan', '0000-00-00')
+        ->setDefault('releasedDate', '0000-00-00')   //2911 优化需求提测计划、发版计划等内容 2行
+        ->setDefault('testDate', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)
         ->add('assignedDate', 0)
