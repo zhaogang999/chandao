@@ -15,6 +15,54 @@
 <?php include '../../../common/view/form.html.php';?>
 <?php include '../../../common/view/datepicker.html.php';?>
 <script language="Javascript">
+  function loadProduct(productID)
+  {
+    loadProductBranches(productID)
+    loadProductModules(productID);
+    loadProductPlans(productID);
+  }
+
+  function loadBranch()
+  {
+    var branch = $('#branch').val();
+    if(typeof(branch) == 'undefined') branch = 0;
+    loadProductModules($('#product').val(), branch);
+    loadProductPlans($('#product').val(), branch);
+  }
+
+  function loadProductBranches(productID)
+  {
+    $('#branch').remove();
+    $.get(createLink('branch', 'ajaxGetBranches', "productID=" + productID), function(data)
+    {
+      if(data)
+      {
+        $('#product').closest('.input-group').append(data);
+        $('#branch').css('width', config.currentMethod == 'create' ? '120px' : '65px');
+      }
+    })
+  }
+
+  function loadProductModules(productID, branch)
+  {
+    if(typeof(branch) == 'undefined') branch = 0;
+    if(!branch) branch = 0;
+    moduleLink = createLink('tree', 'ajaxGetOptionMenu', 'productID=' + productID + '&viewtype=story&branch=' + branch + '&rootModuleID=0&returnType=html&fieldID=&needManage=true');
+    $('#moduleIdBox').load(moduleLink, function()
+    {
+      $('#moduleIdBox #module').chosen(defaultChosenOptions);
+      if(typeof(storyModule) == 'string') $('#moduleIdBox').prepend("<span class='input-group-addon'>" + storyModule + "</span>")
+    });
+  }
+
+  function loadProductPlans(productID, branch)
+  {
+    if(typeof(branch) == 'undefined') branch = 0;
+    if(!branch) branch = 0;
+    planLink = createLink('product', 'ajaxGetPlans', 'productID=' + productID + '&branch=' + branch + '&planID=' + $('#plan').val() + '&fieldID=&needCreate=true');
+    $('#planIdBox').load(planLink, function(){$('#planIdBox #plan').chosen(defaultChosenOptions);});
+  }
+
   $(function(){
     $(".article-content table").width('100%');
   })
@@ -142,7 +190,7 @@
             <td>
               <div class='input-group' id='planIdBox'>
                 <?php $multiple = ($this->session->currentProductType != 'normal' and empty($story->branch)) ? true : false;?>
-                <?php echo html::select($multiple ? 'plan[]' : 'plan', $plans, $story->plan, "class='form-control chosen'" . ($multiple ? ' multiple' : ''));
+                <?php echo html::select($multiple ? 'plan[]' : 'plan', $plans, $story->plan, "class='form-control chosen' data-placeholder='{$this->lang->story->planAB}'" . ($multiple ? ' multiple' : ''));
                 if(count($plans) == 1)
                 {
                   echo "<span class='input-group-addon'>";
@@ -157,11 +205,11 @@
           <!--2911 优化需求提测计划、发版计划等内容-->
           <tr>
             <th><?php echo $lang->story->testDate;?></th>
-            <td><?php echo html::input('testDate', $story->testDate, "class='form-control form-date' placeholder='{$lang->story->testDateAB}'");?></td>
+            <td><?php echo html::input('testDate', $story->testDate, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
           </tr>
           <tr>
             <th><?php echo $lang->story->releasedDate;?></th>
-            <td><?php echo html::input('releasedDate', $story->releasedDate, "class='form-control form-date' placeholder='{$lang->story->releasedDateAB}'");?></td>
+            <td><?php echo html::input('releasedDate', $story->releasedDate, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
           </tr>
         </table>
       </fieldset>

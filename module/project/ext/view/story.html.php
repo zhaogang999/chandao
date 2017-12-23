@@ -123,8 +123,7 @@
           </td>
           <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <td title="<?php echo $story->planTitle;?>"><?php
-            echo ($story->planTitle == ' ' && $story->releasedDate != '0000-00-00')?$story->releasedDate:$story->planTitle;?></td>
+          <td title="<?php echo $story->planTitle;?>"><?php echo $story->planTitle;?></td>
           <!--2911 优化需求提测计划、发版计划等内容-->
           <td><?php echo $story->testDate;?></td>
           <td><?php echo $story->releasedDate;?></td>

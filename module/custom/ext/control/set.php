@@ -6,7 +6,7 @@ include '../../control.php';
  * Date: 2017/12/21
  * Time: 16:08
  */
-class myCust extends custom
+class myCustom extends custom
 {
     /**
      * Custom
@@ -19,9 +19,9 @@ class myCust extends custom
      */
     public function set($module = 'story', $field = 'priList', $lang = 'zh_cn')
     {
-        if($module == 'patchbuild' and $field == 'priList')$field = 'workSeasonList'; //2944 补丁版中的目标环境的值域做成后台可自定义配置项
+        if($module == 'patchbuild' and $field == 'priList') $field = 'workSeasonList';//2944 补丁版中的目标环境的值域做成后台可自定义配置项
         if($module == 'user' and $field == 'priList') $field = 'roleList';
-        if($module == 'block' and $field == 'priList')$field = 'closed';
+        if($module == 'block' and $field == 'priList') $field = 'closed';
         $currentLang = $this->app->getClientLang();
 
         $this->app->loadLang($module);
