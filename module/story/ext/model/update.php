@@ -25,7 +25,7 @@ public function update($storyID)
         ->setDefault('product', $oldStory->product)
         ->setDefault('plan', $oldStory->plan)
         ->setDefault('branch', $oldStory->branch)
-        ->setIF($this->post->releasedDate == '', 'releasedDate', '0000-00-00')  //2911 优化需求提测计划、发版计划等内容 2行
+        ->setIF($this->post->specialPlan == '', 'specialPlan', '0000-00-00')  //2911 优化需求提测计划、发版计划等内容 2行
         ->setIF($this->post->testDate     == '', 'testDate', '0000-00-00')
         ->setIF($this->post->assignedTo   != $oldStory->assignedTo, 'assignedDate', $now)
         ->setIF($this->post->closedBy     != false and $oldStory->closedDate == '', 'closedDate', $now)

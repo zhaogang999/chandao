@@ -14,7 +14,7 @@ $lang->story->plan           = '研发计划';
 $lang->story->planAB         = '研发计划';
 $lang->story->build          = '外部用户提需求使用，研发部无需标记';
 $lang->story->testDate       = '提测时间';
-$lang->story->releasedDate   = '正式发版时间';
+$lang->story->specialPlan   = '正式发版时间';
 $lang->story->testDatePlanAB = '研发专用';
 
 $lang->story->reviewed          = '评审状态';

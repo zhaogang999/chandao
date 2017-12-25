@@ -21,10 +21,10 @@ $first_array = array_splice ($config->product->search['fields'], 0, 11);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
 $config->product->search['params']['testDate']  = array('operator' => '=', 'control' => 'input',  'values' => '', 'class' => 'date');
 
-$insert_array = array('releasedDate' =>$lang->story->releasedDate);
+$insert_array = array('specialPlan' =>$lang->story->specialPlan);
 $first_array = array_splice ($config->product->search['fields'], 0, 12);
 $config->product->search['fields'] = array_merge ($first_array, $insert_array, $config->product->search['fields']);
-$config->product->search['params']['releasedDate']  = array('operator' => '=', 'control' => 'input',  'values' => '', 'class' => 'date');
+$config->product->search['params']['specialPlan']  = array('operator' => '=', 'control' => 'input',  'values' => '', 'class' => 'date');
 
 $config->product->search['fields']['reviewed']      = $lang->story->reviewed;
 $config->product->search['params']['reviewed']            = array('operator' => '=',       'control' => 'select', 'values' => $lang->story->storyReviewedList);

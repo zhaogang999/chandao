@@ -190,7 +190,7 @@ public function create($projectID = 0, $bugID = 0)
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
         ->setDefault('reviewed', '0')        //创建需求时评审状态设置为未评审
-        ->setDefault('releasedDate', '0000-00-00')   //2911 优化需求提测计划、发版计划等内容 2行
+        ->setDefault('specialPlan', '0000-00-00')   //2911 优化需求提测计划、发版计划等内容 2行
         ->setDefault('testDate', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
         ->add('openedDate', $now)
@@ -500,8 +500,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'testDate':
                 echo $story->testDate;
                 break;
-            case 'releasedDate':
-                echo $story->releasedDate;
+            case 'specialPlan':
+                echo $story->specialPlan;
                 break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
@@ -981,7 +981,7 @@ public function update($storyID)
         ->setDefault('product', $oldStory->product)
         ->setDefault('plan', $oldStory->plan)
         ->setDefault('branch', $oldStory->branch)
-        ->setIF($this->post->releasedDate == '', 'releasedDate', '0000-00-00')  //2911 优化需求提测计划、发版计划等内容 2行
+        ->setIF($this->post->specialPlan == '', 'specialPlan', '0000-00-00')  //2911 优化需求提测计划、发版计划等内容 2行
         ->setIF($this->post->testDate     == '', 'testDate', '0000-00-00')
         ->setIF($this->post->assignedTo   != $oldStory->assignedTo, 'assignedDate', $now)
         ->setIF($this->post->closedBy     != false and $oldStory->closedDate == '', 'closedDate', $now)

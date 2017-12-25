@@ -208,8 +208,8 @@
             <td><?php echo html::input('testDate', $story->testDate, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
           </tr>
           <tr>
-            <th><?php echo $lang->story->releasedDate;?></th>
-            <td><?php echo html::input('releasedDate', $story->releasedDate, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
+            <th><?php echo $lang->story->specialPlan;?></th>
+            <td><?php echo html::input('specialPlan', $story->specialPlan, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
           </tr>
         </table>
       </fieldset>

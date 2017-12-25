@@ -31,7 +31,7 @@ $config->story->datatable->fieldList['testDate']['fixed']    = 'no';
 $config->story->datatable->fieldList['testDate']['width']    = '70';
 $config->story->datatable->fieldList['testDate']['required'] = 'no';
 
-$config->story->datatable->fieldList['releasedDate']['title']    = 'releasedDate';
-$config->story->datatable->fieldList['releasedDate']['fixed']    = 'no';
-$config->story->datatable->fieldList['releasedDate']['width']    = '90';
-$config->story->datatable->fieldList['releasedDate']['required'] = 'no';
+$config->story->datatable->fieldList['specialPlan']['title']    = 'specialPlan';
+$config->story->datatable->fieldList['specialPlan']['fixed']    = 'no';
+$config->story->datatable->fieldList['specialPlan']['width']    = '90';
+$config->story->datatable->fieldList['specialPlan']['required'] = 'no';

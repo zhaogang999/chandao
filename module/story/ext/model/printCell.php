@@ -84,8 +84,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'testDate':
                 echo $story->testDate;
                 break;
-            case 'releasedDate':
-                echo $story->releasedDate;
+            case 'specialPlan':
+                echo $story->specialPlan;
                 break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);

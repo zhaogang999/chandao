@@ -251,8 +251,8 @@
                 <td><?php echo $story->testDate;?></td>
               </tr>
                 <tr>
-                    <th><?php echo $lang->story->releasedDate;?></th>
-                    <td><?php echo $story->releasedDate;?></td>
+                    <th><?php echo $lang->story->specialPlan;?></th>
+                    <td><?php echo $story->specialPlan;?></td>
                 </tr>
             <!--2912 需求评审单的开发-->
             <tr>

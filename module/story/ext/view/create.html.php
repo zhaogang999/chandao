@@ -66,8 +66,8 @@
           <div class='input-group'>
             <span class='input-group-addon'><?php echo $lang->story->testDate?></span>
             <?php echo html::input('testDate', '', "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?>
-            <span class='input-group-addon fix-border'><?php echo $lang->story->releasedDate;?></span>
-            <?php echo html::input('releasedDate', '', "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?>
+            <span class='input-group-addon fix-border'><?php echo $lang->story->specialPlan;?></span>
+            <?php echo html::input('specialPlan', '', "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?>
           </div>
         </td>
       </tr>

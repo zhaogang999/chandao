@@ -73,14 +73,14 @@
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
           <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewed',      $orderBy, $vars, $lang->story->reviewed);?></th>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <th class='w-140px {sorter:false}'>  <?php common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);?></th>
+          <!--<th class='w-140px {sorter:false}'>  <?php /*common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);*/?></th>-->
           <!--2911 优化需求提测计划、发版计划等内容-->
           <th class='w-70px {sorter:false}'>  <?php common::printOrderLink('testDate',      $orderBy, $vars, $lang->story->testDate);?></th>
-          <th class='w-90px {sorter:false}'>  <?php common::printOrderLink('releasedDate',      $orderBy, $vars, $lang->story->releasedDate);?></th>
+          <th class='w-90px {sorter:false}'>  <?php common::printOrderLink('specialPlan',      $orderBy, $vars, $lang->story->specialPlan);?></th>
           <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
           <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
-          <th class='w-40px {sorter:false}'>   <?php common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);?></th>
-          <th class='w-45px {sorter:false}'>   <?php common::printOrderLink('status',     $orderBy, $vars, $lang->statusAB);?></th>
+          <!--<th class='w-40px {sorter:false}'>   <?php /*common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);*/?></th>
+          <th class='w-45px {sorter:false}'>   <?php /*common::printOrderLink('status',     $orderBy, $vars, $lang->statusAB);*/?></th>-->
           <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',      $orderBy, $vars, $lang->story->stageAB);?></th>
           <th title='<?php echo $lang->story->taskCount?>' class='w-30px'><?php echo $lang->story->taskCountAB;?></th>
           <th title='<?php echo $lang->story->bugCount?>' class='w-30px'><?php echo $lang->story->bugCountAB;?></th>
@@ -123,10 +123,10 @@
           </td>
           <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
           <!--2085 项目需求中增加需求所属计划的显示-->
-          <td title="<?php echo $story->planTitle;?>"><?php echo $story->planTitle;?></td>
+          <!--<td title="<?php /*echo $story->planTitle;*/?>"><?php /*echo $story->planTitle;*/?></td>-->
           <!--2911 优化需求提测计划、发版计划等内容-->
           <td><?php echo $story->testDate;?></td>
-          <td><?php echo $story->releasedDate;?></td>
+          <td><?php echo $story->specialPlan;?></td>
           <td><?php echo $users[$story->openedBy];?></td>
 
           <!--需求可以指派多个人-->
@@ -134,8 +134,8 @@
             <?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?>
           </td>
 
-          <td><?php echo $story->estimate;?></td>
-          <td class='story-<?php echo $story->status;?>'><?php echo zget($lang->story->statusList, $story->status);?></td>
+         <!-- <td><?php /*echo $story->estimate;*/?></td>
+          <td class='story-<?php /*echo $story->status;*/?>'><?php /*echo zget($lang->story->statusList, $story->status);*/?></td>-->
           <td><?php echo $lang->story->stageList[$story->stage];?></td>
           <td class='linkbox'>
             <?php
@@ -188,7 +188,7 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan='<?php echo $canOrder ? 14 : 13;?>'>
+          <td colspan='<?php echo $canOrder ? 13 : 13;?>'>
             <div class='table-actions clearfix'>
             <?php
             $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));
@@ -213,7 +213,7 @@
                 echo '</li>';
 
                 echo "<li class='dropdown-submenu'>";
-                echo html::a('javascript:;', $lang->story->releasedDate, '', "class ='change-date'");
+                echo html::a('javascript:;', $lang->story->specialPlan, '', "class ='change-date'");
                 echo '</li>';
               }
 

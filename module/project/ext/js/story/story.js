@@ -28,7 +28,7 @@ function gotoDate(ev) {
     var field = $(this).text();
     $(".dropup").removeClass('open');
 
-    field = field == '提测时间'?'testDate':'releasedDate';
+    field = field == '提测时间'?'testDate':'specialPlan';
     var url = createLink('story', 'batchEditDate', "field=" + field + "&value=" + changeDate);
 
     setFormAction(url,'hiddenwin');
