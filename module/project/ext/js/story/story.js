@@ -22,9 +22,7 @@ $(function()
     $('.change-date').fixedDate().datetimepicker(options).on('changeDate',gotoDate);
 });
 function gotoDate(ev) {
-    var diffTime = ev.date.getTimezoneOffset();
-    console.log(ev.date.valueOf());
-    var changeDate= + ev.date.getFullYear().toString() + "-"+ (ev.date.getMonth()+1).toString()+ "-"+ ev.date.getDate().toString();
+    var changeDate = ev.date.valueOf();
     var field = $(this).text();
     $(".dropup").removeClass('open');
 

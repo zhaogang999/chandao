@@ -188,7 +188,7 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan='<?php echo $canOrder ? 13 : 13;?>'>
+          <td colspan='<?php echo $canOrder ? 14 : 13;?>'>
             <div class='table-actions clearfix'>
             <?php
             $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));

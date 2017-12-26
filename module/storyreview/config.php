@@ -27,7 +27,10 @@ $config->storyreview->search['fields']['releasedDate']   = $lang->storyreview->r
 $config->storyreview->search['fields']['deliverables']   = $lang->storyreview->deliverables;
 $config->storyreview->search['fields']['needTest']       = $lang->storyreview->needTest;
 $config->storyreview->search['fields']['influence']      = $lang->storyreview->influence;
+$config->storyreview->search['fields']['problemTracking']= $lang->storyreview->problemTracking;
+$config->storyreview->search['fields']['risk']           = $lang->storyreview->risk;
 $config->storyreview->search['fields']['result']         = $lang->storyreview->result;
+$config->storyreview->search['fields']['comment']         = $lang->storyreview->comment;
 
 $config->storyreview->search['params']['title']           = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->storyreview->search['params']['storyReviewers']  = array('operator' => 'include', 'control' => 'select', 'values' => 'users');
@@ -45,4 +48,7 @@ $config->storyreview->search['params']['acceptanceDate']  = array('operator' => 
 $config->storyreview->search['params']['releasedDate']    = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
 $config->storyreview->search['params']['needTest']        = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->needTestList);
 $config->storyreview->search['params']['influence']       = array('operator' => 'include', 'control' => 'input',  'values' => '');
+$config->storyreview->search['params']['problemTracking'] = array('operator' => 'include', 'control' => 'input',  'values' => '');
+$config->storyreview->search['params']['risk']            = array('operator' => 'include', 'control' => 'input',  'values' => '');
+$config->storyreview->search['params']['comment']         = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->storyreview->search['params']['result']          = array('operator' => 'include', 'control' => 'input',  'values' => '');
