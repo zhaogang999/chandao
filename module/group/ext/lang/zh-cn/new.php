@@ -50,3 +50,5 @@ $lang->storyreview->methodOrder[25] = 'view';
 
 $lang->resource->story->batchStoryReview = 'batchStoryReview';
 $lang->resource->story->batchEditDate    = 'batchEditDate';
+
+$lang->resource->my->todoStory    = 'todoStory';

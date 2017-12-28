@@ -177,9 +177,12 @@ class storyreviewModel extends model
             {
                 if ($change['field'] == 'reviewStories')
                 {
-
-                    $this->unLinkStory($change['old']);
-                    $this->linkStory($change['new'], $storyReviewID);
+                    $oldStoryReviews = explode(',', trim($change['old'], ','));
+                    $storyReviews    = explode(',', trim($change['new'], ','));
+                    $unlinkStories   = array_diff($oldStoryReviews, $storyReviews);
+                    $linkStories     = array_diff($storyReviews, $oldStoryReviews);
+                    $this->unLinkStory($unlinkStories, $storyReviewID);
+                    $this->linkStory($linkStories, $storyReviewID);
                 }
             }
 
@@ -196,17 +199,19 @@ class storyreviewModel extends model
      */
     public function linkStory($stories, $storyReviewID)
     {
-        $stories = explode( ',', trim($stories, ','));
         foreach ($stories as $storyID)
         {
             $storyInfo = new stdClass();
-            $storyInfo->reviewed = 1;
-            $storyInfo->storyReviewID = $storyReviewID;
+            $storyInfo->reviewStatus = 'hasReview';
+
+            $linkStories = $this->dao->select('storyReviewID')->FROM(TABLE_STORY)->where('id')->eq($storyID)->fetch();
+            $storyInfo->storyReviewID = trim($linkStories->storyReviewID .','. $storyReviewID, ',');
 
             $this->dao->update(TABLE_STORY)->data($storyInfo)
                 ->autoCheck()
                 ->where('id')->eq($storyID)
                 ->exec();
+            if(dao::isError()) die(js::error(dao::getError()));
         }
     }
 
@@ -214,16 +219,19 @@ class storyreviewModel extends model
      * 需求评审单解除需求关联
      *
      * @param $stories
+     * @param $storyReviewID
      * @return void
      */
-    public function unLinkStory($stories)
+    public function unLinkStory($stories, $storyReviewID)
     {
-        $stories = explode( ',', trim($stories, ','));
         foreach ($stories as $storyID)
         {
             $storyInfo = new stdClass();
-            $storyInfo->reviewed = '';
-            $storyInfo->storyReviewID = 0;
+            $storyInfo->reviewStatus = 'notReview';
+            //$storyInfo->storyReviewID = 0;
+
+            $oldLinkStories = $this->dao->select('storyReviewID')->FROM(TABLE_STORY)->where('id')->eq($storyID)->fetch();
+            $storyInfo->storyReviewID = trim(str_replace(',' . $storyReviewID . ',', '',  ',' . $oldLinkStories->storyReviewID . ','), ',');
 
             $this->dao->update(TABLE_STORY)->data($storyInfo)
                 ->autoCheck()
@@ -338,25 +346,15 @@ class storyreviewModel extends model
      * @param $project
      * @return array
      */
-    public function getStoryPairs($project, $linkStoryIDs)
+    public function getStoryPairs($project)
     {
-        $linkStories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
+        $stories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
             ->from(TABLE_PROJECTSTORY)->alias('t1')
             ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
             ->where('t1.project')->eq((int)$project)
-            ->andWhere('id')->in(trim($linkStoryIDs, ','))
-            ->orderBy('t1.`order` desc')
-            ->fetchAll();
-        $unLinkStories = $this->dao->select('t2.id, t2.title, t2.pri, t2.estimate')
-            ->from(TABLE_PROJECTSTORY)->alias('t1')
-            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
-            ->where('t1.project')->eq((int)$project)
-            ->andWhere('t2.storyReviewID')->eq(0)
-            ->andWhere('t2.reviewed')->ne('1')
             ->andWhere('t2.deleted')->eq(0)
             ->orderBy('t1.`order` desc')
             ->fetchAll();
-        $stories = $linkStories +$unLinkStories;
         
         return $this->loadModel('story')->formatStories($stories, 'full');
     }

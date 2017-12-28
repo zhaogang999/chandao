@@ -256,17 +256,20 @@
                 </tr>
             <!--2912 需求评审单的开发-->
             <tr>
-                <th><?php echo $lang->story->reviewed;?></th>
-                <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
+                <th><?php echo $lang->story->reviewStatus;?></th>
+                <td><?php echo $lang->story->reviewStatusList[$story->reviewStatus];?></td>
             </tr>
             <tr>
                 <th><?php echo $lang->story->storyReviewID;?></th>
                 <td>
                 <?php
-                if($story->storyReviewID != 0)
+                if(!empty($story->storyReviewID))
                 {
-                    $value = $story->storyReviewID;
-                        common::printLink('storyreview', 'view', "storyReviewID=$story->storyReviewID&from=project", $story->storyReviewID);
+                    $story->storyReviewID = explode(',', $story->storyReviewID);
+                    foreach ($story->storyReviewID as $value)
+                    {
+                        common::printLink('storyreview', 'view', "storyReviewID=$value&from=project", $value);
+                    }
                 }
                 ?>
                 </td>

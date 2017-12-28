@@ -71,7 +71,7 @@
           <?php endif;?>
           <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
-          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewed',      $orderBy, $vars, $lang->story->reviewed);?></th>
+          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewStatus',      $orderBy, $vars, $lang->story->reviewStatus);?></th>
           <!--2085 项目需求中增加需求所属计划的显示-->
           <!--<th class='w-140px {sorter:false}'>  <?php /*common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);*/?></th>-->
           <!--2911 优化需求提测计划、发版计划等内容-->
@@ -121,7 +121,7 @@
             <?php if(isset($branchGroups[$story->product][$story->branch])) echo "<span class='label label-info label-badge'>" . $branchGroups[$story->product][$story->branch] . '</span>';?>
             <?php echo html::a($storyLink,$story->title, null, "style='color: $story->color'");?>
           </td>
-          <td><?php echo $lang->story->storyReviewedList[$story->reviewed];?></td>
+          <td><?php echo $lang->story->reviewStatusList[$story->reviewStatus];?></td>
           <!--2085 项目需求中增加需求所属计划的显示-->
           <!--<td title="<?php /*echo $story->planTitle;*/?>"><?php /*echo $story->planTitle;*/?></td>-->
           <!--2911 优化需求提测计划、发版计划等内容-->
@@ -270,12 +270,12 @@
               if($batchStoryReview)
               {
                 echo "<li class='dropdown-submenu'>";
-                echo html::a('javascript:;', $lang->story->reviewed, '', "id='reviewedItem'");
+                echo html::a('javascript:;', $lang->story->reviewStatus, '', "id='reviewStatusItem'");
                 echo "<ul class='dropdown-menu'>";
-                unset($lang->story->storyReviewedList['']);
+                unset($lang->story->reviewStatusList['']);
                 //unset($lang->story->reviewResultList['revert']);
                 //var_dump($lang->story->storyReviewedList);die;
-                foreach($lang->story->storyReviewedList as $key => $result)
+                foreach($lang->story->reviewStatusList as $key => $result)
                 {
                   $actionLink = $this->createLink('story', 'batchStoryReview', "result=$key");
                   echo '<li>' . html::a('#', $result, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . '</li>';
@@ -284,7 +284,7 @@
               }
               else
               {
-                echo '<li>' . html::a('javascript:;', $lang->story->reviewed,  '', $class) . '</li>';
+                echo '<li>' . html::a('javascript:;', $lang->story->reviewStatus,  '', $class) . '</li>';
               }
 
                 echo '</ul></div>';

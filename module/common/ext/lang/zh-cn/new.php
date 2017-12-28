@@ -34,3 +34,7 @@ $lang->testcase->menu->storyreview = array('link' => '需求评审|storyreview|s
 
 $lang->menugroup->patchbuild        = 'project';
 $lang->menugroup->storyreview       = 'project';
+
+$lang->my->menu->score          = '待办需求|my|todostory';
+$lang->todostory       = new stdclass();
+$lang->todostory->menu = $lang->my->menu;

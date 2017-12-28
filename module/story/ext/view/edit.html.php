@@ -209,7 +209,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->story->specialPlan;?></th>
-            <td><?php echo html::input('specialPlan', $story->specialPlan, "class='form-control form-date' placeholder='{$lang->story->testDatePlanAB}'");?></td>
+            <td><?php echo html::input('specialPlan', $story->specialPlan, "class='form-control form-date'");?></td>
           </tr>
         </table>
       </fieldset>

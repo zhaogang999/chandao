@@ -71,7 +71,7 @@
       <?php if ($script->storyTitle != '') echo html::a($this->createLink('story', 'view', "storyID=$script->story"), $script->storyTitle);?>
     </td>
     <td><?php echo $users[$script->openedBy];?></td>
-    <td><?php echo $script->planTitle;?></td>
+    <td><?php echo $script->specialPlan;?></td>
     <td><?php echo $lang->task->scriptTypeList[$script->scriptType]; ?></td>
     <td><?php echo $lang->task->lobList[$script->lob]; ?></td>
     <td><?php echo $lang->task->performModeList[$script->performMode]; ?></td>

@@ -107,6 +107,10 @@ tfoot tr td .table-actions .btn{display:none;}
             <td><?php echo $storyReview->storySource;?></td>
           </tr>
           <tr>
+            <th class='w-80px'><?php echo $lang->storyreview->consumed;?></th>
+            <td><?php echo $storyReview->consumed . $lang->storyreview->lblHour;?></td>
+          </tr>
+          <tr>
             <th><?php echo $lang->storyreview->storyReviewers;?></th>
             <td><?php $storyReviewers = explode(',', str_replace(' ', '', $storyReview->storyReviewers)); foreach($storyReviewers as $account) echo ' ' . zget($users, $account, $account);?></td>
           </tr>
@@ -128,7 +132,7 @@ tfoot tr td .table-actions .btn{display:none;}
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->teamDev;?></th>
-            <td><?php $teamDev = explode(',', str_replace(' ', '', $storyReview->teamDev)); foreach($teamDev as $account) echo ' ' . zget($users, $account, $account);?></td>
+            <td><?php echo $storyReview->teamDev;?></td>
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->users;?></th>

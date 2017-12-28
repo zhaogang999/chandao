@@ -18,7 +18,7 @@ class myStory extends story
     {
         $story = new stdClass();
 
-        $field = $field == 'testDate'?'testDate':'specialPlank';
+        $field = $field == 'testDate'?'testDate':'specialPlan';
         $story->lastEditedDate = helper::now();
         $story->lastEditedBy     = $this->app->user->account;
         $changeDate = $changeDate/1000-8*60*60;

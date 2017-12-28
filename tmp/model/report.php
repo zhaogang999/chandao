@@ -250,17 +250,17 @@ public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $pager 
     {
         $reportQuery = $this->session->reportQuery;
         $reportQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $reportQuery);
-        $reportQuery = str_replace(array('t1.`storyTitle`','t1.`openedBy`'), array('t3.`title`','t3.`openedBy`'),$reportQuery);
+        $reportQuery = str_replace(array('t1.`storyTitle`','t1.`openedBy`','t1.`specialPlan`'), array('t3.`title`','t3.`openedBy`','t3.`specialPlan`'),$reportQuery);
         $reportQuery = str_replace(array('t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
-        $reportQuery = str_replace(array('t1.`planTitle`'), array('t4.`title`'), $reportQuery);
+        //$reportQuery = str_replace(array('t1.`planTitle`'), array('t4.`title`'), $reportQuery);
         $reportQuery = str_replace(array('t1.`projectTitle`'), array('t5.`code`'), $reportQuery);
 
-        return $this->dao->select('t1.*, t5.`code` as projectTitle, t2.`name` as taskTitle, t2.finishedBy, t2.finishedDate, t2.story, t3.title as storyTitle, t3.plan, t3.openedBy, t4.title as planTitle')
+        return $this->dao->select('t1.*, t5.`code` as projectTitle, t2.`name` as taskTitle, t2.finishedBy, t2.finishedDate, t2.story, t3.title as storyTitle, t3.plan, t3.openedBy, t3.specialPlan')
             ->from(TABLE_SCRIPT)->alias('t1')
             ->leftJoin(TABLE_TASK)->alias('t2')->on('t1.task = t2.id')
             ->leftJoin(TABLE_PROJECT)->alias('t5')->on('t2.project = t5.id')
             ->leftJoin(TABLE_STORY)->alias('t3')->on('t2.story = t3.id')
-            ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
+            //->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
             ->where('t1.deleted')->eq(0)
             ->andWhere($reportQuery)
             ->orderBy($orderBy)
@@ -269,12 +269,12 @@ public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $pager 
     }
     else
     {
-        return $this->dao->select('t1.*, t5.`code` as projectTitle, t2.`name` as taskTitle, t2.finishedBy, t2.finishedDate, t2.story, t3.title as storyTitle, t3.plan, t3.openedBy, t4.title as planTitle')
+        return $this->dao->select('t1.*, t5.`code` as projectTitle, t2.`name` as taskTitle, t2.finishedBy, t2.finishedDate, t2.story, t3.title as storyTitle, t3.plan, t3.openedBy, t3.specialPlan')
             ->from(TABLE_SCRIPT)->alias('t1')
             ->leftJoin(TABLE_TASK)->alias('t2')->on('t1.task = t2.id')
             ->leftJoin(TABLE_PROJECT)->alias('t5')->on('t2.project = t5.id')
             ->leftJoin(TABLE_STORY)->alias('t3')->on('t2.story = t3.id')
-            ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
+            //->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
             ->where('t1.deleted')->eq(0)
             ->orderBy($orderBy)
             ->page($pager)

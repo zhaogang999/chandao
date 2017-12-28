@@ -42,7 +42,13 @@
       <?php endif;?>
       <tr>
         <th><?php echo $lang->storyreview->storySource;?></th>
-        <td colspan="3"><?php echo html::input('storySource', $storyReview->storySource, "class='form-control' autocomplete='off'");?></td>
+        <td colspan="2"><?php echo html::input('storySource', $storyReview->storySource, "class='form-control' autocomplete='off'");?></td>
+        <td width="330">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->storyreview->consumed;?></span>
+            <?php echo html::input('consumed', $storyReview->consumed, "class='form-control' autocomplete='off' placeholder={$lang->storyreview->consumedAB}");?>
+          </div>
+        </td>
       </tr>
       <tr>
         <th><?php echo $lang->storyreview->solvedProblem;?></th>
@@ -72,7 +78,7 @@
             <span class='input-group-addon'><?php echo $lang->storyreview->reviewDate;?></span>
             <?php echo html::input('reviewDate', $storyReview->reviewDate, "class='form-control form-date'; style='width:250px';");?>
             <span class='input-group-addon fix-border br-0'><?php echo $lang->storyreview->teamDev;?></span>
-            <?php echo html::select('teamDev[]', $users, str_replace(' ' , '', $storyReview->teamDev), 'multiple class="form-control chosen"');?>
+            <?php echo html::input('teamDev', $storyReview->teamDev, "class='form-control' autocomplete='off' style='width:270px';");?>
           </div>
         </td>
       </tr>

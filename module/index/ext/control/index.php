@@ -17,7 +17,7 @@ class myIndex extends index
 
         if (isset($nowLoginDefaultPage))
         {
-            $data = explode('-', trim(trim($nowLoginDefaultPage), '/.html'));
+            $data = explode('-', rtrim(trim($nowLoginDefaultPage, '/'), '.html'));
 
             if ($data['0']== 'doc' && $data['1']=='view')
             {
@@ -27,6 +27,13 @@ class myIndex extends index
                 if (common::hasPriv('doc', 'view') && $this->doc->checkPriv($lib))
                 {
                     die(js::locate($this->createLink('doc', 'view', array($data[2]))));
+                }
+            }
+            if ($data['0']== 'my' && $data['1']=='todostory')
+            {
+                if (common::hasPriv('my', 'todostory'))
+                {
+                    die(js::locate($this->createLink('my', 'todostory')));
                 }
             }
         }

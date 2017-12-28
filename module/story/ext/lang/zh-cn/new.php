@@ -14,13 +14,13 @@ $lang->story->plan           = '研发计划';
 $lang->story->planAB         = '研发计划';
 $lang->story->build          = '外部用户提需求使用，研发部无需标记';
 $lang->story->testDate       = '提测时间';
-$lang->story->specialPlan   = '正式发版时间';
+$lang->story->specialPlan    = '正式发版时间';
 $lang->story->testDatePlanAB = '研发专用';
 
-$lang->story->reviewed          = '评审状态';
+$lang->story->reviewStatus      = '评审状态';
 $lang->story->storyReviewID     = '评审单号';
 
-$lang->story->storyReviewedList['']  = '';
-$lang->story->storyReviewedList['0'] = '未评审';
-$lang->story->storyReviewedList['1'] = '已评审';
-$lang->story->storyReviewedList['2'] = '免评审';
+$lang->story->reviewStatusList['']  = '';
+$lang->story->reviewStatusList['notReview']  = '未评审';
+$lang->story->reviewStatusList['hasReview']  = '已评审';
+$lang->story->reviewStatusList['freeReview'] = '免评审';
