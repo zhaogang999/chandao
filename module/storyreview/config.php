@@ -25,6 +25,7 @@ $config->storyreview->search['fields']['testDate']       = $lang->storyreview->t
 $config->storyreview->search['fields']['acceptanceDate'] = $lang->storyreview->acceptanceDate;
 $config->storyreview->search['fields']['releasedDate']   = $lang->storyreview->releasedDate;
 $config->storyreview->search['fields']['deliverables']   = $lang->storyreview->deliverables;
+$config->storyreview->search['fields']['leftProblem']    = $lang->storyreview->leftProblem;
 $config->storyreview->search['fields']['needTest']       = $lang->storyreview->needTest;
 $config->storyreview->search['fields']['influence']      = $lang->storyreview->influence;
 $config->storyreview->search['fields']['problemTracking']= $lang->storyreview->problemTracking;
@@ -46,6 +47,7 @@ $config->storyreview->search['params']['frequency']       = array('operator' => 
 $config->storyreview->search['params']['testDate']        = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
 $config->storyreview->search['params']['acceptanceDate']  = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
 $config->storyreview->search['params']['releasedDate']    = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
+$config->storyreview->search['params']['leftProblem']        = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->leftProblemList);
 $config->storyreview->search['params']['needTest']        = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->needTestList);
 $config->storyreview->search['params']['influence']       = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->storyreview->search['params']['problemTracking'] = array('operator' => 'include', 'control' => 'input',  'values' => '');

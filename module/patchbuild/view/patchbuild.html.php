@@ -54,7 +54,7 @@
   <?php foreach($patchBuilds as $build):?>
   <tr class='text-center'>
     <td><?php echo $build->id;?></td>
-    <td><?php echo $lang->patchbuild->workSeasonList[$build->workSeason]; ?></td>
+    <td><?php echo $build->workSeason != 0 ? $lang->patchbuild->workSeasonList[$build->workSeason] : ''; ?></td>
     <td><?php echo $lang->patchbuild->patchTypeList[$build->patchType]; ?></td>
     <td><?php echo $lang->patchbuild->platformList[$build->platform]; ?></td>
     <td class='text-left' title='<?php echo $build->version?>'><?php echo html::a($this->createLink('patchbuild', 'view', "build=$build->id&from=$from"), $build->version);?></td>

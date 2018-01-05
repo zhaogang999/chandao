@@ -8,6 +8,39 @@ class extstoryModel extends storyModel
 /**
  * Created by PhpStorm.
  * User: 月下亭中人
+ * Date: 2018/1/3
+ * Time: 17:17
+ */
+/**
+ * Batch change the status of ifLinkStories.
+ *
+ * @param  $storyIDList
+ * @param  string    $status
+ * @access public
+ * @return array
+ */
+public function batchChangeIfLinkStories($storyIDList, $status)
+{
+    //var_dump($storyIDList);die;
+    $now         = helper::now();
+    $allChanges  = array();
+    $oldStories  = $this->getByList($storyIDList);
+    foreach($storyIDList as $storyID)
+    {
+        $oldStory = $oldStories[$storyID];
+
+        $story = new stdclass();
+        $story->lastEditedBy   = $this->app->user->account;
+        $story->lastEditedDate = $now;
+        $story->ifLinkStories  = $status;
+        
+        $this->dao->update(TABLE_STORY)->data($story)->autoCheck()->where('id')->eq((int)$storyID)->exec();
+        if(!dao::isError()) $allChanges[$storyID] = common::createChanges($oldStory, $story);
+    }
+    return $allChanges;
+}/**
+ * Created by PhpStorm.
+ * User: 月下亭中人
  * Date: 2017/11/7
  * Time: 11:24
  */
@@ -189,7 +222,7 @@ public function create($projectID = 0, $bugID = 0)
         ->cleanFloat('estimate')
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
-        ->setDefault('reviewed', '0')        //创建需求时评审状态设置为未评审
+        ->setDefault('reviewStatus', 'notReview')        //创建需求时评审状态设置为未评审
         ->setDefault('specialPlan', '0000-00-00')   //2911 优化需求提测计划、发版计划等内容 2行
         ->setDefault('testDate', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
@@ -203,9 +236,21 @@ public function create($projectID = 0, $bugID = 0)
         ->setIF($projectID > 0, 'stage', 'projected')
         ->setIF($bugID > 0, 'fromBug', $bugID)
         ->join('mailto', ',')
+        ->join('story', ',')
         ->stripTags($this->config->story->editor->create['id'], $this->config->allowedTags)
-        ->remove('files,labels,needNotReview,newStory,uid')
+        ->remove('customProduct,files,labels,needNotReview,newStory,uid')
         ->get();
+
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”38,40
+    if (isset($story->story))
+    {
+        $story->linkStories = $story->story;
+        unset($story->story);
+        if (!empty($story->linkStories))
+        {
+            $story->ifLinkStories = 'exist';
+        }
+    }
 
     /* Check repeat story. */
     $result = $this->loadModel('common')->removeDuplicate('story', $story, "product={$story->product}");
@@ -228,6 +273,21 @@ public function create($projectID = 0, $bugID = 0)
         $data->spec    = $story->spec;
         $data->verify  = $story->verify;
         $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
+
+        if (isset($story->linkStories))
+        {
+            $linkStories = explode(',', trim($story->linkStories, ','));
+
+            foreach ($linkStories as $id)
+            {
+                $linkStories = $this->dao->select('linkStories')->FROM(TABLE_STORY)->where('id')->eq(trim($id, ','))->fetch();
+
+                $linkStoriesAB = $linkStories->linkStories .','. $storyID;
+                //var_dump($linkStoriesAB);die;
+                $this->dao->update(TABLE_STORY)->set('ifLinkStories')->eq('exist')->set('linkStories')->eq(trim($linkStoriesAB, ','))->where('id')->eq(trim($id, ','))->exec();
+                if(dao::isError()) die(js::error(dao::getError()));
+            }
+        }
 
         if($projectID != 0 and $story->status != 'draft')
         {
@@ -316,13 +376,12 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
     $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
         ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
         ->where('t1.deleted')->eq(0)
-        ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->notin('released,verified,tested,testing')->andWhere('testDate')->ne('0000-00-00')->fi()
-        ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released')->andWhere('specialPlan')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
         ->fi()
         ->orderBy($orderBy)
         ->page($pager)
         ->fetchAll();
-    //var_dump($limitDate);die;
 
     //$this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story');
     $productIdList = array();
@@ -331,7 +390,8 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
     {
         $productIdList[$story->product] = $story->product;
         $story->projectID = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($story->id)->fetch('project');
-        $story->delay = $this->processStory($story);
+        $this->processStory($story);
+
     }
 
     return $this->mergePlanTitle($productIdList, $stories);
@@ -354,7 +414,19 @@ public function processStory($story)
         if($story->testDate != '0000-00-00')
         {
             $delay = helper::diffDate($story->testDate, $today);
-            if($delay < 3) $story->testWaring = $delay;
+
+            if ($delay == 1)
+            {
+                $story->testWarning = 'green';
+            }
+            elseif($delay == 0)
+            {
+                $story->testWarning = 'blue';
+            }
+            elseif($delay < 0)
+            {
+                $story->testWarning = 'red';
+            }
         }
     }
     if($story->stage != 'released')
@@ -362,9 +434,24 @@ public function processStory($story)
         if($story->specialPlan != '0000-00-00')
         {
             $delay = helper::diffDate($story->specialPlan, $today);
-            if($delay < 3) $story->releaseWaring = $delay;
+
+            if ($delay == 1)
+            {
+                $story->releaseWarning = 'green';
+            }
+            elseif($delay == 0)
+            {
+                $story->releaseWarning = 'blue';
+            }
+            elseif($delay < 0)
+            {
+                $story->releaseWarning = 'red';
+            }
         }
     }
+
+    $builds = $this->dao->select('id')->from(TABLE_BUILD)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
+    $story->build = array_keys($builds);
 
     return $story;
 }/**
@@ -418,8 +505,8 @@ public function linkStories($storyID, $type = 'linkStories')
     $story        = $this->getById($storyID);
     $stories2Link = $this->post->stories;
     $stories = implode(',', $stories2Link) . ',' . trim($story->$type, ',');
-
-    $this->dao->update(TABLE_STORY)->set($type)->eq(trim($stories, ','))->where('id')->eq($storyID)->exec();
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+    $this->dao->update(TABLE_STORY)->set($type)->eq(trim($stories, ','))->set('ifLinkStories')->eq('exist')->where('id')->eq($storyID)->exec();
     if(dao::isError()) die(js::error(dao::getError()));
 
     $action = ($type == 'linkStories') ? 'linkRelatedStory' : 'subdivideStory';
@@ -432,7 +519,7 @@ public function linkStories($storyID, $type = 'linkStories')
             $linkStories = $this->dao->select('linkStories')->FROM(TABLE_STORY)->where('id')->eq(trim($val, ','))->fetch();
             $linkStoriesAB = $linkStories->linkStories .','. $storyID;
 
-            $this->dao->update(TABLE_STORY)->set($type)->eq(trim($linkStoriesAB, ','))->where('id')->eq(trim($val, ','))->exec();
+            $this->dao->update(TABLE_STORY)->set($type)->eq(trim($linkStoriesAB, ','))->set('ifLinkStories')->eq('exist')->where('id')->eq(trim($val, ','))->exec();
             if(dao::isError()) die(js::error(dao::getError()));
 
             $action = ($type == 'linkStories') ? 'linkRelatedStory' : 'subdivideStory';
@@ -570,6 +657,10 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 break;
             case 'specialPlan':
                 echo $story->specialPlan;
+                break;
+            //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+            case 'ifLinkStories':
+                echo $this->lang->story->ifLinkStoriesList[$story->ifLinkStories];
                 break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);

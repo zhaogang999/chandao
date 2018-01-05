@@ -43,7 +43,7 @@ class patchbuildModel extends model
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->create['id'], $this->post->uid);
         $this->dao->insert(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()
-            ->batchCheck($this->config->patchbuild->createPatchBuild->requiredFields, 'notempty')
+            ->batchCheck($this->config->patchbuild->createpatchbuild->requiredFields, 'notempty')
             //->check("product = {$build->product} AND deleted = '0'")
             ->exec();
         if(!dao::isError())

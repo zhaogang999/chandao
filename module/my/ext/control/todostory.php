@@ -14,7 +14,7 @@ class myMy extends my
      * @access public
      * @return void
      */
-    public function todoStory($type = 'toTestStory', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function todoStory($type = 'toTestStory', $orderBy='testDate', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         /* Save session. */
         if($this->app->viewType != 'json') $this->session->set('todoStoryList', $this->app->getURI(true));
@@ -25,14 +25,6 @@ class myMy extends my
         $pager = pager::init($recTotal, $recPerPage, $pageID);
 
         /* Append id for secend sort. */
-        if ($type == 'toTestStory')
-        {
-            $orderBy = 'testDate';
-        }
-        elseif ($type == 'toReleaseStory')
-        {
-            $orderBy = 'specialPlan';
-        }
         $sort = $this->loadModel('common')->appendOrder($orderBy);
 
         $stories = $this->loadModel('story')->getStoriesByField($type, $sort, $pager);

@@ -91,6 +91,10 @@
         <td colspan="3"><?php echo html::textarea('influence', '', "rows='6' class='form-control' placeholder='{$lang->storyreview->influenceAB}'");?></td>
       </tr>
       <tr>
+        <th width="80"><?php echo $lang->storyreview->leftProblem;?></th>
+        <td colspan="3"><?php echo html::select('leftProblem', $lang->storyreview->leftProblemList, '', "class='form-control'");?></td>
+      </tr>
+      <tr>
         <th><?php echo $lang->storyreview->problemTracking;?></th>
         <td colspan="3"><?php echo html::textarea('problemTracking', '', "rows='5' class='form-control' placeholder='{$lang->storyreview->problemTrackingAB}'");?></td>
       </tr>

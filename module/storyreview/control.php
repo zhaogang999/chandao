@@ -282,7 +282,7 @@ class storyreview extends control
             $this->view->position[]    = $this->lang->storyreview->view;
             $this->view->from = 'qa';
             $this->view->objectID = $storyReview->product;
-            $this->view->title         = "STORYREVIEW #$storyReview->id $storyReview->version - " . $product->name;
+            $this->view->title         = "STORYREVIEW #$storyReview->id $storyReview->title - " . $product->name;
         }
 
         if(!empty($storyReview->reviewStories)) $storyReview->reviewStories = $this->dao->select('id,title')->from(TABLE_STORY)->where('id')->in($storyReview->reviewStories)->fetchPairs();

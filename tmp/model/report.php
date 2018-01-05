@@ -780,7 +780,7 @@ public function taskSummary($data)
     $projectInfo = $this->dao->select("id,name,code")->from(TABLE_PROJECT)->where('id')->in($projects)->fetchAll();
 
     $echartData['testTaskStatusCount'] = $this->taskStatusCount("'test'", $projects);
-    $echartData['develTaskStatusCount'] = $this->taskStatusCount("'fos', 'devel', 'sdk', 'web', 'ios', 'android'", $projects);
+    $echartData['develTaskStatusCount'] = $this->taskStatusCount("'fos', 'devel', 'sdk', 'web', 'ios', 'android', 'script'", $projects);
     $echartData['storyTaskStatusCount'] = $this->taskStatusCount("'ra'", $projects);
 
     //对数据进行处理

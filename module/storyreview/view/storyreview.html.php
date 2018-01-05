@@ -13,14 +13,14 @@
 <?php js::set('confirmDelete', $lang->storyreview->confirmDelete)?>
 <div id='titlebar'>
   <div class='heading'>
-    <?php echo html::icon($lang->icons['storyreview']);?> <?php echo $lang->storyreview->storyreview;?>
+    <?php echo html::icon($lang->icons['storyReview']);?> <?php echo $lang->storyreview->storyreview;?>
   </div>
   <?php if ($from == 'project'):?>
   <div class='actions'>
     <?php common::printIcon('storyreview', 'create', "project=$object->id", "", "button", "plus");?>
   </div>
   <?php endif;?>
-  <div id='querybox' class='show'></div>
+  <!--<div id='querybox' class='show'></div>-->
 </div>
 
 <table class='table tablesorter table-fixed' id='storyReviewList'>
@@ -38,6 +38,7 @@
       <th class='w-100px'><?php common::printOrderLink('devReviewers', $orderBy, $vars, $lang->storyreview->devReviewers);?></th>
       <th class='w-100px'><?php common::printOrderLink('testReviewers', $orderBy, $vars, $lang->storyreview->testReviewers);?></th>
       <th class='w-date'><?php common::printOrderLink('reviewDate', $orderBy, $vars, $lang->storyreview->reviewDate);?></th>
+      <th class='w-100px'><?php common::printOrderLink('leftProblem', $orderBy, $vars, $lang->storyreview->leftProblem);?></th>
       <th class='w-id'><?php common::printOrderLink('needTest', $orderBy, $vars, $lang->storyreview->needTest);?></th>
       <th class='w-date'><?php common::printOrderLink('testDate', $orderBy, $vars, $lang->storyreview->testDate);?></th>
       <th class='w-date'><?php common::printOrderLink('acceptanceDate', $orderBy, $vars, $lang->storyreview->acceptanceDate);?></th>
@@ -96,6 +97,7 @@
       ?>
     </td>
     <td><?php echo $storyReview->reviewDate; ?></td>
+    <td><?php echo $lang->storyreview->leftProblemList[$storyReview->leftProblem]; ?></td>
     <td><?php echo $lang->storyreview->needTestList[$storyReview->needTest]; ?></td>
     <td><?php echo $storyReview->testDate; ?></td>
     <td><?php echo $storyReview->acceptanceDate; ?></td>
@@ -117,7 +119,7 @@
   </tr>
   <?php endforeach;?>
   </tbody>
-  <tfoot><tr><td colspan='13'><?php $pager->show();?></td></tr></tfoot>
+  <tfoot><tr><td colspan='14'><?php $pager->show();?></td></tr></tfoot>
 </table>
 <script language="JavaScript">
   $(function()

@@ -1,6 +1,7 @@
 <?php
-$lang->my->todoStory      = '待办需求';
+$lang->my->todoStory     = '进度预警';
+$lang->my->build         = '关联版本';
 
 $lang->my->todoStoryMenu = new stdclass();
-$lang->my->todoStoryMenu->toTestStory    = '待提测需求';
-$lang->my->todoStoryMenu->toReleaseStory = '待正式发版需求';
+$lang->my->todoStoryMenu->toTestStory    = '待提测';
+$lang->my->todoStoryMenu->toReleaseStory = '待发布';

@@ -16,13 +16,12 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
     $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
         ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
         ->where('t1.deleted')->eq(0)
-        ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->notin('released,verified,tested,testing')->andWhere('testDate')->ne('0000-00-00')->fi()
-        ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released')->andWhere('specialPlan')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
         ->fi()
         ->orderBy($orderBy)
         ->page($pager)
         ->fetchAll();
-    //var_dump($limitDate);die;
 
     //$this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story');
     $productIdList = array();
@@ -31,7 +30,8 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
     {
         $productIdList[$story->product] = $story->product;
         $story->projectID = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($story->id)->fetch('project');
-        $story->delay = $this->processStory($story);
+        $this->processStory($story);
+
     }
 
     return $this->mergePlanTitle($productIdList, $stories);
@@ -54,7 +54,19 @@ public function processStory($story)
         if($story->testDate != '0000-00-00')
         {
             $delay = helper::diffDate($story->testDate, $today);
-            if($delay < 3) $story->testWaring = $delay;
+
+            if ($delay == 1)
+            {
+                $story->testWarning = 'green';
+            }
+            elseif($delay == 0)
+            {
+                $story->testWarning = 'blue';
+            }
+            elseif($delay < 0)
+            {
+                $story->testWarning = 'red';
+            }
         }
     }
     if($story->stage != 'released')
@@ -62,9 +74,24 @@ public function processStory($story)
         if($story->specialPlan != '0000-00-00')
         {
             $delay = helper::diffDate($story->specialPlan, $today);
-            if($delay < 3) $story->releaseWaring = $delay;
+
+            if ($delay == 1)
+            {
+                $story->releaseWarning = 'green';
+            }
+            elseif($delay == 0)
+            {
+                $story->releaseWarning = 'blue';
+            }
+            elseif($delay < 0)
+            {
+                $story->releaseWarning = 'red';
+            }
         }
     }
+
+    $builds = $this->dao->select('id')->from(TABLE_BUILD)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
+    $story->build = array_keys($builds);
 
     return $story;
 }

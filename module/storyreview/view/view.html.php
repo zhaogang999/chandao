@@ -151,20 +151,24 @@ tfoot tr td .table-actions .btn{display:none;}
             <td><?php $mailto = explode(',', str_replace(' ', '', $storyReview->mailto)); foreach($mailto as $account) echo ' ' . zget($users, $account, $account);?></td>
           </tr>
           <tr>
+            <th><?php echo $lang->storyreview->leftProblem;?></th>
+            <td><?php echo $lang->storyreview->leftProblemList[$storyReview->leftProblem];?></td>
+          </tr>
+          <tr>
             <th><?php echo $lang->storyreview->needTest;?></th>
-            <td style='word-break:break-all;'><?php echo $lang->storyreview->needTestList[$storyReview->needTest];?></td>
+            <td><?php echo $lang->storyreview->needTestList[$storyReview->needTest];?></td>
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->testDate;?></th>
-            <td style='word-break:break-all;'><?php echo $storyReview->testDate;?></td>
+            <td><?php echo $storyReview->testDate;?></td>
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->acceptanceDate;?></th>
-            <td style='word-break:break-all;'><?php echo $storyReview->acceptanceDate;?></td>
+            <td><?php echo $storyReview->acceptanceDate;?></td>
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->releasedDate;?></th>
-            <td style='word-break:break-all;'><?php echo $storyReview->releasedDate;?></td>
+            <td><?php echo $storyReview->releasedDate;?></td>
           </tr>
         </table>
       </fieldset>
@@ -172,10 +176,13 @@ tfoot tr td .table-actions .btn{display:none;}
         <fieldset>
           <legend><?php echo $lang->storyreview->reviewStories;?></legend>
             <ul class='list-unstyled'>
-              <?php 
-              foreach ($storyReview->reviewStories as $id =>$reviewStory)
+              <?php
+              if (!empty($storyReview->reviewStories))
               {
-                echo '<li>' . html::a($this->createLink('story', 'view', "storyID=$id"), "#$id " . $reviewStory) . '</li>';
+                foreach ($storyReview->reviewStories as $id =>$reviewStory)
+                {
+                  echo '<li>' . html::a($this->createLink('story', 'view', "storyID=$id"), "#$id " . $reviewStory) . '</li>';
+                }
               }
               ?>
             </ul>

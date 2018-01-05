@@ -21,7 +21,7 @@ public function create($projectID = 0, $bugID = 0)
         ->cleanFloat('estimate')
         ->callFunc('title', 'trim')
         ->setDefault('plan,verify', '')
-        ->setDefault('reviewed', '0')        //创建需求时评审状态设置为未评审
+        ->setDefault('reviewStatus', 'notReview')        //创建需求时评审状态设置为未评审
         ->setDefault('specialPlan', '0000-00-00')   //2911 优化需求提测计划、发版计划等内容 2行
         ->setDefault('testDate', '0000-00-00')
         ->add('openedBy', $this->app->user->account)
@@ -35,9 +35,21 @@ public function create($projectID = 0, $bugID = 0)
         ->setIF($projectID > 0, 'stage', 'projected')
         ->setIF($bugID > 0, 'fromBug', $bugID)
         ->join('mailto', ',')
+        ->join('story', ',')
         ->stripTags($this->config->story->editor->create['id'], $this->config->allowedTags)
-        ->remove('files,labels,needNotReview,newStory,uid')
+        ->remove('customProduct,files,labels,needNotReview,newStory,uid')
         ->get();
+
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”38,40
+    if (isset($story->story))
+    {
+        $story->linkStories = $story->story;
+        unset($story->story);
+        if (!empty($story->linkStories))
+        {
+            $story->ifLinkStories = 'exist';
+        }
+    }
 
     /* Check repeat story. */
     $result = $this->loadModel('common')->removeDuplicate('story', $story, "product={$story->product}");
@@ -60,6 +72,21 @@ public function create($projectID = 0, $bugID = 0)
         $data->spec    = $story->spec;
         $data->verify  = $story->verify;
         $this->dao->insert(TABLE_STORYSPEC)->data($data)->exec();
+
+        if (isset($story->linkStories))
+        {
+            $linkStories = explode(',', trim($story->linkStories, ','));
+
+            foreach ($linkStories as $id)
+            {
+                $linkStories = $this->dao->select('linkStories')->FROM(TABLE_STORY)->where('id')->eq(trim($id, ','))->fetch();
+
+                $linkStoriesAB = $linkStories->linkStories .','. $storyID;
+                //var_dump($linkStoriesAB);die;
+                $this->dao->update(TABLE_STORY)->set('ifLinkStories')->eq('exist')->set('linkStories')->eq(trim($linkStoriesAB, ','))->where('id')->eq(trim($id, ','))->exec();
+                if(dao::isError()) die(js::error(dao::getError()));
+            }
+        }
 
         if($projectID != 0 and $story->status != 'draft')
         {

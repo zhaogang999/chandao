@@ -108,7 +108,15 @@
     <div class='main'>
       <fieldset>
         <legend><?php echo $lang->story->legendSpec;?></legend>
-        <div class='article-content'><?php echo $story->spec;?></div>
+        <div class='article-content'>
+        <?php
+        //3304 提需求时，需求描述中增加两个隐性提示
+            $story->specAB = str_replace('<p>[需求背景]','<p class="commentTitle">[需求背景]</p><p>', $story->spec);
+            $story->specAB = str_replace('<p>[功能描述]','<p class="commentTitle">[功能描述]</p><p>', $story->specAB);
+            $story->specAB = str_replace('<p></p>', '', $story->specAB);
+            echo strip_tags($story->specAB) == $story->specAB ? nl2br($story->specAB) : $story->specAB;
+        ?>
+        </div>
       </fieldset>
       <fieldset>
         <legend><?php echo $lang->story->legendVerify;?></legend>
@@ -273,6 +281,10 @@
                 }
                 ?>
                 </td>
+            </tr>
+            <tr>
+                <th><?php echo $lang->story->ifLinkStories;?></th>
+                <td><?php echo $lang->story->ifLinkStoriesList[$story->ifLinkStories];?></td>
             </tr>
             </table>
           </div>

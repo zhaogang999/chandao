@@ -151,7 +151,8 @@
       </tr>  
       <tr>
         <th><?php echo $lang->story->spec;?></th>
-        <td colspan='2'><?php echo html::textarea('spec', $spec, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
+        <!--3304 提需求时，需求描述中增加两个隐性提示-->
+        <td colspan='2'><?php echo html::textarea('spec', $lang->story->specComment, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
       </tr>  
       <?php if(strpos(",$showFields,", ',verify,') !== false):?>
       <tr>
@@ -192,7 +193,22 @@
       <tr>
         <th><?php echo $lang->story->legendAttatch;?></th>
         <td colspan='2'><?php echo $this->fetch('file', 'buildform');?></td>
-      </tr>  
+      </tr>
+      <!--3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”-->
+      <?php if (common::hasPriv('story', 'magicAuth')):?>
+      <tr>
+        <th><?php echo $lang->story->customProduct;?></th>
+        <td>
+            <?php echo html::select('customProduct', $customProducts, '', "onchange='loadStories(this.value);' class='form-control chosen' data-placeholder='{$this->lang->story->devComment}'");?>
+        </td>
+        <td>
+          <div class='input-group' id='storyBox'>
+            <span class='input-group-addon'><?php echo $lang->story->linkStories;?></span>
+            <?php echo html::select('story[]', '', '', "multiple class='form-control chosen'  data-placeholder='{$this->lang->story->devComment}'");?>
+          </div>
+        </td>
+      </tr>
+      <?php endif;?>
       <tr><td></td><td colspan='2' class='text-center'><?php echo html::submitButton() . html::backButton();?></td></tr>
     </table>
     <span id='responser'></span>
@@ -203,6 +219,21 @@
 <?php js::set('storyModule', $lang->story->module);?>
 <?php include '../../../common/view/footer.html.php';?>
 <script language='Javascript'>
+  //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+  function loadStories(productID)
+  {
+    var link = createLink('story', 'ajaxGetCustomProductStories', 'productID=' + productID + '&branch=0&moduleID=0&storyID=0&onlyOption=false&status=noclosed');
+    $.get(link, function(stories)
+    {
+      //var value = $('#story').val();
+      if(!stories) stories = '<select id="story[]" name="story" multiple="multiple"></select>';
+      $('#story').replaceWith(stories);
+      //$('#story').val(value);
+      $('#story_chosen').remove();
+      $("#story").chosen(defaultChosenOptions);
+    });
+  }
+  
   function loadProduct(productID)
   {
     loadProductBranches(productID);

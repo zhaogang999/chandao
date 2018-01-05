@@ -12,11 +12,16 @@
 ?>
 <?php include '../../../common/view/header.html.php';?>
 <?php include '../../../common/view/tablesorter.html.php';?>
+<style>
+    .red {background: red!important;}
+    .blue {background: blue!important;}
+    .green {background: green!important;}
+</style>
 <div id='featurebar'>
   <nav class='nav'>
     <?php
     echo "<li id='toTestStoryTab'>" . html::a(inlink('todoStory', "type=toTestStory"),  $lang->my->todoStoryMenu->toTestStory) . "</li>";
-    echo "<li id='toReleaseStoryTab'>"   . html::a(inlink('todoStory', "type=toReleaseStory"),    $lang->my->todoStoryMenu->toReleaseStory)   . "</li>";
+    echo "<li id='toReleaseStoryTab'>"   . html::a(inlink('todoStory', "type=toReleaseStory&orderBy=specialPlan"),    $lang->my->todoStoryMenu->toReleaseStory)   . "</li>";
     ?>
   </nav>
 </div>
@@ -32,11 +37,16 @@
       <th class='w-date {sorter:false}'> <?php common::printOrderLink('testDate',         $orderBy, $vars, $lang->story->testDate);?></th>
       <th class='w-100px {sorter:false}'> <?php common::printOrderLink('specialPlan',         $orderBy, $vars, $lang->story->specialPlan);?></th>
         <th class='w-status {sorter:false}'><?php common::printOrderLink('status',       $orderBy, $vars, $lang->statusAB);?></th>
-        <th class='w-100px {sorter:false}'> <?php common::printOrderLink('stage',        $orderBy, $vars, $lang->story->stageAB);?></th>
-      <th class='w-user {sorter:false}'>  <?php common::printOrderLink('openedBy',     $orderBy, $vars, $lang->openedByAB);?></th>
-      <th class='w-user {sorter:false}'>  <?php common::printOrderLink('assignedTo',     $orderBy, $vars, $lang->story->assignedTo);?></th>
+        <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',        $orderBy, $vars, $lang->story->stageAB);?></th>
+      <th class='w-60px {sorter:false}'>  <?php common::printOrderLink('openedBy',     $orderBy, $vars, $lang->openedByAB);?></th>
+      <?php if ($type == 'toTestStory'):?>
+      <th class='w-120px {sorter:false}'>  <?php common::printOrderLink('assignedTo',     $orderBy, $vars, $lang->story->assignedTo);?></th>
       <th class='w-30px'>  <?php echo $lang->story->taskCountAB;?></th>
       <th class='w-110px {sorter:false}'><?php echo $lang->actions;?></th>
+      <?php endif;?>
+      <?php if ($type == 'toReleaseStory'):?>
+        <th class='w-110px {sorter:false}'>  <?php echo $lang->my->build;?></th>
+      <?php endif;?>
     </tr>
   </thead>
   <tbody>
@@ -65,12 +75,13 @@
       <td><span class='<?php echo 'pri' . zget($lang->story->priList, $story->pri, $story->pri);?>'><?php echo zget($lang->story->priList, $story->pri, $story->pri);?></span></td>
       <td><?php echo $story->productTitle;?></td>
       <td class='text-left nobr'><?php echo html::a($storyLink, $story->title, null, "style='color: $story->color'");?></td>
-      <td class="<?php if($story->testWaring and $type =='toTestStory') echo 'delayed';?>"><?php echo $story->testDate;?></td>
-      <td class="<?php if($story->releaseWaring and $type =='toReleaseStory') echo 'delayed';?>"><?php echo $story->specialPlan;?></td>
-        <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
-        <td><?php echo $lang->story->stageList[$story->stage];?></td>
+      <td class="<?php if (isset($story->testWarning) and $type == 'toTestStory') echo $story->testWarning;?>"><?php echo $story->testDate;?></td>
+      <td class="<?php if(isset($story->releaseWarning) and $type == 'toReleaseStory') echo $story->releaseWarning;?>"><?php echo $story->specialPlan;?></td>
+       <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
+      <td><?php echo $lang->story->stageList[$story->stage];?></td>
       <td><?php echo $users[$story->openedBy];?></td>
-      <td><?php echo $users[$story->assignedTo];?></td>
+      <?php if ($type == 'toTestStory'):?>
+          <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
       <td><?php  $tasksLink = helper::createLink('story', 'tasks', "storyID=$story->id");
           $storyTasks[$story->id] > 0 ? print(html::a($tasksLink, $storyTasks[$story->id], '', 'class="iframe"')) : print(0);
           ?></td>
@@ -84,12 +95,24 @@
         common::printIcon('story', 'createCase', "productID=$story->product&moduleID=0&from=&param=0&storyID=$story->id", '', 'list', 'sitemap');
         ?>
       </td>
+      <?php endif;?>
+      <?php if ($type == 'toReleaseStory'):?>
+      <td>
+      <?php
+      foreach ($story->build as $value)
+      {
+          $buildLink = $this->createLink('build', 'view', "id=$value");
+          echo html::a($buildLink, $value);
+      };
+      ?>
+      </td>
+      <?php endif;?>
     </tr>
     <?php endforeach;?>
   </tbody>
   <tfoot>
   <tr>
-    <td colspan='12'>
+    <td colspan= <?php echo $type == 'toTestStory'?'12':'10';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>

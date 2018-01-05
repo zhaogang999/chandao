@@ -75,17 +75,17 @@ class myProject extends project
         $storyCases = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
 
         //同产品的项目
-        $proID = $this->dao->select('product')
+        $proID = $this->dao->select('GROUP_CONCAT(`product`) AS products')
             ->from(TABLE_PROJECTPRODUCT)
             ->where('project')
             ->eq($projectID)
-            ->fetch();
+            ->fetch('products');
         $projects = $this->dao->select('t1.project, t2.name')
             ->from(TABLE_PROJECTPRODUCT)->alias('t1')
             ->leftJoin(TABLE_PROJECT)->alias('t2')
             ->on('t1.project = t2.id')
             ->where('t2.deleted')->eq('0')
-            ->andWhere('t1.product')->eq($proID->product)
+            ->andWhere('t1.product')->in($proID)
             ->andWhere('t1.project')->ne($projectID)
             ->fetchAll();
         

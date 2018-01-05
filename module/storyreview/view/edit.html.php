@@ -20,7 +20,7 @@
   </div>
   <form class='form-condensed' method='post' target='hiddenwin' id='dataform' enctype='multipart/form-data'>
     <table class='table table-form'>
-      <?php if ($form == 'project'):?>
+      <?php if ($from == 'project'):?>
       <tr>
         <th class='w-80px'><?php echo $lang->storyreview->project;?></th>
         <td colspan="3"><?php echo html::select('project', $projects, $storyReview->project, 'class="form-control chosen"');?></td>
@@ -101,6 +101,10 @@
       <tr>
         <th><?php echo $lang->storyreview->influence;?></th>
         <td colspan="3"><?php echo html::textarea('influence', $storyReview->influence, "rows='6' class='form-control' placeholder='{$lang->storyreview->influenceAB}'");?></td>
+      </tr>
+      <tr>
+        <th width="80"><?php echo $lang->storyreview->leftProblem;?></th>
+        <td colspan="3"><?php echo html::select('leftProblem', $lang->storyreview->leftProblemList, $storyReview->leftProblem, "class='form-control'");?></td>
       </tr>
       <tr>
         <th><?php echo $lang->storyreview->problemTracking;?></th>

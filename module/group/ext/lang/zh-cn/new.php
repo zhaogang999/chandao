@@ -52,3 +52,6 @@ $lang->resource->story->batchStoryReview = 'batchStoryReview';
 $lang->resource->story->batchEditDate    = 'batchEditDate';
 
 $lang->resource->my->todoStory    = 'todoStory';
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+$lang->resource->story->magicAuth    = 'magicAuth';
+$lang->resource->story->batchChangeIfLinkStories = 'batchChangeIfLinkStories';

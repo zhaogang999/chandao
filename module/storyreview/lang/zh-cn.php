@@ -44,10 +44,15 @@ $lang->storyreview->problemTracking = '问题记录';
 $lang->storyreview->result          = '评审结论';
 $lang->storyreview->progressInfo    = '进度信息';
 $lang->storyreview->comment         = '备注';
+$lang->storyreview->leftProblem     = '是否有遗留问题';
 
 $lang->storyreview->needTestList['']    = '';
 $lang->storyreview->needTestList['1']   = '是';
 $lang->storyreview->needTestList['0']   = '否';
+
+$lang->storyreview->leftProblemList['']  = '';
+$lang->storyreview->leftProblemList['0'] = '无';
+$lang->storyreview->leftProblemList['1'] = '有';
 
 $lang->storyreview->confirmDelete       = '您确认删除该条记录吗？';
 

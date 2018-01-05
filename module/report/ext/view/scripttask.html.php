@@ -41,7 +41,7 @@
       <th class='w-90px'><?php common::printOrderLink('projectTitle', $orderBy, $vars, $lang->task->project);?></th>
       <th class='w-90px'><?php common::printOrderLink('storyTitle', $orderBy, $vars, $lang->task->story);?></th>
       <th class='w-id'><?php common::printOrderLink('openedBy', $orderBy, $vars, $lang->task->openedBy);?></th>
-      <th class='w-id'><?php common::printOrderLink('planTitle', $orderBy, $vars, $lang->report->planTitle);?></th>
+      <th class='w-id'><?php common::printOrderLink('specialPlan', $orderBy, $vars, $lang->report->planTitle);?></th>
       <th class='w-id'><?php common::printOrderLink('scriptType', $orderBy, $vars, $lang->task->scriptType);?></th>
       <th class='w-60px'><?php common::printOrderLink('lob', $orderBy, $vars, $lang->task->lob);?></th>
       <th class='w-id'><?php common::printOrderLink('performMode', $orderBy, $vars, $lang->task->performMode);?></th>

@@ -35,3 +35,9 @@ $config->story->datatable->fieldList['specialPlan']['title']    = 'specialPlan';
 $config->story->datatable->fieldList['specialPlan']['fixed']    = 'no';
 $config->story->datatable->fieldList['specialPlan']['width']    = '90';
 $config->story->datatable->fieldList['specialPlan']['required'] = 'no';
+
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+$config->story->datatable->fieldList['ifLinkStories']['title']    = 'ifLinkStories';
+$config->story->datatable->fieldList['ifLinkStories']['fixed']    = 'no';
+$config->story->datatable->fieldList['ifLinkStories']['width']    = '80';
+$config->story->datatable->fieldList['ifLinkStories']['required'] = 'no';

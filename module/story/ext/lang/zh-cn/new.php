@@ -16,6 +16,7 @@ $lang->story->build          = '外部用户提需求使用，研发部无需标
 $lang->story->testDate       = '提测时间';
 $lang->story->specialPlan    = '正式发版时间';
 $lang->story->testDatePlanAB = '研发专用';
+$lang->story->devComment     = '研发专用,用户无需填写';
 
 $lang->story->reviewStatus      = '评审状态';
 $lang->story->storyReviewID     = '评审单号';
@@ -24,3 +25,14 @@ $lang->story->reviewStatusList['']  = '';
 $lang->story->reviewStatusList['notReview']  = '未评审';
 $lang->story->reviewStatusList['hasReview']  = '已评审';
 $lang->story->reviewStatusList['freeReview'] = '免评审';
+
+//3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+$lang->story->customProduct = '来源产品';
+$lang->story->ifLinkStories = '有无相关需求';
+$lang->story->ifLinkStoriesList['none']  = '无';
+$lang->story->ifLinkStoriesList['exist'] = '有';
+
+$lang->story->specComment = "<p>[需求背景]</p><p>[功能描述]</p>";
+
+$lang->story->magicAuth   = '开发权限';
+$lang->story->batchChangeIfLinkStories = '批量修改是否有相关需求';
