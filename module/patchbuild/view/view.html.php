@@ -84,6 +84,7 @@ tfoot tr td .table-actions .btn{display:none;}
         <div class='article-content'><?php echo $build->testEnvComment;?></div>
       </fieldset>
     </div>
+    <?php include '../../common/view/action.html.php';?>
   </div>
   <div class='col-side'>
     <div class='main-side main'>
@@ -148,7 +149,43 @@ tfoot tr td .table-actions .btn{display:none;}
           </tr>
         </table>
       </fieldset>
-      <?php include '../../common/view/action.html.php';?>
+      <fieldset>
+        <legend><?php echo $lang->patchbuild->linkStoriesAndBugs?></legend>
+        <table class='table table-data table-condensed table-borderless'>
+          <tr class='text-top'>
+            <th class='w-80px'><?php echo $lang->patchbuild->linkStories;?></th>
+            <td>
+              <ul class='list-unstyled'>
+                <?php
+                if (!empty($build->linkStories))
+                {
+                  foreach($build->linkStories as $storyID => $storyTitle)
+                  {
+                    echo '<li>' . html::a($this->createLink('story', 'view', "storyID=$storyID"), '#' . $storyID. ' ' . $storyTitle) . '</li>';
+                  }
+                }
+                ?>
+              </ul>
+            </td>
+          </tr>
+          <tr class='text-top'>
+            <th class='w-80px'><?php echo $lang->patchbuild->linkBugs;?></th>
+            <td>
+              <ul class='list-unstyled'>
+                <?php
+                if (!empty($build->linkBugs))
+                {
+                  foreach($build->linkBugs as $bugID => $bugTitle)
+                  {
+                    echo '<li>' . html::a($this->createLink('story', 'view', "bugID=$bugID"), '#' . $bugID. ' ' . $bugTitle) . '</li>';
+                  }
+                }
+                ?>
+              </ul>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
     </div>
   </div>
 </div>

@@ -6,10 +6,11 @@ $lang->project->menu->patchbuild = array('link' => '补丁版本|patchbuild|patc
 $lang->qa->menu->patchbuild = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
 $lang->bug->menu->patchbuild = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
 $lang->testcase->menu->patchbuild = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
+$lang->caselib->menu->patchbuild  = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
 //菜单配置
 $lang->report->menu->test    = array('link' => '测试|report|bugcreate', 'alias' => 'bugassign,bugsummary,dailybugstatistics,bugbranchstatistics,bugresponsetimestatistics');
 
-$lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|projectdeviation', 'alias' => 'storysummary,burnup,storycyclesummary,storytasksummary,tasksummary,taskplansummary');
+$lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|projectdeviation', 'alias' => 'storysummary,storyreviewsummary,burnup,storycyclesummary,storytasksummary,tasksummary,taskplansummary');
 
 //9312 补丁版本下增加各字段的搜索功能
 $lang->searchObjects['patchbuild']         = '补丁版本';
@@ -31,6 +32,7 @@ $lang->project->menu->storyreview = array('link' => '需求评审|storyreview|st
 $lang->qa->menu->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
 $lang->bug->menu->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
 $lang->testcase->menu->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
+$lang->caselib->menu->storyreview    =array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
 
 $lang->menugroup->patchbuild        = 'project';
 $lang->menugroup->storyreview       = 'project';
@@ -40,3 +42,5 @@ $lang->todostory       = new stdclass();
 $lang->todostory->menu = $lang->my->menu;
 
 $lang->icons['storyReview']    = 'list-alt';
+
+

@@ -5,7 +5,7 @@ $lang->patchbuild->product      = '所属产品';
 $lang->patchbuild->project      = '所属项目';
 
 $lang->patchbuild->basicInfo    = '基本信息';
-$lang->patchbuild->view   = '版本详情';
+$lang->patchbuild->view         = '版本详情';
 
 $lang->patchbuild->createPatchBuild = '创建补丁版本';
 $lang->patchbuild->editpatchbuild   = '编辑补丁版本';
@@ -35,6 +35,9 @@ $lang->patchbuild->influence     = '影响范围';
 $lang->patchbuild->mailto        = '抄送给';
 $lang->patchbuild->assignedTo    = '指派给';
 $lang->patchbuild->workSeason    = '目标环境';
+$lang->patchbuild->linkStories   = '相关需求';
+$lang->patchbuild->linkBugs      = '相关bug';
+$lang->patchbuild->linkStoriesAndBugs = '相关需求及bug';
 
 $lang->patchbuild->workSeasonList['']   = '';
 $lang->patchbuild->workSeasonList['1']   = '17冬';

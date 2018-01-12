@@ -55,6 +55,7 @@
     $canBatchClose = (common::hasPriv('story', 'batchClose') && strtolower($type) != 'closedbyme');
     ?>
     <?php foreach($stories as $key => $story):?>
+    <?php if ($story->status == 'closed' and $story->closedReason != 'done') continue;?>
     <?php
         if ($story->projectID)
         {
@@ -78,7 +79,7 @@
       <td class="<?php if (isset($story->testWarning) and $type == 'toTestStory') echo $story->testWarning;?>"><?php echo $story->testDate;?></td>
       <td class="<?php if(isset($story->releaseWarning) and $type == 'toReleaseStory') echo $story->releaseWarning;?>"><?php echo $story->specialPlan;?></td>
        <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
-      <td><?php echo $lang->story->stageList[$story->stage];?></td>
+      <td class="<?php if ($story->stage == 'projected') echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
       <td><?php echo $users[$story->openedBy];?></td>
       <?php if ($type == 'toTestStory'):?>
           <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>

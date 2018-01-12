@@ -70,7 +70,7 @@
     <?php endif;?>
     <td>
       <?php
-      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$build->product&type=$from", '','list', 'pencil', '', '', false, '', $lang->patchbuild->editpatchbuild);
+      common::printIcon('patchbuild', 'editPatchBuild',   "buildID=$build->id&objectID=$objectID&type=$from", '','list', 'pencil', '', '', false, '', $lang->patchbuild->editpatchbuild);
       if ($from == 'project')
       {
         if(common::hasPriv('patchbuild', 'deletePatchBuild'))

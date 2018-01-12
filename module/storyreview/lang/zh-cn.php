@@ -17,6 +17,8 @@ $lang->storyreview->basicInfo   = '基本信息';
 $lang->storyreview->product     = '所属产品';
 $lang->storyreview->project     = '所属项目';
 $lang->storyreview->id          = '评审单号';
+$lang->storyreview->draft       = '草稿';
+$lang->storyreview->finished    = '完成';
 
 $lang->storyreview->title           = '评审内容';
 $lang->storyreview->reviewStories   = '评审需求';
@@ -71,3 +73,14 @@ $lang->storyreview->mail->close  = new stdclass();
 $lang->storyreview->mail->create->title = "%s创建了需求评审单 #%s:%s";
 $lang->storyreview->mail->edit->title   = "%s编辑了需求评审单 #%s:%s";
 $lang->storyreview->mail->close->title  = "%s关闭了需求评审单 #%s:%s";
+
+$lang->storyreview->qa = new stdclass();
+
+$lang->storyreview->qa->bug       = array('link' => 'Bug|bug|browse|');
+$lang->storyreview->qa->testcase  = array('link' => '用例|testcase|browse|');
+$lang->storyreview->qa->testtask  = array('link' => '内测版本|testtask|browse|');
+$lang->storyreview->qa->testtask  = array('link' => '测试单|testtask|browse|');
+$lang->storyreview->qa->testsuite = array('link' => '套件|testsuite|browse|');
+$lang->storyreview->qa->report    = array('link' => '报告|testreport|browse|');
+$lang->storyreview->qa->caselib   = array('link' => '用例库|testsuite|library');
+$lang->storyreview->qa->patchbuild = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');

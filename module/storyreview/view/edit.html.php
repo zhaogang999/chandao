@@ -144,7 +144,21 @@
         <th><?php echo $lang->storyreview->comment;?></th>
         <td colspan="3"><?php echo html::textarea('comment', $storyReview->comment, "rows='4' class='form-control' placeholder='{$lang->storyreview->commentAB}'");?></td>
       </tr>
-      <tr><td></td><td colspan="3"><?php echo html::submitButton() . html::backButton();?></td></tr>
+      <tr><td></td>
+        <td colspan="3">
+          <?php
+          if ($from == 'project')
+          {
+            $actionLink = $this->createLink('storyreview', 'edit', "storyReviewID=$storyReview->id&objectID=$objectID&from=$from&type=draft");
+            echo html::submitButton($lang->storyreview->draft, "onclick=\"setFormAction('$actionLink')\"") . html::submitButton($lang->storyreview->finished) . html::backButton();
+          }
+          else
+          {
+            echo html::submitButton() . html::backButton();
+          }
+          ?>
+        </td>
+      </tr>
       <tr><td colspan="4"><div class='alert alert-info'><?php echo $lang->storyreview->notice?></div></td></tr>
     </table>
   </form>

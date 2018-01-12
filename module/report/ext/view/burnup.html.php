@@ -1,5 +1,4 @@
 <?php include '../../../common/view/header.html.php';?>
-<?php include '../../../common/view/tablesorter.html.php';?>
 <?php include '../../../common/view/datepicker.html.php';?>
 <?php js::import($jsRoot . 'echarts/echarts.min.js');?>
 
@@ -46,7 +45,7 @@
             <div id="burnUp" style="width: 100%;height:450px;"></div>
         </div>
     </div>
-    <table class='table table-condensed table-striped table-bordered tablesorter active-disabled burnUpTable' style="word-break:break-all; word-wrap:break-all;">
+    <table class='table table-condensed table-striped table-bordered active-disabled burnUpTable' style="word-break:break-all; word-wrap:break-all;">
         <thead>
         <tr class='colhead'>
             <th><?php echo $lang->report->date;?></th>

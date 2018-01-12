@@ -26,16 +26,20 @@ class patchbuildModel extends model
      * Create a patchBuild
      *
      * @param  int    $projectID
+     * @param  int    $productID
      * @access public
      * @return void
      */
-    public function createPatchBuild($projectID)
+    public function createPatchBuild($projectID, $productID)
     {
         $build = fixer::input('post')
             ->setDefault('product', 0)
             ->setDefault('patchDate', helper::today())
             ->join('mailto', ',')
+            ->join('linkStories', ',')
+            ->join('linkBugs', ',')
             ->add('project', (int)$projectID)
+            ->add('product', (int)$productID)
             ->stripTags($this->config->patchbuild->editor->createpatchbuild['id'], $this->config->allowedTags)
             //->remove('resolvedBy,allchecker,files,labels,uid')
             ->get();
@@ -68,11 +72,11 @@ class patchbuildModel extends model
         $build = fixer::input('post')
             ->stripTags($this->config->patchbuild->editor->editpatchbuild['id'], $this->config->allowedTags)
             ->join('mailto', ',')
+            ->join('linkBugs', ',')
+            ->join('linkStories', ',')
             ->remove('files,uid')
             ->get();
-        //if(!isset($build->branch)) $build->branch = $oldBuild->branch;
-
-
+        
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->editBatchBuild['id'], $this->post->uid);
         $this->dao->update(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()

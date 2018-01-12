@@ -49,12 +49,12 @@ class storyreview extends control
 
         if($from == 'qa')
         {
-            $this->lang->storyreview->menu      = $this->lang->qa->menu;
+            $this->lang->storyreview->menu      = $this->lang->storyreview->qa;
             $this->lang->storyreview->menuOrder = $this->lang->qa->menuOrder;
 
             //$this->storyreview->setMenu($this->product->getPairs(), $objectID);
             $this->lang->set('menugroup.storyreview', 'qa');
-            //$this->view->product       = $object;
+            $this->view->product       = $object;
             //$this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[]   = $this->lang->storyreview->storyreview;
             /* Header and position. */
@@ -96,12 +96,13 @@ class storyreview extends control
      * 创建需求评审单
      *
      * @param $projectID
+     * @param $type
      */
-    public function create($projectID)
+    public function create($projectID, $type = '')
     {
         if(!empty($_POST))
         {
-            $storyReviewListID = $this->storyreview->create($projectID);
+            $storyReviewListID = $this->storyreview->create($projectID, $type);
             if(dao::isError()) die(js::error(dao::getError()));
             
             $actionID = $this->loadModel('action')->create('storyreview', $storyReviewListID, 'opened');
@@ -147,17 +148,18 @@ class storyreview extends control
      * @param  int    $storyReviewID
      * @param int $objectID
      * @param string $from
+     * @param $type
      * @access public
      * @return void
      */
-    public function edit($storyReviewID, $objectID, $from)
+    public function edit($storyReviewID, $objectID, $from,  $type = '')
     {
         $this->loadModel('project');
         $this->loadModel('story');
 
         if(!empty($_POST))
         {
-            $changes = $this->storyreview->update($storyReviewID);
+            $changes = $this->storyreview->update($storyReviewID, $from, $type);
             if(dao::isError()) die(js::error(dao::getError()));
             $files = $this->loadModel('file')->saveUpload('build', $storyReviewID);
 

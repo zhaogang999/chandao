@@ -40,9 +40,9 @@ public function storySummary()
 
         $projectAB = $this->project->getById($project);
 
-        $zeroTaskStories = $this->getZeroTaskStories($stories,$project);
-        $zeroDevelTaskStories = $this->getZeroTaskStories($stories,$project, "fos, devel, sdk, web, ios, android, script");
-        $zeroTestTaskStories = $this->getZeroTaskStories($stories,$project, 'test');
+        $zeroTaskStories = $this->getZeroTaskStories($stories);
+        $zeroDevelTaskStories = $this->getZeroTaskStories($stories, "fos, devel, sdk, web, ios, android, script");
+        $zeroTestTaskStories = $this->getZeroTaskStories($stories, 'test');
 
         $storyCountByTime = $this->getStoryOpenDateReport($stories, $projectAB->begin);
         $storyChange = $this->getStoryChangeRate($project);
@@ -103,12 +103,11 @@ public function getStoryOpenDateReport($stories, $projectBegin)
  * Get getZeroTaskStories of project.
  *
  * @param  array  $stories
- * @param  int    $projectID
  * @param  string    $type
  * @access public
  * @return string
  */
-public function getZeroTaskStories($stories, $projectID, $type='')
+public function getZeroTaskStories($stories, $type='')
 {
     $storyIdList = array_keys($stories);
 
@@ -117,7 +116,7 @@ public function getZeroTaskStories($stories, $projectID, $type='')
         ->where('story')->in($storyIdList)
         ->beginIF($type!='')->andWhere('type')->in($type)->fi()
         ->andWhere('deleted')->eq(0)
-        ->beginIF($projectID)->andWhere('project')->eq($projectID)->fi()
+        //->beginIF($storyReviewStatus)->andWhere('project')->eq($projectID)->fi()
         ->groupBy('story')
         ->fetchPairs();
 
@@ -125,7 +124,7 @@ public function getZeroTaskStories($stories, $projectID, $type='')
     foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
     {
         $zeroTaskStories[$storyID]->storyID = $storyID;
-        $zeroTaskStories[$storyID]->version = $story->version;
+        //$zeroTaskStories[$storyID]->version = $story->version;
     }
 
     return $zeroTaskStories;

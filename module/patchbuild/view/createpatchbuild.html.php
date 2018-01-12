@@ -21,38 +21,19 @@
     </div>
   </div>
   <form class='form-condensed' method='post' target='hiddenwin' id='dataform' enctype='multipart/form-data'>
-    <table class='table table-form'> 
+    <table class='table table-form'>
       <tr>
-        <th class='w-110px'><?php echo $lang->patchbuild->product;?></th>
-        <?php if($products):?>
-        <td>
-          <div class='input-group'>
-            <?php echo html::select('product', $products, $product->id, "onchange='loadBranches(this.value);' class='form-control chosen'");?>
-            <?php
-            /*if($product->type != 'normal')
-            {
-                if($product->branch) $branches = array($product->branch => $branches[$product->branch]);
-                echo "<span class='input-group-addon fix-padding fix-border'></span>" . html::select('branch', $branches, $product->branch, "class='form-control' style='width:100px; display:inline-block;'");
-            }*/
-            ?>
-          </div>
-        </td>
-        <td></td>
-        <?php else:?>
-        <td colspan='2'><?php if(empty($products)) printf($lang->build->noProduct, $this->createLink('project', 'manageproducts', "projectID=$projectID"));?></td>
-        <?php endif;?>
-      </tr>
-      <tr>
-        <th><?php echo $lang->patchbuild->patchType;?></th>
+        <th width="70"><?php echo $lang->patchbuild->patchType;?></th>
         <td><?php echo html::select('patchType', $lang->patchbuild->patchTypeList, '', 'class="form-control chosen"');?></td>
+        <td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->workSeason;?></th>
-        <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, '', 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('workSeason', $lang->patchbuild->workSeasonList, '', 'class="form-control chosen"');?></td><td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->platform;?></th>
-        <td><?php echo html::select('platform', $lang->patchbuild->platformList, '', 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('platform', $lang->patchbuild->platformList, '', 'class="form-control chosen"');?></td><td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->version;?></th>
@@ -65,22 +46,29 @@
           <?php endif;?>
         </td>
       </tr>
-
       <tr>
         <th><?php echo $lang->patchbuild->reason;?></th>
-        <td><?php echo html::select('reason', $lang->patchbuild->reasonList, '', 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('reason', $lang->patchbuild->reasonList, '', 'class="form-control chosen"');?></td><td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->submitter;?></th>
-        <td><?php echo html::select('submitter', $users, $app->user->account, 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('submitter', $users, $app->user->account, 'class="form-control chosen"');?></td><td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->group;?></th>
-        <td><?php echo html::select('group', $lang->patchbuild->groupList, '', 'class="form-control chosen"');?></td>
+        <td><?php echo html::select('group', $lang->patchbuild->groupList, '', 'class="form-control chosen"');?></td><td></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->releasedDate;?></th>
-        <td><?php echo html::input('releasedDate', '', "class='form-control form-date'");?></td>
+        <td><?php echo html::input('releasedDate', '', "class='form-control form-date'");?></td><td></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->linkStories;?></th>
+        <td colspan="2"><?php echo html::select('linkStories[]', $stories, '', 'multiple class="form-control chosen"');?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->linkBugs;?></th>
+        <td colspan="2"><?php echo html::select('linkBugs[]', $bugs, '', 'multiple class="form-control chosen"');?></td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->mailto;?></th>

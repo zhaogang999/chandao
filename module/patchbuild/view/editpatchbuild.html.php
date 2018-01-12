@@ -25,15 +25,6 @@
     <table class='table table-form'>
       <?php if ($from == 'project'):?>
       <tr>
-        <th class='w-110px'><?php echo $lang->patchbuild->product;?></th>
-        <td>
-          <div class='input-group'>
-            <?php echo html::select('product', $products, $product->id, "onchange='loadBranches(this.value);' class='form-control chosen'");?>
-          </div>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
         <th><?php echo $lang->patchbuild->project;?></th>
         <td><?php echo html::select('project', $projects, $build->project, 'class="form-control chosen"');?></td>
       </tr>
@@ -78,6 +69,16 @@
       <tr>
         <th><?php echo $lang->patchbuild->assignedTo;?></th>
         <td><?php echo html::select('assignedTo', $users, $build->assignedTo, 'class="form-control chosen"');?></td>
+      </tr>
+      <?php endif; ?>
+      <?php if ($from == 'project'):?>
+      <tr>
+        <th><?php echo $lang->patchbuild->linkStories;?></th>
+        <td colspan="2"><?php echo html::select('linkStories[]', $stories, str_replace(' ', '', $build->linkStories), 'multiple class="form-control chosen"');?></td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->patchbuild->linkBugs;?></th>
+        <td colspan="2"><?php echo html::select('linkBugs[]', $bugs, str_replace(' ', '', $build->linkBugs), 'multiple class="form-control chosen"');?></td>
       </tr>
       <?php endif; ?>
       <tr>

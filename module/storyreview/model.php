@@ -26,10 +26,11 @@ class storyreviewModel extends model
      * Create a storyreview
      *
      * @param  int    $projectID
+     * @param string  $type
      * @access public
      * @return void
      */
-    public function create($projectID)
+    public function create($projectID, $type)
     {
         $productID = $this->dao->select('product')->from(TABLE_PROJECTPRODUCT)
             ->where('project')->eq($projectID)
@@ -71,10 +72,13 @@ class storyreviewModel extends model
             $storyReviewID = $this->dao->lastInsertID();
             $this->file->updateObjectID($this->post->uid, $storyReviewID, 'storyreview');
             $this->file->saveUpload('storyreview', $storyReviewID);
+
+            if ($type == '') $this->dao->update(TABLE_STORY)->set('reviewStatus')->eq('hasReview')->where('id')->in($storyReview->reviewStories)->exec();
             
             if (!empty($storyReview->reviewStories))
             {
-                $this->linkStory($storyReview->reviewStories, $storyReviewID);
+                $reviewStories = explode(',', trim($storyReview->reviewStories, ','));
+                $this->linkStory($reviewStories, $storyReviewID ,$type);
             }
             return $storyReviewID;
         }
@@ -134,10 +138,12 @@ class storyreviewModel extends model
      * Update a storyReview.
      *
      * @param  int    $storyReviewID
+     * @param  string $from
+     * @param  string $type
      * @access public
      * @return void
      */
-    public function update($storyReviewID)
+    public function update($storyReviewID, $from, $type)
     {
         $oldStoryReview = $this->getStoryReviewById($storyReviewID);
 
@@ -171,21 +177,24 @@ class storyreviewModel extends model
         if(!dao::isError())
         {
             $this->file->updateObjectID($this->post->uid, $storyReviewID, 'build');
+            if ($from == 'project')
+            {
+                if ($type == '') $this->dao->update(TABLE_STORY)->set('reviewStatus')->eq('hasReview')->where('id')->in($storyReview->reviewStories)->exec();
+            }
             $changes = common::createChanges($oldStoryReview, $storyReview);
 
             foreach($changes as $change)
             {
                 if ($change['field'] == 'reviewStories')
                 {
-                    $oldStoryReviews = explode(',', trim($change['old'], ','));
-                    $storyReviews    = explode(',', trim($change['new'], ','));
-                    $unlinkStories   = array_diff($oldStoryReviews, $storyReviews);
-                    $linkStories     = array_diff($storyReviews, $oldStoryReviews);
-                    $this->unLinkStory($unlinkStories, $storyReviewID);
+                    $oldReviewStories = explode(',', trim($change['old'], ','));
+                    $reviewStories    = explode(',', trim($change['new'], ','));
+                    $unlinkStories   = array_diff($oldReviewStories, $reviewStories);
+                    $linkStories     = array_diff($reviewStories, $oldReviewStories);
+                    $this->unLinkStory($unlinkStories, $storyReviewID, $type);
                     $this->linkStory($linkStories, $storyReviewID);
                 }
             }
-
             return $changes;
         }
     }
@@ -202,7 +211,6 @@ class storyreviewModel extends model
         foreach ($stories as $storyID)
         {
             $storyInfo = new stdClass();
-            $storyInfo->reviewStatus = 'hasReview';
 
             $linkStories = $this->dao->select('storyReviewID')->FROM(TABLE_STORY)->where('id')->eq($storyID)->fetch();
             $storyInfo->storyReviewID = trim($linkStories->storyReviewID .','. $storyReviewID, ',');
@@ -220,14 +228,15 @@ class storyreviewModel extends model
      *
      * @param $stories
      * @param $storyReviewID
+     * @param $type
      * @return void
      */
-    public function unLinkStory($stories, $storyReviewID)
+    public function unLinkStory($stories, $storyReviewID, $type)
     {
         foreach ($stories as $storyID)
         {
             $storyInfo = new stdClass();
-            $storyInfo->reviewStatus = 'notReview';
+            if ($type == '') $storyInfo->reviewStatus = 'notReview';
             //$storyInfo->storyReviewID = 0;
 
             $oldLinkStories = $this->dao->select('storyReviewID')->FROM(TABLE_STORY)->where('id')->eq($storyID)->fetch();
@@ -304,7 +313,7 @@ class storyreviewModel extends model
         /* Set toList and ccList. */
         $toList   = '';
         $toList = trim($toList, ',');
-        $ccList   = str_replace(' ', '', trim($storyReview->mailto, ','));
+        $ccList   = str_replace(' ', '', trim($storyReview->testReviewers . $storyReview->storyReviewers . $storyReview->devReviewers . $storyReview->otherReviewers . $storyReview->mailto, ','));
         if(empty($toList))
         {
             if(empty($ccList)) return;

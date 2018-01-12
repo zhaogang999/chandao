@@ -101,9 +101,15 @@ class patchbuild extends control
      */
     public function createpatchbuild($projectID)
     {
+        $this->loadModel('project');
+        $productGroups = $this->project->getProducts($projectID);
+        $productID     = key($productGroups);
+        $products      = array();
+        foreach($productGroups as $product) $products[$product->id] = $product->name;
+        
         if(!empty($_POST))
         {
-            $buildID = $this->patchbuild->createPatchBuild($projectID);
+            $buildID = $this->patchbuild->createPatchBuild($projectID, $productID);
             if(dao::isError()) die(js::error(dao::getError()));
             
             $actionID = $this->loadModel('action')->create('patchBuild', $buildID, 'opened');
@@ -114,8 +120,9 @@ class patchbuild extends control
 
         /* Load these models. */
         $this->loadModel('product');
-        $this->loadModel('project');
         $this->loadModel('user');
+        $this->loadModel('story');
+        $this->loadModel('bug');
 
         $this->lang->patchbuild->menu      = $this->lang->project->menu;
         $this->lang->menugroup->patchbuild       = 'project';
@@ -127,12 +134,10 @@ class patchbuild extends control
             $this->product->setMenu($products, $projectID);
 
             $productGroups   = array();
-            //$product->branch = 0;
             foreach($products as $productID => $name) $productGroups[$productID]['branch'] = 0;
 
             $this->view->title    = $this->lang->patchbuild->patchBuild;
             $this->view->product  = $product;
-            //$this->view->branches = ($product and $product->type == 'normal') ? array() : $this->loadModel('branch')->getPairs($projectID);
         }
         else
         {
@@ -145,26 +150,20 @@ class patchbuild extends control
             /* Assign. */
             $project = $this->loadModel('project')->getById($projectID);
 
-            $productGroups = $this->project->getProducts($projectID);
-            $productID     = key($productGroups);
-            $products      = array();
-            foreach($productGroups as $product) $products[$product->id] = $product->name;
-
             $this->view->title         = $project->name . $this->lang->colon . $this->lang->patchbuild->createPatchBuild;
             $this->view->position[]    = html::a($this->createLink('project', 'task', "projectID=$projectID"), $project->name);
             $this->view->position[]    = $this->lang->patchbuild->createPatchBuild;
             $this->view->product       = isset($productGroups[$productID]) ? $productGroups[$productID] : '';
-            //$this->view->branches      = (isset($productGroups[$productID]) and $productGroups[$productID]->type == 'normal') ? array() : $this->loadModel('branch')->getPairs($productID);
             $this->view->projectID     = $projectID;
-
             $this->view->orderBy       = $orderBy;
-
         }
-
-        $this->view->products      = $products;
-        $this->view->lastPatchBuild    = $this->patchbuild->getLastPatchBuild($product->id);
-        $this->view->productGroups = $productGroups;
-        $this->view->users         = $this->user->getPairs('nodeleted|noclosed');
+        
+        $this->view->bugs           = $this->bug->getProductBugsPairs($productID, 'resolved');
+        $this->view->stories        = $this->story->getProjectStoryPairs($projectID);
+        $this->view->products       = $products;
+        $this->view->lastPatchBuild = $this->patchbuild->getLastPatchBuild($product->id);
+        $this->view->productGroups  = $productGroups;
+        $this->view->users          = $this->user->getPairs('nodeleted|noclosed');
         $this->display();
     }
 
@@ -172,12 +171,16 @@ class patchbuild extends control
      * Edit a batchBuild.
      *
      * @param  int    $buildID
+     * @param  int    $objectID
+     * @param  string $from
      * @access public
      * @return void
      */
     public function editpatchbuild($buildID, $objectID, $from)
     {
         $this->loadModel('project');
+        $this->loadModel('story');
+        $this->loadModel('bug');
         
         if(!empty($_POST))
         {
@@ -212,6 +215,14 @@ class patchbuild extends control
             $this->loadModel('project')->setMenu($this->project->getPairs('nocode'), $objectID, 'project');
             $this->lang->patchbuild->menu      = $this->lang->project->menu;
             $this->lang->menugroup->patchbuild       = 'project';
+
+            $this->view->stories        = $this->story->getProjectStoryPairs($objectID);
+            $productGroups = $this->project->getProducts($objectID);
+            $productID     = key($productGroups);
+            $this->view->bugs           = $this->bug->getProductBugsPairs($productID, 'resolved');
+            /* Set menu. */
+            $this->project->setMenu($this->project->getPairs(), $objectID);
+            $this->view->projectID     = $objectID;
         }
         elseif ($from == 'qa')
         {
@@ -363,14 +374,15 @@ class patchbuild extends control
             $this->view->objectID = $build->product;
             $this->view->title         = "PATCHBUILD #$build->id $build->version - " . $product->name;
         }
-        
+
+        //if(!empty($build->linkStories)) $build->linkStories = $this->dao->select('id,title')->from(TABLE_STORY)->where('id')->in(trim($build->linkStories,','))->fetchPairs();
+        //if(!empty($build->linkBugs)) $build->linkBugs = $this->dao->select('id,title')->from(TABLE_BUG)->where('id')->in(trim($build->linkBugs,','))->fetchPairs();
+
         /* Assign. */
         $this->view->users         = $this->loadModel('user')->getPairs('noletter');
         $this->view->build         = $build;
         $this->view->actions       = $this->loadModel('action')->getList('patchbuild', $buildID);
-        //$this->view->link          = $link;
-        //$this->view->param         = $param;
-        //$this->view->branchName    = $build->productType == 'normal' ? '' : $this->loadModel('branch')->getById($build->branch);
+
         $this->display();
     }
 }

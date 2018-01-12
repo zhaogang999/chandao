@@ -101,7 +101,7 @@ if($hiddenStory and isset($visibleFields['story'])) $colspan -= 1;
         <td <?php echo zget($visibleFields, 'estStarted', "class='hidden'")?>><?php echo html::input("estStarted[$i]", '', "class='form-control text-center form-date'");?></td>
         <td <?php echo zget($visibleFields, 'deadline', "class='hidden'")?>><?php echo html::input("deadline[$i]", '', "class='form-control text-center form-date'");?></td>
         <td <?php echo zget($visibleFields, 'desc', "class='hidden'")?>><?php echo html::textarea("desc[$i]", '', "rows='1' class='form-control autosize'");?></td>
-        <td <?php echo zget($visibleFields, 'pri', "class='hidden'")?>><?php echo html::select("pri[$i]", (array)$lang->task->priList, $pri, 'class=form-control');?></td>
+        <td <?php echo zget($visibleFields, 'pri', "class='hidden'")?>><?php echo html::select("pri[$i]", (array)$lang->task->priList, $parent != 0 ? $parentTask->pri : $pri, 'class=form-control');?></td>
         <!--禅道任务增加关键字字段；需求：858 批量添加任务，批量编辑任务增加关键字字段；行：101-102-->
         <td class='<?php echo zget($visibleFields, 'keywords', 'hidden')?>'><?php echo html::input("keywords[$i]", '', "class='form-control' autocomplete='off'");?></td>
       </tr>

@@ -18,7 +18,7 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
         ->where('t1.deleted')->eq(0)
         ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
         ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
-        ->fi()
+        ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
         ->orderBy($orderBy)
         ->page($pager)
         ->fetchAll();
@@ -55,7 +55,7 @@ public function processStory($story)
         {
             $delay = helper::diffDate($story->testDate, $today);
 
-            if ($delay == 1)
+            if ($delay > 0 and $delay < 4)
             {
                 $story->testWarning = 'green';
             }
@@ -75,7 +75,7 @@ public function processStory($story)
         {
             $delay = helper::diffDate($story->specialPlan, $today);
 
-            if ($delay == 1)
+            if ($delay > 0 and $delay < 4)
             {
                 $story->releaseWarning = 'green';
             }
