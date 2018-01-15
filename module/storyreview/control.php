@@ -219,7 +219,7 @@ class storyreview extends control
         elseif ($from == 'qa')
         {
             /* Set menu. */
-            $this->lang->storyreview->menu      = $this->lang->qa->menu;
+            $this->lang->storyreview->menu      = $this->lang->storyreview->qa;
             $this->lang->menugroup->storyreview       = 'qa';
             //$this->storyreview->setMenu($this->loadModel('product')->getPairs(), $objectID);
 

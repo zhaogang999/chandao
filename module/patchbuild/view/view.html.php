@@ -177,7 +177,7 @@ tfoot tr td .table-actions .btn{display:none;}
                 {
                   foreach($build->linkBugs as $bugID => $bugTitle)
                   {
-                    echo '<li>' . html::a($this->createLink('story', 'view', "bugID=$bugID"), '#' . $bugID. ' ' . $bugTitle) . '</li>';
+                    echo '<li>' . html::a($this->createLink('bug', 'view', "bugID=$bugID"), '#' . $bugID. ' ' . $bugTitle) . '</li>';
                   }
                 }
                 ?>

@@ -375,8 +375,8 @@ class patchbuild extends control
             $this->view->title         = "PATCHBUILD #$build->id $build->version - " . $product->name;
         }
 
-        //if(!empty($build->linkStories)) $build->linkStories = $this->dao->select('id,title')->from(TABLE_STORY)->where('id')->in(trim($build->linkStories,','))->fetchPairs();
-        //if(!empty($build->linkBugs)) $build->linkBugs = $this->dao->select('id,title')->from(TABLE_BUG)->where('id')->in(trim($build->linkBugs,','))->fetchPairs();
+        if(!empty($build->linkStories)) $build->linkStories = $this->dao->select('id,title')->from(TABLE_STORY)->where('id')->in(trim($build->linkStories,','))->fetchPairs();
+        if(!empty($build->linkBugs)) $build->linkBugs = $this->dao->select('id,title')->from(TABLE_BUG)->where('id')->in(trim($build->linkBugs,','))->fetchPairs();
 
         /* Assign. */
         $this->view->users         = $this->loadModel('user')->getPairs('noletter');

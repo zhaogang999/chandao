@@ -84,3 +84,4 @@ $lang->storyreview->qa->testsuite = array('link' => '套件|testsuite|browse|');
 $lang->storyreview->qa->report    = array('link' => '报告|testreport|browse|');
 $lang->storyreview->qa->caselib   = array('link' => '用例库|testsuite|library');
 $lang->storyreview->qa->patchbuild = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
+$lang->storyreview->qa->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
