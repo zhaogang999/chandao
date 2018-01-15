@@ -26,20 +26,15 @@ license: |
   
   青岛易软天创保留对本协议的最终解释权。
 releases:
-  1.6:
-    charge: business
-    changelog: 适应开源版8.4
-    date: 2016-12-08
-    zentao:
-      compatible: 8.4,8.4.1
-      incompatible:
-    depends: null
-    conflicts: null
   1.5:
-    zentaoversion: 8.2.3
     charge: business
     changelog: 调整word导出的样式
     date: 2016-06-24
+    zentao:
+      compatible: 8.2.3,8.2.4,8.2.5,8.2.6
+      incompatible:
+    depends: null
+    conflicts: null
   1.4:
     zentaoversion: 8.1
     charge: business

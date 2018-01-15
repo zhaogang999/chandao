@@ -1,5 +1,5 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include "../../control.php";
 class myfile extends file
 {
     /**
@@ -217,8 +217,8 @@ class myfile extends file
         /* Save sheet1*/
         $endColumn = $this->setExcelFiled(count($this->excelKey) + $this->fileCount - 2);
         $sheet1 = file_get_contents($this->exportPath . 'xl/worksheets/sheet1.xml');
-        $sheet1 = str_replace(array('%area%', '%xSplit%', '%cols%', '%sheetData%', '%mergeCells%', '%autoFilter%', '%dataValidations%', '%hyperlinks%', '%colspan%'),
-            array($this->sheet1Params['area'], $this->sheet1Params['xSplit'], $this->sheet1Params['cols'], $this->sheet1SheetData, $this->sheet1Params['mergeCells'],
+        $sheet1 = str_replace(array('%area%', '%xSplit%', '%topLeftCell%', '%cols%', '%sheetData%', '%mergeCells%', '%autoFilter%', '%dataValidations%', '%hyperlinks%', '%colspan%'),
+            array($this->sheet1Params['area'], $this->sheet1Params['xSplit'], $this->sheet1Params['topLeftCell'], $this->sheet1Params['cols'], $this->sheet1SheetData, $this->sheet1Params['mergeCells'],
             empty($this->rows) ? '' : '<autoFilter ref="A1:' . $endColumn . '1"/>',
             $this->sheet1Params['dataValidations'], $this->sheet1Params['hyperlinks'], $this->sheet1Params['colspan']), $sheet1);
         file_put_contents($this->exportPath . 'xl/worksheets/sheet1.xml', $sheet1);
@@ -269,13 +269,12 @@ class myfile extends file
         $letters   = array_values($this->excelKey);
 
         /* Freeze column.*/
-        $this->sheet1Params['xSplit']      = '';
         if(isset($this->config->excel->freeze->{$this->post->kind}))
         {
-            $xSplit = '<pane xSplit="%xSplit%" ySplit="1" topLeftCell="%topLeftCell%" activePane="bottomRight" state="frozenSplit"/><selection pane="topRight"/><selection pane="bottomLeft"/>';
             $column = $this->excelKey[$this->config->excel->freeze->{$this->post->kind}];
             $column ++;
-            $this->sheet1Params['xSplit'] = str_replace(array("%xSplit%", '%topLeftCell%'), array(array_search($column, $letters), $column . '2'), $xSplit);
+            $this->sheet1Params['topLeftCell'] = $column . '2';
+            $this->sheet1Params['xSplit'] = array_search($column, $letters);
         }
 
         /* Set column width */
@@ -407,7 +406,7 @@ class myfile extends file
         }
 
         $sheet2 = file_get_contents($this->exportPath . 'xl/worksheets/sheet2.xml');
-        $sheet2 = sprintf($sheet2, "A1" . ($count ? ":E" . $count : ''), $sheetData);
+        $sheet2 = sprintf($sheet2, "A1:E$count", $sheetData);
         file_put_contents($this->exportPath . 'xl/worksheets/sheet2.xml', $sheet2);
     }
 
@@ -487,7 +486,7 @@ class myfile extends file
         }
 
         $cellValue = '';
-        if($value or $value === '0' or $value === 0)
+        if($value or $value === 0)
         {
             $cellValue .= '<c r="' . $key . $i . '" ' . $s . ' t="s"><v>' . $this->record . '</v></c>';
             $this->appendSharedStrings($value);

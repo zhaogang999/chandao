@@ -27,7 +27,7 @@ $lang->bug->severityList[''] = '';
 $lang->bug->discoveryPhase = '发现阶段';
 
 $lang->bug->discoveryPhaseList[''] = '';
-$lang->bug->discoveryPhaseList['Check-in'] = '提测阶段';
+$lang->bug->discoveryPhaseList['check-in'] = '提测阶段';
 $lang->bug->discoveryPhaseList['alpha'] = '内测阶段';
 $lang->bug->discoveryPhaseList['acceptance'] = '验收阶段';
 $lang->bug->discoveryPhaseList['production'] = '生产阶段';

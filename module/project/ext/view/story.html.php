@@ -282,6 +282,10 @@
                 }
                 echo '</ul></li>';
               }
+              else
+              {
+                echo '<li>' . html::a('javascript:;', $lang->story->reviewStatus,  '', $class) . '</li>';
+              }
 
                 echo '</ul></div>';
                 $storyInfo = $summary;

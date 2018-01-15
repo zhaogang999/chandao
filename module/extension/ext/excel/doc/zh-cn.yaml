@@ -27,20 +27,15 @@ license: |
   
   青岛易软天创保留对本协议的最终解释权。
 releases:
-  3.9:
-    charge: business
-    changelog: 修复导出的文件错误
-    date: 2016-11-14
-    zentao:
-      compatible: 8.3,8.3.1,8.4,8.4.1
-      incompatible:
-    depends: null
-    conflicts: null
   3.8:
-    zentaoversion: 8.2.3
     charge: business
     changelog: 调整导出Excel的样式
     date: 2016-06-24
+    zentao:
+      compatible: 8.2.3,8.2.4,8.2.5,8.2.6
+      incompatible:
+    depends: null
+    conflicts: null
   3.7:
     zentaoversion: 8.2
     charge: business

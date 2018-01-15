@@ -1,5 +1,5 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include "../../control.php";
 class myfile extends file
 {
     public $fileCount = 1;
@@ -10,7 +10,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function xlsInit()
+    public function init()
     {
         $this->phpExcel = $this->app->loadClass('phpexcel');
         $this->fields   = $this->post->fields;
@@ -27,9 +27,9 @@ class myfile extends file
      */
     public function export2Xls()
     {
-        $this->xlsInit();
+        $this->init();
         $this->excelKey  = array();
-        for($i = 0; $i < count($this->fieldsKey); $i++) $this->excelKey[$this->fieldsKey[$i]] = $this->setExcelXlsFiled($i);
+        for($i = 0; $i < count($this->fieldsKey); $i++) $this->excelKey[$this->fieldsKey[$i]] = $this->setExcelFiled($i);
 
         $excelProps = $this->phpExcel->getProperties();
         $excelProps->setCreator("ZenTao");
@@ -47,7 +47,7 @@ class myfile extends file
         foreach($this->fields as $key => $field) $excelSheet->setCellValue($this->excelKey[$key] . '1', $field);
 
         /* Write system data in excel.*/
-        $this->writeXlsSysData();
+        $this->writeSysData();
 
         $i = 1;
         $excelData = array();
@@ -73,7 +73,7 @@ class myfile extends file
                     if(isset($this->config->excel->editor[$this->post->kind]) and in_array($key, $this->config->excel->editor[$this->post->kind])) $value = $this->file->excludeHtml($value);
                     if($key == 'files')
                     {
-                        $this->formatXlsFiles($excelSheet, $i, $value);
+                        $this->formatFiles($excelSheet, $i, $value);
                         continue;
                     } 
                     if(($key == 'project' or $key == 'product') and isset($value[1])) $value = $value[1] == ':' ? substr($value, 2) : $value;
@@ -81,7 +81,7 @@ class myfile extends file
                 }
 
                 /* Build excel list.*/
-                if(!empty($_POST['listStyle']) and in_array($key, $this->post->listStyle)) $this->buildXlsList($excelSheet, $key, $i);
+                if(!empty($_POST['listStyle']) and in_array($key, $this->post->listStyle)) $this->buildList($excelSheet, $key, $i);
             }
         }
 
@@ -102,13 +102,13 @@ class myfile extends file
                     }
 
                     /* Build excel list.*/
-                    if(!empty($_POST['listStyle']) and in_array($field, $this->post->listStyle)) $this->buildXlsList($excelSheet, $field, $i);
+                    if(!empty($_POST['listStyle']) and in_array($field, $this->post->listStyle)) $this->buildList($excelSheet, $field, $i);
                 }
             }
         }
         /*Add help lang in end.*/
         if(isset($this->lang->excel->help->{$this->post->kind}) and !empty($_POST['extraNum'])) $excelSheet->setCellValue("A" . $i, $this->lang->excel->help->{$this->post->kind});
-        $this->setXlsStyle($excelSheet, $i);
+        $this->setStyle($excelSheet, $i);
 
         /* urlencode the filename for ie. */
         $fileName = $this->post->fileName;
@@ -135,9 +135,9 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function setXlsStyle($excelSheet, $i)
+    public function setStyle($excelSheet, $i)
     {
-        $endColumn = $this->setExcelXlsFiled(count($this->excelKey) + $this->fileCount - 2);
+        $endColumn = $this->setExcelFiled(count($this->excelKey) + $this->fileCount - 2);
         $i         = (isset($this->lang->excel->help->{$this->post->kind}) and !empty($_POST['extraNum'])) ? $i - 1 : $i;
 
         /* Set Auto Filter. */
@@ -272,7 +272,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function formatXlsFiles($excelSheet, $i, $content)
+    public function formatFiles($excelSheet, $i, $content)
     {
         if(empty($content)) return;
         $content    = explode('<br />', $content);
@@ -285,7 +285,7 @@ class myfile extends file
             preg_match("/<a href='([^']+)'[^>]*>(.+)<\/a>/", $linkHtml, $out);
             $linkHref = $out[1];
             $linkName = $out[2];
-            $fieldName = $this->setExcelXlsFiled($fieldCount + $key - 1);
+            $fieldName = $this->setExcelFiled($fieldCount + $key - 1);
             $excelSheet->setCellValue($fieldName . $i, $linkName);
             $excelSheet->getCell($fieldName  . $i)->getHyperlink()->setUrl($linkHref);
             $excelSheet->getCell($fieldName  . $i)->getHyperlink()->setTooltip('Navigate to website');
@@ -305,14 +305,14 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function setExcelXlsFiled($count)
+    public function setExcelFiled($count)
     {
         $letter = 'A';
         for($i = 1; $i <= $count; $i++)$letter++;
         return $letter;
     }
 
-    public function writeXlsSysData()
+    public function writeSysData()
     {
         if(isset($_POST['storyList']))
         {
@@ -358,7 +358,7 @@ class myfile extends file
         }
     }
 
-    public function buildXlsList($excelSheet, $field, $row)
+    public function buildList($excelSheet, $field, $row)
     {
         $listName = $field . 'List';
         $range = ($field == 'story' and isset($_POST['storyList'])) ? "{$this->lang->excel->title->sysValue}!\$A\$1:\$A\$" . count($this->post->storyList) :  (is_array($this->post->$listName) ? '' : '"' . $this->post->$listName . '"');

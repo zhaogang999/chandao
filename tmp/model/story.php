@@ -76,7 +76,6 @@ public function batchChangePlan($storyIDList, $planID, $oldPlanID = 0)
             if(empty($story->branch)) $story->plan .= ",$planID";
         }
 
-        //更改计划需求阶段不发生改变
         //if($planID) $story->stage = 'planned';
         if($planID and $oldStory->stage =='wait') $story->stage = 'planned';
 
@@ -1008,7 +1007,7 @@ public function setStage($storyID)
         ->andWhere('story')->eq($storyID)
         ->andWhere('type')->in($taskType)
         ->andWhere('status')->ne('cancel')
-        //->andWhere('status')->ne('pause')
+        ->andWhere('status')->ne('pause')
         ->andWhere('closedReason')->ne('cancel')
         ->andWhere('deleted')->eq(0)
         ->fetchGroup('type');

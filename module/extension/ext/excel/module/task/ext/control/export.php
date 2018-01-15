@@ -1,5 +1,5 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include '../../control.php';
 class mytask extends task
 {
     public function export($projectID, $orderBy)

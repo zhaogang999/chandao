@@ -51,7 +51,7 @@ public function setStage($storyID)
         ->andWhere('story')->eq($storyID)
         ->andWhere('type')->in($taskType)
         ->andWhere('status')->ne('cancel')
-        //->andWhere('status')->ne('pause')
+        ->andWhere('status')->ne('pause')
         ->andWhere('closedReason')->ne('cancel')
         ->andWhere('deleted')->eq(0)
         ->fetchGroup('type');

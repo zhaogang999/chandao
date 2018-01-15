@@ -1,5 +1,5 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include '../../control.php';
 class mystory extends story
 {
     public function import($productID, $branch = 0)

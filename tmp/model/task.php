@@ -740,7 +740,6 @@ public function update($taskID)
     {
         $taskDetail->status = $task->status;
     }
-    
     //禅道任务增加关键字字段；需求：858；行号：100-101
     $taskDetail->keywords    = $task->keywords;
 

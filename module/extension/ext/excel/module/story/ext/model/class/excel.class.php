@@ -90,37 +90,37 @@ class excelStory extends StoryModel
                     if($oldStories[$storyID]->reviewedBy) $storyData->reviewedDate   = '0000-00-00';
                     if($oldStories[$storyID]->closedBy) $storyData->closedDate       = '0000-00-00';
 
-                    $newSpecData = $oldSpecs[$storyID];
-                    $newSpecData->version += 1;
+                    $specData = $oldSpecs[$storyID];
+                    $specData->version += 1;
 
-                    foreach($specChanges as $specChange)$newSpecData->{$specChange['field']} = $specData->{$specChange['field']};
+                    foreach($specChanges as $specChange)$specData->{$specChange['field']} = $specChange['new'];
                 }
 
-                if($storyChanges or $specChanges)
-                {
-                    $storyData->lastEditedBy   = $this->app->user->account;
-                    $storyData->lastEditedDate = $now;
-                    $this->dao->update(TABLE_STORY)
-                        ->data($storyData)
-                        ->autoCheck()
-                        ->batchCheck($this->config->story->change->requiredFields, 'notempty')
-                        ->where('id')->eq((int)$storyID)->exec();
+               if($storyChanges or $specChanges)
+               {
+                   $storyData->lastEditedBy   = $this->app->user->account;
+                   $storyData->lastEditedDate = $now;
+                   $this->dao->update(TABLE_STORY)
+                       ->data($storyData)
+                       ->autoCheck()
+                       ->batchCheck($this->config->story->change->requiredFields, 'notempty')
+                       ->where('id')->eq((int)$storyID)->exec();
+               }
+               if(!dao::isError())
+               {
+                   if($specChanges)
+                   {
+                       $this->dao->insert(TABLE_STORYSPEC)->data($specData)->exec();
+                       $actionID = $this->action->create('story', $storyID, 'Changed', '');
+                       $this->action->logHistory($actionID, $specChanges);
+                   }
+                   if($storyChanges)
+                   {
+                       $actionID = $this->action->create('story', $storyID, 'Edited', '');
+                       $this->action->logHistory($actionID, $storyChanges);
+                   }
 
-                    if(!dao::isError())
-                    {
-                        if($specChanges)
-                        {
-                            $this->dao->insert(TABLE_STORYSPEC)->data($newSpecData)->exec();
-                            $actionID = $this->action->create('story', $storyID, 'Changed', '');
-                            $this->action->logHistory($actionID, $specChanges);
-                        }
-                        if($storyChanges)
-                        {
-                            $actionID = $this->action->create('story', $storyID, 'Edited', '');
-                            $this->action->logHistory($actionID, $storyChanges);
-                        }
-                    }
-                }
+               }
             }
             else
             {

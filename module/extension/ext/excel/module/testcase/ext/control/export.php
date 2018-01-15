@@ -1,5 +1,5 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include '../../control.php';
 class mytestcase extends testcase
 {
     public function export($productID, $orderBy, $taskID = 0)

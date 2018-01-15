@@ -1,9 +1,10 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include '../../control.php';
 class mytestcase extends testcase
 {
     public function showImport($productID, $branch = 0)
     {
+        set_time_limit(0);
         $branch = (int)$branch;
         if($_POST)
         {

@@ -1,5 +1,6 @@
 <?php
-helper::import(dirname(dirname(dirname(__FILE__))) . "/control.php");
+include "../../control.php";
+
 function checkFileExist($matches)
 {
     global $config;
@@ -18,7 +19,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function docxInit()
+    public function init()
     {
         $this->app->loadClass('pclzip', true);
         $this->zfile  = $this->app->loadClass('zfile');
@@ -50,11 +51,11 @@ class myfile extends file
      */
     public function export2Word()
     {
-        $this->docxInit();
+        $this->init();
         $header     = isset($this->config->word->header->{$this->kind}) ? $this->config->word->header->{$this->kind} : (isset($this->post->header) ? $this->post->header : '');
         $header     = (object)$header;
         $headerName = empty($header) ? '' : $this->dao->select('*')->from($header->tableName)->where('id')->eq($this->session->{$header->name})->fetch();
-        $this->setDocxDocProps($headerName);
+        $this->setDocProps($headerName);
 
         $tableName  = (empty($_POST['tableName'])) ? (isset($this->config->word->tableName->{$this->kind}) ? $this->config->word->tableName->{$this->kind} : '') : $this->post->tableName;
         if(empty($tableName)) die(js::alert($this->lang->word->notice->noexport));
@@ -74,7 +75,6 @@ class myfile extends file
         }
         $allModules = $this->dao->select('id,path,name,parent,grade,`order`')->from(TABLE_MODULE)
             ->where('id')->in($idList)
-            ->andWhere('deleted')->eq(0)
             ->orderBy('grade asc, `order` asc')
             ->fetchAll('id');
 
@@ -252,7 +252,7 @@ class myfile extends file
             }
             elseif($fieldName == 'files')
             {
-                $this->formatDocxFiles($content);
+                $this->formatFiles($content);
             }
             else
             {
@@ -277,7 +277,7 @@ class myfile extends file
      * @access public
      * @return void
      */
-    public function formatDocxFiles($content)
+    public function formatFiles($content)
     {
         if(empty($content->files)) return;
         $this->addText($this->fields['files'] . ':', array('font-weight' => 'bold'));
@@ -582,7 +582,7 @@ class myfile extends file
      * @access public 
      * @return void 
      */
-    public function setDocxDocProps($header)
+    public function setDocProps($header)
     {
         $title      = $header ? $header->name : $this->post->kind;
         $coreFile   = file_get_contents($this->exportPath . 'docProps/core.xml');
