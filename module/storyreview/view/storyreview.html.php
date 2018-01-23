@@ -15,7 +15,8 @@
     <ul class='nav'>
       <?php
       if(common::hasPriv('storyReview', 'storyReview')) echo "<li class='active'>" . html::a(inlink('storyReview', "objectID=$objectID&from=$from"),  $lang->storyreview->storyreview) . "</li>";
-      if(common::hasPriv('storyReview', 'leftProblem'))echo "<li>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from"), $lang->storyreview->leftProblemAB) . "</li>";
+      if(common::hasPriv('storyReview', 'leftProblem'))echo "<li>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from&status=all"), $lang->storyreview->leftProblemAB) . "</li>";
+      if(common::hasPriv('storyReview', 'leftProblem'))echo "<li>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from&status=unfixed"), $lang->storyreview->unfixed) . "</li>";
       ?>
     </ul>
   <?php if ($from == 'project'):?>

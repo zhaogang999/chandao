@@ -98,13 +98,14 @@ class storyreview extends control
      * @param $objectID
      * @param $from
      * @param string $type
+     * @param string $status
      * @param int $param
      * @param string $orderBy
      * @param int $recTotal
      * @param int $recPerPage
      * @param int $pageID
      */
-    public function leftProblem($objectID, $from, $type = 'byModule', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function leftProblem($objectID, $from, $status= 'all', $type = 'byModule', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         $this->loadModel('project');
 
@@ -133,7 +134,7 @@ class storyreview extends control
             $this->view->position[]   = $this->lang->storyreview->leftProblemAB;
             /* Header and position. */
             $this->view->title        = $this->lang->colon . $this->lang->storyreview->leftProblemAB;
-            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$objectID, $from, 'true', $sort, $type, $queryID, $pager);
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$objectID, $from, 'true', $sort, $type, $queryID, $pager, $status);
             $actionURL = $this->createLink('storyreview', 'storyreview', "productID=0&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
@@ -148,7 +149,7 @@ class storyreview extends control
             $this->view->title        = $object->name . $this->lang->colon . $this->lang->storyreview->leftProblemAB;
             $this->view->position[]   = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[]   = $this->lang->storyreview->leftProblemAB;
-            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$object->id, $from, 'true', $sort, $type, $queryID, $pager);
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$object->id, $from, 'true', $sort, $type, $queryID, $pager, $status);
             $actionURL = $this->createLink('storyreview', 'storyreview', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
         }
 
@@ -162,6 +163,7 @@ class storyreview extends control
         $this->view->orderBy  = $orderBy;
         $this->view->objectID = $objectID;
         $this->view->param    = $param;
+        $this->view->status   = $status;
 
         $this->display();
     }

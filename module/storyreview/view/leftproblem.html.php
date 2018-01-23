@@ -14,8 +14,11 @@
 <div id='featurebar'>
   <ul class='nav'>
     <?php
+    $allClass     = $status=='all'?'active':'';
+    $unfixedClass = $status=='unfixed'?'active':'';
     if(common::hasPriv('storyReview', 'storyReview')) echo "<li>" . html::a(inlink('storyReview', "objectID=$objectID&from=$from"),  $lang->storyreview->storyreview) . "</li>";
-    if(common::hasPriv('storyReview', 'leftProblem'))echo "<li class='active'>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from"), $lang->storyreview->leftProblemAB) . "</li>";
+    if(common::hasPriv('storyReview', 'leftProblem'))echo "<li class=$allClass>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from&status=all"), $lang->storyreview->leftProblemAB) . "</li>";
+    if(common::hasPriv('storyReview', 'leftProblem'))echo "<li class=$unfixedClass>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from&status=unfixed"), $lang->storyreview->unfixed) . "</li>";
     ?>
   </ul>
   <?php if ($from == 'project'):?>
@@ -28,8 +31,7 @@
 <table class='table tablesorter table-fixed' id='storyReviewList'>
   <thead>
   <?php
-
-  $vars = "objectID=$objectID&from=$from&type=$type&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
+  $vars = "objectID=$objectID&from=$from&status=$status&type=$type&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
   ?>
     <tr class='colhead'>
       <th class='w-40px'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>

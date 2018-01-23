@@ -87,7 +87,20 @@ class storyreviewModel extends model
         }
     }
 
-    public function getStoryReviews($objectID, $from, $leftProblem = 'false', $orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
+    /**
+     * 获取评审单列表
+     *
+     * @param $objectID
+     * @param $from
+     * @param $leftProblem
+     * @param $orderBy
+     * @param $type
+     * @param $queryID
+     * @param $pager
+     * @param  $status
+     * @return array
+     */
+    public function getStoryReviews($objectID, $from, $leftProblem = 'false', $orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null, $status = null)
     {
         if ($type == 'bySearch')
         {
@@ -117,6 +130,7 @@ class storyreviewModel extends model
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
                 ->where('t1.deleted')->eq(0)
                 ->beginIF($leftProblem == 'true')->andWhere('leftProblem')->eq('1')->fi()
+                ->beginIF($status == 'unfixed')->andWhere('resolution')->eq('unfixed')->fi()
                 ->beginIF($from == 'project')->andWhere('t1.project')->eq((int)$objectID)->fi()
                 //->beginIF($from == 'qa')->andWhere('t1.product')->eq((int)$objectID)->fi()
                 ->andWhere($storyReviewQuery)
@@ -132,6 +146,7 @@ class storyreviewModel extends model
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
                 ->where('t1.deleted')->eq(0)
                 ->beginIF($leftProblem == 'true')->andWhere('leftProblem')->eq('1')->fi()
+                ->beginIF($status == 'unfixed')->andWhere('resolution')->eq('unfixed')->fi()
                 ->beginIF($from == 'project')->andWhere('t1.project')->eq((int)$objectID)->fi()
                 ->orderBy($orderBy)
                 ->page($pager)

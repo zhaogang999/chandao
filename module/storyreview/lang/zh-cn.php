@@ -20,6 +20,7 @@ $lang->storyreview->id          = '评审单号';
 $lang->storyreview->draft       = '草稿';
 $lang->storyreview->finished    = '完成';
 $lang->storyreview->resolve     = '解决遗留问题';
+$lang->storyreview->unfixed     = '未解决';
 
 $lang->storyreview->title           = '评审内容';
 $lang->storyreview->reviewStories   = '评审需求';
