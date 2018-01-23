@@ -226,12 +226,17 @@ public function dailyBugStatistics($data)
  * Build a search form
  *
  * @param $actionURL  string
+ * @param $projects  int
+ * @param $queryID int
  * @access public
  * @return void
  */
-public function buildReportSearchForm($actionURL)
+public function buildReportSearchForm($projects, $actionURL, $queryID)
 {
+    $this->config->report->search['queryID']   = $queryID;
+    $this->config->project->search['params']['project']['values'] = array(''=>'', 'all' => $this->lang->project->allProject) + $projects;
     $this->config->report->search['actionURL'] = $actionURL;
+    
     $this->loadModel('search')->setSearchParams($this->config->report->search);
 }
 
@@ -240,18 +245,33 @@ public function buildReportSearchForm($actionURL)
  *
  * @param  string    $orderBy
  * @param  string    $type
+ * @param  int       $queryID
  * @param  object    $pager
  * @access public
  * @return array
  */
-public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $pager = null)
+public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
 {
     if ($type == 'bySearch')
     {
+        if($queryID)
+        {
+            $query = $this->loadModel('search')->getQuery($queryID);
+            if($query)
+            {
+                $this->session->set('reportQuery', $query->sql);
+                $this->session->set('reportForm', $query->form);
+            }
+            else
+            {
+                $this->session->set('reportQuery', ' 1 = 1');
+            }
+        }
+        
         $reportQuery = $this->session->reportQuery;
         $reportQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $reportQuery);
         $reportQuery = str_replace(array('t1.`storyTitle`','t1.`openedBy`','t1.`specialPlan`'), array('t3.`title`','t3.`openedBy`','t3.`specialPlan`'),$reportQuery);
-        $reportQuery = str_replace(array('t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
+        $reportQuery = str_replace(array('t1.`project`','t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`project`','t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
         //$reportQuery = str_replace(array('t1.`planTitle`'), array('t4.`title`'), $reportQuery);
         $reportQuery = str_replace(array('t1.`projectTitle`'), array('t5.`code`'), $reportQuery);
 
@@ -317,7 +337,7 @@ public function getScriptById($scriptID)
 public function updateScript($scriptID)
 {
     $oldScript = $this->getScriptById($scriptID);
-    $script = fixer::input('post')
+    $script    = fixer::input('post')
         ->stripTags($this->config->report->editor->editscript['id'], $this->config->allowedTags)
         //->join('mailto', ',')
         ->remove('taskID')
@@ -431,17 +451,22 @@ public function storyReviewSummary()
     {
         $info[$projectID] = new stdClass();
         $info[$projectID]->name = $project;
+        $info[$projectID]->storyCount           = 0;
         $info[$projectID]->hasTestDateCount     = 0;
         $info[$projectID]->noTestDateCount      = 0;
-        $info[$projectID]->noTestDateStories    = array();
+        $info[$projectID]->noTestDateHasReviewStories     = array();
+        $info[$projectID]->noTestDateFreeReviewStories    = array();
         $info[$projectID]->hasSpecialPlanCount  = 0;
         $info[$projectID]->noSpecialPlanCount   = 0;
-        $info[$projectID]->noSpecialPlanStories = array();
+        $info[$projectID]->noSpecialPlanHasReviewStories  = array();
+        $info[$projectID]->noSpecialPlanFreeReviewStories = array();
         $info[$projectID]->notReviewStoryCount  = 0;
+        $info[$projectID]->hasReviewStoryCount  = 0;
         $info[$projectID]->notReviewStories     = array();
         $info[$projectID]->freeReviewStoryCount = 0;
         $info[$projectID]->freeReviewStories    = array();
-        $hasReviewedStories = array();
+        $hasReviewedStories  = array();
+        $freeReviewedStories = array();
 
         $stories = $this->dao->select('t1.*, t2.*, t2.version as version')->from(TABLE_PROJECTSTORY)->alias('t1')
             ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
@@ -453,6 +478,8 @@ public function storyReviewSummary()
 
         foreach ($stories as $storyID => $story)
         {
+            $info[$projectID]->storyCount++;
+
             if ($story->reviewStatus == 'notReview')
             {
                 $info[$projectID]->notReviewStoryCount++;
@@ -461,11 +488,28 @@ public function storyReviewSummary()
             elseif ($story->reviewStatus == 'freeReview')
             {
                 $info[$projectID]->freeReviewStoryCount++;
-                $info[$projectID]->freeReviewStories[] = $storyID;
+                //$info[$projectID]->freeReviewStories[] = $storyID;
+                $freeReviewedStories[$storyID] = new stdClass();
+                $freeReviewedStories[$storyID]->id = $storyID;
+                $freeReviewedStories[$storyID]->version = $story->version;
+
+                if ($story->testDate == '0000-00-00')
+                {
+                    $info[$projectID]->noTestDateFreeReviewStories[] = $storyID;
+                }
+
+                if ($story->specialPlan == '0000-00-00')
+                {
+                    $info[$projectID]->noSpecialPlanFreeReviewStories[] = $storyID;
+                }
             }
             elseif ($story->reviewStatus == 'hasReview')
             {
-                $hasReviewedStories[$storyID] = $storyID;
+                $info[$projectID]->hasReviewStoryCount++;
+                $hasReviewedStories[$storyID] = new stdClass();
+                $hasReviewedStories[$storyID]->id = $storyID;
+                $hasReviewedStories[$storyID]->version = $story->version;
+
                 if ($story->testDate != '0000-00-00')
                 {
                     $info[$projectID]->hasTestDateCount++;
@@ -473,7 +517,7 @@ public function storyReviewSummary()
                 else
                 {
                     $info[$projectID]->noTestDateCount++;
-                    $info[$projectID]->noTestDateStories[] = $storyID;
+                    $info[$projectID]->noTestDateHasReviewStories[] = $storyID;
                 }
 
                 if ($story->specialPlan != '0000-00-00')
@@ -483,15 +527,15 @@ public function storyReviewSummary()
                 else
                 {
                     $info[$projectID]->noSpecialPlanCount++;
-                    $info[$projectID]->noSpecialPlanStories[] = $storyID;
+                    $info[$projectID]->noSpecialPlanHasReviewStories[] = $storyID;
                 }
             }
         }
-        
-        $zeroDevelTaskStories = $this->getZeroTaskStories($hasReviewedStories, "fos, devel, sdk, web, ios, android, script");
-        $zeroTestTaskStories = $this->getZeroTaskStories($hasReviewedStories, 'test');
-        $info[$projectID]->zeroDevelTaskStories = $zeroDevelTaskStories;
-        $info[$projectID]->zeroTestTaskStories = $zeroTestTaskStories;
+
+        $info[$projectID]->zeroDevelTaskHasReviewStories = $this->getZeroTaskStories($hasReviewedStories, "fos, devel, sdk, web, ios, android, script");
+        $info[$projectID]->zeroDevelTaskFreeReviewStories = $this->getZeroTaskStories($freeReviewedStories, "fos, devel, sdk, web, ios, android, script");
+        $info[$projectID]->zeroTestTaskHasReviewStories = $this->getZeroTaskStories($hasReviewedStories, 'test');
+        $info[$projectID]->zeroTestTaskFreeReviewStories = $this->getZeroTaskStories($freeReviewedStories, 'test');
     }
     
     krsort($info);
@@ -620,8 +664,9 @@ public function getZeroTaskStories($stories, $type='')
     $zeroTaskStories = array();
     foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
     {
+        $zeroTaskStories[$storyID] = new stdClass();
         $zeroTaskStories[$storyID]->storyID = $storyID;
-        //$zeroTaskStories[$storyID]->version = $story->version;
+        $zeroTaskStories[$storyID]->version = $story->version;
     }
 
     return $zeroTaskStories;

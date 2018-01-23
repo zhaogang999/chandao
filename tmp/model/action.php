@@ -270,13 +270,16 @@ public function printChanges($objectType, $histories)
         }
         if ($fieldName == 'module')
         {
-            if ($history->new != 0 || $history->old != 0)
+            if ($history->new != 0)
             {
-                $oldHistory = $this->loadModel('tree')->getByID($history->old);
-                $history->old = '#' . $history->old . ' ' . $oldHistory->name;
                 $newHistory = $this->loadModel('tree')->getByID($history->new);
                 $history->new = '#' . $history->new . ' ' . $newHistory->name;
            }
+            if ($history->old != 0)
+            {
+                $oldHistory = $this->loadModel('tree')->getByID($history->old);
+                $history->old = '#' . $history->old . ' ' . $oldHistory->name;
+            }
         }
 
         $history->fieldLabel = (isset($this->lang->$objectType) && isset($this->lang->$objectType->$fieldName)) ? $this->lang->$objectType->$fieldName : $fieldName;

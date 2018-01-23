@@ -84,7 +84,7 @@
       </tr>
       <tr>
         <th><?php echo $lang->storyreview->mailto;?></th>
-        <td colspan="3"><?php echo html::select('mailto[]', $users, '', 'multiple class="form-control chosen"');?></td>
+        <td colspan="3"><?php echo html::select('mailto[]', $users, '', "multiple class='form-control chosen' data-placeholder='{$lang->storyreview->mailtoAB}'");?></td>
       </tr>
       <tr>
         <th><?php echo $lang->storyreview->influence;?></th>
@@ -138,6 +138,7 @@
           $actionLink = $this->createLink('storyreview', 'create', "projectID=$projectID&type=draft");
           echo html::submitButton($lang->storyreview->draft, "onclick=\"setFormAction('$actionLink')\"") . html::submitButton($lang->storyreview->finished) . html::backButton();
           ?>
+          <sapn class='alert-danger'><?php echo $lang->storyreview->danger;?></sapn>
         </td></tr>
       <tr><td colspan="4"><div class='alert alert-info'><?php echo $lang->storyreview->notice
             ?></div></td></tr>

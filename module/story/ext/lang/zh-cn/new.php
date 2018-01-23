@@ -29,6 +29,7 @@ $lang->story->reviewStatusList['freeReview'] = '免评审';
 //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
 $lang->story->customProduct = '来源产品';
 $lang->story->ifLinkStories = '有无相关需求';
+$lang->story->ifLinkStoriesList['']      = '';
 $lang->story->ifLinkStoriesList['none']  = '无';
 $lang->story->ifLinkStoriesList['exist'] = '有';
 

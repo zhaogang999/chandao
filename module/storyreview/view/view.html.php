@@ -33,21 +33,24 @@ tfoot tr td .table-actions .btn{display:none;}
   $browseLink = $this->session->storyreviewList ? $this->session->storyreviewList : $this->createLink('storyreview', 'storyreview', "objectID=$objectID&from=$from");
   if(!$storyReview->deleted)
   {
+    echo "<div class='btn-group'>";
+    common::printIcon('storyreview', 'edit',   "storyReviewID=$storyReview->id&objectID=$objectID&from=$from", '','list', 'pencil', '', '', false, '', $lang->storyreview->edit);
+    echo '</div>';
+    echo "<div class='btn-group'>";
+    common::printIcon('storyreview', 'resolve', "storyReviewID=$storyReview->id", $storyReview, 'list', '', '', 'iframe', true);
+    echo '</div>';
+
+    if ($from == 'project')
+    {
       echo "<div class='btn-group'>";
-      common::printIcon('storyreview', 'edit',   "storyReviewID=$storyReview->id&objectID=$objectID&from=$from", '','list', 'pencil', '', '', false, '', $lang->storyreview->edit);
-      echo '</div>';
 
-      if ($from == 'project')
+      if(common::hasPriv('storyreview', 'delete'))
       {
-        echo "<div class='btn-group'>";
-
-        if(common::hasPriv('storyreview', 'delete'))
-        {
-          common::printIcon('storyreview', 'delete', "storyReviewID=$storyReview->id", '', 'list', 'remove', 'hiddenwin');
-        }
-
-        echo '</div>';
+        common::printIcon('storyreview', 'delete', "storyReviewID=$storyReview->id", '', 'list', 'remove', 'hiddenwin');
       }
+
+      echo '</div>';
+    }
   }
   echo common::printRPN($browseLink);
   ?>
@@ -68,6 +71,10 @@ tfoot tr td .table-actions .btn{display:none;}
         <fieldset>
           <legend><?php echo $lang->storyreview->problemTracking;?></legend>
           <div class='article-content'><?php echo $storyReview->problemTracking;?></div>
+        </fieldset>
+        <fieldset>
+          <legend><?php echo $lang->storyreview->countermeasure;?></legend>
+          <div class='article-content'><?php echo $storyReview->countermeasure;?></div>
         </fieldset>
         <fieldset>
           <legend><?php echo $lang->storyreview->deliverables;?></legend>
@@ -155,6 +162,18 @@ tfoot tr td .table-actions .btn{display:none;}
             <td><?php echo $lang->storyreview->leftProblemList[$storyReview->leftProblem];?></td>
           </tr>
           <tr>
+            <th><?php echo $lang->storyreview->resolution;?></th>
+            <td><?php echo $lang->storyreview->resolutionList[$storyReview->resolution];?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->storyreview->solver;?></th>
+            <td><?php echo $users[$storyReview->solver];?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->storyreview->resolvedDate;?></th>
+            <td><?php echo $storyReview->resolvedDate;?></td>
+          </tr>
+          <tr>
             <th><?php echo $lang->storyreview->needTest;?></th>
             <td><?php echo $lang->storyreview->needTestList[$storyReview->needTest];?></td>
           </tr>
@@ -169,6 +188,14 @@ tfoot tr td .table-actions .btn{display:none;}
           <tr>
             <th><?php echo $lang->storyreview->releasedDate;?></th>
             <td><?php echo $storyReview->releasedDate;?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->storyreview->openedByAB;?></th>
+            <td><?php echo $storyReview->openedBy;?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->storyreview->openedDate;?></th>
+            <td><?php echo $storyReview->openedDate;?></td>
           </tr>
         </table>
       </fieldset>

@@ -11,10 +11,13 @@
 ?>
 <?php include '../../common/view/header.html.php';?>
 <?php js::set('confirmDelete', $lang->storyreview->confirmDelete)?>
-<div id='titlebar'>
-  <div class='heading'>
-    <?php echo html::icon($lang->icons['storyReview']);?> <?php echo $lang->storyreview->storyreview;?>
-  </div>
+<div id='featurebar'>
+    <ul class='nav'>
+      <?php
+      if(common::hasPriv('storyReview', 'storyReview')) echo "<li class='active'>" . html::a(inlink('storyReview', "objectID=$objectID&from=$from"),  $lang->storyreview->storyreview) . "</li>";
+      if(common::hasPriv('storyReview', 'leftProblem'))echo "<li>"   . html::a(inlink('leftProblem', "objectID=$objectID&from=$from"), $lang->storyreview->leftProblemAB) . "</li>";
+      ?>
+    </ul>
   <?php if ($from == 'project'):?>
   <div class='actions'>
     <?php common::printIcon('storyreview', 'create', "project=$object->id", "", "button", "plus");?>
@@ -33,7 +36,7 @@
       <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>
       <th class='w-150px'><?php common::printOrderLink('title', $orderBy, $vars, $lang->storyreview->title);?></th>
       <th class='w-id'><?php common::printOrderLink('storySource', $orderBy, $vars, $lang->storyreview->storySource);?></th>
-      <th class='w-150px'><?php common::printOrderLink('application', $orderBy, $vars, $lang->storyreview->application);?></th>
+      <th class='w-140px'><?php common::printOrderLink('application', $orderBy, $vars, $lang->storyreview->application);?></th>
       <th class='w-100px'><?php common::printOrderLink('storyReviewers', $orderBy, $vars, $lang->storyreview->storyReviewers);?></th>
       <th class='w-100px'><?php common::printOrderLink('devReviewers', $orderBy, $vars, $lang->storyreview->devReviewers);?></th>
       <th class='w-100px'><?php common::printOrderLink('testReviewers', $orderBy, $vars, $lang->storyreview->testReviewers);?></th>
@@ -50,7 +53,7 @@
   <tbody>
   <?php foreach($storyReviews as $storyReview):?>
   <tr class='text-center'>
-    <td><?php echo $storyReview->id;?></td>
+    <td><?php echo html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id$from=$from"), $storyReview->id);?></td>
     <td class='text-left' title='<?php echo $storyReview->title?>'><?php echo html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id&from=$from"), $storyReview->title);?></td>
     <td><?php echo $storyReview->storySource; ?></td>
     <td><?php echo $storyReview->application; ?></td>

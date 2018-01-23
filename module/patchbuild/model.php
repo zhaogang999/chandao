@@ -80,9 +80,9 @@ class patchbuildModel extends model
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->editBatchBuild['id'], $this->post->uid);
         $this->dao->update(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()
-            ->batchCheck($this->config->patchbuild->editBatchBuild->requiredFields, 'notempty')
+            ->batchCheck($this->config->patchbuild->editpatchbuild->requiredFields, 'notempty')
             ->where('id')->eq((int)$buildID)
-            ->check('name', 'unique', "id != $buildID AND product = {$build->product} AND deleted = '0'")
+            ->check('name', 'unique', "id != $buildID AND deleted = '0'")
             ->exec();
         //if(isset($build->branch) and $oldBuild->branch != $build->branch) $this->dao->update(TABLE_RELEASE)->set('branch')->eq($build->branch)->where('build')->eq($buildID)->exec();
         if(!dao::isError())

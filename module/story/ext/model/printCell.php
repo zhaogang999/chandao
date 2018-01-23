@@ -89,7 +89,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 break;
             //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
             case 'ifLinkStories':
-                echo $this->lang->story->ifLinkStoriesList[$story->ifLinkStories];
+                echo zget($this->lang->story->ifLinkStoriesList, $story->ifLinkStories, $story->ifLinkStories);
                 break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);

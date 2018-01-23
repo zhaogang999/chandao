@@ -133,6 +133,7 @@ $lang->report->notReview = '未评审';
 $lang->report->hasReveiw = '已评审';
 $lang->report->freeReveiw = '免评审';
 $lang->report->notReviewStoryCount = '未评审需求数';
+$lang->report->hasReviewStoryCount = '已评审需求数';
 $lang->report->notReviewStoryIDs = '未评审需求ID';
 $lang->report->testSummary = '提测情况';
 $lang->report->releaseSummary = '正式发版情况';

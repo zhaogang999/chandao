@@ -111,6 +111,22 @@
         <td colspan="3"><?php echo html::textarea('problemTracking', $storyReview->problemTracking, "rows='5' class='form-control' placeholder='{$lang->storyreview->problemTrackingAB}'");?></td>
       </tr>
       <tr>
+        <th><?php echo $lang->storyreview->resolution;?></th>
+        <td><?php echo html::select('resolution', $lang->storyreview->resolutionList, str_replace(' ' , '', $storyReview->resolution), 'class="form-control"');?></td>
+        <td  colspan="2">
+          <div class="input-group">
+            <span class='input-group-addon'><?php echo $lang->storyreview->solver;?></span>
+            <?php echo html::select('solver', $users, $storyReview->solver, "class='form-control chosen'; style='width:250px';");?>
+            <span class='input-group-addon fix-border br-0'><?php echo $lang->storyreview->resolvedDate;?></span>
+            <?php echo html::input('resolvedDate', $storyReview->resolvedDate, "class='form-control form-date' style='width:270px';");?>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th><?php echo $lang->storyreview->countermeasure;?></th>
+        <td colspan="3"><?php echo html::textarea('countermeasure', '', "rows='4' class='form-control'");?></td>
+      </tr>
+      <tr>
         <th><?php echo $lang->storyreview->risk;?></th>
         <td colspan="3"><?php echo html::textarea('risk', $storyReview->risk, "rows='3' class='form-control'");?></td>
       </tr>
@@ -157,6 +173,7 @@
             echo html::submitButton() . html::backButton();
           }
           ?>
+           <sapn class='alert-danger'><?php echo $lang->storyreview->danger;?></sapn>
         </td>
       </tr>
       <tr><td colspan="4"><div class='alert alert-info'><?php echo $lang->storyreview->notice?></div></td></tr>

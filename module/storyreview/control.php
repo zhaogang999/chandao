@@ -59,7 +59,7 @@ class storyreview extends control
             $this->view->position[]   = $this->lang->storyreview->storyreview;
             /* Header and position. */
             $this->view->title        = $this->lang->colon . $this->lang->storyreview->storyreview;
-            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$objectID, $from, $sort, $type, $queryID, $pager);
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$objectID, $from, 'false', $sort, $type, $queryID, $pager);
             $actionURL    = $this->createLink('storyreview', 'storyreview', "productID=0&from=qa&type=bySearch&param=myQueryID");
         }
         elseif($from == 'project')
@@ -74,20 +74,94 @@ class storyreview extends control
             $this->view->title        = $object->name . $this->lang->colon . $this->lang->storyreview->storyreview;
             $this->view->position[]   = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
             $this->view->position[]   = $this->lang->storyreview->storyreview;
-            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$object->id, $from, $sort, $type, $queryID, $pager);
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$object->id, $from, 'false', $sort, $type, $queryID, $pager);
             $actionURL    = $this->createLink('storyreview', 'storyreview', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
         }
 
         $this->storyreview->buildStoryReviewSearchForm($actionURL, $queryID);
 
-        $this->view->users      = $this->loadModel('user')->getPairs('noletter');
-        $this->view->from       = $from;
-        $this->view->type       = $type;
-        $this->view->object     = $object;
-        $this->view->pager      = $pager;
-        $this->view->orderBy    = $orderBy;
-        $this->view->objectID   = $objectID;
-        $this->view->param      = $param;
+        $this->view->users    = $this->loadModel('user')->getPairs('noletter');
+        $this->view->from     = $from;
+        $this->view->type     = $type;
+        $this->view->object   = $object;
+        $this->view->pager    = $pager;
+        $this->view->orderBy  = $orderBy;
+        $this->view->objectID = $objectID;
+        $this->view->param    = $param;
+
+        $this->display();
+    }
+
+    /**
+     * 需求评审单遗留问题
+     *
+     * @param $objectID
+     * @param $from
+     * @param string $type
+     * @param int $param
+     * @param string $orderBy
+     * @param int $recTotal
+     * @param int $recPerPage
+     * @param int $pageID
+     */
+    public function leftProblem($objectID, $from, $type = 'byModule', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    {
+        $this->loadModel('project');
+
+        $this->session->set('storyReviewList', $this->app->getURI(true));
+        $queryID = ($type == 'bySearch')  ? (int)$param : 0;
+
+        $table  = $from == 'qa' ? TABLE_PRODUCT : TABLE_PROJECT;
+        $object = $this->dao->select('id,name')->from($table)->where('id')->eq($objectID)->fetch();
+
+        /* Load pager. */
+        $this->app->loadClass('pager', $static = true);
+        $pager = pager::init($recTotal, $recPerPage, $pageID);
+
+        /* Append id for secend sort. */
+        $sort = $this->loadModel('common')->appendOrder($orderBy);
+
+        if($from == 'qa')
+        {
+            $this->lang->storyreview->menu      = $this->lang->storyreview->qa;
+            $this->lang->storyreview->menuOrder = $this->lang->qa->menuOrder;
+
+            //$this->storyreview->setMenu($this->product->getPairs(), $objectID);
+            $this->lang->set('menugroup.storyreview', 'qa');
+            $this->view->product      = $object;
+            //$this->view->position[] = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
+            $this->view->position[]   = $this->lang->storyreview->leftProblemAB;
+            /* Header and position. */
+            $this->view->title        = $this->lang->colon . $this->lang->storyreview->leftProblemAB;
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$objectID, $from, 'true', $sort, $type, $queryID, $pager);
+            $actionURL = $this->createLink('storyreview', 'storyreview', "productID=0&from=qa&type=bySearch&param=myQueryID");
+        }
+        elseif($from == 'project')
+        {
+            $this->lang->storyreview->menu      = $this->lang->project->menu;
+            $this->lang->storyreview->menuOrder = $this->lang->project->menuOrder;
+            $this->project->setMenu($this->project->getPairs('nocode'), $objectID, 'project');
+            $this->lang->set('menugroup.storyreview', 'project');
+            $this->view->project      = $object;
+            //$this->view->products      = $this->project->getProducts($object->id);
+            /* Header and position. */
+            $this->view->title        = $object->name . $this->lang->colon . $this->lang->storyreview->leftProblemAB;
+            $this->view->position[]   = html::a(helper::createLink('product', 'browse', "productID=$objectID"), $object->name);
+            $this->view->position[]   = $this->lang->storyreview->leftProblemAB;
+            $this->view->storyReviews = $this->storyreview->getStoryReviews((int)$object->id, $from, 'true', $sort, $type, $queryID, $pager);
+            $actionURL = $this->createLink('storyreview', 'storyreview', "objectID=$object->id&from=project&type=bySearch&param=myQueryID");
+        }
+
+        $this->storyreview->buildStoryReviewSearchForm($actionURL, $queryID);
+
+        $this->view->users    = $this->loadModel('user')->getPairs('noletter');
+        $this->view->from     = $from;
+        $this->view->type     = $type;
+        $this->view->object   = $object;
+        $this->view->pager    = $pager;
+        $this->view->orderBy  = $orderBy;
+        $this->view->objectID = $objectID;
+        $this->view->param    = $param;
 
         $this->display();
     }
@@ -115,8 +189,8 @@ class storyreview extends control
         $this->loadModel('project');
         $this->loadModel('user');
 
-        $this->lang->storyreview->menu          = $this->lang->project->menu;
-        $this->lang->menugroup->storyreview     = 'project';
+        $this->lang->storyreview->menu      = $this->lang->project->menu;
+        $this->lang->menugroup->storyreview = 'project';
 
         
         /* Set menu. */
@@ -206,7 +280,7 @@ class storyreview extends control
             
             /* Set menu. */
             $this->lang->storyreview->menu      = $this->lang->project->menu;
-            $this->lang->menugroup->storyreview       = 'project';
+            $this->lang->menugroup->storyreview = 'project';
 
             $this->view->position[] = html::a($this->createLink('storyreview', 'storyreview', "objectID=$storyReview->project&from=project"), $project->name);
 
@@ -220,7 +294,7 @@ class storyreview extends control
         {
             /* Set menu. */
             $this->lang->storyreview->menu      = $this->lang->storyreview->qa;
-            $this->lang->menugroup->storyreview       = 'qa';
+            $this->lang->menugroup->storyreview = 'qa';
             //$this->storyreview->setMenu($this->loadModel('product')->getPairs(), $objectID);
 
             $this->view->position[] = html::a($this->createLink('storyreview', 'storyreview', "objectID=0&from=qa"), $this->lang->storyreview->storyreview);
@@ -230,14 +304,15 @@ class storyreview extends control
         $this->view->title      = $this->lang->storyreview->edit . $this->lang->colon . " #$storyReview->id $storyReview->title";
         //$this->view->product    = isset($productGroups[$storyReview->product]) ? $productGroups[$storyReview->product] : '';
         //$this->view->branches   = (isset($productGroups[$storyReview->product]) and $productGroups[$storyReview->product]->type == 'normal') ? array() : $this->loadModel('branch')->getPairs($storyReview->product);
-        $this->view->orderBy       = $orderBy;
+        $this->view->orderBy     = $orderBy;
+        $this->view->objectID    = $objectID;
 
         //$this->view->projects      = $this->project->getPairs('noclosed,nocode');
         //$this->view->productGroups = $productGroups;
         //$this->view->products      = $products;
-        $this->view->users         = $this->loadModel('user')->getPairs();
-        $this->view->storyReview   = $storyReview;
-        $this->view->from          = $from;
+        $this->view->users       = $this->loadModel('user')->getPairs();
+        $this->view->storyReview = $storyReview;
+        $this->view->from        = $from;
 
         $this->display();
     }
@@ -264,35 +339,35 @@ class storyreview extends control
             $this->loadModel('project')->setMenu($this->project->getPairs('nocode'), $storyReview->project, 'project');
 
             $this->lang->storyreview->menu      = $this->lang->project->menu;
-            $this->lang->menugroup->storyreview       = 'project';
-            $this->view->position[]    = html::a($this->createLink('project', 'task', "projectID=$storyReview->project"), $projects[$storyReview->project]);
-            $this->view->position[]    = $this->lang->storyreview->storyreview;
-            $this->view->position[]    = $this->lang->storyreview->view;
+            $this->lang->menugroup->storyreview = 'project';
+            $this->view->position[] = html::a($this->createLink('project', 'task', "projectID=$storyReview->project"), $projects[$storyReview->project]);
+            $this->view->position[] = $this->lang->storyreview->storyreview;
+            $this->view->position[] = $this->lang->storyreview->view;
             $this->view->from = 'project';
-            $this->view->objectID = $storyReview->project;
-            $this->view->title         = "STORYREVIEW #$storyReview->id $storyReview->version - " . $projects[$storyReview->project];
+            $this->view->objectID   = $storyReview->project;
+            $this->view->title      = "STORYREVIEW #$storyReview->id $storyReview->title - " . $projects[$storyReview->project];
         }
         elseif($from == 'qa')
         {
             $this->lang->storyreview->menu      = $this->lang->qa->menu;
             $this->lang->storyreview->menuOrder = $this->lang->qa->menuOrder;
-            $this->lang->menugroup->storyreview       = 'qa';
+            $this->lang->menugroup->storyreview = 'qa';
             $product = $this->loadModel('product')->getById($storyReview->product);
             //$this->storyreview->setMenu($this->loadModel('product')->getPairs(), $storyReview->product);
 
-            $this->view->position[]    = html::a($this->createLink('product', 'browse', "productID=$storyReview->product"), $product->name);
-            $this->view->position[]    = $this->lang->storyreview->view;
+            $this->view->position[] = html::a($this->createLink('product', 'browse', "productID=$storyReview->product"), $product->name);
+            $this->view->position[] = $this->lang->storyreview->view;
             $this->view->from = 'qa';
-            $this->view->objectID = $storyReview->product;
-            $this->view->title         = "STORYREVIEW #$storyReview->id $storyReview->title - " . $product->name;
+            $this->view->objectID   = $storyReview->product;
+            $this->view->title      = "STORYREVIEW #$storyReview->id $storyReview->title - " . $product->name;
         }
 
         if(!empty($storyReview->reviewStories)) $storyReview->reviewStories = $this->dao->select('id,title')->from(TABLE_STORY)->where('id')->in($storyReview->reviewStories)->fetchPairs();
 
         /* Assign. */
-        $this->view->users         = $this->loadModel('user')->getPairs('noletter');
-        $this->view->storyReview   = $storyReview;
-        $this->view->actions       = $this->loadModel('action')->getList('storyreview', $storyReviewID);
+        $this->view->users       = $this->loadModel('user')->getPairs('noletter');
+        $this->view->storyReview = $storyReview;
+        $this->view->actions     = $this->loadModel('action')->getList('storyreview', $storyReviewID);
         
         $this->display();
     }
@@ -334,5 +409,39 @@ class storyreview extends control
 
             die(js::locate($this->createLink('storyreview', 'storyreview', "objectID=$storyReview->project&from=project"), 'parent'));
         }
+    }
+
+    /**
+     * Resolve a leftProblem.
+     *
+     * @param  int    $storyReviewID
+     * @access public
+     * @return void
+     */
+    public function resolve($storyReviewID)
+    {
+        if(!empty($_POST))
+        {
+            $this->loadModel('action');
+            $changes = $this->storyreview->resolve($storyReviewID);
+
+            if(dao::isError()) die(js::error(dao::getError()));
+            //$this->loadModel('file')->saveUpload('storyReview', $storyReviewID);
+            
+            //$fileAction = !empty($files) ? $this->lang->addFiles . join(',', $files) . "\n" : '';
+            $actionID = $this->action->create('storyReview', $storyReviewID, 'Resolved', '', $this->post->resolution);
+            $this->action->logHistory($actionID, $changes);
+            $this->storyreview->sendmail($storyReviewID, $actionID);
+            
+            if(isonlybody()) die(js::closeModal('parent.parent'));
+            die(js::locate($this->createLink('storyReview', 'view', "storyReviewID=$storyReviewID"), 'parent'));
+        }
+
+        $storyReview = $this->storyreview->getStoryReviewById($storyReviewID);
+        $this->view->title       = $this->lang->colon . $this->lang->storyreview->resolve;
+        $this->view->storyReview = $storyReview;
+        $this->view->actions     = $this->loadModel('action')->getList('storyReview', $storyReviewID);
+        
+        $this->display();
     }
 }

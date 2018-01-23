@@ -123,8 +123,9 @@ public function getZeroTaskStories($stories, $type='')
     $zeroTaskStories = array();
     foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
     {
+        $zeroTaskStories[$storyID] = new stdClass();
         $zeroTaskStories[$storyID]->storyID = $storyID;
-        //$zeroTaskStories[$storyID]->version = $story->version;
+        $zeroTaskStories[$storyID]->version = $story->version;
     }
 
     return $zeroTaskStories;

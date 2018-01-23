@@ -42,12 +42,14 @@ $lang->resource->storyreview->create        = 'create';
 $lang->resource->storyreview->edit          = 'edit';
 $lang->resource->storyreview->delete        = 'delete';
 $lang->resource->storyreview->view          = 'view';
+$lang->resource->storyreview->resolve       = 'resolve';
 
 $lang->storyreview->methodOrder[5]  = 'create';
 $lang->storyreview->methodOrder[10] = 'edit';
 $lang->storyreview->methodOrder[15] = 'delete';
 $lang->storyreview->methodOrder[20] = 'storyreview';
 $lang->storyreview->methodOrder[25] = 'view';
+$lang->storyreview->methodOrder[30] = 'resolve';
 
 $lang->resource->story->batchStoryReview = 'batchStoryReview';
 $lang->resource->story->batchEditDate    = 'batchEditDate';

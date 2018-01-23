@@ -10,7 +10,7 @@
  * @link        http://www.zentao.net
  */
 ?>
-<?php include '../../common/view/header.html.php';?>
+<?php include '../../../common/view/header.html.php';?>
 <?php js::set('confirmUnlinkStory', $lang->release->confirmUnlinkStory)?>
 <?php js::set('confirmUnlinkBug', $lang->release->confirmUnlinkBug)?>
 <div id='titlebar'>
@@ -322,7 +322,7 @@
                 ?>
                 </div>
               </fieldset>
-              <?php include '../../common/view/action.html.php';?>
+              <?php include '../../../common/view/action.html.php';?>
             </div>
           </div>
 

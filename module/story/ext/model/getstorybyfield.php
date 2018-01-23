@@ -90,8 +90,10 @@ public function processStory($story)
         }
     }
 
-    $builds = $this->dao->select('id')->from(TABLE_BUILD)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
-    $story->build = array_keys($builds);
+    $builds      = $this->dao->select('id')->from(TABLE_BUILD)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
+    $patchBuilds = $this->dao->select('id')->from(TABLE_PATCHBUILD)->where('linkStories')->like('%,' . $story->id . '%')->fetchAll('id');
+    $story->build      = array_keys($builds);
+    $story->patchBuild = array_keys($patchBuilds);
 
     return $story;
 }

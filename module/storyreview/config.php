@@ -4,7 +4,8 @@ $config->storyreview = new stdclass();
 $config->storyreview->editor   = new stdclass();
 
 $config->storyreview->editor->create   = array('id' => 'comment', 'tools' => 'simpleTools');
-$config->storyreview->editor->edit     = array('id' => 'comment', 'tools' => 'simpleTools');
+$config->storyreview->editor->edit     = array('id' => 'comment,countermeasure', 'tools' => 'simpleTools');
+$config->storyreview->editor->resolve  = array('id' => 'countermeasure', 'tools' => 'simpleTools');
 
 global $lang;
 $config->storyreview->search['module']                   = 'storyreview';
@@ -31,7 +32,7 @@ $config->storyreview->search['fields']['influence']      = $lang->storyreview->i
 $config->storyreview->search['fields']['problemTracking']= $lang->storyreview->problemTracking;
 $config->storyreview->search['fields']['risk']           = $lang->storyreview->risk;
 $config->storyreview->search['fields']['result']         = $lang->storyreview->result;
-$config->storyreview->search['fields']['comment']         = $lang->storyreview->comment;
+$config->storyreview->search['fields']['comment']        = $lang->storyreview->comment;
 
 $config->storyreview->search['params']['title']           = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->storyreview->search['params']['storyReviewers']  = array('operator' => 'include', 'control' => 'select', 'values' => 'users');
@@ -47,7 +48,7 @@ $config->storyreview->search['params']['frequency']       = array('operator' => 
 $config->storyreview->search['params']['testDate']        = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
 $config->storyreview->search['params']['acceptanceDate']  = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
 $config->storyreview->search['params']['releasedDate']    = array('operator' => '=', 'control' => 'input', 'values' => '',  'class' => 'date');
-$config->storyreview->search['params']['leftProblem']        = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->leftProblemList);
+$config->storyreview->search['params']['leftProblem']     = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->leftProblemList);
 $config->storyreview->search['params']['needTest']        = array('operator' => '=', 'control' => 'select',  'values' => $lang->storyreview->needTestList);
 $config->storyreview->search['params']['influence']       = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->storyreview->search['params']['problemTracking'] = array('operator' => 'include', 'control' => 'input',  'values' => '');

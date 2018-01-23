@@ -47,6 +47,9 @@ class storyreviewModel extends model
             ->setDefault('testDate', '0000-00-00')
             ->setDefault('acceptanceDate', '0000-00-00')
             ->setDefault('releasedDate', '0000-00-00')
+            ->setIF($this->post->leftProblem == '1', 'resolution', 'unfixed')
+            ->add('openedDate', helper::now())
+            ->add('openedBy', $this->app->user->account)
             ->join('mailto', ',')
             ->join('reviewStories', ',')
             ->join('storyReviewers', ',')
@@ -84,7 +87,7 @@ class storyreviewModel extends model
         }
     }
 
-    public function getStoryReviews($objectID, $from, $orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
+    public function getStoryReviews($objectID, $from, $leftProblem = 'false', $orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
     {
         if ($type == 'bySearch')
         {
@@ -113,8 +116,9 @@ class storyreviewModel extends model
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
                 ->where('t1.deleted')->eq(0)
+                ->beginIF($leftProblem == 'true')->andWhere('leftProblem')->eq('1')->fi()
                 ->beginIF($from == 'project')->andWhere('t1.project')->eq((int)$objectID)->fi()
-                ->beginIF($from == 'qa')->andWhere('t1.product')->eq((int)$objectID)->fi()
+                //->beginIF($from == 'qa')->andWhere('t1.product')->eq((int)$objectID)->fi()
                 ->andWhere($storyReviewQuery)
                 ->orderBy($orderBy)
                 ->page($pager)
@@ -127,6 +131,7 @@ class storyreviewModel extends model
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
                 ->where('t1.deleted')->eq(0)
+                ->beginIF($leftProblem == 'true')->andWhere('leftProblem')->eq('1')->fi()
                 ->beginIF($from == 'project')->andWhere('t1.project')->eq((int)$objectID)->fi()
                 ->orderBy($orderBy)
                 ->page($pager)
@@ -145,6 +150,7 @@ class storyreviewModel extends model
      */
     public function update($storyReviewID, $from, $type)
     {
+        $now = helper::now();
         $oldStoryReview = $this->getStoryReviewById($storyReviewID);
 
         $_POST['solvedProblem'] = str_replace("\r\n","<br />",trim($_POST['solvedProblem']));
@@ -155,6 +161,9 @@ class storyreviewModel extends model
 
         $storyReview = fixer::input('post')
             ->stripTags($this->config->storyreview->editor->edit['id'] . ',solvedProblem,risk,result,influence,problemTracking', $this->config->allowedTags)
+            ->setDefault('resolvedDate', '0000-00-00')
+            ->setIF($this->post->resolution != '' and $this->post->solver == '', 'solver', $this->app->user->account)
+            ->setIF($this->post->resolution != '' and $this->post->resolvedDate == '0000-00-00', 'resolvedDate', $now)
             ->join('mailto', ',')
             ->join('reviewStories', ',')
             ->join('storyReviewers', ',')
@@ -267,9 +276,13 @@ class storyreviewModel extends model
             ->fetch();
         if(!$storyReview) return false;
 
-        $storyReview = $this->loadModel('file')->replaceImgURL($storyReview, 'comment');
-        $storyReview->files = $this->loadModel('file')->getByObject('storyreview', $storyReviewID);
-        if($setImgSize) $storyReview->comment = $this->file->setImgSize($storyReview->comment);
+        $storyReview = $this->loadModel('file')->replaceImgURL($storyReview, 'comment,countermeasure');
+        //$storyReview->files = $this->loadModel('file')->getByObject('storyreview', $storyReviewID);
+        if($setImgSize)
+        {
+            //$storyReview->comment = $this->file->setImgSize($storyReview->comment);
+            //$storyReview->countermeasure = $this->file->setImgSize($storyReview->countermeasure);
+        }
 
         return $storyReview;
     }
@@ -366,5 +379,57 @@ class storyreviewModel extends model
             ->fetchAll();
         
         return $this->loadModel('story')->formatStories($stories, 'full');
+    }
+
+    /**
+     * Adjust the action is clickable.
+     *
+     * @param  string $object
+     * @param  string $action
+     * @access public
+     * @return void
+     */
+    public static function isClickable($object, $action)
+    {
+        $action = strtolower($action);
+        if($action == 'resolve')    return $object->leftProblem == '1' and ($object->resolution == '' or $object->resolution == 'unfixed');
+
+        return true;
+    }
+
+    /**
+     * Resolve a leftProblem.
+     *
+     * @param  int    $storyReviewID
+     * @access public
+     * @return void
+     */
+    public function resolve($storyReviewID)
+    {
+        $this->loadModel('file');
+        $now    = helper::now();
+        $oldStoryReview = $this->getStoryReviewById($storyReviewID);
+        $storyReview = fixer::input('post')
+            ->add('solver',   $this->app->user->account)
+            ->add('resolvedDate', $now)
+            ->stripTags($this->config->storyreview->editor->resolve['id'], $this->config->allowedTags)
+            ->get();
+        //var_dump($this->config->storyreview->editor->resolve['id']);die;
+        $storyReview = $this->file->processImgURL($storyReview, $this->config->storyreview->editor->resolve['id'], $this->post->uid);
+
+        //var_dump($storyReview);die;
+        $this->dao->update(TABLE_STORYREVIEW)->data($storyReview)
+            ->autoCheck()
+            ->checkIF($storyReview->resolution == 'fixed', 'countermeasure','notempty')
+            ->where('id')->eq((int)$storyReviewID)
+            ->exec();
+        if(!dao::isError())
+        {
+            //$storyReviewID = $this->dao->lastInsertID();
+            $this->file->updateObjectID($this->post->uid, $storyReviewID, 'build');
+            $this->loadModel('score')->create('storyReview', 'resolve', $oldStoryReview);
+
+            return common::createChanges($oldStoryReview, $storyReview);
+        }
     }
 }

@@ -26,14 +26,14 @@
   <div class='heading'>
     <?php echo html::icon($lang->icons['build']);?> <?php echo $lang->task->task;?>
   </div>
-  <!--<div id='querybox' class='show'></div>-->
+  <div id='querybox' class='show'></div>
 </div>
 
 <table class='table tablesorter table-fixed' id='scriptForm'>
   <thead>
   <?php
 
-  $vars = "type=$type&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
+  $vars = "type=$type&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
   ?>
     <tr class='colhead'>
       <th class='w-id'><?php common::printOrderLink('id', $orderBy, $vars, $lang->idAB);?></th>

@@ -3,12 +3,17 @@
  * Build a search form
  *
  * @param $actionURL  string
+ * @param $projects  int
+ * @param $queryID int
  * @access public
  * @return void
  */
-public function buildReportSearchForm($actionURL)
+public function buildReportSearchForm($projects, $actionURL, $queryID)
 {
+    $this->config->report->search['queryID']   = $queryID;
+    $this->config->project->search['params']['project']['values'] = array(''=>'', 'all' => $this->lang->project->allProject) + $projects;
     $this->config->report->search['actionURL'] = $actionURL;
+    
     $this->loadModel('search')->setSearchParams($this->config->report->search);
 }
 
@@ -17,18 +22,33 @@ public function buildReportSearchForm($actionURL)
  *
  * @param  string    $orderBy
  * @param  string    $type
+ * @param  int       $queryID
  * @param  object    $pager
  * @access public
  * @return array
  */
-public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $pager = null)
+public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $queryID, $pager = null)
 {
     if ($type == 'bySearch')
     {
+        if($queryID)
+        {
+            $query = $this->loadModel('search')->getQuery($queryID);
+            if($query)
+            {
+                $this->session->set('reportQuery', $query->sql);
+                $this->session->set('reportForm', $query->form);
+            }
+            else
+            {
+                $this->session->set('reportQuery', ' 1 = 1');
+            }
+        }
+        
         $reportQuery = $this->session->reportQuery;
         $reportQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $reportQuery);
         $reportQuery = str_replace(array('t1.`storyTitle`','t1.`openedBy`','t1.`specialPlan`'), array('t3.`title`','t3.`openedBy`','t3.`specialPlan`'),$reportQuery);
-        $reportQuery = str_replace(array('t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
+        $reportQuery = str_replace(array('t1.`project`','t1.`taskTitle`','t1.`finishedBy`','t1.`finishedDate`'), array('t2.`project`','t2.`name`','t2.`finishedBy`','t2.`finishedDate`'), $reportQuery);
         //$reportQuery = str_replace(array('t1.`planTitle`'), array('t4.`title`'), $reportQuery);
         $reportQuery = str_replace(array('t1.`projectTitle`'), array('t5.`code`'), $reportQuery);
 
@@ -94,7 +114,7 @@ public function getScriptById($scriptID)
 public function updateScript($scriptID)
 {
     $oldScript = $this->getScriptById($scriptID);
-    $script = fixer::input('post')
+    $script    = fixer::input('post')
         ->stripTags($this->config->report->editor->editscript['id'], $this->config->allowedTags)
         //->join('mailto', ',')
         ->remove('taskID')

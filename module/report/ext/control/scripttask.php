@@ -7,15 +7,17 @@ class myReport extends report
      *
      * @param string $type
      * @param string $orderBy
+     * @param int $param
      * @param int $recTotal
      * @param int $recPerPage
      * @param int $pageID
      */
-    public function scriptTask($type = 'byModule', $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
+    public function scriptTask($type = 'byModule', $param = 0, $orderBy = 'id_desc', $recTotal = 0, $recPerPage = 20, $pageID = 1)
     {
         $this->app->loadLang('task');
 
         $this->session->set('scriptTaskList', $this->app->getURI(true));
+        $queryID   = ($type == 'bySearch')  ? (int)$param : 0;
 
         /* Load pager. */
         $this->app->loadClass('pager', $static = true);
@@ -25,10 +27,11 @@ class myReport extends report
         $sort = $this->loadModel('common')->appendOrder($orderBy);
         
         $this->view->position[] = $this->lang->task->script;
-        $this->view->scriptTasks = $this->report->getScriptTask($sort, $type, $pager);
-        $actionURL    = $this->createLink('report', 'scriptTask', "type=bySearch");
+        $this->view->scriptTasks = $this->report->getScriptTask($sort, $type, $queryID, $pager);
+        $actionURL    = $this->createLink('report', 'scriptTask', "type=bySearch&param=myQueryID");
+        $projects = $this->loadModel('project')->getPairs('nocode');
 
-        $this->report->buildReportSearchForm($actionURL);
+        $this->report->buildReportSearchForm($projects, $actionURL, $queryID);
         /* Header and position. */
         $this->view->title      = $this->lang->task->script;
         $this->view->users      = $this->loadModel('user')->getPairs('noletter');

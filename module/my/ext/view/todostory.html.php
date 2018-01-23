@@ -32,8 +32,8 @@
     <tr class='text-center'>
       <th class='w-id {sorter:false}'>    <?php common::printOrderLink('id',           $orderBy, $vars, $lang->idAB);?></th>
       <th class='w-pri {sorter:false}'>   <?php common::printOrderLink('pri',          $orderBy, $vars, $lang->priAB);?></th>
-      <th class='w-200px {sorter:false}'> <?php common::printOrderLink('productTitle', $orderBy, $vars, $lang->story->product);?></th>
-      <th class="{sorter:false}">                 <?php common::printOrderLink('title',        $orderBy, $vars, $lang->story->title);?></th>
+      <th class='w-140px {sorter:false}'> <?php common::printOrderLink('productTitle', $orderBy, $vars, $lang->story->product);?></th>
+      <th class="{sorter:false}">         <?php common::printOrderLink('title',        $orderBy, $vars, $lang->story->title);?></th>
       <th class='w-date {sorter:false}'> <?php common::printOrderLink('testDate',         $orderBy, $vars, $lang->story->testDate);?></th>
       <th class='w-100px {sorter:false}'> <?php common::printOrderLink('specialPlan',         $orderBy, $vars, $lang->story->specialPlan);?></th>
         <th class='w-status {sorter:false}'><?php common::printOrderLink('status',       $orderBy, $vars, $lang->statusAB);?></th>
@@ -42,10 +42,13 @@
       <?php if ($type == 'toTestStory'):?>
       <th class='w-120px {sorter:false}'>  <?php common::printOrderLink('assignedTo',     $orderBy, $vars, $lang->story->assignedTo);?></th>
       <th class='w-30px'>  <?php echo $lang->story->taskCountAB;?></th>
-      <th class='w-110px {sorter:false}'><?php echo $lang->actions;?></th>
+      <th class='w-80px'>  <?php echo $lang->story->storyReviewID;?></th>
       <?php endif;?>
       <?php if ($type == 'toReleaseStory'):?>
-        <th class='w-110px {sorter:false}'>  <?php echo $lang->my->build;?></th>
+        <th class='w-110px'>  <?php echo $lang->my->build;?></th>
+        <th class='w-110px'>  <?php echo $lang->my->patchBuild;?></th>
+        <th class="w-100px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
+
       <?php endif;?>
     </tr>
   </thead>
@@ -82,19 +85,21 @@
       <td class="<?php if ($story->stage == 'projected') echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
       <td><?php echo $users[$story->openedBy];?></td>
       <?php if ($type == 'toTestStory'):?>
-          <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
+      <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
       <td><?php  $tasksLink = helper::createLink('story', 'tasks', "storyID=$story->id");
           $storyTasks[$story->id] > 0 ? print(html::a($tasksLink, $storyTasks[$story->id], '', 'class="iframe"')) : print(0);
           ?></td>
-
-      <td class='text-right'>
-        <?php
-        common::printIcon('story', 'change',     "storyID=$story->id", $story, 'list', 'random');
-        common::printIcon('story', 'review',     "storyID=$story->id", $story, 'list', 'search');
-        common::printIcon('story', 'close',      "storyID=$story->id", $story, 'list', 'off', '', 'iframe', true);
-        common::printIcon('story', 'edit',       "storyID=$story->id", $story, 'list', 'pencil');
-        common::printIcon('story', 'createCase', "productID=$story->product&moduleID=0&from=&param=0&storyID=$story->id", '', 'list', 'sitemap');
-        ?>
+      <td>
+      <?php
+      if(!empty($story->storyReviewID))
+      {
+          $story->storyReviewID = explode(',', $story->storyReviewID);
+          foreach ($story->storyReviewID as $value)
+          {
+              common::printLink('storyreview', 'view', "storyReviewID=$value&from=project", $value);
+          }
+      }
+      ?>
       </td>
       <?php endif;?>
       <?php if ($type == 'toReleaseStory'):?>
@@ -107,13 +112,34 @@
       };
       ?>
       </td>
+      <td>
+          <?php
+          foreach ($story->patchBuild as $value)
+          {
+              $buildLink = $this->createLink('patchbuild', 'view', "id=$value");
+              echo html::a($buildLink, $value);
+          };
+          ?>
+      </td>
+      <td>
+          <?php
+          if (!empty($story->linkStories))
+          {
+              foreach (explode(',', $story->linkStories) as $value)
+              {
+                  $storyLink = $this->createLink('story', 'view', "id=$value");
+                  echo html::a($storyLink, $value);
+              };
+          }
+          ?>
+      </td>
       <?php endif;?>
     </tr>
     <?php endforeach;?>
   </tbody>
   <tfoot>
   <tr>
-    <td colspan= <?php echo $type == 'toTestStory'?'12':'10';?>>
+    <td colspan= <?php echo $type == 'toTestStory'?'12':'12';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>
