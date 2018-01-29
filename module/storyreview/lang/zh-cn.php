@@ -103,6 +103,7 @@ $lang->storyreview->qa->report    = array('link' => '报告|testreport|browse|')
 $lang->storyreview->qa->caselib   = array('link' => '用例库|testsuite|library');
 $lang->storyreview->qa->patchbuild  = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
 $lang->storyreview->qa->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa', 'subModule' => 'storyreview');
+$lang->storyreview->qa->issue       = array('link' => '问题管理表|issue|browse');
 
 /* 操作记录。*/
 $lang->storyreview->action = new stdclass();

@@ -40,3 +40,5 @@ $config->bug->datatable->fieldList['discoveryPhase']['title']    = 'discoveryPha
 $config->bug->datatable->fieldList['discoveryPhase']['fixed']    = 'no';
 $config->bug->datatable->fieldList['discoveryPhase']['width']    = '80';
 $config->bug->datatable->fieldList['discoveryPhase']['required'] = 'no';
+
+$config->bug->datatable->fieldList['actions']['width']    = '160';

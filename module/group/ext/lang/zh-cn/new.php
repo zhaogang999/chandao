@@ -11,8 +11,8 @@ $lang->resource->report->taskSummary        = 'taskSummary';
 $lang->resource->report->taskPlanSummary    = 'taskPlanSummary';
 $lang->resource->report->burnUp             = 'burnUp';
 $lang->resource->report->storyCycleSummary  = 'storyCycleSummary';
-$lang->resource->report->bugBranchStatistics  = 'bugBranchStatistics';
-$lang->resource->report->bugResponseTimeStatistics  = 'bugResponseTimeStatistics';
+$lang->resource->report->bugBranchStatistics = 'bugBranchStatistics';
+$lang->resource->report->bugResponseTimeStatistics = 'bugResponseTimeStatistics';
 $lang->resource->report->editScript = 'editScript';
 $lang->resource->report->scriptTask = 'scriptTask';
 $lang->resource->report->viewScript = 'viewScript';
@@ -22,7 +22,7 @@ $lang->resource->custom->loginDefaultPage   = 'loginDefaultPage';
 /* patchbuild. */
 $lang->moduleOrder[200] = 'patchBuild';
 $lang->resource->patchbuild = new stdclass();
-$lang->resource->patchbuild->patchBuild = 'patchBuild';
+$lang->resource->patchbuild->patchBuild       = 'patchBuild';
 $lang->resource->patchbuild->createPatchBuild = 'createPatchBuild';
 $lang->resource->patchbuild->editpatchbuild   = 'editpatchbuild';
 $lang->resource->patchbuild->deletePatchBuild = 'deletePatchBuild';
@@ -56,5 +56,20 @@ $lang->resource->story->batchEditDate    = 'batchEditDate';
 
 $lang->resource->my->todoStory    = 'todoStory';
 //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
-$lang->resource->story->magicAuth    = 'magicAuth';
+$lang->resource->story->magicAuth = 'magicAuth';
 $lang->resource->story->batchChangeIfLinkStories = 'batchChangeIfLinkStories';
+
+/* issue. */
+$lang->moduleOrder[205] = 'issue';
+$lang->resource->issue = new stdclass();
+$lang->resource->issue->browse = 'browse';
+$lang->resource->issue->create = 'create';
+$lang->resource->issue->edit   = 'edit';
+$lang->resource->issue->view   = 'view';
+$lang->resource->issue->delete = 'delete';
+
+$lang->issue->methodOrder[5]  = 'browse';
+$lang->issue->methodOrder[10] = 'create';
+$lang->issue->methodOrder[15] = 'edit';
+$lang->issue->methodOrder[20] = 'view';
+$lang->issue->methodOrder[25] = 'delete';

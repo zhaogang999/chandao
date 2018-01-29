@@ -304,6 +304,7 @@
                     echo "<li class='dropdown-submenu'>";
                     echo html::a('javascript:;', $lang->story->ifLinkStories, '', "id='ifLinkStoriesItem'");
                     echo "<ul class='dropdown-menu'>";
+                    $lang->story->ifLinkStoriesList[''] = $lang->null;
                     foreach($lang->story->ifLinkStoriesList as $key => $status)
                     {
                         $actionLink = $this->createLink('story', 'batchChangeIfLinkStories', "status=$key");

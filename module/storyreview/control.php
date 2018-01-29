@@ -351,7 +351,7 @@ class storyreview extends control
         }
         elseif($from == 'qa')
         {
-            $this->lang->storyreview->menu      = $this->lang->qa->menu;
+            $this->lang->storyreview->menu      = $this->lang->storyreview->qa;
             $this->lang->storyreview->menuOrder = $this->lang->qa->menuOrder;
             $this->lang->menugroup->storyreview = 'qa';
             $product = $this->loadModel('product')->getById($storyReview->product);

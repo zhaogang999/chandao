@@ -120,9 +120,9 @@ public function getProductBugsPairs($productID, $status='')
 {
     $bugs = array('' => '');
     $data = $this->dao->select('id, title')->from(TABLE_BUG)
-        ->where('product')->eq((int)$productID)
-        ->andWhere('deleted')->eq(0)
-        ->beginIF(!empty($status))->andWhere('status')->eq($status)
+        ->where('deleted')->eq(0)
+        ->beginIF($productID != 0)->andWhere('product')->eq((int)$productID)->fi()
+        ->beginIF(!empty($status))->andWhere('status')->in($status)->fi()
         ->orderBy('id desc')
         ->fetchAll();
     foreach($data as $bug)
@@ -130,6 +130,25 @@ public function getProductBugsPairs($productID, $status='')
         $bugs[$bug->id] = $bug->id . ':' . $bug->title;
     }
     return $bugs;
+}/**
+ * Adjust the action is clickable.
+ *
+ * @param  string $object
+ * @param  string $action
+ * @access public
+ * @return void
+ */
+public static function isClickable($object, $action)
+{
+    $action = strtolower($action);
+    if($action == 'confirmbug') return $object->status == 'active' and $object->confirmed == 0;
+    if($action == 'resolve')    return $object->status == 'active';
+    if($action == 'close')      return $object->status == 'resolved';
+    if($action == 'activate')   return $object->status != 'active';
+    if($action == 'tostory')    return $object->status == 'active';
+    if($action == 'toissue')    return $object->toIssue == 0;
+
+    return true;
 }/**
  * Link related bugs.
  *
@@ -320,6 +339,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
                 common::printIcon('bug', 'close',      $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'edit',       $params, $bug, 'list');
                 common::printIcon('bug', 'create',     "product=$bug->product&branch=$bug->branch&extra=bugID=$bug->id", $bug, 'list', 'copy');
+                common::printIcon('bug', 'toIssue',     "fromBug=$bug->id", $bug, 'list', 'bug');
                 break;
         }
         echo '</td>';

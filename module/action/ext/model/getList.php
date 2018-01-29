@@ -13,7 +13,7 @@ public function getList($objectType, $objectID)
     $actions   = $this->dao->select('*')->from(TABLE_ACTION)
         ->beginIF($objectType == 'project')
         //1951 补丁版本增加详情页面，并增加历史记录信息
-        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild', 'storyreview')")
+        ->where("objectType IN('project', 'testtask', 'build', 'patchbuild', 'storyreview', 'issue')")
         ->andWhere('project')->eq($objectID)
         ->fi()
         ->beginIF($objectType != 'project')
@@ -30,6 +30,7 @@ public function getList($objectType, $objectID)
         //1951 补丁版本增加详情页面，并增加历史记录信息
         $this->app->loadLang('patchbuild');
         $this->app->loadLang('storyreview');
+        $this->app->loadLang('issue');
 
         $this->app->loadLang('testtask');
         $actions = $this->processProjectActions($actions);
@@ -104,6 +105,10 @@ public function getList($objectType, $objectID)
         {
             $title = $this->dao->select('title')->from(TABLE_STORY)->where('id')->eq($action->extra)->fetch('title');
             if($title) $action->extra = common::hasPriv('story', 'view') ? html::a(helper::createLink('story', 'view', "storyID=$action->extra"), "#$action->extra " . $title) : "#$action->extra " . $title;
+        }
+        elseif($actionName == 'toissue')
+        {
+            $action->extra = common::hasPriv('issue', 'view') ? html::a(helper::createLink('issue', 'view', "issueID=$action->extra"), "#$action->extra") : "#$action->extra";
         }
         elseif($actionName == 'totask')
         {
