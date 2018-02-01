@@ -28,6 +28,7 @@ $config->bug->list->exportFields = 'id, product, branch, module, project, story,
 $config->bug->create->requiredFields  = 'module,project,openedBuild,title,severity,pri,discoveryPhase';
 $config->bug->edit->requiredFields    = $config->bug->create->requiredFields;
 $config->bug->list->customCreateFields      = 'project,story,task,pri,severity,os,browser,mailto,keywords';
+$config->bug->resolve->requiredFields = 'resolution,type';
 
 //2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索
 $insert_array = array('discoveryPhase' => $lang->bug->discoveryPhase);

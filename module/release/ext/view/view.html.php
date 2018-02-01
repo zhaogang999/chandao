@@ -77,7 +77,8 @@
         <div class='tab-content'>
           <div class='tab-pane <?php if($type == 'story') echo 'active'?>' id='stories'>
             <?php if(common::hasPriv('release', 'linkStory')):?>
-            <div class='action'><?php echo html::a("javascript:showLink({$release->id}, \"story\")", '<i class="icon-link"></i> ' . $lang->release->linkStory, '', "class='btn btn-sm btn-primary'");?></div>
+            <!--10127 提需求时，用户需求增加创建人显示，并支持搜索-->
+            <div class='action'><?php echo html::a("javascript:showLink({$release->id}, \"story\")", '<i class="icon-link"></i> ' . $lang->release->linkStory, '', "class='btn btn-sm btn-primary'");?><?php common::printIcon('story', 'export', "productID=0&orderBy=id_desc&project=0&type=released&param=$release->id", '', 'button', '', '', 'export btn-sm');?></div>
             <div class='linkBox'></div>
             <?php endif;?>
             <form method='post' target='hiddenwin' action="<?php echo inLink('batchUnlinkStory', "release=$release->id");?>" id='linkedStoriesForm'>
@@ -91,7 +92,9 @@
                   <th class='w-hour'><?php echo $lang->story->estimateAB;?></th>
                   <th class='w-hour'><?php echo $lang->statusAB;?></th>
                   <th class='w-100px'><?php echo $lang->story->stageAB;?></th>
+                  <!--10127 提需求时，用户需求增加创建人显示，并支持搜索-->
                   <th class='w-100px'><?php echo $lang->story->linkStories;?></th>
+                  <th class='w-100px'><?php echo $lang->story->linkStoryOpenedBys;?></th>
                   <th class='w-50px'><?php echo $lang->actions;?></th>
                 </tr>
               </thead>
@@ -111,6 +114,7 @@
                 <td><?php echo $story->estimate;?></td>
                 <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
                 <td><?php echo $lang->story->stageList[$story->stage];?></td>
+                <!--10127 提需求时，用户需求增加创建人显示，并支持搜索-->
                 <td>
                   <?php
                   if (!empty($story->linkStories))
@@ -123,6 +127,7 @@
                   }
                   ?>
                 </td>
+                <td><?php echo isset($story->linkStoryOpenedBys)?$story->linkStoryOpenedBys:'';?></td>
                 <td>
                   <?php
                   if(common::hasPriv('release', 'unlinkStory'))
@@ -136,7 +141,7 @@
               <?php endforeach;?>
               <tfoot>
                 <tr>
-                  <td colspan='8'>
+                  <td colspan='10'>
                     <div class='table-actions clearfix'>
                       <?php if($countStories and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->release->batchUnlink);?>
                       <div class='text'><?php echo sprintf($lang->release->finishStories, $countStories);?></div>
@@ -334,6 +339,26 @@
 <style>
 .tabs .tab-content .tab-pane .action{position: absolute; right: <?php echo ($countStories or $countBugs or $countLeftBugs) ? '110px' : '-1px'?>; top: 0px;}
 </style>
+<script language="JavaScript">
+  //10127 提需求时，用户需求增加创建人显示，并支持搜索
+  function showLink(releaseID, type, param)
+  {
+    var method = type == 'story' ? 'linkStory' : 'linkBug';
+    if(typeof(param) == 'undefined') param = '&browseType=' + type + '&param=0';
+    if(type == 'leftBug') param += '&type=leftBug';
+    console.log(method);
+    $.get(createLink('release', method, 'releaseID=' + releaseID + param), function(data)
+    {
+      var obj = type == 'story' ? '.tab-pane#stories .linkBox' : (type == 'leftBug' ? '.tab-pane#leftBugs .linkBox' : '.tab-pane#bugs .linkBox');
+      $(obj).html(data);
+      $('#' + type + 'List').hide();
+
+      var formID = type == 'story' ? '#unlinkedStoriesForm' : (type == 'leftBug' ? '#unlinkedLeftBugsForm' : '#unlinkedBugsForm');
+      setTimeout(function(){fixedTfootAction(formID)}, 100);
+      checkTable($(formID).find('table'));
+    });
+  }
+</script>
 <?php js::set('param', helper::safe64Decode($param))?>
 <?php js::set('link', $link)?>
 <?php js::set('releaseID', $release->id)?>

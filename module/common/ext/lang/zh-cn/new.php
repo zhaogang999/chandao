@@ -2,7 +2,7 @@
 /* 查询条中可以选择的对象列表。*/
 $lang->searchObjects['patchbuild']    = '补丁版本';
 $lang->searchObjects['storyreview']   = '需求评审';
-$lang->searchObjects['issue']         = '问题管理表';
+$lang->searchObjects['issue']         = '流出问题管理';
 
 $lang->icons['storyReview']  = 'list-alt';
 $lang->icons['issue']        = 'bug';
@@ -58,10 +58,10 @@ $lang->issue->menu->report      = array('link' => '报告|testreport|browse|');
 $lang->issue->menu->caselib     = array('link' => '用例库|testsuite|library');
 $lang->issue->menu->patchbuild  = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa');
 $lang->issue->menu->storyreview = array('link' => '需求评审|storyreview|storyreview|objectID=0&from=qa');
-$lang->issue->menu->issue       = array('link' => '问题管理表|issue|browse', 'alias' => 'browse,create,edit,', 'subModule' => 'issue');
+$lang->issue->menu->issue       = array('link' => '流出问题管理|issue|browse', 'alias' => 'browse,create,edit,', 'subModule' => 'issue');
 
-$lang->qa->menu->issue = array('link' => '问题管理表|issue|browse');
-$lang->bug->menu->issue = array('link' => '问题管理表|issue|browse');
-$lang->testcase->menu->issue = array('link' => '问题管理表|issue|browse');
-$lang->caselib->menu->issue = array('link' => '问题管理表|issue|browse');
-$lang->storyreview->menu->issue = array('link' => '问题管理表|issue|browse');
+$lang->qa->menu->issue = array('link' => '流出问题管理|issue|browse');
+$lang->bug->menu->issue = array('link' => '流出问题管理|issue|browse');
+$lang->testcase->menu->issue = array('link' => '流出问题管理|issue|browse');
+$lang->caselib->menu->issue = array('link' => '流出问题管理|issue|browse');
+$lang->storyreview->menu->issue = array('link' => '流出问题管理|issue|browse');

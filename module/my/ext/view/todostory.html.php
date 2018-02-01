@@ -24,6 +24,12 @@
     echo "<li id='toReleaseStoryTab'>"   . html::a(inlink('todoStory', "type=toReleaseStory&orderBy=specialPlan"),    $lang->my->todoStoryMenu->toReleaseStory)   . "</li>";
     ?>
   </nav>
+    <?php if ($type == 'toReleaseStory'):?>
+    <div class='actions'>
+        <?php
+        common::printIcon('story', 'export', "productID=0&orderBy=id_desc&project=0&type=toReleased", '', 'button', '', '', 'export');?>
+    </div>
+    <?php endif;?>
 </div>
 <form method='post' id='myStoryForm'>
 <table class='table table-condensed table-hover table-striped tablesorter table-fixed table-selectable'>
@@ -31,11 +37,11 @@
   <thead>
     <tr class='text-center'>
       <th class='w-id {sorter:false}'>    <?php common::printOrderLink('id',           $orderBy, $vars, $lang->idAB);?></th>
-      <th class='w-pri {sorter:false}'>   <?php common::printOrderLink('pri',          $orderBy, $vars, $lang->priAB);?></th>
+      <!--<th class='w-pri {sorter:false}'>   <?php /*common::printOrderLink('pri',          $orderBy, $vars, $lang->priAB);*/?></th>-->
       <th class='w-140px {sorter:false}'> <?php common::printOrderLink('productTitle', $orderBy, $vars, $lang->story->product);?></th>
       <th class="{sorter:false}">         <?php common::printOrderLink('title',        $orderBy, $vars, $lang->story->title);?></th>
       <th class='w-date {sorter:false}'> <?php common::printOrderLink('testDate',         $orderBy, $vars, $lang->story->testDate);?></th>
-      <th class='w-100px {sorter:false}'> <?php common::printOrderLink('specialPlan',         $orderBy, $vars, $lang->story->specialPlan);?></th>
+      <th class='w-80px {sorter:false}'> <?php common::printOrderLink('specialPlan',         $orderBy, $vars, $lang->story->specialPlan);?></th>
         <th class='w-status {sorter:false}'><?php common::printOrderLink('status',       $orderBy, $vars, $lang->statusAB);?></th>
         <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',        $orderBy, $vars, $lang->story->stageAB);?></th>
       <th class='w-60px {sorter:false}'>  <?php common::printOrderLink('openedBy',     $orderBy, $vars, $lang->openedByAB);?></th>
@@ -45,10 +51,10 @@
       <th class='w-80px'>  <?php echo $lang->story->storyReviewID;?></th>
       <?php endif;?>
       <?php if ($type == 'toReleaseStory'):?>
-        <th class='w-110px'>  <?php echo $lang->my->build;?></th>
-        <th class='w-110px'>  <?php echo $lang->my->patchBuild;?></th>
-        <th class="w-100px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
-
+        <th class='w-80px'>  <?php echo $lang->my->build;?></th>
+        <th class='w-80px'>  <?php echo $lang->my->patchBuild;?></th>
+        <th class="w-80px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
+        <th class="w-110px"><?php echo $lang->story->linkStoryOpenedBys;?></th>
       <?php endif;?>
     </tr>
   </thead>
@@ -76,9 +82,9 @@
         <?php endif;?>
         <?php echo html::a($storyLink, sprintf('%03d', $story->id));?>
       </td>
-      <td><span class='<?php echo 'pri' . zget($lang->story->priList, $story->pri, $story->pri);?>'><?php echo zget($lang->story->priList, $story->pri, $story->pri);?></span></td>
+     <!-- <td><span class='<?php /*echo 'pri' . zget($lang->story->priList, $story->pri, $story->pri);*/?>'><?php /*echo zget($lang->story->priList, $story->pri, $story->pri);*/?></span></td>-->
       <td><?php echo $story->productTitle;?></td>
-      <td class='text-left nobr'><?php echo html::a($storyLink, $story->title, null, "style='color: $story->color'");?></td>
+      <td class='text-left nobr' title="<?php echo $story->title?>"><?php echo html::a($storyLink, $story->title, null, "style='color: $story->color'");?></td>
       <td class="<?php if (isset($story->testWarning) and $type == 'toTestStory') echo $story->testWarning;?>"><?php echo $story->testDate;?></td>
       <td class="<?php if(isset($story->releaseWarning) and $type == 'toReleaseStory') echo $story->releaseWarning;?>"><?php echo $story->specialPlan;?></td>
        <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
@@ -133,13 +139,14 @@
           }
           ?>
       </td>
+      <td><?php echo isset($story->linkStoryOpenedBys)?$story->linkStoryOpenedBys:'';?></td>
       <?php endif;?>
     </tr>
     <?php endforeach;?>
   </tbody>
   <tfoot>
   <tr>
-    <td colspan= <?php echo $type == 'toTestStory'?'12':'12';?>>
+    <td colspan= <?php echo $type == 'toTestStory'?'11':'12';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>

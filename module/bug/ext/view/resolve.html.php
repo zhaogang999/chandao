@@ -54,6 +54,11 @@ js::set('productID' , $bug->product);
         </div>
       </td>
     </tr>
+    <!--增加bug类型字段-->
+    <tr>
+      <th class='w-80px'><?php echo $lang->bug->type;?></th>
+      <td class='w-500px'><?php echo html::select('type', $lang->bug->typeList, $bug->type, 'class=form-control');?></td>
+    </tr>
     <tr>
       <th><?php echo $lang->bug->resolvedDate;?></th>
       <td><?php echo html::input('resolvedDate', helper::now(), "class='form-control form-date'");?></td>

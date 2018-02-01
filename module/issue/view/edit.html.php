@@ -15,7 +15,9 @@
 <div class='container'>
   <div id='titlebar'>
     <div class='heading'>
-      <strong><small class='text-muted'><?php echo html::icon($lang->icons['edit']);?></small> <?php echo $lang->issue->edit;?></strong>
+      <span class='prefix'><?php echo html::icon($lang->icons['issue']);?> <strong><?php echo $issue->id;?></strong></span>
+      <strong><?php echo $issue->issueDesc;?></strong>
+      <small class='text-muted'><?php echo html::icon($lang->icons['edit']);?><?php echo $lang->issue->edit;?></small>
     </div>
   </div>
   <form class='form-condensed' method='post' target='hiddenwin' id='dataform' enctype='multipart/form-data'>

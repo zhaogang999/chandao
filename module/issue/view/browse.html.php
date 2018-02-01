@@ -63,6 +63,7 @@
 <script language="JavaScript">
   $(function()
   {
+    ajaxGetSearchForm();
     setTimeout(function(){fixedTheadOfList('#issueList')}, 100);
   })
 </script>

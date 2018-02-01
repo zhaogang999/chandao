@@ -1,5 +1,5 @@
 <?php
-$lang->issue->issue              = '问题管理表';
+$lang->issue->issue              = '流出问题管理';
 $lang->issue->issueDesc          = '问题描述';
 $lang->issue->platform           = '所属平台';
 $lang->issue->discoveryDate      = '发现时间';
@@ -13,14 +13,15 @@ $lang->issue->openedBy           = '由谁创建';
 $lang->issue->openedTime         = '创建时间';
 $lang->issue->mailto             = '抄送给';
 $lang->issue->comment            = '备注';
+$lang->issue->id                 = '编号';
 
 $lang->issue->confirmDelete  = '确认删除该条流出问题吗？';
-$lang->issue->common         = '问题管理表';
-$lang->issue->browse         = '问题管理表';
-$lang->issue->create         = '创建问题管理表';
-$lang->issue->edit           = '编辑问题管理表';
-$lang->issue->view           = '问题管理表详情';
-$lang->issue->delete         = '删除问题管理表';
+$lang->issue->common         = '流出问题管理';
+$lang->issue->browse         = '流出问题管理';
+$lang->issue->create         = '创建流出问题';
+$lang->issue->edit           = '编辑流出问题';
+$lang->issue->view           = '流出问题详情';
+$lang->issue->delete         = '删除流出问题';
 
 $lang->issue->deleted        = '已删除';
 $lang->issue->basicInfo      = '基本信息';

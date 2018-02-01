@@ -32,6 +32,16 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
         $story->projectID = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($story->id)->fetch('project');
         $this->processStory($story);
 
+        if (!empty($story->linkStories))
+        {
+            $relatedStories = $this->dao->select('id,openedBy')->from(TABLE_STORY) ->where('id')->in(trim($story->linkStories, ','))->fetchPairs();
+            $users = $this->loadModel('user')->getPairs('noletter');
+            foreach ($relatedStories as $relatedStory)
+            {
+                $story->linkStoryOpenedBys .= $users[$relatedStory] . ' ';
+            };
+            $story->linkStoryOpenedBys = implode(' ', array_unique(explode(' ',trim($story->linkStoryOpenedBys))));
+        }
     }
 
     return $this->mergePlanTitle($productIdList, $stories);

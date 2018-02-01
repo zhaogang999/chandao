@@ -159,7 +159,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
                 common::printIcon('bug', 'close',      $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'edit',       $params, $bug, 'list');
                 common::printIcon('bug', 'create',     "product=$bug->product&branch=$bug->branch&extra=bugID=$bug->id", $bug, 'list', 'copy');
-                common::printIcon('bug', 'toIssue',     "fromBug=$bug->id", $bug, 'list', 'bug');
+                common::printIcon('bug', 'toIssue',     "fromBug=$bug->id", $bug, 'list', 'question-sign');
                 break;
         }
         echo '</td>';

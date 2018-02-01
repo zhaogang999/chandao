@@ -14,7 +14,7 @@ $lang->story->plan           = '研发计划';
 $lang->story->planAB         = '研发计划';
 $lang->story->build          = '外部用户提需求使用，研发部无需标记';
 $lang->story->testDate       = '提测时间';
-$lang->story->specialPlan    = '正式发版时间';
+$lang->story->specialPlan    = '正式版时间';
 $lang->story->testDatePlanAB = '研发专用';
 $lang->story->devComment     = '研发专用,用户无需填写';
 
@@ -37,3 +37,4 @@ $lang->story->specComment = "<p>[需求背景]</p><p>[功能描述]</p>";
 
 $lang->story->magicAuth   = '开发权限';
 $lang->story->batchChangeIfLinkStories = '批量修改是否有相关需求';
+$lang->story->linkStoryOpenedBys = '相关需求创建者';

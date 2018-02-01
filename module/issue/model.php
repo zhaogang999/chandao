@@ -6,6 +6,21 @@
 class issueModel extends model
 {
     /**
+     * Build a search form
+     *
+     * @param $actionURL  string
+     * @param int $queryID
+     * @access public
+     * @return void
+     */
+    public function buildIssueSearchForm($actionURL, $queryID)
+    {
+        $this->config->issue->search['queryID']   = $queryID;
+        $this->config->issue->search['actionURL'] = $actionURL;
+        $this->loadModel('search')->setSearchParams($this->config->issue->search);
+    }
+
+    /**
      * 获取流出问题列表
      *
      * @param $orderBy
@@ -34,7 +49,6 @@ class issueModel extends model
             
             $issueQuery = $this->session->issueQuery;
             $issueQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $issueQuery);
-
             return $this->dao->select('t1.*')
                 ->from(TABLE_ISSUE)->alias('t1')
                 ->where('t1.deleted')->eq('0')
@@ -89,6 +103,12 @@ class issueModel extends model
                 $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($fromBug)->exec();
                 $this->loadModel('action')->create('bug', $fromBug, 'toissue', '', $issueID);
             }
+            elseif ($issue->frombug != 0)
+            {
+                $bug = new stdclass();
+                $bug->toIssue = $issueID;
+                $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($fromBug)->exec();
+            }
             return $issueID;
         }
     }
@@ -121,6 +141,14 @@ class issueModel extends model
         {
             $this->file->updateObjectID($this->post->uid, $issueID, 'issue');
             $changes = common::createChanges($oldIssue, $issue);
+            foreach($changes as $change)
+            {
+                if ($change['field'] == 'fromBug')
+                {
+                    $this->dao->update(TABLE_BUG)->set('toIssue')->eq(0)->where('id')->eq($change['old'])->exec();
+                    $this->dao->update(TABLE_BUG)->set('toIssue')->eq($issueID)->where('id')->eq($change['new'])->exec();
+                }
+            }
             return $changes;
         }
     }

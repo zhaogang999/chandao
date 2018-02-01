@@ -345,6 +345,45 @@ public function createFromImport($productID, $branch = 0)
 {
     return $this->loadExtension('excel')->createFromImport($productID, $branch);
 }/**
+ * Format stories
+ *
+ * @param  array    $stories
+ * @param  string   $type
+ * @param  int      $limit
+ * @access public
+ * @return void
+ */
+public function formatStories($stories, $type = 'full', $limit = 0)
+{
+    /* Get module names of stories. */
+    /*$modules = array();
+    foreach($stories as $story) $modules[] = $story->module;
+    $moduleNames = $this->dao->select('id, name')->from(TABLE_MODULE)->where('id')->in($modules)->fetchPairs();*/
+
+    /* Format these stories. */
+    $storyPairs = array('' => '');
+    $i = 0;
+    $users = $this->loadModel('user')->getPairs('noclosed|nodeleted');
+    foreach($stories as $story)
+    {
+        if($type == 'short')
+        {
+            $property = '[p' . $story->pri . ', ' . $story->estimate . 'h]';
+        }
+        else
+        {
+            $property = '(' . $this->lang->story->pri . ':' . $story->pri . ',' . $this->lang->story->estimate . ':' . $story->estimate . ')' . $users[$story->openedBy];
+        }
+        $storyPairs[$story->id] = $story->id . ':' . $story->title . $property;
+
+        if($limit > 0 && ++$i > $limit)
+        {
+            $storyPairs['showmore'] = $this->lang->more . $this->lang->ellipsis;
+            break;
+        }
+    }
+    return $storyPairs;
+}/**
  * Get stories by assignedTo.
  *
  * @param  int    $productID
@@ -358,6 +397,32 @@ public function getByAssignedTo($productID, $branch, $modules, $account, $orderB
 {
     //需求可以指派给多个人；查询自拍给用like
     return $this->getByField($productID, $branch, $modules, 'assignedTo', $account, $orderBy, $pager, 'include');
+}/**
+ * Get stories pairs of a product.
+ *
+ * @param  int           $productID
+ * @param  array|string  $moduleIdList
+ * @param  string        $status
+ * @param  string        $order
+ * @param  int           $limit
+ * @access public
+ * @return array
+ */
+public function getProductStoryPairs($productID = 0, $branch = 0, $moduleIdList = 0, $status = 'all', $order = 'id_desc', $limit = 0)
+{
+    if($branch) $branch = "0,$branch";//Fix bug 1059.
+    $stories = $this->dao->select('t1.id, t1.title, t1.module, t1.pri, t1.estimate, t1.openedBy, t2.name AS product')
+        ->from(TABLE_STORY)->alias('t1')->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
+        ->where('1=1')
+        ->beginIF($productID)->andWhere('t1.product')->in($productID)->fi()
+        ->beginIF($moduleIdList)->andWhere('t1.module')->in($moduleIdList)->fi()
+        ->beginIF($branch)->andWhere('t1.branch')->in($branch)->fi()
+        ->beginIF($status and $status != 'all')->andWhere('t1.status')->in($status)->fi()
+        ->andWhere('t1.deleted')->eq(0)
+        ->orderBy($order)
+        ->fetchAll();
+    if(!$stories) return array();
+    return $this->formatStories($stories, 'full', $limit);
 }/**
  * Get stories of a user.
  *
@@ -391,6 +456,16 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
         $story->projectID = $this->dao->select('project')->from(TABLE_PROJECTSTORY)->where('story')->eq($story->id)->fetch('project');
         $this->processStory($story);
 
+        if (!empty($story->linkStories))
+        {
+            $relatedStories = $this->dao->select('id,openedBy')->from(TABLE_STORY) ->where('id')->in(trim($story->linkStories, ','))->fetchPairs();
+            $users = $this->loadModel('user')->getPairs('noletter');
+            foreach ($relatedStories as $relatedStory)
+            {
+                $story->linkStoryOpenedBys .= $users[$relatedStory] . ' ';
+            };
+            $story->linkStoryOpenedBys = implode(' ', array_unique(explode(' ',trim($story->linkStoryOpenedBys))));
+        }
     }
 
     return $this->mergePlanTitle($productIdList, $stories);

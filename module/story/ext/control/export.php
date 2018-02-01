@@ -10,7 +10,7 @@ class mystory extends story
      * @access public
      * @return void
      */
-    public function export($productID, $orderBy)
+    public function export($productID, $orderBy, $projectID=0, $type='', $param=0)
     {
         /* format the fields of every story in order to export data. */
         if($_POST)
@@ -33,9 +33,32 @@ class mystory extends story
             $stories = array();
             if($this->session->storyOnlyCondition)
             {
-                $stories = $this->dao->select('*')->from(TABLE_STORY)->where($this->session->storyQueryCondition)
-                    ->beginIF($this->post->exportType == 'selected')->andWhere('id')->in($this->cookie->checkedItem)->fi()
-                    ->orderBy($orderBy)->fetchAll('id');
+                if ($type == 'toReleased')
+                {
+                    $limitDate = date("Y-m-d",strtotime("+10 day"));
+                    $stories = $this->dao->select('*')->from(TABLE_STORY)
+                        ->where('deleted')->eq(0)
+                        ->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')
+                        ->andWhere("IF (`status` = 'closed',closedReason = 'done',2>1)")
+                        ->orderBy($orderBy)
+                        ->fetchAll('id');
+                }
+                elseif($type == 'released')
+                {
+                    $storyIDs = $this->dao->select('stories')->from(TABLE_RELEASE)->where('id')->eq($param)->fetch('stories');
+                    $stories = $this->dao->select('*')->from(TABLE_STORY)
+                        ->where('deleted')->eq(0)
+                        ->andWhere('id')->in(trim($storyIDs, ','))
+                        ->orderBy($orderBy)
+                        ->fetchAll('id');
+                }
+                else
+                {
+                    $stories = $this->dao->select('*')->from(TABLE_STORY)->where($this->session->storyQueryCondition)
+                        ->beginIF($this->post->exportType == 'selected')->andWhere('id')->in($this->cookie->checkedItem)->fi()
+                        ->orderBy($orderBy)->fetchAll('id');
+                }
+
             }
             else
             {
@@ -89,7 +112,11 @@ class mystory extends story
             //2670 需求导出列表中，需要增加需求的期望发版时间字段
             $relatedCustomPlans   = $this->dao->select('id, title')->from(TABLE_PRODUCTPLAN)->where('id')->in(join(',', $relatedCustomPlanIdList))->fetchPairs();
             
-            $relatedStories = $this->dao->select('id,title')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchPairs();
+            $relatedStories = $this->dao->select('id,title,openedBy')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchAll('id');
+            foreach ($relatedStories as $relatedStory)
+            {
+                $relatedStories[$relatedStory->id] = '#' . $relatedStory->id . ':' . $relatedStory->title . ':' . $users[$relatedStory->openedBy];
+            }
             $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedSpecs   = $this->dao->select('*')->from(TABLE_STORYSPEC)->where('`story`')->in(@array_keys($stories))->orderBy('version desc')->fetchGroup('story');
             $relatedBranch  = array('0' => $this->lang->branch->all) + $this->dao->select('id, name')->from(TABLE_BRANCH)->where('id')->in($relatedBranchIdList)->fetchPairs();
@@ -175,8 +202,7 @@ class mystory extends story
                     foreach($linkStoriesIdList as $linkStoryID)
                     {
                         $linkStoryID = trim($linkStoryID);
-                        //
-                        $tmpLinkStories[] = isset($relatedStories[$linkStoryID]) ? $relatedStories[$linkStoryID] . "(#$linkStoryID)" : $linkStoryID;
+                        $tmpLinkStories[] = isset($relatedStories[$linkStoryID]) ? $relatedStories[$linkStoryID] : $linkStoryID;
 
                     }
                     $story->linkStories = join("; \n", $tmpLinkStories);
@@ -189,8 +215,7 @@ class mystory extends story
                     foreach($childStoriesIdList as $childStoryID)
                     {
                         $childStoryID = trim($childStoryID);
-                        //
-                        $tmpChildStories[] = isset($relatedStories[$childStoryID]) ? $relatedStories[$childStoryID] . "(#$childStoryID)" : $childStoryID;
+                        $tmpChildStories[] = isset($relatedStories[$childStoryID]) ? $relatedStories[$childStoryID] : $childStoryID;
 
                     }
                     $story->childStories = join("; \n", $tmpChildStories);

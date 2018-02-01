@@ -91,7 +91,6 @@
                   <th class='w-hour'><?php echo $lang->story->estimateAB;?></th>
                   <th class='w-hour'><?php echo $lang->statusAB;?></th>
                   <th class='w-100px'><?php echo $lang->story->stageAB;?></th>
-                  <th class='w-100px'><?php echo $lang->story->linkStories;?></th>
                   <th class='w-50px'><?php echo $lang->actions;?></th>
                 </tr>
               </thead>
@@ -111,18 +110,6 @@
                 <td><?php echo $story->estimate;?></td>
                 <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
                 <td><?php echo $lang->story->stageList[$story->stage];?></td>
-                <td>
-                  <?php
-                  if (!empty($story->linkStories))
-                  {
-                    foreach (explode(',', $story->linkStories) as $value)
-                    {
-                      $storyLink = $this->createLink('story', 'view', "id=$value");
-                      echo html::a($storyLink, $value);
-                    };
-                  }
-                  ?>
-                </td>
                 <td>
                   <?php
                   if(common::hasPriv('release', 'unlinkStory'))

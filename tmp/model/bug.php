@@ -116,13 +116,14 @@ public function getDataOfbugsDeadline()
  * @param $status
  * @return array
  */
-public function getProductBugsPairs($productID, $status='')
+public function getProductBugsPairs($productID, $status='', $toIssue=false)
 {
     $bugs = array('' => '');
     $data = $this->dao->select('id, title')->from(TABLE_BUG)
         ->where('deleted')->eq(0)
         ->beginIF($productID != 0)->andWhere('product')->eq((int)$productID)->fi()
         ->beginIF(!empty($status))->andWhere('status')->in($status)->fi()
+        ->beginIF($toIssue==true)->andWhere('toIssue')->eq(0)->fi()
         ->orderBy('id desc')
         ->fetchAll();
     foreach($data as $bug)
@@ -339,7 +340,7 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
                 common::printIcon('bug', 'close',      $params, $bug, 'list', '', '', 'iframe', true);
                 common::printIcon('bug', 'edit',       $params, $bug, 'list');
                 common::printIcon('bug', 'create',     "product=$bug->product&branch=$bug->branch&extra=bugID=$bug->id", $bug, 'list', 'copy');
-                common::printIcon('bug', 'toIssue',     "fromBug=$bug->id", $bug, 'list', 'bug');
+                common::printIcon('bug', 'toIssue',     "fromBug=$bug->id", $bug, 'list', 'question-sign');
                 break;
         }
         echo '</td>';

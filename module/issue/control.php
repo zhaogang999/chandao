@@ -45,7 +45,7 @@ class issue extends control
 
         /* Build the search form. */
         $actionURL    = $this->createLink('issue', 'browse', "type=bySearch&param=myQueryID");
-        //$this->issue->buildIssueSearchForm($actionURL, $queryID);
+        $this->issue->buildIssueSearchForm($actionURL, $queryID);
 
         /* Set view. */
         $this->view->position[]   = $this->lang->issue->issue;
@@ -88,7 +88,7 @@ class issue extends control
         $this->view->fromBug    = $fromBug;
         $this->view->title      = $this->lang->issue->create;
         $this->view->position[] = $this->lang->issue->create;
-        $this->view->bugs       = $this->bug->getProductBugsPairs(0, 'active,resolved');
+        $this->view->bugs       = $this->bug->getProductBugsPairs(0, 'active,resolved', true);
         $this->view->users      = $this->user->getPairs('nodeleted|noclosed');
         $this->display();
     }
@@ -123,10 +123,18 @@ class issue extends control
         $this->loadModel('user');
         $this->loadModel('bug');
 
+        $bugs = $this->bug->getProductBugsPairs(0, 'active,resolved', true);
+        $issue = $this->issue->getById((int)$issueID);
+        if ($issue->fromBug != 0)
+        {
+            $fromBug = $this->dao->select('id,title')->from(TABLE_BUG)->where('toIssue')->eq($issueID)->fetchPairs();
+            $fromBug[$issue->fromBug] = $issue->fromBug . ':' . $fromBug[$issue->fromBug];
+            $bugs = $fromBug + $bugs;
+        }
         $this->view->title      = $this->lang->issue->edit;
         $this->view->position[] = $this->lang->issue->edit;
-        $this->view->issue      = $this->issue->getById($issueID);
-        $this->view->bugs       = $this->bug->getProductBugsPairs(0, 'active,resolved');
+        $this->view->issue      = $issue;
+        $this->view->bugs       = $bugs;
         $this->view->users      = $this->user->getPairs('nodeleted|noclosed');
         $this->display();
     }
