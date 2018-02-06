@@ -51,4 +51,5 @@ $lang->issue->mail->create->title = "%s创建了流出问题 #%s:%s";
 $lang->issue->mail->edit->title   = "%s编辑了流出问题 #%s:%s";
 $lang->issue->mail->close->title  = "%s关闭了流出问题 #%s:%s";
 
+$lang->issue->action = new stdClass();
 $lang->issue->action->toissue = array('main' => '$date, 由 <strong>$actor</strong> Bug转化而来，Bug编号为 <strong>$extra</strong>。');

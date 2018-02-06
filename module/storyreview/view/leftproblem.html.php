@@ -51,7 +51,7 @@
   <tr class='text-center'>
     <td><?php echo html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id$from=$from"), $storyReview->id);?></td>
     <td><?php echo $storyReview->projectName;?></td>
-    <td class='text-left' title='<?php echo $storyReview->problemTracking?>'><?php echo html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id&from=$from"), $storyReview->problemTracking);?></td>
+    <td class='text-left' title='<?php echo $storyReview->problemTracking?>'><?php echo !empty($storyReview->problemTracking) ? html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id&from=$from"), $storyReview->problemTracking) : '';?></td>
     <td><?php echo $users[$storyReview->openedBy]; ?></td>
     <td><?php echo $storyReview->reviewDate; ?></td>
     <td><?php echo $lang->storyreview->resolutionList[$storyReview->resolution]; ?></td>

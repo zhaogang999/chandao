@@ -66,7 +66,7 @@
       </tr>
       <tr>
         <th><?php echo $lang->issue->comment;?></th>
-        <td colspan="2"><?php echo html::textarea('comment', $issue->comment, "class='form-control' rows='3'");?></td>
+        <td colspan="2"><?php echo html::textarea('comment', '', "class='form-control' rows='3'");?></td>
       </tr>
       <tr><td></td>
         <td colspan="2">
