@@ -19,8 +19,8 @@
 <?php js::set('confirmUnlinkStory', $lang->project->confirmUnlinkStory)?>
 <div id='featurebar'>
   <ul class='nav'>
-    <li class='active'><?php if(common::hasPriv('project', 'story')) echo html::a($this->createLink('project', 'story', "project=$project->id"), $lang->project->story);?></li>
-    <li><?php if(common::hasPriv('project', 'storyProgress')) echo html::a($this->createLink('project', 'storyProgress', "project=$project->id"), $lang->project->storyProgress);?></li>
+    <li><?php if(common::hasPriv('project', 'story')) echo html::a($this->createLink('project', 'story', "project=$project->id"), $lang->project->story);?></li>
+    <li class='active'><?php if(common::hasPriv('project', 'storyProgress')) echo html::a($this->createLink('project', 'storyProgress', "project=$project->id"), $lang->project->storyProgress);?></li>
     <li><?php if(common::hasPriv('project', 'storykanban')) echo html::a($this->createLink('project', 'storykanban', "project=$project->id"), $lang->project->kanban);?></li>
   </ul>
   <div class='actions'>
@@ -61,32 +61,23 @@
 <div class='main'>
   <script>setTreeBox();</script>
   <form method='post' id='projectStoryForm'>
-    <?php $canOrder = common::hasPriv('project', 'storySort');?>
-    <table class='table tablesorter table-condensed table-fixed table-selectable' id='storyList'>
+    <table class='table tablesorter table-condensed table-fixed' id='storyList'>
       <thead>
         <tr class='colhead'>
         <?php $vars = "projectID={$project->id}&orderBy=%s&type=$type&param=$param&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}"; ?>
           <th class='w-id  {sorter:false}'>    <?php common::printOrderLink('id',         $orderBy, $vars, $lang->idAB);?></th>
-          <?php if($canOrder):?>
-          <th class='w-40px {sorter:false}'> <?php common::printOrderLink('order',      $orderBy, $vars, $lang->project->updateOrder);?></th>
-          <?php endif;?>
-          <th class='w-pri {sorter:false}'>    <?php common::printOrderLink('pri',        $orderBy, $vars, $lang->priAB);?></th>
           <th class='{sorter:false}'>          <?php common::printOrderLink('title',      $orderBy, $vars, $lang->story->title);?></th>
-          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('reviewStatus',      $orderBy, $vars, $lang->story->reviewStatus);?></th>
-          <!--2085 项目需求中增加需求所属计划的显示-->
-          <!--<th class='w-140px {sorter:false}'>  <?php /*common::printOrderLink('plan',      $orderBy, $vars, $lang->story->plan);*/?></th>-->
-          <!--2911 优化需求提测计划、发版计划等内容-->
+          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
+          <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',      $orderBy, $vars, $lang->story->stageAB);?></th>
+          <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('reviewStatus',      $orderBy, $vars, $lang->story->reviewStatus);?></th>
+          <th class='w-80px'>  <?php echo $lang->story->storyReviewID;?></th>
           <th class='w-70px {sorter:false}'>  <?php common::printOrderLink('testDate',      $orderBy, $vars, $lang->story->testDate);?></th>
           <th class='w-90px {sorter:false}'>  <?php common::printOrderLink('specialPlan',      $orderBy, $vars, $lang->story->specialPlan);?></th>
-          <th class='w-60px {sorter:false}'>   <?php common::printOrderLink('openedBy',   $orderBy, $vars, $lang->openedByAB);?></th>
-          <th class='w-80px {sorter:false}'>   <?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->assignedToAB);?></th>
-          <!--<th class='w-40px {sorter:false}'>   <?php /*common::printOrderLink('estimate',   $orderBy, $vars, $lang->story->estimateAB);*/?></th>
-          <th class='w-45px {sorter:false}'>   <?php /*common::printOrderLink('status',     $orderBy, $vars, $lang->statusAB);*/?></th>-->
-          <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',      $orderBy, $vars, $lang->story->stageAB);?></th>
-          <th title='<?php echo $lang->story->taskCount?>' class='w-30px'><?php echo $lang->story->taskCountAB;?></th>
-          <th title='<?php echo $lang->story->bugCount?>' class='w-30px'><?php echo $lang->story->bugCountAB;?></th>
-          <th title='<?php echo $lang->story->caseCount?>' class='w-30px'><?php echo $lang->story->caseCountAB;?></th>
-          <th class='w-110px {sorter:false}'><?php echo $lang->actions;?></th>
+          <th class='w-80px'>  <?php echo $lang->project->build;?></th>
+          <th class='w-80px'>  <?php echo $lang->project->patchBuild;?></th>
+          <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('testStatus',      $orderBy, $vars, $lang->story->testStatus);?></th>
+          <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('verifyStatus',      $orderBy, $vars, $lang->story->verifyStatus);?></th>
+          <th class="w-80px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
         </tr>
       </thead>
       <tbody id='storyTableList' class='sortable'>
@@ -114,73 +105,56 @@
             <?php endif;?>
             <?php echo html::a($storyLink, sprintf('%03d', $story->id));?>
           </td>
-          <?php if($canOrder):?>
-          <td class='sort-handler'><i class='icon-move'></i></td>
-          <?php endif;?>
-          <td><span class='<?php echo 'pri' . zget($lang->story->priList, $story->pri, $story->pri)?>'><?php echo zget($lang->story->priList, $story->pri, $story->pri);?></span></td>
           <td class='text-left' title="<?php echo $story->title?>">
             <?php if(isset($branchGroups[$story->product][$story->branch])) echo "<span class='label label-info label-badge'>" . $branchGroups[$story->product][$story->branch] . '</span>';?>
             <?php echo html::a($storyLink,$story->title, null, "style='color: $story->color'");?>
           </td>
+          <td><?php echo $users[$story->openedBy];?></td>
+          <td><?php echo $lang->story->stageList[$story->stage];?></td>
           <td><?php echo $lang->story->reviewStatusList[$story->reviewStatus];?></td>
-          <!--2085 项目需求中增加需求所属计划的显示-->
-          <!--<td title="<?php /*echo $story->planTitle;*/?>"><?php /*echo $story->planTitle;*/?></td>-->
-          <!--2911 优化需求提测计划、发版计划等内容-->
+          <td>
+            <?php
+            if(!empty($story->storyReviewID))
+            {
+              $story->storyReviewID = explode(',', $story->storyReviewID);
+              foreach ($story->storyReviewID as $value)
+              {
+                common::printLink('storyreview', 'view', "storyReviewID=$value&from=project", $value);
+              }
+            }
+            ?>
+          </td>
           <td><?php echo $story->testDate;?></td>
           <td><?php echo $story->specialPlan;?></td>
-          <td><?php echo $users[$story->openedBy];?></td>
-
-          <!--需求可以指派多个人-->
-          <td title="<?php $assignedToAB = '';$assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; $assignedToAB .=  $users[trim($account)] . '&nbsp;'; };echo $title = $assignedToAB; ?>">
-            <?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?>
-          </td>
-
-         <!-- <td><?php /*echo $story->estimate;*/?></td>
-          <td class='story-<?php /*echo $story->status;*/?>'><?php /*echo zget($lang->story->statusList, $story->status);*/?></td>-->
-          <td><?php echo $lang->story->stageList[$story->stage];?></td>
-          <td class='linkbox'>
-            <?php
-            $tasksLink = $this->createLink('story', 'tasks', "storyID=$story->id&projectID=$project->id");
-            $storyTasks[$story->id] > 0 ? print(html::a($tasksLink, $storyTasks[$story->id], '', 'class="iframe"')) : print(0);
-            ?>
           <td>
             <?php
-            $bugsLink = $this->createLink('story', 'bugs', "storyID=$story->id&projectID=$project->id");
-            $storyBugs[$story->id] > 0 ? print(html::a($bugsLink, $storyBugs[$story->id], '', 'class="iframe"')) : print(0);
+            foreach ($story->build as $value)
+            {
+              $buildLink = $this->createLink('build', 'view', "id=$value");
+              echo html::a($buildLink, $value);
+            };
             ?>
           </td>
           <td>
             <?php
-            $casesLink = $this->createLink('story', 'cases', "storyID=$story->id&projectID=$project->id");
-            $storyCases[$story->id] > 0 ? print(html::a($casesLink, $storyCases[$story->id], '', 'class="iframe"')) : print(0);
+            foreach ($story->patchBuild as $value)
+            {
+              $buildLink = $this->createLink('patchbuild', 'view', "id=$value");
+              echo html::a($buildLink, $value);
+            };
             ?>
           </td>
+          <td><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
+          <td><?php echo $lang->story->verifyStatusList[$story->verifyStatus];?></td>
           <td>
             <?php
-            $hasDBPriv = common::hasDBPriv($project, 'project');
-            $param = "projectID={$project->id}&story={$story->id}&moduleID={$story->module}";
-
-            $lang->task->create = $lang->project->wbs;
-            if(commonModel::isTutorialMode())
+            if (!empty($story->linkStories))
             {
-                $wizardParams = helper::safe64Encode($param);
-                echo html::a($this->createLink('tutorial', 'wizard', "module=task&method=create&params=$wizardParams"), "<i class='icon-plus-border'></i>",'', "class='btn-icon btn-task-create' title='{$lang->project->wbs}'");
-            }
-            else
-            {
-              if($hasDBPriv) common::printIcon('task', 'create', $param, '', 'list', 'plus-border', '', 'btn-task-create');
-            }
-
-            $lang->task->batchCreate = $lang->project->batchWBS;
-            if($hasDBPriv) common::printIcon('task', 'batchCreate', "projectID={$project->id}&story={$story->id}", '', 'list', 'plus-sign');
-
-            $lang->testcase->batchCreate = $lang->testcase->create;
-            if($productID && $hasDBPriv) common::printIcon('testcase', 'batchCreate', "productID=$story->product&branch=$story->branch&moduleID=$story->module&storyID=$story->id", '', 'list', 'sitemap');
-
-            if(common::hasPriv('project', 'unlinkStory', $project))
-            {
-                $unlinkURL = $this->createLink('project', 'unlinkStory', "projectID=$project->id&storyID=$story->id&confirm=yes");
-                echo html::a("javascript:ajaxDelete(\"$unlinkURL\",\"storyList\",confirmUnlinkStory)", '<i class="icon-unlink"></i>', '', "class='btn-icon' title='{$lang->project->unlinkStory}'");
+              foreach (explode(',', $story->linkStories) as $value)
+              {
+                $storyLink = $this->createLink('story', 'view', "id=$value");
+                echo html::a($storyLink, $value);
+              };
             }
             ?>
           </td>
@@ -189,7 +163,7 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan='<?php echo $canOrder ? 14 : 13;?>'>
+          <td colspan='13'>
             <div class='table-actions clearfix'>
             <?php
             $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));

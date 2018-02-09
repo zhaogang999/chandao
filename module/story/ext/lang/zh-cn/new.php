@@ -38,3 +38,22 @@ $lang->story->specComment = "<p>[需求背景]</p><p>[功能描述]</p>";
 $lang->story->magicAuth   = '开发权限';
 $lang->story->batchChangeIfLinkStories = '批量修改是否有相关需求';
 $lang->story->linkStoryOpenedBys = '相关需求创建者';
+
+$lang->story->emptyBranch = '所属平台不能为空';
+$lang->story->choseBranch = '请选择所属平台';
+
+$lang->story->testStatus = '开发提测';
+$lang->story->testStatusList['']         = '';
+$lang->story->testStatusList['tested']   = '已提测';
+$lang->story->testStatusList['toTest']   = '未提测';
+$lang->story->testStatusList['released'] = '已发布';
+
+$lang->story->verifyStatus = '测试验收';
+$lang->story->verifyStatusList['']             = '';
+$lang->story->verifyStatusList['pass']         = '已通过';
+$lang->story->verifyStatusList['failed']       = '未通过';
+$lang->story->verifyStatusList['noVerified']   = '暂未验收';
+$lang->story->verifyStatusList['portVerified'] = '部分验收';
+$lang->story->verifyStatusList['freeVerified'] = '免验收';
+
+$lang->project->storyProgress = '需求进展';

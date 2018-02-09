@@ -339,28 +339,8 @@
 <style>
 .tabs .tab-content .tab-pane .action{position: absolute; right: <?php echo ($countStories or $countBugs or $countLeftBugs) ? '110px' : '-1px'?>; top: 0px;}
 </style>
-<script language="JavaScript">
-  //10127 提需求时，用户需求增加创建人显示，并支持搜索
-  function showLink(releaseID, type, param)
-  {
-    var method = type == 'story' ? 'linkStory' : 'linkBug';
-    if(typeof(param) == 'undefined') param = '&browseType=' + type + '&param=0';
-    if(type == 'leftBug') param += '&type=leftBug';
-    console.log(method);
-    $.get(createLink('release', method, 'releaseID=' + releaseID + param), function(data)
-    {
-      var obj = type == 'story' ? '.tab-pane#stories .linkBox' : (type == 'leftBug' ? '.tab-pane#leftBugs .linkBox' : '.tab-pane#bugs .linkBox');
-      $(obj).html(data);
-      $('#' + type + 'List').hide();
-
-      var formID = type == 'story' ? '#unlinkedStoriesForm' : (type == 'leftBug' ? '#unlinkedLeftBugsForm' : '#unlinkedBugsForm');
-      setTimeout(function(){fixedTfootAction(formID)}, 100);
-      checkTable($(formID).find('table'));
-    });
-  }
-</script>
 <?php js::set('param', helper::safe64Decode($param))?>
 <?php js::set('link', $link)?>
 <?php js::set('releaseID', $release->id)?>
 <?php js::set('type', $type)?>
-<?php include '../../common/view/footer.html.php';?>
+<?php include '../../../common/view/footer.html.php';?>

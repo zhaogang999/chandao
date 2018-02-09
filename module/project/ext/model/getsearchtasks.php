@@ -16,10 +16,25 @@
  */
 public function getSearchTasks($condition, $pager, $orderBy)
 {
-    $taskIdList = $this->dao->select('id')
-        ->from(TABLE_TASK)
+    //3669 实现任务可以通过提测计划字段进行筛选或排序
+    if (strstr($orderBy, 'testDate'))
+    {
+        $orderBy = 't2.' . $orderBy;
+    }
+    else
+    {
+        $orderBy = 't1.' . $orderBy;
+    }
+
+    $condition = str_replace('deleted' , 't1.deleted', $condition);
+    $condition = preg_replace('/`(\w+)`/', 't1.`$1`', $condition);
+    $condition = str_replace(array('t1.`testDate`'), array('t2.`testDate`'), $condition);
+
+    $taskIdList = $this->dao->select('t1.id')
+        ->from(TABLE_TASK)->alias('t1')
+        ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
         ->where($condition)
-        ->andWhere('deleted')->eq(0)
+        ->andWhere('t1.deleted')->eq(0)
         ->orderBy($orderBy)
         ->page($pager)
         ->fetchAll('id');

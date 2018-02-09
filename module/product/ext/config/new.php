@@ -23,3 +23,9 @@ $config->product->search['params']['reviewStatus'] = array('operator' => '=', 'c
 
 $config->product->search['fields']['ifLinkStories'] = $lang->story->ifLinkStories;
 $config->product->search['params']['ifLinkStories'] = array('operator' => '=', 'control' => 'select', 'values' => $lang->story->ifLinkStoriesList);
+
+$config->product->search['fields']['testStatus'] = $lang->story->testStatus;
+$config->product->search['params']['testStatus'] = array('operator' => '=', 'control' => 'select', 'values' => $lang->story->testStatusList);
+
+$config->product->search['fields']['verifyStatus'] = $lang->story->verifyStatus;
+$config->product->search['params']['verifyStatus'] = array('operator' => '=', 'control' => 'select', 'values' => $lang->story->verifyStatusList);

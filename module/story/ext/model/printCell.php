@@ -91,6 +91,13 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
             case 'ifLinkStories':
                 echo zget($this->lang->story->ifLinkStoriesList, $story->ifLinkStories, $story->ifLinkStories);
                 break;
+            //3759 项目需求下增加具体情况汇总展示页
+            case 'testStatus':
+                echo zget($this->lang->story->testStatusList, $story->testStatus, $story->testStatus);
+                break;
+            case 'verifyStatus':
+                echo zget($this->lang->story->verifyStatusList, $story->verifyStatus, $story->verifyStatus);
+                break;
             case 'source':
                 echo zget($this->lang->story->sourceList, $story->source, $story->source);
                 break;

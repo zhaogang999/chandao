@@ -286,6 +286,15 @@
                 <th><?php echo $lang->story->ifLinkStories;?></th>
                 <td><?php echo $lang->story->ifLinkStoriesList[$story->ifLinkStories];?></td>
             </tr>
+            <!--3759 项目需求下增加具体情况汇总展示页-->
+            <tr>
+                <th><?php echo $lang->story->testStatus;?></th>
+                <td><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
+            </tr>
+            <tr>
+                <th><?php echo $lang->story->verifyStatus;?></th>
+                <td><?php echo $lang->story->verifyStatusList[$story->verifyStatus];?></td>
+            </tr>
             </table>
           </div>
           <div class='tab-pane' id='legendLifeTime'>

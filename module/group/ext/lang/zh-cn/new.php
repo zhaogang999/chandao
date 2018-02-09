@@ -1,6 +1,7 @@
 <?php
 //权限控制
 $lang->resource->project->batchChangeProject = 'batchChangeProject';//新增
+$lang->resource->project->storyProgress      = 'storyProgress';//新增
 $lang->resource->task->deleteAudit          = 'deleteAudit';//新增
 $lang->resource->task->deleteReview         = 'deleteReview';
 $lang->resource->report->bugSummary         = 'bugSummary';
@@ -60,6 +61,8 @@ $lang->resource->my->todoStory    = 'todoStory';
 //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
 $lang->resource->story->magicAuth = 'magicAuth';
 $lang->resource->story->batchChangeIfLinkStories = 'batchChangeIfLinkStories';
+$lang->resource->story->batchChangeTestStatus    = 'batchChangeTestStatus';
+$lang->resource->story->batchChangeVerifyStatus  = 'batchChangeVerifyStatus';
 
 /* issue. */
 $lang->moduleOrder[205] = 'issue';

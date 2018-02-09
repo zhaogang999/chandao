@@ -3,6 +3,7 @@
 $config->story->develTask = 'devel,web,ios,android,sdk,fos,script';
 //禅道自身bug，待系统修复后可以删除
 $config->story->edit->requiredFields = 'title';
+$config->story->create->requiredFields = 'title,branch';
 
 //1522 增加产品需求所关联的需求和已细分需求的显示
 $config->story->datatable->fieldList['childStories']['title']    = 'childStories';
@@ -41,3 +42,13 @@ $config->story->datatable->fieldList['ifLinkStories']['title']    = 'ifLinkStori
 $config->story->datatable->fieldList['ifLinkStories']['fixed']    = 'no';
 $config->story->datatable->fieldList['ifLinkStories']['width']    = '80';
 $config->story->datatable->fieldList['ifLinkStories']['required'] = 'no';
+
+$config->story->datatable->fieldList['testStatus']['title']    = 'testStatus';
+$config->story->datatable->fieldList['testStatus']['fixed']    = 'no';
+$config->story->datatable->fieldList['testStatus']['width']    = '70';
+$config->story->datatable->fieldList['testStatus']['required'] = 'no';
+
+$config->story->datatable->fieldList['verifyStatus']['title']    = 'verifyStatus';
+$config->story->datatable->fieldList['verifyStatus']['fixed']    = 'no';
+$config->story->datatable->fieldList['verifyStatus']['width']    = '70';
+$config->story->datatable->fieldList['verifyStatus']['required'] = 'no';

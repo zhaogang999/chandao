@@ -32,7 +32,8 @@
         <td class='w-p45-f'>
           <div class='input-group'>
             <?php echo html::select('product', $products, $productID, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
-            <?php if($product->type != 'normal') echo html::select('branch', $branches, $branch, "onchange='loadBranch();' class='form-control chosen' style='width:120px'");?>
+            <!--3757 提需求时，所属平台需要变更为必填项-->
+            <?php if($product->type != 'normal') echo html::select('branch', $branches, '', "onchange='loadBranch();' class='form-control chosen' style='width:120px'");?>
 
           </div>
         </td>
