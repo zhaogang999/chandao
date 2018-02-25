@@ -162,7 +162,7 @@ class myStory extends story
         $this->view->color            = $color;
         $this->view->pri              = $pri;
         $this->view->branch           = $branch;
-        $this->view->branches         = $product->type != 'normal' ? $this->loadModel('branch')->getPairs($productID) : array();
+        $this->view->branches         = $product->type != 'normal' ? array('' => '') + $this->loadModel('branch')->getPairs($productID) : array();
         $this->view->productID        = $productID;
         $this->view->product          = $product;
         $this->view->projectID        = $projectID;

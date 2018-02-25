@@ -101,7 +101,8 @@ class searchModel extends model
                 }
                 else
                 {
-                    $condition = ' = ' . $this->dbh->quote($value) . ' ';
+                    //$condition = ' = ' . $this->dbh->quote($value) . ' ';
+                    $condition = helper::dbIN($value);
                 }
             }
             else

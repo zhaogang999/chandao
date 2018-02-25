@@ -460,14 +460,14 @@ public function getProjectStoryPairs($projectID = 0, $productID = 0, $branch = 0
  */
 public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $pager = null)
 {
-    $limitDate = date("Y-m-d",strtotime("+10 day"));
+    //$limitDate = date("Y-m-d",strtotime("+10 day"));
     //$orderBy = $type == 'toTestStory'?'testDate_desc':'specialPlan_desc';
 
     $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
         ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
         ->where('t1.deleted')->eq(0)
-        ->beginIF($type == 'toTestStory')->andWhere('testDate')->lt($limitDate)->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
-        ->beginIF($type == 'toReleaseStory')->andWhere('specialPlan')->lt($limitDate)->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+        ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
         ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
         ->orderBy($orderBy)
         ->page($pager)
@@ -1223,6 +1223,31 @@ public function setStage($storyID)
     }
 
     return;
+}/**
+ * 需求进展统计
+ *
+ * @param $stories array
+ * @return string
+ */
+public function storyProgressSummary($stories)
+{
+    $storyCount = count($stories);
+    $notReviewStoryCount = 0;
+    $notTestStoryCount   = 0;
+    $notVerifyStoryCount = 0;
+    
+    foreach ($stories as $story)
+    {
+        if (empty($story->reviewStatus) or $story->reviewStatus == 'notReview') $notReviewStoryCount++;
+        if (empty($story->testStatus) or $story->testStatus == 'notTest') $notTestStoryCount++;
+        if (empty($story->verifyStatus) or strpos('failed,noVerified,portVerified', $story->verifyStatus) !== false) $notVerifyStoryCount++;
+    }
+    
+    $reviewedStoryRate = $storyCount == 0 ? 0 : 1 - round($notReviewStoryCount/$storyCount, 2);
+    $TestedStoryRate   = $storyCount == 0 ? 0 : 1 - round($notTestStoryCount/$storyCount, 2);
+    $verifiedStoryRate = $storyCount == 0 ? 0 : 1 - round($notVerifyStoryCount/$storyCount, 2);
+
+    return sprintf($this->lang->story->storyProgressSummary, $storyCount, $notReviewStoryCount, $reviewedStoryRate * 100 . "%", $notTestStoryCount, $TestedStoryRate * 100 . "%", $notVerifyStoryCount, $verifiedStoryRate * 100 . "%");
 }/**
  * Update a story.
  *

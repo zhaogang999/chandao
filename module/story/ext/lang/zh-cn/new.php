@@ -45,7 +45,7 @@ $lang->story->choseBranch = '请选择所属平台';
 $lang->story->testStatus = '开发提测';
 $lang->story->testStatusList['']         = '';
 $lang->story->testStatusList['tested']   = '已提测';
-$lang->story->testStatusList['toTest']   = '未提测';
+$lang->story->testStatusList['notTest']   = '未提测';
 $lang->story->testStatusList['released'] = '已发布';
 
 $lang->story->verifyStatus = '测试验收';
@@ -56,4 +56,7 @@ $lang->story->verifyStatusList['noVerified']   = '暂未验收';
 $lang->story->verifyStatusList['portVerified'] = '部分验收';
 $lang->story->verifyStatusList['freeVerified'] = '免验收';
 
-$lang->project->storyProgress = '需求进展';
+$lang->story->storyProgress = '需求进展';
+$lang->story->batchChangeTestStatus   = '开发提测';
+$lang->story->batchChangeVerifyStatus = '测试验收';
+$lang->story->storyProgressSummary = "共 <strong>%s</strong> 个需求，未评审 <strong>%s</strong> 个，评审率<strong>%s</strong>；未提测 <strong>%s</strong> 个，提测率<strong>%s</strong>；未验收 <strong>%s</strong> 个，验收通过率<strong>%s</strong>。";

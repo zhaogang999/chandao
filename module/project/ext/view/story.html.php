@@ -20,7 +20,7 @@
 <div id='featurebar'>
   <ul class='nav'>
     <li class='active'><?php if(common::hasPriv('project', 'story')) echo html::a($this->createLink('project', 'story', "project=$project->id"), $lang->project->story);?></li>
-    <li><?php if(common::hasPriv('project', 'storyProgress')) echo html::a($this->createLink('project', 'storyProgress', "project=$project->id"), $lang->project->storyProgress);?></li>
+    <li><?php if(common::hasPriv('project', 'storyProgress')) echo html::a($this->createLink('project', 'storyProgress', "project=$project->id"), $lang->story->storyProgress);?></li>
     <li><?php if(common::hasPriv('project', 'storykanban')) echo html::a($this->createLink('project', 'storykanban', "project=$project->id"), $lang->project->kanban);?></li>
   </ul>
   <div class='actions'>
@@ -101,6 +101,8 @@
         $batchStoryReview   = common::hasPriv('story', 'batchStoryReview');
         /*2911 优化需求提测计划、发版计划等内容*/
         $batchEditDate      = common::hasPriv('story', 'batchEditDate');
+        $canBatchChangeTestStatus = common::hasPriv('story', 'batchChangeTestStatus');
+        $canBatchChangeVerifyStatus = common::hasPriv('story', 'batchChangeVerifyStatus');
         ?>
         <?php foreach($stories as $key => $story):?>
         <?php
@@ -282,7 +284,7 @@
                 echo '</ul></li>';
               }
 
-              if(common::hasPriv('story', 'batchChangeTestStatus'))
+              if($canBatchChangeTestStatus)
               {
                 echo "<li class='dropdown-submenu'>";
                 echo html::a('javascript:;', $lang->story->testStatus, '', "id='testStatusItem'");
@@ -295,7 +297,7 @@
                 }
                 echo '</ul></li>';
               }
-              if(common::hasPriv('story', 'batchChangeVerifyStatus'))
+              if($canBatchChangeVerifyStatus)
               {
                 echo "<li class='dropdown-submenu'>";
                 echo html::a('javascript:;', $lang->story->verifyStatus, '', "id='verifyStatusItem'");

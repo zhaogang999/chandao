@@ -50,9 +50,9 @@
       <th class='w-30px'>  <?php echo $lang->story->taskCountAB;?></th>
       <th class='w-80px'>  <?php echo $lang->story->storyReviewID;?></th>
       <?php endif;?>
+      <th class='w-80px'>  <?php echo $lang->my->build;?></th>
+      <th class='w-80px'>  <?php echo $lang->my->patchBuild;?></th>
       <?php if ($type == 'toReleaseStory'):?>
-        <th class='w-80px'>  <?php echo $lang->my->build;?></th>
-        <th class='w-80px'>  <?php echo $lang->my->patchBuild;?></th>
         <th class="w-80px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
         <th class="w-110px"><?php echo $lang->story->linkStoryOpenedBys;?></th>
       <?php endif;?>
@@ -108,7 +108,6 @@
       ?>
       </td>
       <?php endif;?>
-      <?php if ($type == 'toReleaseStory'):?>
       <td>
       <?php
       foreach ($story->build as $value)
@@ -127,6 +126,7 @@
           };
           ?>
       </td>
+      <?php if ($type == 'toReleaseStory'):?>
       <td>
           <?php
           if (!empty($story->linkStories))
@@ -146,7 +146,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan= <?php echo $type == 'toTestStory'?'11':'12';?>>
+    <td colspan= <?php echo $type == 'toTestStory'?'13':'12';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>

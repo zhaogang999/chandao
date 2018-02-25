@@ -37,6 +37,7 @@ class myProject extends project
         $pager = new pager($recTotal, $recPerPage, $pageID);
 
         $stories = $this->story->getProjectStories($projectID, $sort, $type, $param, $pager);
+        $AllStories = $this->story->getProjectStories($projectID, $sort, $type, $param);
         foreach($stories as $story)
         {
             $this->story->processStory($story);
@@ -97,7 +98,7 @@ class myProject extends project
         $this->view->project      = $project;
         $this->view->stories      = $this->loadModel('story')->mergePlanTitle($productID, $stories);
         $this->view->plans         = $this->loadModel('productplan')->getPairs($productID);
-        $this->view->summary      = $this->product->summary($stories);
+        $this->view->summary      = $this->story->storyProgressSummary($AllStories);
         $this->view->orderBy      = $orderBy;
         $this->view->type         = $type;
         $this->view->param        = $param;

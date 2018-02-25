@@ -65,3 +65,5 @@ $lang->bug->menu->issue = array('link' => '流出问题管理|issue|browse');
 $lang->testcase->menu->issue = array('link' => '流出问题管理|issue|browse');
 $lang->caselib->menu->issue = array('link' => '流出问题管理|issue|browse');
 $lang->storyreview->menu->issue = array('link' => '流出问题管理|issue|browse');
+
+$lang->project->menu->story     = array('link' => '需求|project|story|projectID=%s', 'subModule' => 'story', 'alias' => 'linkstory,storykanban,storyprogress');

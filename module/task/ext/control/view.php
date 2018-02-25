@@ -93,7 +93,7 @@ class myTask extends task
         $this->view->task        = $task;
         $this->view->actions     = $this->loadModel('action')->getList('task', $taskID);
         $this->view->users       = $this->loadModel('user')->getPairs('noletter');
-        $this->view->preAndNext  = $this->loadModel('common')->getPreAndNextObject('task', $taskID);
+        //$this->view->preAndNext  = $this->loadModel('common')->getPreAndNextObject('task', $taskID);
         $this->view->product     = $this->tree->getProduct($task->module);
         $this->view->modulePath  = $this->tree->getParents($task->module);
         $this->display();
