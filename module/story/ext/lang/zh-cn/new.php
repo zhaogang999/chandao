@@ -45,8 +45,9 @@ $lang->story->choseBranch = '请选择所属平台';
 $lang->story->testStatus = '开发提测';
 $lang->story->testStatusList['']         = '';
 $lang->story->testStatusList['tested']   = '已提测';
-$lang->story->testStatusList['notTest']   = '未提测';
+$lang->story->testStatusList['notTest']  = '未提测';
 $lang->story->testStatusList['released'] = '已发布';
+$lang->story->testStatusList['freeTest'] = '免测试';
 
 $lang->story->verifyStatus = '测试验收';
 $lang->story->verifyStatusList['']             = '';
@@ -60,3 +61,7 @@ $lang->story->storyProgress = '需求进展';
 $lang->story->batchChangeTestStatus   = '开发提测';
 $lang->story->batchChangeVerifyStatus = '测试验收';
 $lang->story->storyProgressSummary = "共 <strong>%s</strong> 个需求，未评审 <strong>%s</strong> 个，评审率<strong>%s</strong>；未提测 <strong>%s</strong> 个，提测率<strong>%s</strong>；未验收 <strong>%s</strong> 个，验收通过率<strong>%s</strong>。";
+
+$lang->story->sourceNoteCommtent = '用户专用，如无溯源号，请填写无';
+$lang->story->error = new stdClass();
+$lang->story->error->branchErrorComment = '用户专用，如无溯源号，请填写无';

@@ -52,6 +52,37 @@
       <th><?php echo $lang->files;?></th>
       <td colspan='2'><?php echo $this->fetch('file', 'buildform');?></td>
     </tr>
+
+    <?php if(isset($scriptTasks)):?>
+      <tr>
+        <td colspan='3'>
+          <fieldset class='fieldset-pure'>
+            <legend><?php echo $lang->task->script;?></legend>
+            <table class='table table-form'>
+              <thead>
+                <tr>
+                  <th class="w-id"><?php echo $lang->task->id;?></th>
+                  <th><?php echo $lang->task->name;?></th>
+                  <th class="w-100px"><?php echo $lang->task->tester;?></th>
+                  <th class="w-100px"><?php echo $lang->task->AT;?></th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach($scriptTasks as $scriptTask):?>
+                  <tr>
+                    <td><?php echo $scriptTask->id . html::hidden("tid[$scriptTask->id]", $scriptTask->id);?></td>
+                    <td><?php echo $scriptTask->name;?></td>
+                    <td><?php echo html::select("tester[$scriptTask->id]", $members, $scriptTask->tester, "class='form-control chosen'");?></td>
+                    <td><?php echo html::select("AT[$scriptTask->id]", $lang->task->ATList, $scriptTask->AT, "class='form-control chosen'");?></td>
+                  </tr>
+                <?php endforeach;?>
+              </tbody>
+            </table>
+          </fieldset>
+        </td>
+      </tr>
+    <?php endif;?>
+
     <?php if($task->type == 'review'):?>
       <tr>
         <td colspan='3'>

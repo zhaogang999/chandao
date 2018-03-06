@@ -85,6 +85,71 @@ public function batchChangePlan($storyIDList, $planID, $oldPlanID = 0)
     }
     return $allChanges;
 }/**
+ * Batch close story.
+ *
+ * @access public
+ * @return void
+ */
+public function batchClose()
+{
+    /* Init vars. */
+    $stories     = array();
+    $allChanges  = array();
+    $now         = helper::now();
+    $data        = fixer::input('post')->get();
+    $storyIDList = $data->storyIDList ? $data->storyIDList : array();
+
+    $oldStories = $this->getByList($storyIDList);
+    foreach($storyIDList as $storyID)
+    {
+        $oldStory = $oldStories[$storyID];
+        if($oldStory->status == 'closed') continue;
+
+        $story = new stdclass();
+        $story->lastEditedBy   = $this->app->user->account;
+        $story->lastEditedDate = $now;
+        $story->closedBy       = $this->app->user->account;
+        $story->closedDate     = $now;
+        $story->assignedTo     = 'closed';
+        $story->assignedDate   = $now;
+        $story->status         = 'closed';
+
+        $story->closedReason   = $data->closedReasons[$storyID];
+        $story->duplicateStory = $data->duplicateStoryIDList[$storyID] ? $data->duplicateStoryIDList[$storyID] : $oldStory->duplicateStory;
+        $story->childStories   = $data->childStoriesIDList[$storyID] ? $data->childStoriesIDList[$storyID] : $oldStory->childStories;
+
+        if($story->closedReason == 'done') $story->stage = 'released';
+        //bug修改把plan的值有0改为'';待官方修复后该文件删除
+        if($story->closedReason != 'done') $story->plan  = '';
+
+        $stories[$storyID] = $story;
+        unset($story);
+    }
+
+    foreach($stories as $storyID => $story)
+    {
+        if(!$story->closedReason) continue;
+
+        $oldStory = $oldStories[$storyID];
+
+        $this->dao->update(TABLE_STORY)->data($story)
+            ->autoCheck()
+            ->checkIF($story->closedReason == 'duplicate',  'duplicateStory', 'notempty')
+            ->where('id')->eq($storyID)->exec();
+
+        if(!dao::isError())
+        {
+            $allChanges[$storyID] = common::createChanges($oldStory, $story);
+        }
+        else
+        {
+            die(js::error('story#' . $storyID . dao::getError(true)));
+        }
+        if(!dao::isError() && $story->stage == 'released') $this->loadModel('score')->create('story', 'close', $storyID);
+    }
+
+    return $allChanges;
+}/**
  * Batch update stories.
  *
  * @access public
@@ -200,6 +265,46 @@ public function batchUpdate()
     if(!dao::isError()) $this->loadModel('score')->create('ajax', 'batchEdit');
     return $allChanges;
 }/**
+ * Close a story.
+ *
+ * @param  int    $storyID
+ * @access public
+ * @return bool
+ */
+public function close($storyID)
+{
+    if(strpos($this->config->story->close->requiredFields, 'comment') !== false and !$this->post->comment)
+    {
+        dao::$errors[] = sprintf($this->lang->error->notempty, $this->lang->comment);
+        return false;
+    }
+
+    $oldStory = $this->dao->findById($storyID)->from(TABLE_STORY)->fetch();
+    $now      = helper::now();
+    $story = fixer::input('post')
+        ->add('lastEditedBy', $this->app->user->account)
+        ->add('lastEditedDate', $now)
+        ->add('closedDate', $now)
+        ->add('closedBy',   $this->app->user->account)
+        ->add('assignedTo',   'closed')
+        ->add('assignedDate', $now)
+        ->add('status', 'closed')
+        ->removeIF($this->post->closedReason != 'duplicate', 'duplicateStory')
+        ->removeIF($this->post->closedReason != 'subdivided', 'childStories')
+        ->setIF($this->post->closedReason == 'done', 'stage', 'released')
+        //bug修改把plan的值有0改为'';待官方修复后该文件删除
+        ->setIF($this->post->closedReason != 'done', 'plan', '')
+        ->remove('comment')
+        ->get();
+
+    $this->dao->update(TABLE_STORY)->data($story)
+        ->autoCheck()
+        ->batchCheck($this->config->story->close->requiredFields, 'notempty')
+        ->checkIF($story->closedReason == 'duplicate',  'duplicateStory', 'notempty')
+        ->where('id')->eq($storyID)->exec();
+    if(!dao::isError() && $this->post->closedReason == 'done') $this->loadModel('score')->create('story', 'close', $storyID);
+    return common::createChanges($oldStory, $story);
+}/**
  * Created by PhpStorm.
  * User: 月下亭中人
  * Date: 2017/9/28
@@ -239,6 +344,7 @@ public function create($projectID = 0, $bugID = 0)
         ->stripTags($this->config->story->editor->create['id'], $this->config->allowedTags)
         ->remove('customProduct,files,labels,needNotReview,newStory,uid')
         ->get();
+    if ($story->branch === '') die("丰东股份");
 
 //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”38,40
     if (isset($story->story))
@@ -282,7 +388,6 @@ public function create($projectID = 0, $bugID = 0)
                 $linkStories = $this->dao->select('linkStories')->FROM(TABLE_STORY)->where('id')->eq(trim($id, ','))->fetch();
 
                 $linkStoriesAB = $linkStories->linkStories .','. $storyID;
-                //var_dump($linkStoriesAB);die;
                 $this->dao->update(TABLE_STORY)->set('ifLinkStories')->eq('exist')->set('linkStories')->eq(trim($linkStoriesAB, ','))->where('id')->eq(trim($id, ','))->exec();
                 if(dao::isError()) die(js::error(dao::getError()));
             }
@@ -363,7 +468,8 @@ public function formatStories($stories, $type = 'full', $limit = 0)
     /* Format these stories. */
     $storyPairs = array('' => '');
     $i = 0;
-    $users = $this->loadModel('user')->getPairs('noclosed|nodeleted');
+    $this->config->user->showDeleted = 1;        //修改bug；列表页可以显示已删除的用户 21-22
+    $users = $this->loadModel('user')->getPairs();
     foreach($stories as $story)
     {
         if($type == 'short')
@@ -424,6 +530,84 @@ public function getProductStoryPairs($productID = 0, $branch = 0, $moduleIdList 
     if(!$stories) return array();
     return $this->formatStories($stories, 'full', $limit);
 }/**
+ * Get stories list of a project.
+ *
+ * @param  int    $projectID
+ * @param  string $orderBy
+ * @access public
+ * @return array
+ */
+public function getProjectStories($projectID = 0, $orderBy = 't1.`order`_desc', $type = 'byModule', $param = 0, $pager = null)
+{
+    if(defined('TUTORIAL')) return $this->loadModel('tutorial')->getProjectStories();
+
+    if($type == 'bySearch')
+    {
+        $queryID  = (int)$param;
+        $products = $this->loadModel('project')->getProducts($projectID);
+
+        if($this->session->projectStoryQuery == false) $this->session->set('projectStoryQuery', ' 1 = 1');
+        if($queryID)
+        {
+            $query = $this->loadModel('search')->getQuery($queryID);
+            if($query)
+            {
+                $this->session->set('projectStoryQuery', $query->sql);
+                $this->session->set('projectStoryForm', $query->form);
+            }
+        }
+
+        $allProduct = "`product` = 'all'";
+        $storyQuery = $this->session->projectStoryQuery;
+        if(strpos($this->session->projectStoryQuery, $allProduct) !== false)
+        {
+            $storyQuery = str_replace($allProduct, '1', $this->session->projectStoryQuery);
+        }
+        $storyQuery = preg_replace('/`(\w+)`/', 't2.`$1`', $storyQuery);
+
+        $stories = $this->dao->select('distinct t1.*, t2.*, t3.branch as productBranch, t4.type as productType, t2.version as version')->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
+            ->leftJoin(TABLE_PROJECTPRODUCT)->alias('t3')->on('t1.project = t3.project')
+            ->leftJoin(TABLE_PRODUCT)->alias('t4')->on('t2.product = t4.id')
+            ->where($storyQuery)
+            ->andWhere('t1.project')->eq((int)$projectID)
+            ->orderBy($orderBy)
+            ->page($pager, 't2.id')
+            ->fetchAll('id');
+    }
+    else
+    {
+        $modules = ($type == 'byModule' and $param) ? $this->dao->select('*')->from(TABLE_MODULE)->where('path')->like("%,$param,%")->andWhere('type')->eq('story')->andWhere('deleted')->eq(0)->fetchPairs('id', 'id') : array();
+        $stories = $this->dao->select('distinct t1.*, t2.*,t3.branch as productBranch,t4.type as productType,t2.version as version')->from(TABLE_PROJECTSTORY)->alias('t1')
+            ->leftJoin(TABLE_STORY)->alias('t2')->on('t1.story = t2.id')
+            ->leftJoin(TABLE_PROJECTPRODUCT)->alias('t3')->on('t1.project = t3.project')
+            ->leftJoin(TABLE_PRODUCT)->alias('t4')->on('t2.product = t4.id')
+            ->where('t1.project')->eq((int)$projectID)
+            ->beginIF($type == 'byProduct')->andWhere('t1.product')->eq($param)->fi()
+            ->beginIF($type == 'byBrach')->andWhere('t2.branch')->eq($param)->fi()
+            ->beginIF($type == 'byModule' and $param)->andWhere('t2.module')->in($modules)->fi()
+            ->andWhere('t2.deleted')->eq(0)
+            ->orderBy($orderBy)
+            ->page($pager, 't2.id')
+            ->fetchAll('id');
+    }
+
+    $query    = $this->dao->get();
+    $branches = array();
+    foreach($stories as $story)
+    {
+        if(empty($story->branch) and $story->productType != 'normal') $branches[$story->productBranch][$story->id] = $story->id;
+    }
+    //现阶段不需要该规则
+    /*foreach($branches as $branchID => $storyIDList)
+    {
+        $stages = $this->dao->select('*')->from(TABLE_STORYSTAGE)->where('story')->in($storyIDList)->andWhere('branch')->eq($branchID)->fetchPairs('story', 'stage');
+        foreach($stages as $storyID => $stage) $stories[$storyID]->stage = $stage;
+    }*/
+
+    $this->dao->sqlobj->sql = $query;
+    return $stories;
+}/**
  * Get stories pairs of a project.
  *
  * @param  int           $projectID
@@ -466,6 +650,7 @@ public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $p
     $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
         ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
         ->where('t1.deleted')->eq(0)
+        ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
         ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
         ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
         ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
@@ -987,6 +1172,8 @@ public function sendmail($storyID, $actionID)
 {
     $this->loadModel('mail');
     $story       = $this->getById($storyID);
+    $storyDetail       = $this->dao->select('*')->from(TABLE_STORY)->where('id')->eq($storyID)->fetch();
+    //var_dump($storyDetail);die;
     $productName = $this->loadModel('product')->getById($story->product)->name;
     $users       = $this->loadModel('user')->getPairs('noletter');
 
@@ -1025,11 +1212,11 @@ public function sendmail($storyID, $actionID)
 
     /* Set toList and ccList. */
 
-    $toList = $story->assignedTo;
-    $ccList = str_replace(' ', '', trim($story->mailto, ','));
+    $toList = $storyDetail->assignedTo;
+    $ccList = str_replace(' ', '', trim($storyDetail->mailto, ','));
 
     //2284 需求发生任何变动，需要触发邮件（含编辑，备注，变更等所有操作）并且收件人不光含抄送人，还需包含需求原始提出人
-    $ccList = $ccList . ',' . $story->openedBy;
+    $ccList = $ccList . ',' . $storyDetail->openedBy;
 
     /* If the action is changed or reviewed, mail to the project team. */
     if(strtolower($action->action) == 'changed' or strtolower($action->action) == 'reviewed')
@@ -1059,11 +1246,11 @@ public function sendmail($storyID, $actionID)
     }
     elseif($toList == 'closed')
     {
-        $toList = $story->openedBy;
+        $toList = $storyDetail->openedBy;
     }
 
     /* Send it. */
-    $this->mail->send($toList, 'STORY #' . $story->id . ' ' . $story->title . ' - ' . $productName, $mailContent, $ccList);
+    $this->mail->send($toList, 'STORY #' . $storyDetail->id . ' ' . $storyDetail->title . ' - ' . $productName, $mailContent, $ccList);
     if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
 }/**
  * Set stage of a story.
@@ -1272,7 +1459,7 @@ public function update($storyID)
         ->add('lastEditedDate', $now)
         ->setDefault('status', $oldStory->status)
         ->setDefault('product', $oldStory->product)
-        ->setDefault('plan', $oldStory->plan)
+        //->setDefault('plan', $oldStory->plan)
         ->setDefault('branch', $oldStory->branch)
         ->setIF($this->post->specialPlan == '', 'specialPlan', '0000-00-00')  //2911 优化需求提测计划、发版计划等内容 2行
         ->setIF($this->post->testDate     == '', 'testDate', '0000-00-00')

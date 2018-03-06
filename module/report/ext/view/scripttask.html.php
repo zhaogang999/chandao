@@ -23,9 +23,6 @@
   }
 </style>
 <div id='titlebar'>
-  <div class='heading'>
-    <?php echo html::icon($lang->icons['build']);?> <?php echo $lang->task->task;?>
-  </div>
   <div id='querybox' class='show'></div>
 </div>
 

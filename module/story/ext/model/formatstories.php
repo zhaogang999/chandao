@@ -18,7 +18,8 @@ public function formatStories($stories, $type = 'full', $limit = 0)
     /* Format these stories. */
     $storyPairs = array('' => '');
     $i = 0;
-    $users = $this->loadModel('user')->getPairs('noclosed|nodeleted');
+    $this->config->user->showDeleted = 1;        //修改bug；列表页可以显示已删除的用户 21-22
+    $users = $this->loadModel('user')->getPairs();
     foreach($stories as $story)
     {
         if($type == 'short')

@@ -191,7 +191,7 @@ tfoot tr td .table-actions .btn{display:none;}
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->openedByAB;?></th>
-            <td><?php echo $storyReview->openedBy;?></td>
+            <td><?php echo $users[$storyReview->openedBy];?></td>
           </tr>
           <tr>
             <th><?php echo $lang->storyreview->openedDate;?></th>

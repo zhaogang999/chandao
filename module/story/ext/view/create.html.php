@@ -91,7 +91,7 @@
               <?php echo html::select('source', $lang->story->sourceList, $source, "class='form-control'");?>
               <!--1084 产品需求下增加溯源号及搜索-->
               <span class='input-group-addon fix-border'><?php echo $lang->story->sourceNO?></span>
-              <?php echo html::input('sourceNote', $sourceNote, "class='form-control' autocomplete='off'");?>
+              <?php echo html::input('sourceNote', $sourceNote, "class='form-control' autocomplete='off' placeholder='{$this->lang->story->sourceNoteCommtent}'");?>
             </div>
           </td>
         <?php endif;?>
@@ -226,10 +226,8 @@
     var link = createLink('story', 'ajaxGetCustomProductStories', 'productID=' + productID + '&branch=0&moduleID=0&storyID=0&onlyOption=false&status=noclosed');
     $.get(link, function(stories)
     {
-      //var value = $('#story').val();
       if(!stories) stories = '<select id="story[]" name="story" multiple="multiple"></select>';
       $('#story').replaceWith(stories);
-      //$('#story').val(value);
       $('#story_chosen').remove();
       $("#story").chosen(defaultChosenOptions);
     });

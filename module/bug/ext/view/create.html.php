@@ -123,7 +123,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
             unset($lang->bug->typeList['designchange']);
             unset($lang->bug->typeList['newfeature']);
             unset($lang->bug->typeList['trackthings']);
-            echo html::select('type', $lang->bug->typeList, $type, "class='form-control'");
+            echo html::select('type', $lang->bug->typeList, '', "class='form-control'");
             ?>
             <?php if($showOS):?>
               <span class='input-group-addon fix-border'><?php echo $lang->bug->os?></span>

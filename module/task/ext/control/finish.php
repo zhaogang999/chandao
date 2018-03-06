@@ -69,6 +69,13 @@ class myTask extends task
         if ($this->view->task->type == 'test')
         {
             $this->view->testTaskComment = $this->lang->task->testTaskComment;
+
+            //获取需求下脚本类型的任务的脚本文档信息
+            if ($task->sory !== 0)
+            {
+                $scriptTasks = $this->dao->select('t1.id, t1.name ,t2.tester, t2.AT')->from(TABLE_TASK)->alias('t1')->leftJoin(TABLE_SCRIPT)->alias('t2')->on('t1.id = t2.task')->where('t1.type')->eq('script')->andWhere('t1.story')->eq($task->story)->andWhere('t1.deleted')->eq('0')->andWhere('t1.status')->ne('cancel')->fetchAll('id');
+                if (!empty($scriptTasks)) $this->view->scriptTasks = $scriptTasks;
+            }
         }
 
         //1754 增加开发任务关闭成果展示内容

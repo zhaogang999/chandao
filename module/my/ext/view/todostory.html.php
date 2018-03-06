@@ -44,6 +44,9 @@
       <th class='w-80px {sorter:false}'> <?php common::printOrderLink('specialPlan',         $orderBy, $vars, $lang->story->specialPlan);?></th>
         <th class='w-status {sorter:false}'><?php common::printOrderLink('status',       $orderBy, $vars, $lang->statusAB);?></th>
         <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',        $orderBy, $vars, $lang->story->stageAB);?></th>
+        <?php if ($type == 'toTestStory'):?>
+        <th class='w-70px {sorter:false}'>  <?php common::printOrderLink('testStatus',     $orderBy, $vars, $lang->story->testStatus);?></th>
+        <?php endif;?>
       <th class='w-60px {sorter:false}'>  <?php common::printOrderLink('openedBy',     $orderBy, $vars, $lang->openedByAB);?></th>
       <?php if ($type == 'toTestStory'):?>
       <th class='w-120px {sorter:false}'>  <?php common::printOrderLink('assignedTo',     $orderBy, $vars, $lang->story->assignedTo);?></th>
@@ -88,7 +91,10 @@
       <td class="<?php if (isset($story->testWarning) and $type == 'toTestStory') echo $story->testWarning;?>"><?php echo $story->testDate;?></td>
       <td class="<?php if(isset($story->releaseWarning) and $type == 'toReleaseStory') echo $story->releaseWarning;?>"><?php echo $story->specialPlan;?></td>
        <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
-      <td class="<?php if ($story->stage == 'projected') echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
+      <td class="<?php if ($story->stage == 'projected' or ($type == 'toReleaseStory' and ($story->stage == 'developing' or $story->stage == 'developed' or $story->stage == 'testing'))) echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
+      <?php if ($type == 'toTestStory'):?>
+      <td><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
+      <?php endif;?>
       <td><?php echo $users[$story->openedBy];?></td>
       <?php if ($type == 'toTestStory'):?>
       <td><?php $assignedTo = explode(',', $story->assignedTo); foreach($assignedTo as $account) {if(empty($account)) continue; echo "<span>" . $users[trim($account)] . '</span> &nbsp;'; }?></td>
@@ -146,7 +152,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan= <?php echo $type == 'toTestStory'?'13':'12';?>>
+    <td colspan= <?php echo $type == 'toTestStory'?'14':'12';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>

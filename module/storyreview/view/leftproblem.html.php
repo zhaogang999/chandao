@@ -28,7 +28,7 @@
   <?php endif;?>
   <!--<div id='querybox' class='show'></div>-->
 </div>
-<table class='table tablesorter table-fixed' id='storyReviewList'>
+<table class='table tablesorter table-condensed table-hover table-striped' id='storyReviewList' style="table-layout:fixed" >
   <thead>
   <?php
   $vars = "objectID=$objectID&from=$from&status=$status&type=$type&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";
@@ -39,8 +39,8 @@
       <th><?php common::printOrderLink('problemTracking', $orderBy, $vars, $lang->storyreview->problemTracking);?></th>
       <th class='w-user'><?php common::printOrderLink('openedBy', $orderBy, $vars, $lang->storyreview->openedBy);?></th>
       <th class='w-date'><?php common::printOrderLink('reviewDate', $orderBy, $vars, $lang->storyreview->reviewDate);?></th>
-      <th class='w-70px'><?php common::printOrderLink('resolution', $orderBy, $vars, $lang->storyreview->resolution);?></th>
-      <th class='w-60px'><?php common::printOrderLink('solver', $orderBy, $vars, $lang->storyreview->solver);?></th>
+      <th class='w-80px'><?php common::printOrderLink('resolution', $orderBy, $vars, $lang->storyreview->resolution);?></th>
+      <th class='w-70px'><?php common::printOrderLink('solver', $orderBy, $vars, $lang->storyreview->solver);?></th>
       <th class='w-date'><?php common::printOrderLink('resolvedDate', $orderBy, $vars, $lang->storyreview->resolvedDate);?></th>
       <th class='w-80px'><?php echo $lang->actions;?></th>
 
@@ -51,7 +51,7 @@
   <tr class='text-center'>
     <td><?php echo html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id$from=$from"), $storyReview->id);?></td>
     <td><?php echo $storyReview->projectName;?></td>
-    <td class='text-left' title='<?php echo $storyReview->problemTracking?>'><?php echo !empty($storyReview->problemTracking) ? html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id&from=$from"), $storyReview->problemTracking) : '';?></td>
+    <td style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" class='text-left' title='<?php echo $storyReview->problemTracking; ?>'><?php echo !empty($storyReview->problemTracking) ? html::a($this->createLink('storyreview', 'view', "storyReview=$storyReview->id&from=$from"), strip_tags($storyReview->problemTracking)) : '';?></td>
     <td><?php echo $users[$storyReview->openedBy]; ?></td>
     <td><?php echo $storyReview->reviewDate; ?></td>
     <td><?php echo $lang->storyreview->resolutionList[$storyReview->resolution]; ?></td>

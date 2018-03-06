@@ -55,7 +55,7 @@
       echo '</div>';
 
       echo "<div class='btn-group'>";
-      common::printRPN($browseLink, $preAndNext);
+      //common::printRPN($browseLink, $preAndNext);
       echo '</div>';
 
       $actionLinks = ob_get_contents();

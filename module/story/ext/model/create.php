@@ -82,7 +82,6 @@ public function create($projectID = 0, $bugID = 0)
                 $linkStories = $this->dao->select('linkStories')->FROM(TABLE_STORY)->where('id')->eq(trim($id, ','))->fetch();
 
                 $linkStoriesAB = $linkStories->linkStories .','. $storyID;
-                //var_dump($linkStoriesAB);die;
                 $this->dao->update(TABLE_STORY)->set('ifLinkStories')->eq('exist')->set('linkStories')->eq(trim($linkStoriesAB, ','))->where('id')->eq(trim($id, ','))->exec();
                 if(dao::isError()) die(js::error(dao::getError()));
             }

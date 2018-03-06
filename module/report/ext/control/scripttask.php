@@ -38,6 +38,7 @@ class myReport extends report
         $this->view->type       = $type;
         $this->view->pager      = $pager;
         $this->view->orderBy    = $orderBy;
+        $this->view->param      = $param;
 
         $this->display();
     }

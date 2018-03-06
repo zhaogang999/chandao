@@ -111,6 +111,17 @@ public function finish($taskID)
     $taskDetail->lastEditedBy = $task->lastEditedBy;
     $taskDetail->lastEditedDate = $task->lastEditedDate;
 
+    if (isset($task->tid))
+    {
+        foreach ($task->tid as $scriptTaskID)
+        {
+            $scriptTask = new stdClass();
+            $scriptTask->tester = $task->tester[$scriptTaskID];
+            $scriptTask->AT = $task->AT[$scriptTaskID];
+            $this->dao->update(TABLE_SCRIPT)->data($scriptTask)->autoCheck()->where('task')->eq((int)$scriptTaskID)->exec();
+        }
+    }
+
     //1.task
     $this->dao->begin();
     $this->dao->update(TABLE_TASK)->data($taskDetail)

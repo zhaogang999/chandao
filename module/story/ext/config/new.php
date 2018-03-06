@@ -1,9 +1,11 @@
 <?php
+//需求收集池产品ID
+$config->story->storyCollectionPoolProducts = '10,18,26';
 //开发任务分类
 $config->story->develTask = 'devel,web,ios,android,sdk,fos,script';
 //禅道自身bug，待系统修复后可以删除
 $config->story->edit->requiredFields = 'title';
-$config->story->create->requiredFields = 'title,branch';
+//$config->story->create->requiredFields = 'title,branch';
 
 //1522 增加产品需求所关联的需求和已细分需求的显示
 $config->story->datatable->fieldList['childStories']['title']    = 'childStories';

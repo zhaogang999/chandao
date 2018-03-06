@@ -78,6 +78,7 @@
           <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('testStatus',      $orderBy, $vars, $lang->story->testStatus);?></th>
           <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('verifyStatus',      $orderBy, $vars, $lang->story->verifyStatus);?></th>
           <th class="w-80px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
+          <th class="w-100px {sorter:false}"><?php common::printOrderLink('ifLinkStories',     $orderBy, $vars, $lang->story->ifLinkStories);?></th>
         </tr>
       </thead>
       <tbody id='storyTableList' class='sortable'>
@@ -160,12 +161,13 @@
             }
             ?>
           </td>
+          <td><?php echo $lang->story->ifLinkStoriesList[$story->ifLinkStories];?></td>
         </tr>
         <?php endforeach;?>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan='13'>
+          <td colspan='14'>
             <div class='table-actions clearfix'>
             <?php
             $storyInfo = sprintf($lang->project->productStories, inlink('linkStory', "project={$project->id}"));
@@ -281,6 +283,20 @@
                 {
                   $actionLink = $this->createLink('story', 'batchChangeVerifyStatus', "result=$key");
                   echo '<li>' . html::a('#', $result, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . '</li>';
+                }
+                echo '</ul></li>';
+              }
+              //3883 将有无相关需求功能调用在项目-需求-需求（需求列表、需求进展中均显示）显示，并可直接赋值
+              if(common::hasPriv('story', 'batchChangeIfLinkStories'))
+              {
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->ifLinkStories, '', "id='ifLinkStoriesItem'");
+                echo "<ul class='dropdown-menu'>";
+                $lang->story->ifLinkStoriesList[''] = $lang->null;
+                foreach($lang->story->ifLinkStoriesList as $key => $status)
+                {
+                  $actionLink = $this->createLink('story', 'batchChangeIfLinkStories', "status=$key");
+                  echo "<li>" . html::a('#', $status, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . "</li>";
                 }
                 echo '</ul></li>';
               }

@@ -137,7 +137,7 @@ class myStory extends story
         }
         //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
         $customProducts = $this->dao->select('id, name')->from(TABLE_PRODUCT)
-            ->where('id')->in('10,18')
+            ->where('id')->in($this->config->story->storyCollectionPoolProducts)
             ->andWhere('deleted')->eq('0')
             ->fetchPairs();
         $this->view->customProducts = $customProducts + array('' => '');

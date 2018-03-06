@@ -14,6 +14,7 @@
 <?php include '../../../common/view/tablesorter.html.php';?>
 <?php include '../../../common/view/sortable.html.php';?>
 <?php include '../../../common/view/datepicker.html.php';?>
+<?php js::set('projectID', $project->id);?>
 <?php js::set('moduleID', ($type == 'byModule' ? $param : 0));?>
 <?php js::set('productID', ($type == 'byProduct' ? $param : 0));?>
 <?php js::set('confirmUnlinkStory', $lang->project->confirmUnlinkStory)?>
@@ -310,6 +311,20 @@
                 }
                 echo '</ul></li>';
               }
+              //3883 将有无相关需求功能调用在项目-需求-需求（需求列表、需求进展中均显示）显示，并可直接赋值
+              if(common::hasPriv('story', 'batchChangeIfLinkStories'))
+              {
+                echo "<li class='dropdown-submenu'>";
+                echo html::a('javascript:;', $lang->story->ifLinkStories, '', "id='ifLinkStoriesItem'");
+                echo "<ul class='dropdown-menu'>";
+                $lang->story->ifLinkStoriesList[''] = $lang->null;
+                foreach($lang->story->ifLinkStoriesList as $key => $status)
+                {
+                  $actionLink = $this->createLink('story', 'batchChangeIfLinkStories', "status=$key");
+                  echo "<li>" . html::a('#', $status, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . "</li>";
+                }
+                echo '</ul></li>';
+              }
 
               echo '</ul></div>';
               $storyInfo = $summary;
@@ -324,6 +339,5 @@
     </table>
   </form>
 </div>
-<?php js::set('projectID', $project->id);?>
 <?php js::set('orderBy', $orderBy)?>
 <?php include '../../../common/view/footer.html.php';?>

@@ -11,6 +11,8 @@ public function sendmail($storyID, $actionID)
 {
     $this->loadModel('mail');
     $story       = $this->getById($storyID);
+    $storyDetail       = $this->dao->select('*')->from(TABLE_STORY)->where('id')->eq($storyID)->fetch();
+    //var_dump($storyDetail);die;
     $productName = $this->loadModel('product')->getById($story->product)->name;
     $users       = $this->loadModel('user')->getPairs('noletter');
 
@@ -49,11 +51,11 @@ public function sendmail($storyID, $actionID)
 
     /* Set toList and ccList. */
 
-    $toList = $story->assignedTo;
-    $ccList = str_replace(' ', '', trim($story->mailto, ','));
+    $toList = $storyDetail->assignedTo;
+    $ccList = str_replace(' ', '', trim($storyDetail->mailto, ','));
 
     //2284 需求发生任何变动，需要触发邮件（含编辑，备注，变更等所有操作）并且收件人不光含抄送人，还需包含需求原始提出人
-    $ccList = $ccList . ',' . $story->openedBy;
+    $ccList = $ccList . ',' . $storyDetail->openedBy;
 
     /* If the action is changed or reviewed, mail to the project team. */
     if(strtolower($action->action) == 'changed' or strtolower($action->action) == 'reviewed')
@@ -83,10 +85,10 @@ public function sendmail($storyID, $actionID)
     }
     elseif($toList == 'closed')
     {
-        $toList = $story->openedBy;
+        $toList = $storyDetail->openedBy;
     }
 
     /* Send it. */
-    $this->mail->send($toList, 'STORY #' . $story->id . ' ' . $story->title . ' - ' . $productName, $mailContent, $ccList);
+    $this->mail->send($toList, 'STORY #' . $storyDetail->id . ' ' . $storyDetail->title . ' - ' . $productName, $mailContent, $ccList);
     if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
 }
