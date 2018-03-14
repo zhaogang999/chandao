@@ -16,3 +16,7 @@ $lang->action->label->issue = '流出问题|issue|view|$issueID=%s';
 $lang->action->search->objectTypeList['issue'] = '流出问题';
 $lang->action->label->toissue           = '转流出问题';
 $lang->action->search->label['toissue'] = $lang->action->label->toissue;
+
+$lang->action->objectTypes['riskmanage'] = '风险管理表';
+$lang->action->label->riskmanage = '风险管理表|riskmanage|view|$riskManageID=%s';
+$lang->action->search->objectTypeList['riskmanage'] = '风险管理表';

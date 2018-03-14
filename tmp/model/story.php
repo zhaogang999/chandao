@@ -344,7 +344,6 @@ public function create($projectID = 0, $bugID = 0)
         ->stripTags($this->config->story->editor->create['id'], $this->config->allowedTags)
         ->remove('customProduct,files,labels,needNotReview,newStory,uid')
         ->get();
-    if ($story->branch === '') die("丰东股份");
 
 //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”38,40
     if (isset($story->story))

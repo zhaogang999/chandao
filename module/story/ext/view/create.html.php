@@ -153,7 +153,7 @@
       <tr>
         <th><?php echo $lang->story->spec;?></th>
         <!--3304 提需求时，需求描述中增加两个隐性提示-->
-        <td colspan='2'><?php echo html::textarea('spec', $lang->story->specComment, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
+        <td colspan='2'><?php echo html::textarea('spec', $spec ? $spec : $lang->story->specComment, "rows='9' class='form-control disabled-ie-placeholder' placeholder='" . htmlspecialchars($lang->story->specTemplate) . "'");?></td>
       </tr>  
       <?php if(strpos(",$showFields,", ',verify,') !== false):?>
       <tr>

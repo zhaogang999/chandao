@@ -3,13 +3,16 @@
 $lang->searchObjects['patchbuild']    = '补丁版本';
 $lang->searchObjects['storyreview']   = '需求评审';
 $lang->searchObjects['issue']         = '流出问题管理';
+$lang->searchObjects['riskmanage']    = '风险管理表';
 
 $lang->icons['storyReview']  = 'list-alt';
 $lang->icons['issue']        = 'bug';
+$lang->icons['riskmanage']   = 'bug';
 
 $lang->menugroup->patchbuild     = 'project';
 $lang->menugroup->storyreview    = 'project';
 $lang->menugroup->issue          = 'qa';
+$lang->menugroup->riskmanage     = 'report';
 
 $lang->patchbuild = new stdclass();
 
@@ -67,3 +70,10 @@ $lang->caselib->menu->issue = array('link' => '流出问题管理|issue|browse')
 $lang->storyreview->menu->issue = array('link' => '流出问题管理|issue|browse');
 
 $lang->project->menu->story     = array('link' => '需求|project|story|projectID=%s', 'subModule' => 'story', 'alias' => 'linkstory,storykanban,storyprogress');
+
+$lang->riskmanage = new stdclass();
+$lang->riskmanage->menu = new stdClass();
+$lang->riskmanage->menu = $lang->report->menu;
+$lang->riskmanage->menu->riskmanage = array('link' => '风险管理表|riskmanage|browse', 'alias' => 'browse,create,edit,view', 'subModule' => 'riskmanage');
+$lang->report->menu->riskmanage   = array('link' => '风险管理表|riskmanage|browse', 'subModule' => 'riskmanage');
+$lang->riskmanage->menuOrder       = $lang->report->menuOrder;

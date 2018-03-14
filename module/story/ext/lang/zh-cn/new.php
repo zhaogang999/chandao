@@ -46,8 +46,9 @@ $lang->story->testStatus = '开发提测';
 $lang->story->testStatusList['']         = '';
 $lang->story->testStatusList['tested']   = '已提测';
 $lang->story->testStatusList['notTest']  = '未提测';
+$lang->story->testStatusList['partTest'] = '部分提测';
 $lang->story->testStatusList['released'] = '已发布';
-$lang->story->testStatusList['freeTest'] = '免测试';
+$lang->story->testStatusList['freeTest'] = '免提测';
 
 $lang->story->verifyStatus = '测试验收';
 $lang->story->verifyStatusList['']             = '';

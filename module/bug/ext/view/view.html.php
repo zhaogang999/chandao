@@ -30,7 +30,7 @@
     {
         ob_start();
         echo "<div class='btn-group'>";
-        common::printIcon('bug', 'toissue', "fromBug=$bug->id", $bug, 'button', 'question-sign');
+        common::printIcon('bug', 'toissue', "fromBug=$bug->id", $bug, 'button', 'question-sign', '', '', false, '', $lang->bug->toIssueAB);
         common::printIcon('bug', 'confirmBug', $params, $bug, 'button', 'search', '', 'iframe', true);
         common::printIcon('bug', 'assignTo',   $params, $bug, 'button', '', '', 'iframe', true);
         common::printIcon('bug', 'resolve',    $params, $bug, 'button', '', '', 'iframe showinonlybody', true);
@@ -200,6 +200,12 @@
               <tr>
                 <th><?php echo $lang->bug->mailto;?></th>
                 <td><?php $mailto = explode(',', str_replace(' ', '', $bug->mailto)); foreach($mailto as $account) echo ' ' . $users[$account]; ?></td>
+              </tr>
+              <tr>
+                <th><?php echo $lang->bug->discoveryPhase ;?></th>
+                <td>
+                  <?php echo $lang->bug->discoveryPhaseList[$bug->discoveryPhase];?>
+                </td>
               </tr>
             </table>
           </div>

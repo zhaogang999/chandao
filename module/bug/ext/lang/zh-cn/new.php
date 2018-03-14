@@ -33,4 +33,5 @@ $lang->bug->discoveryPhaseList['acceptance'] = '验收阶段';
 $lang->bug->discoveryPhaseList['production'] = '生产阶段';
 
 $lang->bug->action->toissue = array('main' => '$date, 由 <strong>$actor</strong> 转为<strong>流出问题</strong>，编号为 <strong>$extra</strong>。');
-$lang->bug->toIssue = '流出问题';
+$lang->bug->toIssue   = '流出问题';
+$lang->bug->toIssueAB = '流出问题分析';

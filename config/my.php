@@ -22,7 +22,9 @@ if(!defined('TABLE_BUGREPORT')) define('TABLE_BUGREPORT', '`' . $config->db->pre
 if(!defined('TABLE_SCRIPT')) define('TABLE_SCRIPT', '`' . $config->db->prefix . 'script`');
 if(!defined('TABLE_STORYREVIEW')) define('TABLE_STORYREVIEW', '`' . $config->db->prefix . 'storyreview`');
 if(!defined('TABLE_ISSUE')) define('TABLE_ISSUE', '`' . $config->db->prefix . 'issue`');
+if(!defined('TABLE_RISKMANAGE')) define('TABLE_RISKMANAGE', '`' . $config->db->prefix . 'riskmanage`');
 
 $config->objectTables['patchbuild']     = TABLE_PATCHBUILD;
 $config->objectTables['storyreview']    = TABLE_STORYREVIEW;
 $config->objectTables['issue']          = TABLE_ISSUE;
+$config->objectTables['riskmanage']     = TABLE_RISKMANAGE;

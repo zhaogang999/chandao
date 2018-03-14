@@ -78,3 +78,21 @@ $lang->issue->methodOrder[10] = 'create';
 $lang->issue->methodOrder[15] = 'edit';
 $lang->issue->methodOrder[20] = 'view';
 $lang->issue->methodOrder[25] = 'delete';
+
+$lang->moduleOrder[210] = 'riskmanage';
+$lang->resource->riskmanage = new stdclass();
+$lang->resource->riskmanage->browse = 'browse';
+$lang->resource->riskmanage->create = 'create';
+$lang->resource->riskmanage->edit   = 'edit';
+$lang->resource->riskmanage->view   = 'view';
+$lang->resource->riskmanage->delete = 'delete';
+$lang->resource->riskmanage->close  = 'close';
+$lang->resource->riskmanage->batchClose  = 'batchClose';
+
+$lang->riskmanage->methodOrder[5]  = 'browse';
+$lang->riskmanage->methodOrder[10] = 'create';
+$lang->riskmanage->methodOrder[15] = 'edit';
+$lang->riskmanage->methodOrder[20] = 'view';
+$lang->riskmanage->methodOrder[25] = 'delete';
+$lang->riskmanage->methodOrder[30] = 'close';
+$lang->riskmanage->methodOrder[35] = 'batchClose';

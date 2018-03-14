@@ -35,6 +35,7 @@ class myCompany extends company
         $this->session->set('patchbuildList',  $uri);
         $this->session->set('storyreviewList', $uri);
         $this->session->set('issueList',       $uri);
+        $this->session->set('riskmanageList',  $uri);
 
         /* Set the pager. */
         $this->app->loadClass('pager', $static = true);

@@ -282,7 +282,6 @@ public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $queryI
             ->leftJoin(TABLE_STORY)->alias('t3')->on('t2.story = t3.id')
             //->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
             ->where('t1.deleted')->eq(0)
-            ->andWhere('t2.status')->in('done,closed')
             ->andWhere($reportQuery)
             ->orderBy($orderBy)
             ->page($pager)
@@ -297,7 +296,6 @@ public function getScriptTask($orderBy = 'id_desc', $type  = 'byModule', $queryI
             ->leftJoin(TABLE_STORY)->alias('t3')->on('t2.story = t3.id')
             //->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t3.plan = t4.id')
             ->where('t1.deleted')->eq(0)
-            ->andWhere('t2.status')->in('done,closed')
             ->orderBy($orderBy)
             ->page($pager)
             ->fetchAll();

@@ -1,10 +1,4 @@
 <?php
-global $app;
-helper::cd($app->getBasePath());
-helper::import('module\search\model.php');
-helper::cd();
-class extsearchModel extends searchModel 
-{
 /**
  * Build the query to execute.
  *
@@ -72,6 +66,7 @@ public function buildQuery()
             }
             else
             {
+                //4120 产品发布时，版本关联需求可实现按指定需求ID搜索并关联到该版本上
                 //$condition = ' = ' . $this->dbh->quote($value) . ' ';
                 $condition = helper::dbIN($value);
             }
@@ -102,6 +97,4 @@ public function buildQuery()
     $this->session->set($querySessionName, $where);
     $this->session->set($formSessionName,  $_POST);
     if($scoreNum > 2 && !dao::isError()) $this->loadModel('score')->create('search', 'saveQueryAdvanced');
-}
-//**//
 }
