@@ -64,11 +64,25 @@
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->linkStories;?></th>
-        <td colspan="2"><?php echo html::select('linkStories[]', $stories, '', 'multiple class="form-control chosen"');?></td>
+        <td colspan="2">
+          <div class='input-group'>
+            <?php echo html::select('linkStories[]', $stories, '', 'multiple class="form-control chosen"');?>
+            <div style="width:180px; color:red;" class="help-block">
+              <span>如由需求引发的补丁，请关联需求</span>
+            </div>
+          </div>
+        </td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->linkBugs;?></th>
-        <td colspan="2"><?php echo html::select('linkBugs[]', $bugs, '', 'multiple class="form-control chosen"');?></td>
+        <td colspan="2">
+          <div class='input-group'>
+            <?php echo html::select('linkBugs[]', $bugs, '', 'multiple class="form-control chosen"');?>
+            <div style="width:180px; color:red;" class="help-block">
+              <span>如由问题引发的补丁，请关联Bug</span>
+            </div>
+          </div>
+        </td>
       </tr>
       <tr>
         <th><?php echo $lang->patchbuild->mailto;?></th>

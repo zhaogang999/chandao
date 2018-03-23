@@ -124,7 +124,7 @@ class storyreviewModel extends model
             $storyReviewQuery = $this->session->storyreviewQuery;
             $storyReviewQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $storyReviewQuery);
 
-            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+            return $this->dao->select('t1.*, t2.name as projectName, t2.code as projectCode, t3.name as productName')
                 ->from(TABLE_STORYREVIEW)->alias('t1')
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')
@@ -140,7 +140,7 @@ class storyreviewModel extends model
         }
         else
         {
-            return $this->dao->select('t1.*, t2.name as projectName, t3.name as productName')
+            return $this->dao->select('t1.*, t2.name as projectName, t2.code as projectCode, t3.name as productName')
                 ->from(TABLE_STORYREVIEW)->alias('t1')
                 ->leftJoin(TABLE_PROJECT)->alias('t2')->on('t1.project = t2.id')
                 ->leftJoin(TABLE_PRODUCT)->alias('t3')->on('t1.product = t3.id')

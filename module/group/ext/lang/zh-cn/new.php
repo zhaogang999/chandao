@@ -96,3 +96,5 @@ $lang->riskmanage->methodOrder[20] = 'view';
 $lang->riskmanage->methodOrder[25] = 'delete';
 $lang->riskmanage->methodOrder[30] = 'close';
 $lang->riskmanage->methodOrder[35] = 'batchClose';
+
+$lang->resource->story->switchStoryLock = 'switchStoryLock';

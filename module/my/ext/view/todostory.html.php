@@ -30,6 +30,7 @@
         common::printIcon('story', 'export', "productID=0&orderBy=id_desc&project=0&type=toReleased", '', 'button', '', '', 'export');?>
     </div>
     <?php endif;?>
+    <div id='querybox' class='show'></div>
 </div>
 <form method='post' id='myStoryForm'>
 <table class='table table-condensed table-hover table-striped tablesorter table-fixed table-selectable'>
@@ -46,6 +47,9 @@
         <th class='w-60px {sorter:false}'> <?php common::printOrderLink('stage',        $orderBy, $vars, $lang->story->stageAB);?></th>
         <?php if ($type == 'toTestStory'):?>
         <th class='w-70px {sorter:false}'>  <?php common::printOrderLink('testStatus',     $orderBy, $vars, $lang->story->testStatus);?></th>
+        <?php endif;?>
+        <?php if ($type == 'toReleaseStory'):?>
+        <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('verifyStatus',      $orderBy, $vars, $lang->story->verifyStatus);?></th>
         <?php endif;?>
       <th class='w-60px {sorter:false}'>  <?php common::printOrderLink('openedBy',     $orderBy, $vars, $lang->openedByAB);?></th>
       <?php if ($type == 'toTestStory'):?>
@@ -94,6 +98,9 @@
       <td class="<?php if ($story->stage == 'projected' or ($type == 'toReleaseStory' and ($story->stage == 'developing' or $story->stage == 'developed' or $story->stage == 'testing'))) echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
       <?php if ($type == 'toTestStory'):?>
       <td><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
+      <?php endif;?>
+      <?php if ($type == 'toReleaseStory'):?>
+      <td><?php echo $lang->story->verifyStatusList[$story->verifyStatus];?></td>
       <?php endif;?>
       <td><?php echo $users[$story->openedBy];?></td>
       <?php if ($type == 'toTestStory'):?>
@@ -243,5 +250,8 @@
   </tfoot>
 </table>
 </form>
-<script language='javascript'>$("#<?php echo $type;?>Tab").addClass('active');</script>
+<script language='javascript'>
+    $("#<?php echo $type;?>Tab").addClass('active');
+    ajaxGetSearchForm();
+</script>
 <?php include '../../../common/view/footer.html.php';?>

@@ -66,3 +66,5 @@ $lang->story->storyProgressSummary = "共 <strong>%s</strong> 个需求，未评
 $lang->story->sourceNoteCommtent = '用户专用，如无溯源号，请填写无';
 $lang->story->error = new stdClass();
 $lang->story->error->branchErrorComment = '用户专用，如无溯源号，请填写无';
+
+$lang->story->switchStoryLock = '项目需求锁';

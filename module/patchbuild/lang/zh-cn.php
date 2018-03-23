@@ -65,6 +65,10 @@ $lang->patchbuild->platformList['dealership']        = '代理店';
 $lang->patchbuild->platformList['tips']              = 'tips转mark';
 $lang->patchbuild->platformList['script']            = '脚本';
 $lang->patchbuild->platformList['limitLineNumber']   = '限行限号平台';
+$lang->patchbuild->platformList['cms']               = 'CMS';
+$lang->patchbuild->platformList['dms']               = 'DMS';
+$lang->patchbuild->platformList['cop']               = 'COP';
+$lang->patchbuild->platformList['nm']                = 'NM';
 $lang->patchbuild->platformList['other']             = '其他';
 
 $lang->patchbuild->reasonList['']                = '';
@@ -80,6 +84,9 @@ $lang->patchbuild->groupList['mobile']    = '移动组';
 $lang->patchbuild->groupList['fos']       = '服务组';
 $lang->patchbuild->groupList['dt']        = '大数据组';
 $lang->patchbuild->groupList['presents']  = '出品组';
+$lang->patchbuild->groupList['cms']       = 'CMS';
+$lang->patchbuild->groupList['dms']       = 'DMS';
+$lang->patchbuild->groupList['nm']        = 'NM';
 $lang->patchbuild->groupList['other']     = '其他';
 
 $lang->patchbuild->testPassList['']              = '';

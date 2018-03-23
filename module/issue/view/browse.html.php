@@ -44,7 +44,7 @@
     <td class='text-left' title='<?php echo $issue->issueDesc?>'><?php echo html::a($this->createLink('issue', 'view', "issue=$issue->id"), $issue->issueDesc);?></td>
     <td><?php echo $lang->issue->platformList[$issue->platform]; ?></td>
     <td><?php echo $issue->discoveryDate; ?></td>
-    <td><?php echo $issue->openedBy; ?></td>
+    <td><?php echo $users[$issue->openedBy]; ?></td>
     <td>
       <?php
       common::printIcon('issue', 'edit',   "storyReviewID=$issue->id", '','list', 'pencil', '', '', false, '', $lang->issue->edit);

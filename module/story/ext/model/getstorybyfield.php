@@ -8,21 +8,63 @@
  * @access public
  * @return array
  */
-public function getStoriesByField($type = 'toTestStory', $orderBy='testDate', $pager = null)
+public function getStoriesByField($type = 'toTestStory', $browseType, $queryID, $orderBy='testDate', $pager = null)
 {
     //$limitDate = date("Y-m-d",strtotime("+10 day"));
     //$orderBy = $type == 'toTestStory'?'testDate_desc':'specialPlan_desc';
+    if ($browseType == 'bysearch')
+    {
+        $products = $this->loadModel('product')->getPairs();
 
-    $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
-        ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
-        ->where('t1.deleted')->eq(0)
-        ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
-        ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
-        ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
-        ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
-        ->orderBy($orderBy)
-        ->page($pager)
-        ->fetchAll();
+        if($queryID)
+        {
+            $query = $this->loadModel('search')->getQuery($queryID);
+            if($query)
+            {
+                $this->session->set('storyQuery', $query->sql);
+                $this->session->set('storyForm', $query->form);
+            }
+            else
+            {
+                $this->session->set('storyQuery', ' 1 = 1');
+            }
+        }
+
+        $allProduct     = "`product` = 'all'";
+        $storyQuery = $this->session->storyQuery;
+        if(strpos($storyQuery, $allProduct) !== false)
+        {
+            $storyQuery     = str_replace($allProduct, '1', $storyQuery);
+            $queryProductID = 'all';
+        }
+        $storyQuery = $storyQuery . ' AND `product` ' . helper::dbIN(array_keys($products));
+        $storyQuery = preg_replace('/`(\w+)`/', 't1.`$1`', $storyQuery);
+
+        $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
+            ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
+            ->where('t1.deleted')->eq(0)
+            ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
+            ->andWhere($storyQuery)
+            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+            ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
+            ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
+            ->orderBy($orderBy)
+            ->page($pager)
+            ->fetchAll();
+    }
+    else
+    {
+        $stories = $this->dao->select('t1.*, t2.name as productTitle')->from(TABLE_STORY)->alias('t1')
+            ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
+            ->where('t1.deleted')->eq(0)
+            ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
+            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+            ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
+            ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
+            ->orderBy($orderBy)
+            ->page($pager)
+            ->fetchAll();
+    }
 
     //$this->loadModel('common')->saveQueryCondition($this->dao->get(), 'story');
     $productIdList = array();

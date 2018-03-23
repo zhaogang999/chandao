@@ -27,6 +27,8 @@
   <div class='actions'>
     <div class='btn-group'>
     <?php
+    //4019 项目内增加对需求新增和关联的权限控制
+    common::printIcon('story', 'switchStoryLock', "project=$project->id&status=$project->lockStory", '', 'button', $project->lockStory == 1 ? 'lock' : 'unlock-alt', 'hiddenwin');
     //需求1197 项目需求导出时，增加TBC字段的内容export方法增加projectID参数
     common::printIcon('story', 'export', "productID=$productID&orderBy=id_desc&project=$project->id", '', 'button', '', '', 'export');
 

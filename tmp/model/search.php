@@ -72,6 +72,7 @@ public function buildQuery()
             }
             else
             {
+                //4120 产品发布时，版本关联需求可实现按指定需求ID搜索并关联到该版本上
                 //$condition = ' = ' . $this->dbh->quote($value) . ' ';
                 $condition = helper::dbIN($value);
             }

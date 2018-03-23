@@ -71,6 +71,14 @@ class myStory extends story
         /* Set products, users and module. */
         if($projectID != 0)
         {
+            //4019 项目内增加对需求新增和关联的权限控制
+            $project = $this->loadModel('project')->getById($projectID);
+            if ($project->lockStory == '1')
+            {
+                echo(js::error('该项目需求已经锁定，如需新增或变更需求请联系项目管理组'));
+                die(js::locate('back'));
+            }
+
             $products = $this->product->getProductsByProject($projectID);
             $product  = $this->product->getById(($productID and array_key_exists($productID, $products)) ? $productID : key($products));
         }
