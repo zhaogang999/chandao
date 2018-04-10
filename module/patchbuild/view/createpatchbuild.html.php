@@ -68,7 +68,7 @@
           <div class='input-group'>
             <?php echo html::select('linkStories[]', $stories, '', 'multiple class="form-control chosen"');?>
             <div style="width:180px; color:red;" class="help-block">
-              <span>如由需求引发的补丁，请关联需求</span>
+              <span><?php echo $lang->patchbuild->linkStoriesComment;?></span>
             </div>
           </div>
         </td>
@@ -79,7 +79,7 @@
           <div class='input-group'>
             <?php echo html::select('linkBugs[]', $bugs, '', 'multiple class="form-control chosen"');?>
             <div style="width:180px; color:red;" class="help-block">
-              <span>如由问题引发的补丁，请关联Bug</span>
+              <span><?php echo $lang->patchbuild->linkBugComment;?></span>
             </div>
           </div>
         </td>

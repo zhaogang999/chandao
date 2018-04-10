@@ -76,7 +76,13 @@ class patchbuildModel extends model
             ->join('linkStories', ',')
             ->remove('files,uid')
             ->get();
-        
+
+        if ($build->project !== $oldBuild->project)
+        {
+            $project = $this->loadModel('project')->getById($build->project);
+            if ($project->lockPatchBuild == '1') die(js::error('该项目提交已冻结，如有疑问，请联系测试组'));
+        }
+
         //$build = $this->loadModel('file')->processEditor($build, $this->config->build->editor->editBatchBuild['id'], $this->post->uid);
         $this->dao->update(TABLE_PATCHBUILD)->data($build)
             ->autoCheck()

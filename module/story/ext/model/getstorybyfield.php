@@ -3,15 +3,17 @@
  * Get stories of a user.
  *
  * @param  string $type         the query type
+ * @param $browseType string
+ * @param $queryID int
  * @param  string $orderBy
  * @param  object $pager
  * @access public
  * @return array
  */
-public function getStoriesByField($type = 'toTestStory', $browseType, $queryID, $orderBy='testDate', $pager = null)
+public function getStoriesByField($type = 'toTestStory', $browseType, $queryID, $orderBy, $pager = null)
 {
     //$limitDate = date("Y-m-d",strtotime("+10 day"));
-    //$orderBy = $type == 'toTestStory'?'testDate_desc':'specialPlan_desc';
+    
     if ($browseType == 'bysearch')
     {
         $products = $this->loadModel('product')->getPairs();
@@ -145,8 +147,10 @@ public function processStory($story)
 
     $builds      = $this->dao->select('id')->from(TABLE_BUILD)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
     $patchBuilds = $this->dao->select('id')->from(TABLE_PATCHBUILD)->where('linkStories')->like('%,' . $story->id . '%')->fetchAll('id');
+    $releases = $this->dao->select('id')->from(TABLE_RELEASE)->where('stories')->like('%,' . $story->id . '%')->fetchAll('id');
     $story->build      = array_keys($builds);
     $story->patchBuild = array_keys($patchBuilds);
+    $story->release = array_keys($releases);
 
     return $story;
 }

@@ -1,7 +1,8 @@
 <?php
 /**
- * @param $productID
- * @param $status
+ * @param $productID string
+ * @param $status string
+ * @param $toIssue bool
  * @return array
  */
 public function getProductBugsPairs($productID, $status='', $toIssue=false)
@@ -9,7 +10,7 @@ public function getProductBugsPairs($productID, $status='', $toIssue=false)
     $bugs = array('' => '');
     $data = $this->dao->select('id, title')->from(TABLE_BUG)
         ->where('deleted')->eq(0)
-        ->beginIF($productID != 0)->andWhere('product')->eq((int)$productID)->fi()
+        ->beginIF($productID != 0)->andWhere('product')->in($productID)->fi()
         ->beginIF(!empty($status))->andWhere('status')->in($status)->fi()
         ->beginIF($toIssue==true)->andWhere('toIssue')->eq(0)->fi()
         ->orderBy('id desc')

@@ -25,7 +25,8 @@ public function batchUpdate()
             if($data->pris[$storyID]     == 'ditto') $data->pris[$storyID]     = isset($prev['pri'])    ? $prev['pri']    : 0;
             if($data->branches[$storyID] == 'ditto') $data->branches[$storyID] = isset($prev['branch']) ? $prev['branch'] : 0;
             if($data->modules[$storyID]  == 'ditto') $data->modules[$storyID]  = isset($prev['module']) ? $prev['module'] : 0;
-            if($data->plans[$storyID]    == 'ditto') $data->plans[$storyID]    = isset($prev['plan'])   ? $prev['plan']   : 0;
+            //bug修改把plan的值有0改为'';待官方修复后该文件删除
+            if($data->plans[$storyID]    == 'ditto') $data->plans[$storyID]    = isset($prev['plan'])   ? $prev['plan']   : '';
             if($data->sources[$storyID]  == 'ditto') $data->sources[$storyID]  = isset($prev['source']) ? $prev['source'] : '';
             if(isset($data->stages[$storyID])        and ($data->stages[$storyID]        == 'ditto')) $data->stages[$storyID]        = isset($prev['stage'])        ? $prev['stage']        : '';
             if(isset($data->closedBys[$storyID])     and ($data->closedBys[$storyID]     == 'ditto')) $data->closedBys[$storyID]     = isset($prev['closedBy'])     ? $prev['closedBy']     : '';
@@ -70,7 +71,8 @@ public function batchUpdate()
             $story->version        = $story->title == $oldStory->title ? $oldStory->version : $oldStory->version + 1;
 
             if($story->title        != $oldStory->title)                         $story->status     = 'changed';
-            if($story->plan         !== false and $story->plan == '')            $story->plan       = 0;
+            //bug修改把plan的值有0改为'';待官方修复后该文件删除
+            if($story->plan         !== false and $story->plan == '')            $story->plan       = '';
             if($story->closedBy     != false  and $oldStory->closedDate == '')   $story->closedDate = $now;
             if($story->closedReason != false  and $oldStory->closedDate == '')   $story->closedDate = $now;
             if($story->closedBy     != false  or  $story->closedReason != false) $story->status     = 'closed';

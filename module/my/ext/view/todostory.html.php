@@ -34,7 +34,7 @@
 </div>
 <form method='post' id='myStoryForm'>
 <table class='table table-condensed table-hover table-striped tablesorter table-fixed table-selectable'>
-  <?php $vars = "type=$type&orderBy=%s&recTotal=$recTotal&recPerPage=$recPerPage&pageID=$pageID"; ?>
+  <?php $vars = "type=$type&browseType=$browseType&param=$param&orderBy=%s&recTotal=$recTotal&recPerPage=$recPerPage&pageID=$pageID"; ?>
   <thead>
     <tr class='text-center'>
       <th class='w-id {sorter:false}'>    <?php common::printOrderLink('id',           $orderBy, $vars, $lang->idAB);?></th>
@@ -97,10 +97,10 @@
        <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
       <td class="<?php if ($story->stage == 'projected' or ($type == 'toReleaseStory' and ($story->stage == 'developing' or $story->stage == 'developed' or $story->stage == 'testing'))) echo 'red';?>"><?php echo $lang->story->stageList[$story->stage];?></td>
       <?php if ($type == 'toTestStory'):?>
-      <td><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
+      <td class="<?php if ($story->testStatus === 'notTest' or $story->testStatus === 'partTest') echo 'red';?>"><?php echo $lang->story->testStatusList[$story->testStatus];?></td>
       <?php endif;?>
       <?php if ($type == 'toReleaseStory'):?>
-      <td><?php echo $lang->story->verifyStatusList[$story->verifyStatus];?></td>
+      <td class="<?php if ($story->verifyStatus === 'failed' or $story->verifyStatus === 'noVerified' or $story->verifyStatus === 'portVerified') echo 'red';?>"><?php echo $lang->story->verifyStatusList[$story->verifyStatus];?></td>
       <?php endif;?>
       <td><?php echo $users[$story->openedBy];?></td>
       <?php if ($type == 'toTestStory'):?>

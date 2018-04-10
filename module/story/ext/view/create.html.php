@@ -80,7 +80,8 @@
           <div class='input-group'>
             <?php echo html::select('assignedTo', $users, empty($needReview) ? $product->PO : '', "class='form-control chosen'");?>
             <?php if(!$this->story->checkForceReview()):?>
-              <span class='input-group-addon'><?php echo html::checkbox('needNotReview', $lang->story->needNotReview, '', "id='needNotReview' {$needReview}");?></span>
+                <?php $disabled = $projectID === 0 ? disabled : ''?>
+              <span class='input-group-addon'><?php echo html::checkbox('needNotReview', $lang->story->needNotReview, '', "id='needNotReview' {$needReview} $disabled");?></span>
             <?php endif;?>
           </div>
         </td>

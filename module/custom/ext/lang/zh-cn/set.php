@@ -5,3 +5,5 @@ $lang->custom->notice->loginDefaultPage = '请输入想要设置的登录默认�
 $lang->custom->object['patchbuild'] = '补丁版本';
 $lang->custom->patchbuild           = new stdClass();
 $lang->custom->patchbuild->fields['workSeasonList'] = '目标环境';
+$lang->custom->patchbuild->fields['platformList']   = '所属平台';
+$lang->custom->patchbuild->fields['groupList']      = '所属组';

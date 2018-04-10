@@ -71,14 +71,13 @@
         <td><?php echo html::select('assignedTo', $users, $build->assignedTo, 'class="form-control chosen"');?></td>
       </tr>
       <?php endif; ?>
-      <?php if ($from == 'project'):?>
       <tr>
         <th><?php echo $lang->patchbuild->linkStories;?></th>
         <td colspan="2">
           <div class='input-group'>
             <?php echo html::select('linkStories[]', $stories, str_replace(' ', '', $build->linkStories), 'multiple class="form-control chosen"');?>
             <div style="width:180px; color:red;" class="help-block">
-              <span>如由需求引发的补丁，请关联需求</span>
+              <span><?php echo $lang->patchbuild->linkStoriesComment;?></span>
             </div>
           </div>
         </td>
@@ -89,12 +88,11 @@
           <div class='input-group'>
             <?php echo html::select('linkBugs[]', $bugs, str_replace(' ', '', $build->linkBugs), 'multiple class="form-control chosen"');?>
             <div style="width:180px; color:red;" class="help-block">
-              <span>如由问题引发的补丁，请关联Bug</span>
+              <span><?php echo $lang->patchbuild->linkBugComment;?></span>
             </div>
           </div>
         </td>
       </tr>
-      <?php endif; ?>
       <tr>
         <th><?php echo $lang->patchbuild->mailto;?></th>
         <td colspan='2'>

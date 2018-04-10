@@ -75,6 +75,7 @@
           <th class='w-90px {sorter:false}'>  <?php common::printOrderLink('specialPlan',      $orderBy, $vars, $lang->story->specialPlan);?></th>
           <th class='w-80px'>  <?php echo $lang->project->build;?></th>
           <th class='w-80px'>  <?php echo $lang->project->patchBuild;?></th>
+          <th class='w-80px'>  <?php echo $lang->project->release;?></th>
           <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('testStatus',      $orderBy, $vars, $lang->story->testStatus);?></th>
           <th class='w-70px {sorter:false}'>   <?php common::printOrderLink('verifyStatus',      $orderBy, $vars, $lang->story->verifyStatus);?></th>
           <th class="w-80px {sorter:false}"><?php common::printOrderLink('linkStories',        $orderBy, $vars, $lang->story->linkStories);?></th>
@@ -144,6 +145,15 @@
             {
               $buildLink = $this->createLink('patchbuild', 'view', "id=$value");
               echo html::a($buildLink, $value);
+            };
+            ?>
+          </td>
+          <td>
+            <?php
+            foreach ($story->release as $value)
+            {
+              $releaseLink = $this->createLink('release', 'view', "id=$value");
+              echo html::a($releaseLink, $value);
             };
             ?>
           </td>

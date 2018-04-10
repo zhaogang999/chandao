@@ -20,8 +20,8 @@ $config->story->datatable->fieldList['linkStories']['required'] = 'no';
 
 //1788 首次提需求时，屏蔽所属计划字段
 $config->story->list->customCreateFields      = 'source,verify,pri,estimate,mailto,keywords';
-$config->story->list->customBatchCreateFields = 'module,spec,source,verify,pri,estimate,review,keywords';
-$config->story->custom->batchCreateFields = 'module,spec,pri,estimate,review';
+$config->story->list->customBatchCreateFields = 'module,spec,source,verify,pri,estimate,keywords';
+$config->story->custom->batchCreateFields = 'module,spec,pri,estimate';
 
 //需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
 $config->story->datatable->fieldList['customPlan']['title']    = 'customPlan';

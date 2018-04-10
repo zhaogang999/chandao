@@ -18,7 +18,12 @@
   </div>
   <?php if ($from == 'project'):?>
   <div class='actions'>
-    <?php common::printIcon('patchbuild', 'createPatchBuild', "project=$object->id", "", "button", "plus");?>
+    <div class='btn-group'>
+      <?php
+      common::printIcon('patchbuild', 'switchPatchBuildLock', "project=$project->id&status=$project->lockPatchBuild", '', 'button', $project->lockPatchBuild == 1 ? 'lock' : 'unlock-alt', 'hiddenwin');
+      common::printIcon('patchbuild', 'createPatchBuild', "project=$object->id", "", "button", "plus");
+      ?>
+    </div>
   </div>
   <?php endif;?>
   <div id='querybox' class='show'></div>

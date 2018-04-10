@@ -3,6 +3,7 @@
  * Get stories pairs of a product.
  *
  * @param  int           $productID
+ * @param  int           $branch
  * @param  array|string  $moduleIdList
  * @param  string        $status
  * @param  string        $order

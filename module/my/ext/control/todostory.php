@@ -7,6 +7,8 @@ class myMy extends my
      * 待办需求
      *
      * @param  string $type
+     * @param  $browseType string
+     * @param  $param int
      * @param  string $orderBy
      * @param  int    $recTotal
      * @param  int    $recPerPage
@@ -35,6 +37,7 @@ class myMy extends my
         $pager = pager::init($recTotal, $recPerPage, $pageID);
 
         /* Append id for secend sort. */
+        $orderBy = $type == 'toTestStory' ? 'testDate' : 'specialPlan';
         $sort = $this->loadModel('common')->appendOrder($orderBy);
 
         $stories = $this->loadModel('story')->getStoriesByField($type, $browseType, $queryID, $sort, $pager);
@@ -59,6 +62,8 @@ class myMy extends my
         $this->view->orderBy    = $orderBy;
         $this->view->pager      = $pager;
         $this->view->today      = helper::today();
+        $this->view->browseType = $browseType;
+        $this->view->param      = $param;
 
         $this->display();
     }

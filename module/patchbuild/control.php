@@ -67,7 +67,7 @@ class patchbuild extends control
             $this->lang->patchbuild->menuOrder = $this->lang->project->menuOrder;
             $this->project->setMenu($this->project->getPairs('nocode'), $objectID, 'project');
             $this->lang->set('menugroup.patchbuild', 'project');
-            $this->view->project       = $object;
+            $this->view->project       = $this->project->getById($object->id);
             $this->view->products      = $this->project->getProducts($object->id);
             /* Header and position. */
             $this->view->title      = $object->name . $this->lang->colon . $this->lang->patchbuild->patchBuild;
@@ -101,8 +101,8 @@ class patchbuild extends control
      */
     public function createpatchbuild($projectID)
     {
-        $this->loadModel('project');
-        $productGroups = $this->project->getProducts($projectID);
+        $productGroups = $this->loadModel('project')->getProducts($projectID);
+        //$productIDs = implode(',', array_keys($productGroups));
         $productID     = key($productGroups);
         $products      = array();
         foreach($productGroups as $product) $products[$product->id] = $product->name;
@@ -123,6 +123,13 @@ class patchbuild extends control
         $this->loadModel('user');
         $this->loadModel('story');
         $this->loadModel('bug');
+
+        $project = $this->project->getById($projectID);
+        if ($project->lockPatchBuild == '1')
+        {
+            echo(js::error('本项目提交已冻结，如有疑问，请联系测试组'));
+            die(js::locate('back'));
+        }
 
         $this->lang->patchbuild->menu      = $this->lang->project->menu;
         $this->lang->menugroup->patchbuild       = 'project';
@@ -159,7 +166,7 @@ class patchbuild extends control
         }
         
         $this->view->bugs           = $this->bug->getProductBugsPairs($productID, 'resolved');
-        $this->view->stories        = $this->story->getProjectStoryPairs($projectID);
+        $this->view->stories        = $this->story->getProductStoryPairs($productID);
         $this->view->products       = $products;
         $this->view->lastPatchBuild = $this->patchbuild->getLastPatchBuild($product->id);
         $this->view->productGroups  = $productGroups;
@@ -216,20 +223,25 @@ class patchbuild extends control
             $this->lang->patchbuild->menu      = $this->lang->project->menu;
             $this->lang->menugroup->patchbuild       = 'project';
 
-            $this->view->stories        = $this->story->getProjectStoryPairs($objectID);
             $productGroups = $this->project->getProducts($objectID);
-            $productID     = key($productGroups);
-            $this->view->bugs           = $this->bug->getProductBugsPairs($productID, 'resolved');
+
             /* Set menu. */
             $this->project->setMenu($this->project->getPairs(), $objectID);
             $this->view->projectID     = $objectID;
         }
         elseif ($from == 'qa')
         {
+            $oldBuild = $this->patchbuild->getPatchBuildById($buildID);
+            $productGroups = $this->project->getProducts($oldBuild->project);
             $this->lang->patchbuild->menu      = $this->lang->qa->menu;
             $this->lang->menugroup->patchbuild       = 'qa';
             $this->patchbuild->setMenu($this->loadModel('product')->getPairs(), $objectID);
         }
+
+        //$productIDs = implode(',', array_keys($productGroups));
+        $productID = key($productGroups);
+        $this->view->stories        = $this->story->getProductStoryPairs($productID);
+        $this->view->bugs           = $this->bug->getProductBugsPairs($productID, 'resolved');
 
         if($this->config->global->flow == 'onlyTest')
         {
@@ -384,5 +396,20 @@ class patchbuild extends control
         $this->view->actions       = $this->loadModel('action')->getList('patchbuild', $buildID);
 
         $this->display();
+    }
+
+    /**
+     * 补丁版本提交锁定
+     *
+     * @param $project
+     * @param $status
+     * @return null
+     */
+    public function switchPatchBuildLock($project, $status)
+    {
+        $status = $status == '0' ? '1' : '0';
+        $this->dao->update(TABLE_PROJECT)->set('lockPatchBuild')->eq($status)->where('id')->eq($project)->exec();
+        if(dao::isError()) die(js::error(dao::getError()));
+        die(js::reload('parent'));
     }
 }

@@ -11,6 +11,7 @@ $lang->patchbuild->createPatchBuild = '创建补丁版本';
 $lang->patchbuild->editpatchbuild   = '编辑补丁版本';
 $lang->patchbuild->deletePatchBuild = '删除补丁版本';
 $lang->patchbuild->confirmDelete    = '您确认删除该版本吗？';
+$lang->patchbuild->switchPatchBuildLock = '锁定提交';
 
 $lang->patchbuild->id            =  'ID';
 $lang->patchbuild->patchType     = '补丁类型';
@@ -87,6 +88,7 @@ $lang->patchbuild->groupList['presents']  = '出品组';
 $lang->patchbuild->groupList['cms']       = 'CMS';
 $lang->patchbuild->groupList['dms']       = 'DMS';
 $lang->patchbuild->groupList['nm']        = 'NM';
+$lang->patchbuild->groupList['cop']       = 'COP';
 $lang->patchbuild->groupList['other']     = '其他';
 
 $lang->patchbuild->testPassList['']              = '';
@@ -96,9 +98,10 @@ $lang->patchbuild->testPassList['partialPassed'] = '部分通过';
 $lang->patchbuild->testPassList['withoutApproval'] = '免验收';
 
 $lang->patchbuild->testEnvList['']                = '';
-$lang->patchbuild->testEnvList['released']        = '发布';
-$lang->patchbuild->testEnvList['notReleased']     = '未发布';
+$lang->patchbuild->testEnvList['released']        = '已发布';
+$lang->patchbuild->testEnvList['notReleased']     = '不予发布';
 $lang->patchbuild->testEnvList['partialReleased'] = '部分发布';
+$lang->patchbuild->testEnvList['emergencyReleased'] = '已紧急发布';
 
 $lang->patchbuild->mail = new stdclass();
 $lang->patchbuild->mail->create = new stdclass();
@@ -108,4 +111,5 @@ $lang->patchbuild->mail->create->title = "%s创建了补丁版本 #%s:%s";
 $lang->patchbuild->mail->edit->title   = "%s编辑了补丁版本 #%s:%s";
 $lang->patchbuild->mail->close->title  = "%s关闭了补丁版本 #%s:%s";
 
-//$lang->patchbuild->featureBar['patchbuild']['all']          = $lang->project->allTasks;
+$lang->patchbuild->linkStoriesComment = '如由需求引发的补丁，请关联需求';
+$lang->patchbuild->linkBugComment     = '如由问题引发的补丁，请关联Bug';
