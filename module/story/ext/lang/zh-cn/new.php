@@ -35,7 +35,7 @@ $lang->story->ifLinkStoriesList['exist'] = '有';
 
 $lang->story->specComment = "<p>[需求背景]</p><p>[功能描述]</p>";
 
-$lang->story->magicAuth   = '开发权限';
+$lang->story->magicAuth   = '用户需求关联';
 $lang->story->batchChangeIfLinkStories = '批量修改是否有相关需求';
 $lang->story->linkStoryOpenedBys = '相关需求创建者';
 
@@ -69,3 +69,6 @@ $lang->story->error = new stdClass();
 $lang->story->error->branchErrorComment = '用户专用，如无溯源号，请填写无';
 
 $lang->story->switchStoryLock = '项目需求锁';
+
+$lang->story->action->linked2patchbuild        = array('main' => '$date, 由 <strong>$actor</strong> 关联到补丁版本 <strong>$extra</strong>。');
+$lang->story->action->unlinkedfrompatchbuild   = array('main' => '$date, 由 <strong>$actor</strong> 从补丁版本 <strong>$extra</strong> 移除。');

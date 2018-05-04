@@ -28,12 +28,26 @@ $lang->resource->patchbuild->createPatchBuild = 'createPatchBuild';
 $lang->resource->patchbuild->editpatchbuild   = 'editpatchbuild';
 $lang->resource->patchbuild->deletePatchBuild = 'deletePatchBuild';
 $lang->resource->patchbuild->view             = 'view';
+$lang->resource->patchbuild->linkStory        = 'linkStory';
+$lang->resource->patchbuild->unlinkStory      = 'unlinkStory';
+$lang->resource->patchbuild->batchUnlinkStory = 'batchUnlinkStory';
+$lang->resource->patchbuild->linkBug          = 'linkBug';
+$lang->resource->patchbuild->unlinkBug        = 'unlinkBug';
+$lang->resource->patchbuild->batchUnlinkBug   = 'batchUnlinkBug';
+$lang->resource->patchbuild->switchPatchBuildLock = 'switchPatchBuildLock';
 
-$lang->build->methodOrder[5]  = 'createpatchbuild';
-$lang->build->methodOrder[10] = 'editpatchbuild';
-$lang->build->methodOrder[15] = 'deletePatchBuild';
-$lang->build->methodOrder[20] = 'patchBuild';
-$lang->build->methodOrder[25] = 'view';
+$lang->patchbuild->methodOrder[5]  = 'createpatchbuild';
+$lang->patchbuild->methodOrder[10] = 'editpatchbuild';
+$lang->patchbuild->methodOrder[15] = 'deletePatchBuild';
+$lang->patchbuild->methodOrder[20] = 'patchBuild';
+$lang->patchbuild->methodOrder[25] = 'view';
+$lang->patchbuild->methodOrder[25] = 'linkStory';
+$lang->patchbuild->methodOrder[30] = 'unlinkStory';
+$lang->patchbuild->methodOrder[35] = 'batchUnlinkStory';
+$lang->patchbuild->methodOrder[40] = 'linkBug';
+$lang->patchbuild->methodOrder[45] = 'unlinkBug';
+$lang->patchbuild->methodOrder[50] = 'batchUnlinkBug';
+$lang->patchbuild->methodOrder[55] = 'switchPatchBuildLock';
 
 /* storyreview. */
 $lang->moduleOrder[205] = 'storyreview';
@@ -98,3 +112,4 @@ $lang->riskmanage->methodOrder[30] = 'close';
 $lang->riskmanage->methodOrder[35] = 'batchClose';
 
 $lang->resource->story->switchStoryLock = 'switchStoryLock';
+$lang->resource->task->batchEditDeadlineDate = 'batchEditDate';

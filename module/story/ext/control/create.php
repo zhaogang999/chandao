@@ -144,10 +144,14 @@ class myStory extends story
             }
         }
         //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+        $customStoryCollectPool = $this->dao->select('value')->from(TABLE_CONFIG)->where('`key`')->eq('customStoryCollectPool')->fetch('value');
+
         $customProducts = $this->dao->select('id, name')->from(TABLE_PRODUCT)
-            ->where('id')->in($this->config->story->storyCollectionPoolProducts)
+            ->where('id')->in($customStoryCollectPool)
             ->andWhere('deleted')->eq('0')
             ->fetchPairs();
+
+        $this->view->customStoryCollectPool = explode(',', $customStoryCollectPool);
         $this->view->customProducts = $customProducts + array('' => '');
         
         /* Set Custom*/

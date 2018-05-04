@@ -68,7 +68,11 @@ public function buildQuery()
             {
                 //4120 产品发布时，版本关联需求可实现按指定需求ID搜索并关联到该版本上
                 //$condition = ' = ' . $this->dbh->quote($value) . ' ';
+
+                $value = preg_replace('/(\n)|(\s)|(\t)|(\')|(\')|(，)/' ,',' , $value);
+                $value = str_replace(chr(194) . chr(160), "", $value);
                 $condition = helper::dbIN($value);
+
             }
         }
         else

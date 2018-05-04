@@ -36,8 +36,6 @@ class patchbuildModel extends model
             ->setDefault('product', 0)
             ->setDefault('patchDate', helper::today())
             ->join('mailto', ',')
-            ->join('linkStories', ',')
-            ->join('linkBugs', ',')
             ->add('project', (int)$projectID)
             ->add('product', (int)$productID)
             ->stripTags($this->config->patchbuild->editor->createpatchbuild['id'], $this->config->allowedTags)
@@ -72,8 +70,6 @@ class patchbuildModel extends model
         $build = fixer::input('post')
             ->stripTags($this->config->patchbuild->editor->editpatchbuild['id'], $this->config->allowedTags)
             ->join('mailto', ',')
-            ->join('linkBugs', ',')
-            ->join('linkStories', ',')
             ->remove('files,uid')
             ->get();
 
@@ -357,5 +353,163 @@ class patchbuildModel extends model
         /* Send mail. */
         $this->mail->send($toList, $mailTitle, $mailContent, $ccList);
         if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
+    }
+
+    /**
+     * Link stories
+     *
+     * @param  int    $buildID
+     * @access public
+     * @return void
+     */
+    public function linkStory($buildID)
+    {
+        $build = $this->getPatchBuildById($buildID);
+
+        $build->linkStories .= ',' . join(',', $this->post->stories);
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkStories')->eq($build->linkStories)->where('id')->eq((int)$buildID)->exec();
+        foreach($this->post->stories as $storyID)
+        {
+            $this->loadModel('action')->create('story', $storyID, 'linked2patchbuild', '', $buildID);
+        }
+    }
+
+    /**
+     * Unlink story
+     *
+     * @param  int    $buildID
+     * @param  int    $storyID
+     * @access public
+     * @return void
+     */
+    public function unlinkStory($buildID, $storyID)
+    {
+        $build = $this->getPatchBuildById($buildID);
+        $build->linkStories = trim(str_replace(",$storyID,", ',', ",$build->linkStories,"), ',');
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkStories')->eq($build->linkStories)->where('id')->eq((int)$buildID)->exec();
+        $this->loadModel('action')->create('story', $storyID, 'unlinkedfrompatchbuild', '', $buildID);
+    }
+
+    /**
+     * Batch unlink story.
+     *
+     * @param  int    $buildID
+     * @access public
+     * @return void
+     */
+    public function batchUnlinkStory($buildID)
+    {
+        $storyList = $this->post->unlinkStories;
+        if(empty($storyList)) return true;
+
+        $build = $this->getPatchBuildById($buildID);
+        $build->linkStories = ",$build->linkStories,";
+        foreach($storyList as $storyID) $build->linkStories = str_replace(",$storyID,", ',', $build->linkStories);
+        $build->linkStories = trim($build->linkStories, ',');
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkStories')->eq($build->linkStories)->where('id')->eq((int)$buildID)->exec();
+        foreach($this->post->unlinkStories as $unlinkStoryID)
+        {
+            $this->loadModel('action')->create('story', $unlinkStoryID, 'unlinkedfrompatchbuild', '', $buildID);
+        }
+    }
+    
+    /**
+     * Link bugs.
+     *
+     * @param  int    $buildID
+     * @access public
+     * @return void
+     */
+    public function linkBug($buildID)
+    {
+        $build = $this->getPatchBuildById($buildID);
+        $build->linkBugs .= ',' . join(',', $this->post->bugs);
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkBugs')->eq($build->linkBugs)->where('id')->eq((int)$buildID)->exec();
+        foreach($this->post->bugs as $bugID)
+        {
+            $this->loadModel('action')->create('bug', $bugID, 'linked2patchbuild', '', $buildID);
+        }
+    }
+
+    /**
+     * Unlink bug.
+     *
+     * @param  int    $buildID
+     * @param  int    $bugID
+     * @access public
+     * @return void
+     */
+    public function unlinkBug($buildID, $bugID)
+    {
+        $build = $this->getPatchBuildById($buildID);
+        $build->linkBugs = trim(str_replace(",$bugID,", ',', ",$build->linkBugs,"), ',');
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkBugs')->eq($build->linkBugs)->where('id')->eq((int)$buildID)->exec();
+        $this->loadModel('action')->create('bug', $bugID, 'unlinkedfrompatchbuild', '', $buildID);
+    }
+
+    /**
+     * Batch unlink bug.
+     *
+     * @param  int    $buildID
+     * @access public
+     * @return void
+     */
+    public function batchUnlinkBug($buildID)
+    {
+        $bugList = $this->post->unlinkBugs;
+        if(empty($bugList)) return true;
+
+        $build = $this->getPatchBuildById($buildID);
+        $build->linkBugs = ",$build->linkBugs,";
+        foreach($bugList as $bugID) $build->linkBugs = str_replace(",$bugID,", ',', $build->linkBugs);
+        $build->linkBugs = trim($build->linkBugs, ',');
+        $this->dao->update(TABLE_PATCHBUILD)->set('linkBugs')->eq($build->linkBugs)->where('id')->eq((int)$buildID)->exec();
+        foreach($this->post->unlinkBugs as $unlinkBugID)
+        {
+            $this->loadModel('action')->create('bug', $unlinkBugID, 'unlinkedfrompatchbuild', '', $buildID);
+        }
+    }
+    
+    /**
+     * Update linked bug to resolved.
+     *
+     * @param  object    $build
+     * @access public
+     * @return void
+     */
+    public function updateLinkedBug($build)
+    {
+        $bugs = empty($build->bugs) ? '' : $this->dao->select('*')->from(TABLE_BUG)->where('id')->in($build->bugs)->fetchAll();
+        $data = fixer::input('post')->get();
+        $now  = helper::now();
+
+        $resolvedPairs = array();
+        if(isset($_POST['bugs']))
+        {
+            foreach($data->linkBugs as $key => $bugID)
+            {
+                if(isset($_POST['resolvedBy'][$key]))$resolvedPairs[$bugID] = $data->resolvedBy[$key];
+            }
+        }
+
+        $this->loadModel('action');
+        if(!$bugs) return false;
+        foreach($bugs as $bug)
+        {
+            if($bug->status == 'resolved' or $bug->status == 'closed') continue;
+
+            $bug->resolvedBy     = $resolvedPairs[$bug->id];
+            $bug->resolvedDate   = $now;
+            $bug->status         = 'resolved';
+            $bug->confirmed      = 1;
+            $bug->assignedDate   = $now;
+            $bug->assignedTo     = $bug->openedBy;
+            $bug->lastEditedBy   = $this->app->user->account;
+            $bug->lastEditedDate = $now;
+            $bug->resolution     = 'fixed';
+            $bug->resolvedBuild  = $build->name;
+            $this->dao->update(TABLE_BUG)->data($bug)->where('id')->eq($bug->id)->exec();
+            $this->action->create('bug', $bug->id, 'Resolved', '', 'fixed', $bug->resolvedBy);
+        }
     }
 }

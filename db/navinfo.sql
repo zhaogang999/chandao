@@ -10,4 +10,4 @@ ALTER TABLE `zt_story` ADD `ifLinkStories` varchar(10) NOT NULL COMMENT '是否�
 ALTER TABLE `zt_story` ADD `testStatus` varchar(30) NOT NULL AFTER `status`;
 ALTER TABLE `zt_story` ADD `verifyStatus` varchar(30) NOT NULL AFTER `testStatus`;
 ALTER TABLE `zt_project` ADD `lockStory` enum('0','1') NOT NULL DEFAULT '0' AFTER `stage`;
-ALTER TABLE `zt_project` ADD `lockPatchBuild` enum('0','1') NOT NULL AFTER `lockStory`;
+ALTER TABLE `zt_project` ADD `lockPatchBuild` enum('0','1') NOT NULL COMMENT '补丁锁定' AFTER `lockStory`;

@@ -34,7 +34,7 @@
             <?php echo html::select('product', $products, $productID, "onchange='loadProduct(this.value);' class='form-control chosen'");?>
             <!--3757 提需求时，所属平台需要变更为必填项-->
             <?php if($product->type != 'normal') echo html::select('branch', $branches,'', "data-placeholder='{$lang->story->choseBranch}' onchange='loadBranch();' class='form-control chosen' style='width:120px'");?>
-
+            <span class="required required-wrapper"></span>
           </div>
         </td>
         <td>
@@ -197,16 +197,24 @@
         <td colspan='2'><?php echo $this->fetch('file', 'buildform');?></td>
       </tr>
       <!--3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”-->
-      <?php if (common::hasPriv('story', 'magicAuth')):?>
+      <?php if (common::hasPriv('story', 'magicAuth') && !in_array($productID, $customStoryCollectPool)):?>
       <tr>
         <th><?php echo $lang->story->customProduct;?></th>
-        <td>
-            <?php echo html::select('customProduct', $customProducts, '', "onchange='loadStories(this.value);' class='form-control chosen' data-placeholder='{$this->lang->story->devComment}'");?>
-        </td>
-        <td>
-          <div class='input-group' id='storyBox'>
-            <span class='input-group-addon'><?php echo $lang->story->linkStories;?></span>
-            <?php echo html::select('story[]', '', '', "multiple class='form-control chosen'  data-placeholder='{$this->lang->story->devComment}'");?>
+        <td colspan='2'>
+          <div class='row-table'>
+            <div class='col-table w-300px'>
+              <div class="input-group w-p100">
+                <?php echo html::select('customProduct', $customProducts, '', "onchange='loadStories(this.value);' class='form-control chosen' data-placeholder='{$this->lang->story->devComment}'");?>
+              </div>
+            </div>
+            <div class='col-table'>
+              <div class="input-group w-p100">
+                <span class='input-group-addon'><?php echo $lang->story->linkStories;?></span>
+                <?php echo html::select('story[]', '', '', "onchange='changeIfLinkStories(this.value);' multiple class='form-control chosen'  data-placeholder='{$this->lang->story->devComment}'");?>
+                <span class='input-group-addon br-0'><?php echo $lang->story->ifLinkStories;?></span>
+                <?php echo html::select('ifLinkStories', $lang->story->ifLinkStoriesList, '', "class='form-control' id='ifLinkStories' style='width:60px';");?>
+              </div>
+            </div>
           </div>
         </td>
       </tr>
@@ -227,11 +235,17 @@
     var link = createLink('story', 'ajaxGetCustomProductStories', 'productID=' + productID + '&branch=0&moduleID=0&storyID=0&onlyOption=false&status=noclosed');
     $.get(link, function(stories)
     {
-      if(!stories) stories = '<select id="story[]" name="story" multiple="multiple"></select>';
+      if(!stories) stories = '<select id="story[]" name="story" multiple="multiple" onchange="changeIfLinkStories(this.value);"></select>';
       $('#story').replaceWith(stories);
       $('#story_chosen').remove();
       $("#story").chosen(defaultChosenOptions);
     });
+  }
+  
+  function changeIfLinkStories(linkStories)
+  {
+    if(linkStories === '') $('#ifLinkStories').val('');
+    if(linkStories !== '') $('#ifLinkStories').val('exist');
   }
   
   function loadProduct(productID)

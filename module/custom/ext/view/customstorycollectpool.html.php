@@ -24,9 +24,9 @@
   common::printLink('custom', 'flow', "",  $lang->custom->flow); 
   echo '</li><li>'; 
   common::printLink('custom', 'working', '',  $lang->custom->working);
-  echo "</li><li class='active'>";
-  common::printLink('custom', 'loginDefaultPage', '',  $lang->custom->loginDefaultPage);
   echo "</li><li>";
+  common::printLink('custom', 'loginDefaultPage', '',  $lang->custom->loginDefaultPage);
+  echo "</li><li class='active'>";
   common::printLink('custom', 'customStoryCollectPool', '',  $lang->custom->customStoryCollectPool);
   echo '</li>';
   ?>
@@ -36,16 +36,16 @@
   <form method='post' class='form-condensed' target='hiddenwin'>
     <table class='table table-form'>
       <tr>
-        <th class='w-150px'><?php echo $lang->custom->loginDefaultPage;?></th>
+        <th class='w-150px'><?php echo $lang->custom->customStoryCollectPool;?></th>
         <td>
           <p>
-          <?php echo html::input('loginDefaultPage', $nowLoginDefaultPage, "class='form-control w-500px' autocomplete='off'");?></p>
+          <?php echo html::input('customStoryCollectPool', $nowCustomStoryCollectPool, "class='form-control w-500px' autocomplete='off'");?></p>
         </td>
       </tr>
       <tr><td></td><td><?php echo html::submitButton()?></td></tr>
       <tr>
         <td colspan='2' class='pd-0'>
-          <div class='alert alert-info alert-block'><strong><?php echo $lang->custom->notice->loginDefaultPage?></strong></div>
+          <div class='alert alert-info alert-block'><strong><?php echo $lang->custom->notice->customStoryCollectPool?></strong></div>
         </td>
       </tr>
     </table>

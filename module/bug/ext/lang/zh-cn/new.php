@@ -1,4 +1,6 @@
 <?php
+$lang->bug->toIssue   = '流出问题';
+$lang->bug->toIssueAB = '流出问题分析';
 /* 模板。*/
 $lang->bug->tplReason   = "<p>[问题原因]</p>\n";
 $lang->bug->tplProject = "<p>[解决方案]</p>\n";
@@ -33,5 +35,5 @@ $lang->bug->discoveryPhaseList['acceptance'] = '验收阶段';
 $lang->bug->discoveryPhaseList['production'] = '生产阶段';
 
 $lang->bug->action->toissue = array('main' => '$date, 由 <strong>$actor</strong> 转为<strong>流出问题</strong>，编号为 <strong>$extra</strong>。');
-$lang->bug->toIssue   = '流出问题';
-$lang->bug->toIssueAB = '流出问题分析';
+$lang->bug->action->linked2patchbuild        = array('main' => '$date, 由 <strong>$actor</strong> 关联到补丁版本 <strong>$extra</strong>。');
+$lang->bug->action->unlinkedfrompatchbuild   = array('main' => '$date, 由 <strong>$actor</strong> 从补丁版本 <strong>$extra</strong> 移除。');

@@ -1,6 +1,9 @@
 <?php
-$lang->custom->loginDefaultPage         = '登录默认页';
-$lang->custom->notice->loginDefaultPage = '请输入想要设置的登录默认页';
+$lang->custom->loginDefaultPage             = '登录默认页';
+$this->lang->custom->customStoryCollectPool = '用户需求收集池';
+
+$lang->custom->notice->loginDefaultPage       = '请输入想要设置的登录默认页';
+$lang->custom->notice->customStoryCollectPool = '请输入想要设置的用户需求池产品的IDs，ID之间用英文逗号隔开';
 
 $lang->custom->object['patchbuild'] = '补丁版本';
 $lang->custom->patchbuild           = new stdClass();

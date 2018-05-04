@@ -1414,7 +1414,7 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
         ->leftJoin(TABLE_PRODUCTPLAN)->alias('t4')->on('t2.plan = t4.id')
         ->where('t1.project')->eq((int)$projectID)
         ->andWhere('t1.deleted')->eq(0)
-        ->andWhere('t1.parent')->eq(0)
+        //->andWhere('t1.parent')->eq(0)
         ->beginIF($productID)->andWhere('t2.product')->eq((int)$productID)->fi()
         ->beginIF($type == 'undone')->andWhere("(t1.status = 'wait' or t1.status ='doing')")->fi()
         ->beginIF($type == 'needconfirm')->andWhere('t2.version > t1.storyVersion')->andWhere("t2.status = 'active'")->fi()
@@ -1442,7 +1442,11 @@ public function getProjectTasks($projectID, $productID = 0, $type = 'all', $modu
             ->andWhere('t1.deleted')->eq(0)
             ->orderBy('id_desc')
             ->fetchGroup('parent');
-        foreach($children as $key => $child) $tasks[$key]->children = $child;
+        foreach($children as $key => $child)
+        {
+            $tasks[$key]->children = $child;
+            foreach ($child as $value) if(in_array($value->id,$taskList)) unset($tasks[$value->id]);
+        }
         $taskTeam = $this->dao->select('*')->from(TABLE_TEAM)->where('task')->in($taskList)->fetchGroup('task');
         foreach($taskTeam as $taskID => $team) $tasks[$taskID]->team = $team;
     }

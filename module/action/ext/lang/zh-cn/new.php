@@ -20,3 +20,6 @@ $lang->action->search->label['toissue'] = $lang->action->label->toissue;
 $lang->action->objectTypes['riskmanage'] = '风险管理表';
 $lang->action->label->riskmanage = '风险管理表|riskmanage|view|$riskManageID=%s';
 $lang->action->search->objectTypeList['riskmanage'] = '风险管理表';
+
+$lang->action->label->linked2patchbuild        = "关联补丁版本";
+$lang->action->label->unlinkedfrompatchbuild   = "移除补丁版本";

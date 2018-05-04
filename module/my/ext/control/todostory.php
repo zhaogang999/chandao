@@ -25,7 +25,7 @@ class myMy extends my
         $products = $this->loadModel('product')->getPairs('nocode');
 
         /* Save session. */
-        if($this->app->viewType != 'json') $this->session->set('todoStoryList', $this->app->getURI(true));
+        if($this->app->viewType != 'json') $this->app->session->set('storyList', $this->app->getURI(true));
 
         //if($browseType == 'bymodule') setcookie('storyModule', (int)$param, $this->config->cookieLife, $this->config->webRoot);
         if($browseType != 'bymodule') $this->session->set('storyBrowseType', $browseType);

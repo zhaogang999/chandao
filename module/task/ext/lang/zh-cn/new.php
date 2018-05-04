@@ -86,3 +86,4 @@ $lang->task->error->performModeEmpty        = '执行方式不能为空';
 $lang->task->error->performSystemEmpty      = '执行系统不能为空';
 $lang->task->error->scriptPathEmpty         = '脚本路径不能为空';
 
+$lang->task->batchEditDate = '批量修改截止时间';

@@ -37,7 +37,7 @@ class myStory extends story
         }
 
         $stories = $this->story->getProductStoryPairs($productID, $branch ? "0,$branch" : $branch, $moduleID, $storyStatus, 'id_desc', $limit);
-        $select  = html::select('story[]', empty($stories) ? array('' => '') : $stories, $storyID, "class='form-control' multiple");
+        $select  = html::select('story[]', empty($stories) ? array('' => '') : $stories, $storyID, "class='form-control' multiple onchange='changeIfLinkStories(this.value);'");
 
         /* If only need options, remove select wrap. */
         if($onlyOption == 'true') die(substr($select, strpos($select, '>') + 1, -10));

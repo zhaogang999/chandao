@@ -662,11 +662,15 @@ public function getZeroTaskStories($stories, $type='')
         ->fetchPairs();
 
     $zeroTaskStories = array();
-    foreach($stories as $storyID =>$story) if(!isset($taskCounts[$storyID]))
+    foreach($stories as $storyID =>$story)
     {
-        $zeroTaskStories[$storyID] = new stdClass();
-        $zeroTaskStories[$storyID]->storyID = $storyID;
-        $zeroTaskStories[$storyID]->version = $story->version;
+        if ($type === 'test' && $story->verifyStatus === 'freeVerified') continue;
+        if(!isset($taskCounts[$storyID]))
+        {
+            $zeroTaskStories[$storyID] = new stdClass();
+            $zeroTaskStories[$storyID]->storyID = $storyID;
+            $zeroTaskStories[$storyID]->version = $story->version;
+        }
     }
 
     return $zeroTaskStories;
