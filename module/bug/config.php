@@ -6,14 +6,14 @@ $config->bug->longlife    = 7;
 $config->bug->create  = new stdclass();
 $config->bug->edit    = new stdclass();
 $config->bug->resolve = new stdclass();
-$config->bug->create->requiredFields  = 'title,openedBuild';
+$config->bug->create->requiredFields  = 'title,openedBuild,module';
 $config->bug->edit->requiredFields    = $config->bug->create->requiredFields;
 $config->bug->resolve->requiredFields = 'resolution';
 
 $config->bug->list = new stdclass();
 $config->bug->list->allFields = 'id, module, project, story, task, 
     title, keywords, severity, pri, type, os, browser, hardware,
-    found, steps, status, activatedCount, confirmed, mailto,
+    found, steps, status, deadline, activatedCount, confirmed, mailto,
     openedBy, openedDate, openedBuild, 
     assignedTo, assignedDate,
     resolvedBy, resolution, resolvedBuild, resolvedDate,
@@ -38,7 +38,7 @@ $config->bug->list->exportFields = 'id, product, branch, module, project, story,
     lastEditedDate, files';
 
 $config->bug->list->customCreateFields      = 'project,story,task,pri,severity,os,browser,deadline,mailto,keywords';
-$config->bug->list->customBatchCreateFields = 'module,project,steps,type,pri,severity,os,browser,keywords';
+$config->bug->list->customBatchCreateFields = 'module,project,steps,type,pri,deadline,severity,os,browser,keywords';
 $config->bug->list->customBatchEditFields   = 'type,severity,pri,productplan,assignedTo,deadline,status,resolvedBy,resolution,os,browser,keywords';
 
 $config->bug->custom = new stdclass();
@@ -267,7 +267,7 @@ $config->bug->datatable->fieldList['openedBuild']['fixed']    = 'no';
 $config->bug->datatable->fieldList['openedBuild']['width']    = '120';
 $config->bug->datatable->fieldList['openedBuild']['required'] = 'no';
 
-$config->bug->datatable->fieldList['assignedTo']['title']    = 'assignedTo';
+$config->bug->datatable->fieldList['assignedTo']['title']    = 'assignedToAB';
 $config->bug->datatable->fieldList['assignedTo']['fixed']    = 'no';
 $config->bug->datatable->fieldList['assignedTo']['width']    = '80';
 $config->bug->datatable->fieldList['assignedTo']['required'] = 'no';

@@ -17,7 +17,7 @@ $lang->productplan->edit       = "編輯計劃";
 $lang->productplan->delete     = "刪除計劃";
 $lang->productplan->view       = "計劃詳情";
 $lang->productplan->bugSummary = "本頁共 <strong>%s</strong> 個Bug";
-$lang->productplan->basicInfo  = '基本信息';
+$lang->productplan->info       = '信息';
 $lang->productplan->batchEdit  = '批量編輯';
 
 $lang->productplan->batchUnlink      = "批量移除";
@@ -26,6 +26,7 @@ $lang->productplan->unlinkStory      = "移除需求";
 $lang->productplan->batchUnlinkStory = "批量移除需求";
 $lang->productplan->linkedStories    = '需求';
 $lang->productplan->unlinkedStories  = '未關聯需求';
+$lang->productplan->updateOrder      = '排序';
 
 $lang->productplan->linkBug          = "關聯Bug";
 $lang->productplan->unlinkBug        = "移除Bug";
@@ -45,6 +46,11 @@ $lang->productplan->desc    = '描述';
 $lang->productplan->begin   = '開始日期';
 $lang->productplan->end     = '結束日期';
 $lang->productplan->last    = '上次計劃';
+$lang->productplan->future  = '待定';
+$lang->productplan->stories = '需求數';
+$lang->productplan->bugs    = 'Bug數';
+$lang->productplan->hour    = '工時';
+$lang->productplan->project = $lang->projectCommon;
 
 $lang->productplan->endList[7]   = '一星期';
 $lang->productplan->endList[14]  = '兩星期';

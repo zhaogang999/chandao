@@ -74,7 +74,7 @@
     <div class='main main-side'>
       <fieldset>
         <legend><?php echo $lang->testtask->legendBasicInfo;?></legend>
-        <table class='table table-data table-condensed table-borderless'>
+        <table class='table table-data table-condensed table-borderless table-fixed'>
           <?php if($this->config->global->flow != 'onlyTest'):?>
           <tr>
             <th class='w-60px'><?php echo $lang->testtask->project;?></th>

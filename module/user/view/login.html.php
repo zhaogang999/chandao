@@ -60,19 +60,22 @@ if(empty($config->notMd5Pwd))js::import($jsRoot . 'md5.js');
     <div id='demoUsers' class="panel-foot">
       <span><?php echo $lang->user->loginWithDemoUser; ?></span>
       <?php
-      $sign = $config->requestType == 'GET' ? '&' : '?';
-      if(isset($demoUsers['productManager'])) echo html::a(inlink('login') . $sign . "account=productManager&password=123456", $demoUsers['productManager'], 'hiddenwin');
-      if(isset($demoUsers['projectManager'])) echo html::a(inlink('login') . $sign . "account=projectManager&password=123456", $demoUsers['projectManager'], 'hiddenwin');
-      if(isset($demoUsers['testManager']))    echo html::a(inlink('login') . $sign . "account=testManager&password=123456",    $demoUsers['testManager'],    'hiddenwin');
-      if(isset($demoUsers['dev1']))           echo html::a(inlink('login') . $sign . "account=dev1&password=123456",           $demoUsers['dev1'],           'hiddenwin');
-      if(isset($demoUsers['tester1']))        echo html::a(inlink('login') . $sign . "account=tester1&password=123456",        $demoUsers['tester1'],        'hiddenwin');
+      $password = md5('123456');
+      $link     = inlink('login');
+      $link    .= strpos($link, '?') !== false ? '&' : '?';
+      foreach($demoUsers as $demoAccount => $demoUser)
+      {
+          if($demoUser->password != $password) continue;
+          echo html::a($link . "account={$demoAccount}&password=" . md5($password . $this->session->rand), $demoUser->realname, 'hiddenwin');
+      }
       ?>  
     </div>  
     <?php endif;?>
   </div>
   <div id="poweredby">
     <?php if($config->checkVersion):?>
-    <iframe id='updater' class='hidden' frameborder='0' width='100%' scrolling='no' allowtransparency='true' src="http://api.zentao.net/updater-isLatest-<?php echo $config->version;?>-<?php echo $s;?>.html?lang=<?php echo str_replace('-', '_', $this->app->getClientLang())?>"></iframe>
+    <?php $siteURL = $this->app->getClientLang() == 'en' ? 'http://api.zentao.pm' : 'http://api.zentao.net';?>
+    <iframe id='updater' class='hidden' frameborder='0' width='100%' scrolling='no' allowtransparency='true' src="<?php echo $siteURL;?>/updater-isLatest-<?php echo $config->version;?>-<?php echo $s;?>.html?lang=<?php echo str_replace('-', '_', $this->app->getClientLang())?>"></iframe>
     <?php endif;?>
     <?php echo html::hidden('verifyRand', $rand);?>
   </div>

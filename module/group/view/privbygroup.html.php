@@ -25,8 +25,8 @@
     <tr class='<?php echo cycle('even, bg-gray');?>'>
       <th class='text-right w-150px'><?php echo $lang->my->common;?></th>
       <td id='my' class='pv-10px'>
-        <input type='checkbox' name='actions[my][]' value='limited' <?php if(isset($groupPrivs['my']['limited'])) echo "checked";?> />
-        <span class='priv' id="my-limited"><?php echo $lang->my->limited;?></span>
+          <input type='checkbox' name='actions[my][]' value='limited' <?php if(isset($groupPrivs['my']['limited'])) echo "checked";?> />
+          <span class='priv' id="my-limited"><?php echo $lang->my->limited;?></span>
       </td>
     </tr>
     <tr>

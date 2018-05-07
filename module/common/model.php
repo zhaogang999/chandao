@@ -48,7 +48,7 @@ class commonModel extends model
     /**
      * Set the commpany.
      *
-     * First, search company by the http host. If not found, search by the default domain. Last, use the first as the default. 
+     * First, search company by the http host. If not found, search by the default domain. Last, use the first as the default.
      * After get the company, save it to session.
      * @access public
      * @return void
@@ -72,7 +72,7 @@ class commonModel extends model
 
     /**
      * Set the user info.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -99,7 +99,7 @@ class commonModel extends model
 
     /**
      * Load configs from database and save it to config->system and config->personal.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -170,9 +170,9 @@ class commonModel extends model
 
     /**
      * Deny access.
-     * 
+     *
      * @access public
-     * @return void
+     * @return mixed
      */
     public function deny($module, $method)
     {
@@ -207,7 +207,7 @@ class commonModel extends model
 
     /**
      * Print the run info.
-     * 
+     *
      * @param mixed $startTime  the start time.
      * @access public
      * @return array    the run info array.
@@ -223,7 +223,7 @@ class commonModel extends model
 
     /**
      * Print top bar.
-     * 
+     *
      * @static
      * @access public
      * @return void
@@ -293,8 +293,9 @@ class commonModel extends model
     /**
      * Create menu item link
      *
-     * @param  object   $menuItemLink
-     * @param  boolean  $isTutorialMode
+     * @param object $menuItem
+     *
+     * @static
      * @access public
      * @return string
      */
@@ -321,6 +322,8 @@ class commonModel extends model
      * Print the main menu.
      *
      * @param  string $moduleName
+     * @param  string $methodName
+     *
      * @static
      * @access public
      * @return void
@@ -383,14 +386,14 @@ class commonModel extends model
             if($config->global->flow == 'onlyTask')  $searchObject = 'task';
         }
 
-        echo "<div class='input-group input-group-sm' id='searchbox'>"; 
+        echo "<div class='input-group input-group-sm' id='searchbox'>";
         echo "<div class='input-group-btn' id='typeSelector'>";
         echo "<button type='button' class='btn dropdown-toggle' data-toggle='dropdown'><span id='searchTypeName'>" . $lang->searchObjects[$searchObject] . "</span> <span class='caret'></span></button>";
         echo html::hidden('searchType', $searchObject);
         echo "<ul class='dropdown-menu'>";
         foreach ($lang->searchObjects as $key => $value)
         {
-            echo "<li><a href='javascript:;' data-value='{$key}'>{$value}</a></li>"; 
+            echo "<li><a href='javascript:;' data-value='{$key}'>{$value}</a></li>";
         }
         echo '</ul></div>';
         echo html::input('searchQuery', '', "onclick='this.value=\"\"' onkeydown='if(event.keyCode==13) shortcut()' class='form-control' placeholder='" . $lang->searchTips . "'");
@@ -400,8 +403,8 @@ class commonModel extends model
 
     /**
      * Print the module menu.
-     * 
-     * @param  string $moduleName 
+     *
+     * @param  string $moduleName
      * @static
      * @access public
      * @return void
@@ -470,9 +473,9 @@ class commonModel extends model
 
     /**
      * Print the bread menu.
-     * 
-     * @param  string $moduleName 
-     * @param  string $position 
+     *
+     * @param  string $moduleName
+     * @param  string $position
      * @static
      * @access public
      * @return void
@@ -504,7 +507,7 @@ class commonModel extends model
 
     /**
      * Print the link for notify file.
-     * 
+     *
      * @static
      * @access public
      * @return void
@@ -519,8 +522,10 @@ class commonModel extends model
     }
 
     /**
-     * Print QR code Link. 
-     * 
+     * Print QR code Link.
+     *
+     * @param string $color
+     *
      * @static
      * @access public
      * @return void
@@ -537,16 +542,16 @@ class commonModel extends model
     /**
      * Print the link contains orderBy field.
      *
-     * This method will auto set the orderby param according the params. Fox example, if the order by is desc, 
+     * This method will auto set the orderby param according the params. Fox example, if the order by is desc,
      * will be changed to asc.
-     * 
+     *
      * @param  string $fieldName    the field name to sort by
      * @param  string $orderBy      the order by string
      * @param  string $vars         the vars to be passed
      * @param  string $label        the label of the link
      * @param  string $module       the module name
      * @param  string $method       the method name
-     * @static
+     *
      * @access public
      * @return void
      */
@@ -583,17 +588,21 @@ class commonModel extends model
     }
 
     /**
+     *
      * Print link to an modules' methd.
      *
      * Before printing, check the privilege first. If no privilege, return fasle. Else, print the link, return true.
      *
-     * @param  string $module   the module name
-     * @param  string $method   the method
-     * @param  string $vars     vars to be passed
-     * @param  string $label    the label of the link
-     * @param  string $target   the target of the link
-     * @param  string $misc     others
-     * @param  bool   $newline
+     * @param string $module    the module name
+     * @param string $method    the method
+     * @param string $vars      vars to be passed
+     * @param string $label     the label of the link
+     * @param string $target    the target of the link
+     * @param string $misc      others
+     * @param bool   $newline
+     * @param bool   $onlyBody
+     * @param        $object
+     *
      * @static
      * @access public
      * @return bool
@@ -607,7 +616,7 @@ class commonModel extends model
 
     /**
      * Print icon of split line.
-     * 
+     *
      * @static
      * @access public
      * @return void
@@ -619,11 +628,13 @@ class commonModel extends model
 
     /**
      * Print icon of comment.
-     * 
-     * @param  string $module 
+     *
+     * @param string $module
+     * @param        $object
+     *
      * @static
      * @access public
-     * @return void
+     * @return mixed
      */
     public static function printCommentIcon($module, $object = null)
     {
@@ -631,7 +642,7 @@ class commonModel extends model
 
         global $lang;
 
-        if(!commonModel::hasPriv($module, 'edit', $object)) return false;
+        if(!commonModel::hasPriv('action', 'comment', $object)) return false;
         echo html::a('#commentBox', '<i class="icon-comment-alt"></i>', '', "title='$lang->comment' onclick='setComment()' class='btn'");
     }
 
@@ -671,7 +682,6 @@ class commonModel extends model
         }
 
         /* Set module and method, then create link to it. */
-        if(strtolower($module) == 'bug'      and strtolower($method) == 'toissue')    ($module = 'issue') and ($method = 'create');
         if(strtolower($module) == 'story'    and strtolower($method) == 'createcase') ($module = 'testcase') and ($method = 'create');
         if(strtolower($module) == 'bug'      and strtolower($method) == 'tostory')    ($module = 'story') and ($method = 'create');
         if(strtolower($module) == 'bug'      and strtolower($method) == 'createcase') ($module = 'testcase') and ($method = 'create');
@@ -684,7 +694,7 @@ class commonModel extends model
             $title = $method;
             if($method == 'create' and $icon == 'copy') $method = 'copy';
             if(isset($lang->$method) and is_string($lang->$method)) $title = $lang->$method;
-            if((isset($lang->$module->$method) or $app->loadLang($module)) and isset($lang->$module->$method)) 
+            if((isset($lang->$module->$method) or $app->loadLang($module)) and isset($lang->$module->$method))
             {
                 $title = $method == 'report' ? $lang->$module->$method->common : $lang->$module->$method;
             }
@@ -760,8 +770,11 @@ class commonModel extends model
     /**
      * Print backLink and preLink and nextLink.
      *
-     * @param  string $backLink
-     * @param  object $preAndNext
+     * @param string $backLink
+     * @param object $preAndNext
+     * @param string $linkTemplate
+     *
+     * @static
      * @access public
      * @return void
      */
@@ -773,7 +786,7 @@ class commonModel extends model
         $title = $lang->goback . $lang->backShortcutKey;
         echo html::a($backLink, '<i class="icon-goback icon-level-up icon-large icon-rotate-270"></i>', '', "id='back' class='btn' title={$title}");
 
-        if(isset($preAndNext->pre) and $preAndNext->pre) 
+        if(isset($preAndNext->pre) and $preAndNext->pre)
         {
             $id = (isset($_SESSION['testcaseOnlyCondition']) and !$_SESSION['testcaseOnlyCondition'] and $app->getModuleName() == 'testcase' and isset($preAndNext->pre->case)) ? 'case' : 'id';
             $title = isset($preAndNext->pre->title) ? $preAndNext->pre->title : $preAndNext->pre->name;
@@ -781,7 +794,7 @@ class commonModel extends model
             $link  = $linkTemplate ? sprintf($linkTemplate, $preAndNext->pre->$id) : inLink('view', "ID={$preAndNext->pre->$id}");
             echo html::a($link, '<i class="icon-pre icon-chevron-left"></i>', '', "id='pre' class='btn' title='{$title}'");
         }
-        if(isset($preAndNext->next) and $preAndNext->next) 
+        if(isset($preAndNext->next) and $preAndNext->next)
         {
             $id = (isset($_SESSION['testcaseOnlyCondition']) and !$_SESSION['testcaseOnlyCondition'] and $app->getModuleName() == 'testcase' and isset($preAndNext->next->case)) ? 'case' : 'id';
             $title = isset($preAndNext->next->title) ? $preAndNext->next->title : $preAndNext->next->name;
@@ -793,7 +806,7 @@ class commonModel extends model
 
     /**
      * Create changes of one object.
-     * 
+     *
      * @param mixed $old    the old object
      * @param mixed $new    the new object
      * @static
@@ -816,14 +829,13 @@ class commonModel extends model
             if(strtolower($key) == 'finisheddate' && $value == '')  continue;
             if(strtolower($key) == 'canceleddate' && $value == '')  continue;
             if(strtolower($key) == 'closeddate'   && $value == '')  continue;
-            if(strtolower($key) == 'resolveddate'   && $value == '')  continue;
 
             if($magicQuote) $value = stripslashes($value);
             if(isset($old->$key) and $value != stripslashes($old->$key))
-            { 
+            {
                 $diff = '';
-                if(substr_count($value, "\n") > 1     or 
-                    substr_count($old->$key, "\n") > 1 or 
+                if(substr_count($value, "\n") > 1     or
+                    substr_count($old->$key, "\n") > 1 or
                     strpos('name,title,desc,spec,steps,content,digest,verify,report', strtolower($key)) !== false)
                 {
                     $diff = commonModel::diff($old->$key, $value);
@@ -836,9 +848,9 @@ class commonModel extends model
 
     /**
      * Diff two string. (see phpt)
-     * 
-     * @param string $text1 
-     * @param string $text2 
+     *
+     * @param string $text1
+     * @param string $text2
      * @static
      * @access public
      * @return string
@@ -862,8 +874,8 @@ class commonModel extends model
 
     /**
      * Judge Suhosin Setting whether the actual size of post data is large than the setting size.
-     * 
-     * @param  int    $countInputVars 
+     *
+     * @param  int    $countInputVars
      * @static
      * @access public
      * @return bool
@@ -887,9 +899,9 @@ class commonModel extends model
 
     /**
      * Get the previous and next object.
-     * 
+     *
      * @param  string $type story|task|bug|case
-     * @param  string $objectID 
+     * @param  string $objectID
      * @access public
      * @return void
      */
@@ -910,7 +922,6 @@ class commonModel extends model
         $queryCondition = $this->session->$queryCondition;
         $orderBy = $type . 'OrderBy';
         $orderBy = $this->session->$orderBy;
-        $orderBy = str_replace('`left`', 'left', $orderBy); // process the `left` to left.
 
         if(empty($queryCondition) or $this->session->$typeOnlyCondition)
         {
@@ -954,9 +965,9 @@ class commonModel extends model
 
     /**
      * Save one executed query.
-     * 
-     * @param  string    $sql 
-     * @param  string    $objectType story|task|bug|testcase 
+     *
+     * @param  string    $sql
+     * @param  string    $objectType story|task|bug|testcase
      * @access public
      * @return void
      */
@@ -998,10 +1009,10 @@ class commonModel extends model
 
     /**
      * Remove duplicate for story, task, bug, case, doc.
-     * 
+     *
      * @param  string       $type  e.g. story task bug case doc.
-     * @param  array|object $data 
-     * @param  string       $condition 
+     * @param  array|object $data
+     * @param  string       $condition
      * @access public
      * @return array
      */
@@ -1035,9 +1046,9 @@ class commonModel extends model
 
     /**
      * Append order by.
-     * 
-     * @param  string $orderBy 
-     * @param  string $append 
+     *
+     * @param  string $orderBy
+     * @param  string $append
      * @access public
      * @return string
      */
@@ -1050,9 +1061,9 @@ class commonModel extends model
 
     /**
      * Check field exists
-     * 
-     * @param  string    $table 
-     * @param  string    $field 
+     *
+     * @param  string    $table
+     * @param  string    $field
      * @access public
      * @return bool
      */
@@ -1073,7 +1084,7 @@ class commonModel extends model
 
     /**
      * Check upgrade's status file is ok or not.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -1094,7 +1105,7 @@ class commonModel extends model
 
     /**
      * Check the user has permission to access this method, if not, locate to the login page or deny page.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -1150,6 +1161,7 @@ class commonModel extends model
             if($menu == 'my' or $menu == 'index' or $module == 'tree') return true;
             if($module == 'company' and $method == 'dynamic') return true;
             if($module == 'action' and $method == 'editcomment') return true;
+            if($module == 'action' and $method == 'comment') return true;
             if(!isset($acls['views'][$menu])) return false;
 
             return true;
@@ -1159,11 +1171,11 @@ class commonModel extends model
     }
 
     /**
-     * Check db priv. 
-     * 
-     * @param  object $object 
-     * @param  string $module 
-     * @param  string $method 
+     * Check db priv.
+     *
+     * @param  object $object
+     * @param  string $module
+     * @param  string $method
      * @static
      * @access public
      * @return void
@@ -1179,7 +1191,7 @@ class commonModel extends model
         // limited project
         $limitedProject = false;
         if(!empty($module) && $module == 'task' && !empty($object->project) or
-           !empty($module) && $module == 'project' && !empty($object->id))
+            !empty($module) && $module == 'project' && !empty($object->id))
         {
             $objectID = '';
             if(!empty($object->id)) $objectID = $object->id;
@@ -1199,14 +1211,14 @@ class commonModel extends model
         if(is_null($object)) return true;
 
         if(!empty($object->openedBy)     && $object->openedBy     == $app->user->account or
-           !empty($object->addedBy)      && $object->addedBy      == $app->user->account or
-           !empty($object->assignedTo)   && $object->assignedTo   == $app->user->account or
-           !empty($object->finishedBy)   && $object->finishedBy   == $app->user->account or
-           !empty($object->canceledBy)   && $object->canceledBy   == $app->user->account or
-           !empty($object->closedBy)     && $object->closedBy     == $app->user->account or
-           !empty($object->lastEditedBy) && $object->lastEditedBy == $app->user->account)
+            !empty($object->addedBy)      && $object->addedBy      == $app->user->account or
+            !empty($object->assignedTo)   && $object->assignedTo   == $app->user->account or
+            !empty($object->finishedBy)   && $object->finishedBy   == $app->user->account or
+            !empty($object->canceledBy)   && $object->canceledBy   == $app->user->account or
+            !empty($object->closedBy)     && $object->closedBy     == $app->user->account or
+            !empty($object->lastEditedBy) && $object->lastEditedBy == $app->user->account)
         {
-           return true;
+            return true;
         }
 
         return false;
@@ -1261,7 +1273,7 @@ class commonModel extends model
      * we used %s as placeholder. These %s should be setted in one module.
      *
      * The items of one module's menu may be an string or array. For example, please see module/common/lang.
-     * 
+     *
      * @param  string $object     the menus of one module
      * @param  string $key        the menu item to be replaced
      * @param  string $params     the params passed to the menu item
@@ -1280,7 +1292,7 @@ class commonModel extends model
                 $menu->$key->link = vsprintf($menu->$key->link, $params);
                 $menu->$key = (array)$menu->$key;
             }
-            else 
+            else
             {
                 $menu->$key = vsprintf($menu->$key, $params);
             }
@@ -1302,7 +1314,7 @@ class commonModel extends model
 
     /**
      * Get the full url of the system.
-     * 
+     *
      * @access public
      * @return string
      */
@@ -1325,8 +1337,8 @@ class commonModel extends model
 
     /**
      * Convert items to Pinyin.
-     * 
-     * @param  array    $items 
+     *
+     * @param  array    $items
      * @static
      * @access public
      * @return array
@@ -1367,38 +1379,43 @@ class commonModel extends model
     }
 
     /**
-     * Check an entry. 
-     * 
+     * Check an entry.
+     *
      * @access public
      * @return void
      */
     public function checkEntry()
     {
+        $this->loadModel('entry');
+
         if($this->session->valid_entry)
         {
-            if(!$this->session->entry_code) $this->response(SESSION_CODE_MISSING);
-            if($this->session->valid_entry != md5(md5($this->get->code) . $this->server->remote_addr)) $this->response(SESSION_VERIFY_FAILED);
+            if(!$this->session->entry_code) $this->response('SESSION_CODE_MISSING');
+            if($this->session->valid_entry != md5(md5($this->get->code) . $this->server->remote_addr)) $this->response('SESSION_VERIFY_FAILED');
             return true;
         }
 
-        if(!$this->get->code)  $this->response(PARAM_CODE_MISSING);
-        if(!$this->get->token) $this->response(PARAM_TOKEN_MISSING);
+        if(!$this->get->code)  $this->response('PARAM_CODE_MISSING');
+        if(!$this->get->token) $this->response('PARAM_TOKEN_MISSING');
 
-        $entry = $this->loadModel('entry')->getByCode($this->get->code);
-        if(!$entry)                              $this->response(INVALID_ENTRY);
-        if(!$entry->key)                         $this->response(EMPTY_KEY);
-        if(!$this->checkIP($entry->ip))          $this->response(IP_DENIED);
-        if(!$this->checkEntryToken($entry->key)) $this->response(INVALID_TOKEN);
+        $entry = $this->entry->getByCode($this->get->code);
+        if(!$entry)                              $this->response('EMPTY_ENTRY');
+        if(!$entry->key)                         $this->response('EMPTY_KEY');
+        if(!$this->checkIP($entry->ip))          $this->response('IP_DENIED');
+        if(!$this->checkEntryToken($entry->key)) $this->response('INVALID_TOKEN');
 
         $this->session->set('ENTRY_CODE', $this->get->code);
         $this->session->set('VALID_ENTRY', md5(md5($this->get->code) . $this->server->remote_addr));
         $this->loadModel('entry')->saveLog($entry->id, $this->server->request_uri);
+
+        unset($_GET['code']);
+        unset($_GET['token']);
     }
 
     /**
-     * Check token of an entry. 
-     * 
-     * @param  string $key 
+     * Check token of an entry.
+     *
+     * @param  string $key
      * @access public
      * @return void
      */
@@ -1411,19 +1428,71 @@ class commonModel extends model
     }
 
     /**
-     * Response. 
-     * 
-     * @param  int    $code 
+     * Response.
+     *
+     * @param  string $code
      * @access public
      * @return void
      */
     public function response($code)
     {
         $response = new stdclass();
-        $response->errcode = $code;
-        $response->errmsg  = $this->lang->error->entry[$code];
+        $response->errcode = $this->config->entry->errcode[$code];
+        $response->errmsg  = $this->lang->entry->errmsg[$code];
 
         die(helper::jsonEncode($response));
+    }
+
+    /**
+     * Http.
+     *
+     * @param  string       $url
+     * @param  string|array $data
+     * @static
+     * @access public
+     * @return string
+     */
+    public static function http($url, $data = null)
+    {
+        global $lang, $app;
+        if(!extension_loaded('curl')) return json_encode(array('result' => 'fail', 'message' => $lang->error->noCurlExt));
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'Sae T OAuth2 v0.1');
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_ENCODING, "");
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_HEADER, FALSE);
+
+        $headers[] = "API-RemoteIP: " . $_SERVER['REMOTE_ADDR'];
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt($curl, CURLINFO_HEADER_OUT, TRUE);
+        if(!empty($data))
+        {
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        }
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $logFile = $app->getLogRoot() . 'saas.'. date('Ymd') . '.log.php';
+        if(!file_exists($logFile)) file_put_contents($logFile, '<?php die(); ?' . '>');
+
+        $fh = @fopen($logFile, 'a');
+        if($fh)
+        {
+            fwrite($fh, date('Ymd H:i:s') . ": " . $app->getURI() . "\n");
+            fwrite($fh, "url:    " . $url . "\n");
+            fwrite($fh, "results:" . print_r($response, true) . "\n");
+            fclose($fh);
+        }
+
+        return $response;
     }
 }
 

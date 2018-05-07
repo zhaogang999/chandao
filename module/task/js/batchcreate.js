@@ -13,7 +13,7 @@ function setStories(moduleID, projectID, num)
         var storyID = $('#story' + num).val();
         if(!stories) stories = '<select id="story' + num + '" name="story[' + num + ']" class="form-control"></select>';
         $('#story' + num).replaceWith(stories);
-        if(moduleID == 0) $('#story' + num).append("<option value='ditto'>" + ditto + "</option>");
+        if(moduleID == 0 || moduleID == 'ditto') $('#story' + num).append("<option value='ditto'>" + ditto + "</option>");
         $('#story' + num).val(storyID);
         if($('#zeroTaskStory').hasClass('zeroTask'))
         {
@@ -153,5 +153,28 @@ $(function()
     if($.cookie('zeroTask') == 'true') toggleZeroTaskStory();
 
     if(storyID != 0) setStoryRelated(0);
-})
 
+    $(document).keydown(function(event)
+    {
+        if(event.ctrlKey && event.keyCode == 38)
+        {
+            event.stopPropagation();
+            event.preventDefault();
+            selectFocusJump('up');
+        }
+        else if(event.ctrlKey && event.keyCode == 40)
+        {
+            event.stopPropagation();
+            event.preventDefault();
+            selectFocusJump('down');
+        }
+        else if(event.keyCode == 38)
+        {
+            inputFocusJump('up');
+        }
+        else if(event.keyCode == 40)
+        {
+            inputFocusJump('down');
+        }
+    });
+});

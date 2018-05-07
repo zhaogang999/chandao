@@ -13,7 +13,7 @@ $config->story->edit   = new stdclass();
 $config->story->change = new stdclass();
 $config->story->close  = new stdclass();
 $config->story->review = new stdclass();
-$config->story->create->requiredFields = 'title';
+$config->story->create->requiredFields = 'title,module';
 $config->story->change->requiredFields = 'title';
 $config->story->close->requiredFields  = 'closedReason';
 $config->story->review->requiredFields = 'assignedTo,reviewedBy';
@@ -38,8 +38,8 @@ $config->story->list->exportFields      = '
     childStories, linkStories, duplicateStory, files';
 
 $config->story->list->customCreateFields      = 'source,verify,pri,estimate,mailto,keywords';
-$config->story->list->customBatchCreateFields = 'module,plan,spec,source,verify,pri,estimate,review,keywords';
-$config->story->list->customBatchEditFields   = 'branch,module,plan,estimate,pri,assignedTo,source,stage,closedBy,closedReason,keywords';
+$config->story->list->customBatchCreateFields = 'plan,spec,source,verify,pri,estimate,review,keywords';
+$config->story->list->customBatchEditFields   = 'branch,plan,estimate,pri,assignedTo,source,stage,closedBy,closedReason,keywords';
 
 $config->story->custom = new stdclass();
 $config->story->custom->createFields      = $config->story->list->customCreateFields;
@@ -51,7 +51,7 @@ $config->story->datatable->defaultField = array('id', 'pri', 'title', 'plan', 'o
 
 $config->story->datatable->fieldList['id']['title']    = 'idAB';
 $config->story->datatable->fieldList['id']['fixed']    = 'left';
-$config->story->datatable->fieldList['id']['width']    = '70';
+$config->story->datatable->fieldList['id']['width']    = '60';
 $config->story->datatable->fieldList['id']['required'] = 'yes';
 
 $config->story->datatable->fieldList['pri']['title']    = 'priAB';
@@ -91,12 +91,12 @@ $config->story->datatable->fieldList['sourceNote']['required'] = 'no';
 
 $config->story->datatable->fieldList['status']['title']    = 'statusAB';
 $config->story->datatable->fieldList['status']['fixed']    = 'no';
-$config->story->datatable->fieldList['status']['width']    = '50';
+$config->story->datatable->fieldList['status']['width']    = '60';
 $config->story->datatable->fieldList['status']['required'] = 'no';
 
 $config->story->datatable->fieldList['estimate']['title']    = 'estimateAB';
 $config->story->datatable->fieldList['estimate']['fixed']    = 'no';
-$config->story->datatable->fieldList['estimate']['width']    = '50';
+$config->story->datatable->fieldList['estimate']['width']    = '55';
 $config->story->datatable->fieldList['estimate']['required'] = 'no';
 
 $config->story->datatable->fieldList['stage']['title']    = 'stageAB';
