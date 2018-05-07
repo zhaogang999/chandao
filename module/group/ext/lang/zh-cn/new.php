@@ -19,6 +19,7 @@ $lang->resource->report->scriptTask = 'scriptTask';
 $lang->resource->report->viewScript = 'viewScript';
 $lang->resource->report->dailyBugStatistics = 'dailyBugStatistics';
 $lang->resource->custom->loginDefaultPage   = 'loginDefaultPage';
+$lang->resource->custom->customStoryCollectPool = 'customStoryCollectPool';
 
 /* patchbuild. */
 $lang->moduleOrder[200] = 'patchBuild';
@@ -112,4 +113,4 @@ $lang->riskmanage->methodOrder[30] = 'close';
 $lang->riskmanage->methodOrder[35] = 'batchClose';
 
 $lang->resource->story->switchStoryLock = 'switchStoryLock';
-$lang->resource->task->batchEditDeadlineDate = 'batchEditDate';
+$lang->resource->task->batchEditDate = 'batchEditDate';

@@ -163,7 +163,7 @@ public function getBySearch($productID, $queryID, $orderBy, $pager = null, $bran
 
     $bugs = $this->dao->select('*')->from(TABLE_BUG)->where($bugQuery)
         ->andWhere('deleted')->eq(0)
-        ->beginIF($status != '')->andWhere('status')->in($status)->fi()
+        //->beginIF($status != '')->andWhere('status')->in($status)->fi() //取消bug状态限制
         ->orderBy($orderBy)->page($pager)->fetchAll();
     return $bugs;
 }/**
