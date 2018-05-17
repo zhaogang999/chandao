@@ -56,6 +56,7 @@ public function storyReviewSummary()
                 $freeReviewedStories[$storyID] = new stdClass();
                 $freeReviewedStories[$storyID]->id = $storyID;
                 $freeReviewedStories[$storyID]->version = $story->version;
+                $freeReviewedStories[$storyID]->verifyStatus = $story->verifyStatus;
 
                 if ($story->testDate == '0000-00-00')
                 {
@@ -73,6 +74,7 @@ public function storyReviewSummary()
                 $hasReviewedStories[$storyID] = new stdClass();
                 $hasReviewedStories[$storyID]->id = $storyID;
                 $hasReviewedStories[$storyID]->version = $story->version;
+                $hasReviewedStories[$storyID]->verifyStatus = $story->verifyStatus;
 
                 if ($story->testDate != '0000-00-00')
                 {

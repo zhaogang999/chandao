@@ -28,6 +28,7 @@ public function batchClose()
         $story->assignedTo     = 'closed';
         $story->assignedDate   = $now;
         $story->status         = 'closed';
+        $story->stage          = 'closed';
 
         $story->closedReason   = $data->closedReasons[$storyID];
         $story->duplicateStory = $data->duplicateStoryIDList[$storyID] ? $data->duplicateStoryIDList[$storyID] : $oldStory->duplicateStory;

@@ -227,6 +227,11 @@ class task extends control
 
         if($taskID) $this->view->parentTitle = $this->dao->select('name')->from(TABLE_TASK)->where('id')->eq($taskID)->fetch('name');
 
+        //创建子任务时子任务优先级继承父任务
+        if ($taskID != 0)
+        {
+            $this->view->parentTask = $this->task->getByID($taskID);
+        }
         $this->view->title      = $title;
         $this->view->position   = $position;
         $this->view->project    = $project;

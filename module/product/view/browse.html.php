@@ -310,6 +310,48 @@
                 {
                     echo '<li>' . html::a('javascript:;', $lang->story->assignedTo, '', $class) . '</li>';
                 }
+                //3286 创建需求时就可以选择关联需求，并且支持相关需求处显示“无”
+                if(common::hasPriv('story', 'batchChangeIfLinkStories'))
+                {
+                    echo "<li class='dropdown-submenu'>";
+                    echo html::a('javascript:;', $lang->story->ifLinkStories, '', "id='ifLinkStoriesItem'");
+                    echo "<ul class='dropdown-menu'>";
+                    $lang->story->ifLinkStoriesList[''] = $lang->null;
+                    foreach($lang->story->ifLinkStoriesList as $key => $status)
+                    {
+                        $actionLink = $this->createLink('story', 'batchChangeIfLinkStories', "status=$key");
+                        echo "<li>" . html::a('#', $status, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . "</li>";
+                    }
+                    echo '</ul></li>';
+                }
+                //4632 将需求提测状态，验收状态在产品-需求下和进度预警中都显示，可以进行批量编辑
+                if(common::hasPriv('story', 'batchChangeTestStatus'))
+                {
+                    echo "<li class='dropdown-submenu'>";
+                    echo html::a('javascript:;', $lang->story->testStatus, '', "id='testStatusItem'");
+                    echo "<ul class='dropdown-menu'>";
+                    unset($lang->story->testStatusList['']);
+                    foreach($lang->story->testStatusList as $key => $result)
+                    {
+                        $actionLink = $this->createLink('story', 'batchChangeTestStatus', "result=$key");
+                        echo '<li>' . html::a('#', $result, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . '</li>';
+                    }
+                    echo '</ul></li>';
+                }
+                if(common::hasPriv('story', 'batchChangeVerifyStatus'))
+                {
+                    echo "<li class='dropdown-submenu'>";
+                    echo html::a('javascript:;', $lang->story->verifyStatus, '', "id='verifyStatusItem'");
+                    echo "<ul class='dropdown-menu'>";
+                    unset($lang->story->verifyStatusList['']);
+                    foreach($lang->story->verifyStatusList as $key => $result)
+                    {
+                        $actionLink = $this->createLink('story', 'batchChangeVerifyStatus', "result=$key");
+                        echo '<li>' . html::a('#', $result, '', "onclick=\"setFormAction('$actionLink','hiddenwin')\"") . '</li>';
+                    }
+                    echo '</ul></li>';
+                }
+
                 ?>
               </ul>
             </div>

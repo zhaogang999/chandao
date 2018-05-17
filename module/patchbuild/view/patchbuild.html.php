@@ -48,6 +48,7 @@
       <th class='w-date'><?php common::printOrderLink('patchDate', $orderBy, $vars, $lang->patchbuild->patchDate);?></th>
       <?php if ($from == 'qa'):?>
       <th class='w-user'><?php common::printOrderLink('assignedTo', $orderBy, $vars, $lang->patchbuild->assignedTo);?></th>
+      <th class='w-id'><?php common::printOrderLink('versionDeploy', $orderBy, $vars, $lang->patchbuild->versionDeploy);?></th>
       <th class='w-id'><?php common::printOrderLink('testPass', $orderBy, $vars, $lang->patchbuild->testPass);?></th>
       <th class='w-id'><?php common::printOrderLink('testEnv', $orderBy, $vars, $lang->patchbuild->testEnv);?></th>
       <?php endif;?>
@@ -70,6 +71,7 @@
     <td><?php echo $build->patchDate?></td>
     <?php if ($from == 'qa'):?>
     <td><?php echo $users[$build->assignedTo]?></td>
+    <td><?php echo !empty($build->versionDeploy) ? $lang->patchbuild->versionDeployList[$build->versionDeploy] : '';?></td>
     <td title='<?php echo strip_tags($build->testComment);?>'><?php echo $lang->patchbuild->testPassList[$build->testPass]; ?></td>
     <td title='<?php echo strip_tags($build->testEnvComment)?>'><?php echo $lang->patchbuild->testEnvList[$build->testEnv]; ?></td>
     <?php endif;?>
@@ -89,7 +91,7 @@
   </tr>
   <?php endforeach;?>
   </tbody>
-  <tfoot><tr><td colspan='<?php echo $from == 'qa' ? 14 : 11;?>'><?php $pager->show();?></td></tr></tfoot>
+  <tfoot><tr><td colspan='<?php echo $from == 'qa' ? 15 : 11;?>'><?php $pager->show();?></td></tr></tfoot>
 </table>
 <script language="JavaScript">
   $(function()

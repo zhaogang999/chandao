@@ -48,6 +48,7 @@ $lang->patchbuild->workSeason    = '目标环境';
 $lang->patchbuild->linkStories   = '相关需求';
 $lang->patchbuild->linkBugs      = '相关bug';
 $lang->patchbuild->linkStoriesAndBugs = '相关需求及bug';
+$lang->patchbuild->versionDeploy = '版本部署';
 
 $lang->patchbuild->workSeasonList['']    = '';
 $lang->patchbuild->workSeasonList['1']   = '17冬';
@@ -111,6 +112,9 @@ $lang->patchbuild->testEnvList['released']          = '已发布';
 $lang->patchbuild->testEnvList['notReleased']       = '不予发布';
 $lang->patchbuild->testEnvList['partialReleased']   = '部分发布';
 $lang->patchbuild->testEnvList['emergencyReleased'] = '已紧急发布';
+
+$lang->patchbuild->versionDeployList['']    = '';
+$lang->patchbuild->versionDeployList['yes'] = '是';
 
 $lang->patchbuild->linkStoriesList[''] = '';
 $lang->patchbuild->linkBugsList['']    = '';

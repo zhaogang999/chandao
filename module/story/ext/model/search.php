@@ -86,14 +86,17 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
         ->beginIF($productID != 'all' and $productID != '')->andWhere('product')->eq((int)$productID)->fi()
         ->fetchPairs();
 
-    $tmpStories = $this->dao->select('*')->from(TABLE_STORY)->where($sql)
+    $sql = str_replace(array('`product`', '`version`'), array('t1.`product`', 't1.`version`'), $sql);
+    $tmpStories = $this->dao->select('DISTINCT t1.*')->from(TABLE_STORY)->alias('t1')
+        ->leftJoin(TABLE_PROJECTSTORY)->alias('t2')->on('t1.id=t2.story')
+        ->where($sql)
         //跨产品需求搜索无法搜到结果；
         ->beginIF($productID != 'all' and strpos($sql, "`product` =") === false)->andWhere('product')->eq((int)$productID)->fi()
         // ->beginIF($productID != 'all' and $productID != '')->andWhere('product')->eq((int)$productID)->fi()
 
         ->andWhere('deleted')->eq(0)
         ->orderBy($orderBy)
-        ->page($pager)
+        ->page($pager, 't1.id')
         ->fetchAll('id');
 
     if(!$tmpStories) return array();

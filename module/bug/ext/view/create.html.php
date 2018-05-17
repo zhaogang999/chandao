@@ -33,7 +33,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
     </div>
   </div>
   <form class='form-condensed' method='post' enctype='multipart/form-data' id='dataform' data-type='ajax'>
-    <table class='table table-form'>
+    <table class='table table-form'> 
       <tr>
         <th class='w-110px'><?php echo $lang->bug->product;?></th>
         <td class='w-p45-f'>
@@ -44,16 +44,16 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
         </td>
         <td>
           <div class='input-group' id='moduleIdBox'>
-            <span class="input-group-addon"><?php echo $lang->bug->module?></span>
+            <span class="input-group-addon w-90px"><?php echo $lang->bug->module?></span>
             <?php
             echo html::select('module', $moduleOptionMenu, $moduleID, "onchange='loadModuleRelated()' class='form-control chosen'");
             if(count($moduleOptionMenu) == 1)
             {
-              echo "<span class='input-group-addon'>";
-              echo html::a($this->createLink('tree', 'browse', "rootID=$productID&view=bug&currentModuleID=0&branch=$branch"), $lang->tree->manage, '_blank');
-              echo '&nbsp; ';
-              echo html::a("javascript:loadProductModules($productID)", $lang->refresh);
-              echo '</span>';
+                echo "<span class='input-group-addon'>";
+                echo html::a($this->createLink('tree', 'browse', "rootID=$productID&view=bug&currentModuleID=0&branch=$branch"), $lang->tree->manage, '_blank');
+                echo '&nbsp; ';
+                echo html::a("javascript:loadProductModules($productID)", $lang->refresh);
+                echo '</span>';
             }
             ?>
           </div>
@@ -65,34 +65,34 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
         <th><?php echo ($showProject) ? $lang->bug->project : $lang->bug->type;?></th>
 
         <?php if(!$showProject):?>
-          <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
-          <?php $showBrowser = strpos(",$showFields,", ',browser,') !== false;?>
-          <td>
-            <div class='input-group' id='bugTypeInputGroup'>
-              <?php
-              /* Remove the unused types. */
-              unset($lang->bug->typeList['designchange']);
-              unset($lang->bug->typeList['newfeature']);
-              unset($lang->bug->typeList['trackthings']);
-              echo html::select('type', $lang->bug->typeList, $type, "class='form-control'");
-              ?>
-              <?php if($showOS):?>
-                <span class='input-group-addon fix-border'><?php echo $lang->bug->os?></span>
-                <?php echo html::select('os', $lang->bug->osList, $os, "class='form-control'");?>
-              <?php endif;?>
-              <?php if($showBrowser):?>
-                <span class='input-group-addon fix-border'><?php echo $lang->bug->browser?></span>
-                <?php echo html::select('browser', $lang->bug->browserList, $browser, "class='form-control'");?>
-              <?php endif;?>
-            </div>
-          </td>
+        <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
+        <?php $showBrowser = strpos(",$showFields,", ',browser,') !== false;?>
+        <td>
+          <div class='input-group' id='bugTypeInputGroup'>
+            <?php
+            /* Remove the unused types. */
+            unset($lang->bug->typeList['designchange']);
+            unset($lang->bug->typeList['newfeature']);
+            unset($lang->bug->typeList['trackthings']);
+            echo html::select('type', $lang->bug->typeList, $type, "class='form-control' style='width:140px'");
+            ?>
+            <?php if($showOS):?>
+            <span class='input-group-addon fix-border'><?php echo $lang->bug->os?></span>
+            <?php echo html::select('os', $lang->bug->osList, $os, "class='form-control chosen'");?>
+            <?php endif;?>
+            <?php if($showBrowser):?>
+            <span class='input-group-addon fix-border'><?php echo $lang->bug->browser?></span>
+            <?php echo html::select('browser', $lang->bug->browserList, $browser, "class='form-control chosen'");?>
+            <?php endif;?>
+          </div>
+        </td>
         <?php endif;?>
         <?php if($showProject):?>
-          <td><span id='projectIdBox'><?php echo html::select('project', $projects, $projectID, "class='form-control chosen' onchange='loadProjectRelated(this.value)' autocomplete='off'");?></span></td>
+        <td><span id='projectIdBox'><?php echo html::select('project', $projects, $projectID, "class='form-control chosen' onchange='loadProjectRelated(this.value)' autocomplete='off'");?></span></td>
         <?php endif;?>
         <td>
           <div class='input-group'>
-            <span class='input-group-addon'><?php echo $lang->bug->openedBuild?></span>
+            <span class='input-group-addon w-90px'><?php echo $lang->bug->openedBuild?></span>
             <span id='buildBox'><?php echo html::select('openedBuild[]', $builds, $buildID, "size=4 multiple=multiple class='chosen form-control'");?></span>
             <span class='input-group-addon fix-border' id='buildBoxActions'></span>
             <span class='input-group-btn'><?php echo html::commonButton($lang->bug->allBuilds, "class='btn btn-default' data-toggle='tooltip' onclick='loadAllBuilds()'")?></span>
@@ -108,34 +108,35 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
 
             <!--2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索-->
             <span class='input-group-addon fix-border'><?php echo $lang->bug->discoveryPhase;?></span>
-            <?php echo html::select('discoveryPhase', $lang->bug->discoveryPhaseList, '', "class='form-control'");?>
+            <?php echo html::select('discoveryPhase', $lang->bug->discoveryPhaseList, '', "class='form-control chosen'");?>
 
           </div>
         </td>
         <?php if($this->config->global->flow != 'onlyTest' && $showProject):?>
-        <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
-        <?php $showBrowser = strpos(",$showFields,", ',browser,') !== false;?>
-        <td>
-          <div class='input-group' id='bugTypeInputGroup'>
-            <span class='input-group-addon'><?php echo $lang->bug->type?></span>
-            <?php
-            /* Remove the unused types. */
-            unset($lang->bug->typeList['designchange']);
-            unset($lang->bug->typeList['newfeature']);
-            unset($lang->bug->typeList['trackthings']);
-            echo html::select('type', $lang->bug->typeList, '', "class='form-control'");
-            ?>
-            <?php if($showOS):?>
-              <span class='input-group-addon fix-border'><?php echo $lang->bug->os?></span>
-              <?php echo html::select('os', $lang->bug->osList, $os, "class='form-control'");?>
-            <?php endif;?>
-            <?php if($showBrowser):?>
-              <span class='input-group-addon fix-border'><?php echo $lang->bug->browser?></span>
-              <?php echo html::select('browser', $lang->bug->browserList, $browser, "class='form-control'");?>
-            <?php endif;?>
-          </div>
-        </td>
-      <?php endif;?>
+          <?php $showOS      = strpos(",$showFields,", ',os,')      !== false;?>
+          <?php $showBrowser = strpos(",$showFields,", ',browser,') !== false;?>
+          <td>
+            <div class='input-group' id='bugTypeInputGroup'>
+              <span class='input-group-addon'><?php echo $lang->bug->type?></span>
+              <?php
+              /* Remove the unused types. */
+              unset($lang->bug->typeList['designchange']);
+              unset($lang->bug->typeList['newfeature']);
+              unset($lang->bug->typeList['trackthings']);
+              echo html::select('type', $lang->bug->typeList, '', "class='form-control' style='width:140px'");
+              ?>
+              <?php if($showOS):?>
+                <span class='input-group-addon fix-border'><?php echo $lang->bug->os?></span>
+                <?php echo html::select('os', $lang->bug->osList, $os, "class='form-control chosen'");?>
+              <?php endif;?>
+              <?php if($showBrowser):?>
+                <span class='input-group-addon fix-border'><?php echo $lang->bug->browser?></span>
+                <?php echo html::select('browser', $lang->bug->browserList, $browser, "class='form-control chosen'");?>
+              <?php endif;?>
+            </div>
+          </td>
+        <?php endif;?>
+      </tr>
       <tr>
         <th><?php echo $lang->bug->title;?></th>
         <td colspan='2'>
@@ -149,61 +150,61 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
             <?php $showSeverity = strpos(",$showFields,", ',severity,') !== false;?>
             <?php $showPri      = strpos(",$showFields,", ',pri,')      !== false;?>
             <?php if($showSeverity or $showPri):?>
-              <?php $widthClass = (!$showSeverity or !$showPri) ? 'w-100px' : 'w-230px';?>
-              <div class='col-table <?php echo $widthClass?>'>
-                <div class='input-group'>
-                  <?php if($showSeverity):?>
-                    <span class='input-group-addon fix-border br-0'><?php echo $lang->bug->severity;?></span>
-                    <?php
-                    $hasCustomSeverity = false;
-                    foreach($lang->bug->severityList as $severityKey => $severityValue)
+            <?php $widthClass = (!$showSeverity or !$showPri) ? 'w-100px' : 'w-230px';?>
+            <div class='col-table <?php echo $widthClass?>'>
+              <div class='input-group'>
+                <?php if($showSeverity):?>
+                <span class='input-group-addon fix-border br-0'><?php echo $lang->bug->severity;?></span>
+                <?php
+                $hasCustomSeverity = false;
+                foreach($lang->bug->severityList as $severityKey => $severityValue)
+                {
+                    if(!empty($severityKey) and (string)$severityKey != (string)$severityValue)
                     {
-                      if($severityKey != $severityValue)
-                      {
                         $hasCustomSeverity = true;
                         break;
-                      }
                     }
-                    ?>
-                    <?php if($hasCustomSeverity):?>
-                      <?php echo html::select('severity', (array)$lang->bug->severityList, $severity, "class='form-control minw-80px'");?>
-                    <?php else: ?>
-                      <div class='input-group-btn dropdown-pris' data-prefix='severity'>
-                        <button type='button' class='btn dropdown-toggle br-0' data-toggle='dropdown'>
-                          <span class='pri-text'></span> &nbsp;<span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu pull-right'></ul>
-                        <?php echo html::select('severity', (array)$lang->bug->severityList, $severity, "class='hide'");?>
-                      </div>
-                    <?php endif; ?>
-                  <?php endif;?>
-                  <?php if($showPri):?>
-                    <span class='input-group-addon fix-border br-0'><?php echo $lang->bug->pri;?></span>
-                    <?php
-                    $hasCustomPri = false;
-                    foreach($lang->bug->priList as $priKey => $priValue)
+                }
+                ?>
+                <?php if($hasCustomSeverity):?>
+                <?php echo html::select('severity', (array)$lang->bug->severityList, $severity, "class='form-control minw-80px chosen'");?> 
+                <?php else: ?>
+                <div class='input-group-btn dropdown-pris' data-prefix='severity'>
+                  <button type='button' class='btn dropdown-toggle br-0' data-toggle='dropdown'>
+                    <span class='pri-text'></span> &nbsp;<span class='caret'></span>
+                  </button>
+                  <ul class='dropdown-menu pull-right'></ul>
+                  <?php echo html::select('severity', (array)$lang->bug->severityList, $severity, "class='hide'");?>
+                </div>
+                <?php endif; ?>
+                <?php endif;?>
+                <?php if($showPri):?>
+                <span class='input-group-addon fix-border br-0'><?php echo $lang->bug->pri;?></span>
+                <?php
+                $hasCustomPri = false;
+                foreach($lang->bug->priList as $priKey => $priValue)
+                {
+                    if(!empty($priKey) and (string)$priKey != (string)$priValue)
                     {
-                      if($priKey != $priValue)
-                      {
                         $hasCustomPri = true;
                         break;
-                      }
                     }
-                    ?>
-                    <?php if($hasCustomPri):?>
-                      <?php echo html::select('pri', (array)$lang->bug->priList, $pri, "class='form-control minw-80px'");?>
-                    <?php else: ?>
-                      <div class='input-group-btn dropdown-pris'>
-                        <button type='button' class='btn dropdown-toggle br-0' data-toggle='dropdown'>
-                          <span class='pri-text'></span> &nbsp;<span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu pull-right'></ul>
-                        <?php echo html::select('pri', $lang->bug->priList, $pri, "class='hide'");?>
-                      </div>
-                    <?php endif;?>
-                  <?php endif;?>
+                }
+                ?>
+                <?php if($hasCustomPri):?>
+                <?php echo html::select('pri', (array)$lang->bug->priList, $pri, "class='form-control minw-80px chosen'");?> 
+                <?php else: ?>
+                <div class='input-group-btn dropdown-pris'>
+                  <button type='button' class='btn dropdown-toggle br-0' data-toggle='dropdown'>
+                    <span class='pri-text'></span> &nbsp;<span class='caret'></span>
+                  </button>
+                  <ul class='dropdown-menu pull-right'></ul>
+                  <?php echo html::select('pri', $lang->bug->priList, $pri, "class='hide'");?>
                 </div>
+                <?php endif;?>
+                <?php endif;?>
               </div>
+            </div>
             <?php endif;?>
           </div>
         </td>
@@ -230,54 +231,54 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
       $showTask  = strpos(",$showFields,", ',task,')  !== false;
       ?>
       <?php if(($showStory or $showTask) and $this->config->global->flow != 'onlyTest'):?>
-        <tr>
-          <th><?php echo ($showStory) ? $lang->bug->story : $lang->bug->task;?></th>
-          <?php if($showStory):?>
-            <td>
-              <span id='storyIdBox'><?php echo html::select('story', empty($stories) ? '' : $stories, $storyID, "class='form-control chosen'");?></span>
-            </td>
-          <?php endif;?>
-          <?php if($showTask):?>
-            <td>
-              <div class='input-group'>
-                <?php if($showStory):?>
-                  <span class='input-group-addon'><?php echo $lang->bug->task?></span>
-                <?php endif;?>
-                <span id='taskIdBox'> <?php echo html::select('task', '', $taskID, "class='form-control chosen'") . html::hidden('oldTaskID', $taskID);?></span>
-              </div>
-            </td>
-          <?php endif;?>
-        </tr>
+      <tr>
+        <th><?php echo ($showStory) ? $lang->bug->story : $lang->bug->task;?></th>
+        <?php if($showStory):?>
+        <td>
+          <span id='storyIdBox'><?php echo html::select('story', empty($stories) ? '' : $stories, $storyID, "class='form-control chosen'");?></span>
+        </td>
+        <?php endif;?>
+        <?php if($showTask):?>
+        <td>
+          <div class='input-group'>
+            <?php if($showStory):?>
+            <span class='input-group-addon w-90px'><?php echo $lang->bug->task?></span>
+            <?php endif;?>
+            <span id='taskIdBox'> <?php echo html::select('task', '', $taskID, "class='form-control chosen' style='width:650px;'") . html::hidden('oldTaskID', $taskID);?></span>
+          </div>
+        </td>
+        <?php endif;?>
+      </tr>
       <?php endif;?>
       <?php
       $showMailto   = strpos(",$showFields,", ',mailto,')   !== false;
       $showKeywords = strpos(",$showFields,", ',keywords,') !== false;
       ?>
       <?php if($showMailto or $showKeywords):?>
-        <?php $colspan = ($showMailto and $showKeywords) ? '' : "colspan='2'";?>
-        <tr>
-          <th><?php echo ($showMailto) ? $lang->bug->lblMailto : $lang->bug->keywords;?></th>
-          <?php if($showMailto):?>
-            <td>
-              <div class='input-group' id='contactListGroup'>
-                <?php
-                echo html::select('mailto[]', $users, str_replace(' ', '', $mailto), "class='form-control chosen' multiple");
-                echo $this->fetch('my', 'buildContactLists');
-                ?>
-              </div>
-            </td>
-          <?php endif;?>
-          <?php if($showKeywords):?>
-            <td <?php echo $colspan?>>
-              <div class='input-group'>
-                <?php if($showMailto):?>
-                  <span class='input-group-addon' id='keywordsAddonLabel'><?php echo $lang->bug->keywords;?></span>
-                <?php endif;?>
-                <?php echo html::input('keywords', $keywords, "class='form-control'");?>
-              </div>
-            </td>
-          <?php endif;?>
-        </tr>
+      <?php $colspan = ($showMailto and $showKeywords) ? '' : "colspan='2'";?>
+      <tr>
+        <th><?php echo ($showMailto) ? $lang->bug->lblMailto : $lang->bug->keywords;?></th>
+        <?php if($showMailto):?>
+        <td>
+          <div class='input-group' id='contactListGroup'>
+          <?php 
+          echo html::select('mailto[]', $users, str_replace(' ', '', $mailto), "class='form-control chosen' multiple");
+          echo $this->fetch('my', 'buildContactLists');
+          ?>
+          </div>
+        </td>
+        <?php endif;?>
+        <?php if($showKeywords):?>
+        <td <?php echo $colspan?>>
+          <div class='input-group'>
+            <?php if($showMailto):?>
+            <span class='input-group-addon w-90px' id='keywordsAddonLabel'><?php echo $lang->bug->keywords;?></span>
+            <?php endif;?>
+            <?php echo html::input('keywords', $keywords, "class='form-control'");?>
+          </div>
+        </td>
+        <?php endif;?>
+      </tr>
       <?php endif;?>
       <tr>
         <th><?php echo $lang->bug->files;?></th>
@@ -307,7 +308,7 @@ js::set('confirmDeleteTemplate', $lang->bug->confirmDeleteTemplate);
         <div class='input-group'>
           <?php echo html::input('title', '' , "class='form-control'")?>
           <?php if(common::hasPriv('bug', 'setPublic')):?>
-            <span class='input-group-addon'><?php echo html::checkbox('public', array('1' => $lang->public))?></span>
+          <span class='input-group-addon'><?php echo html::checkbox('public', array('1' => $lang->public))?></span>
           <?php endif;?>
           <span class='input-group-btn'><?php echo html::submitButton()?></span>
         </div>

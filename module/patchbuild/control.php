@@ -380,8 +380,8 @@ class patchbuild extends control
             $this->view->title         = "PATCHBUILD #$build->id $build->version - " . $product->name;
         }
 
-        if(!empty($build->linkStories)) $build->linkStories = $this->dao->select('id,pri,title,testDate,estimate,openedBy,status,stage')->from(TABLE_STORY)->where('id')->in(trim($build->linkStories,','))->fetchAll();
-        if(!empty($build->linkBugs)) $build->linkBugs = $this->dao->select('*')->from(TABLE_BUG)->where('id')->in(trim($build->linkBugs,','))->fetchAll();
+        if(!empty($build->linkStories)) $build->linkStories = $this->dao->select('id,pri,title,testDate,estimate,openedBy,status,stage')->from(TABLE_STORY)->where('id')->in(trim($build->linkStories,','))->fetchAll('id');
+        if(!empty($build->linkBugs)) $build->linkBugs = $this->dao->select('*')->from(TABLE_BUG)->where('id')->in(trim($build->linkBugs,','))->fetchAll('id');
 
         /* Assign. */
         $this->app->loadLang('story');

@@ -93,6 +93,13 @@ class myProject extends project
         $this->view->projects      = $projects;
         $this->view->oldProjectID      = $projectID;
 
+        $plans = $this->project->getPlans($products);
+        $allPlans = array('' => '');
+        if(!empty($plans))
+        {
+            foreach($plans as $productID => $plan) $allPlans += $plan;
+        }
+
         /* Assign. */
         $this->view->title        = $title;
         $this->view->position     = $position;
@@ -100,6 +107,7 @@ class myProject extends project
         $this->view->project      = $project;
         //2085 项目需求中增加需求所属计划的显示
         $this->view->stories      = $this->loadModel('story')->mergePlanTitle($productID, $stories);
+        $this->view->allPlans     = $allPlans;
         $this->view->plans         = $this->loadModel('productplan')->getPairs($productID);
 
         $this->view->summary      = $this->product->summary($stories);

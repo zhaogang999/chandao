@@ -19,7 +19,7 @@ class myTask extends  task
      * @access public
      * @return void
      */
-    public function batchCreate($projectID = 0, $storyID = 0, $iframe = 0, $taskID = 0)
+    public function batchCreate($projectID = 0, $storyID = 0, $moduleID = 0, $taskID = 0, $iframe = 0)
     {
         $project   = $this->project->getById($projectID);
         $taskLink  = $this->createLink('project', 'browse', "projectID=$projectID&tab=task");
@@ -33,10 +33,8 @@ class myTask extends  task
             $mails = $this->task->batchCreate($projectID);
             if(dao::isError()) die(js::error(dao::getError()));
 
-            foreach($mails as $mail) $this->task->sendmail($mail->taskID, $mail->actionID);
-
             /* Locate the browser. */
-            if($iframe) die(js::reload('parent.parent'));
+            if(!empty($iframe)) die(js::reload('parent.parent'));
             die(js::locate($storyLink, 'parent'));
         }
 
@@ -53,6 +51,8 @@ class myTask extends  task
         $position[] = $this->lang->task->common;
         $position[] = $this->lang->task->batchCreate;
 
+        if($taskID) $this->view->parentTitle = $this->dao->select('name')->from(TABLE_TASK)->where('id')->eq($taskID)->fetch('name');
+
         //创建子任务时子任务优先级继承父任务
         if ($taskID != 0)
         {
@@ -68,6 +68,7 @@ class myTask extends  task
         $this->view->story      = $this->story->getByID($storyID);
         $this->view->storyTasks = $this->task->getStoryTaskCounts(array_keys($stories), $projectID);
         $this->view->members    = $members;
+        $this->view->moduleID   = $moduleID;
         $this->display();
     }
 }

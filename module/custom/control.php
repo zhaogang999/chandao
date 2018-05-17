@@ -33,6 +33,7 @@ class custom extends control
      */
     public function set($module = 'story', $field = 'priList', $lang = 'zh_cn')
     {
+        if($module == 'patchbuild' and $field == 'priList') $field = 'workSeasonList';//2944 补丁版中的目标环境的值域做成后台可自定义配置项
         if($module == 'user' and $field == 'priList') $field = 'roleList';
         if($module == 'block' and $field == 'priList')$field = 'closed';
         $currentLang = $this->app->getClientLang();

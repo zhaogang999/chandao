@@ -113,6 +113,7 @@ public function batchClose()
         $story->assignedTo     = 'closed';
         $story->assignedDate   = $now;
         $story->status         = 'closed';
+        $story->stage          = 'closed';
 
         $story->closedReason   = $data->closedReasons[$storyID];
         $story->duplicateStory = $data->duplicateStoryIDList[$storyID] ? $data->duplicateStoryIDList[$storyID] : $oldStory->duplicateStory;
@@ -172,6 +173,7 @@ public function batchCreate($productID = 0, $branch = 0)
     $plan   = '';
     $pri    = 0;
     $source = '';
+
     for($i = 0; $i < $batchNum; $i++)
     {
         $module = $stories->module[$i] == 'ditto' ? $module : $stories->module[$i];
@@ -182,89 +184,101 @@ public function batchCreate($productID = 0, $branch = 0)
         $stories->plan[$i]   = $plan;
         $stories->pri[$i]    = (int)$pri;
         $stories->source[$i] = $source;
+
+        if(!empty($stories->title[$i]) && empty($stories->module[$i])) die(js::alert(sprintf($this->lang->error->notempty, $this->lang->story->module)));
     }
 
     if(isset($stories->uploadImage)) $this->loadModel('file');
 
     $forceReview = $this->checkForceReview();
+    $data        = array();
     for($i = 0; $i < $batchNum; $i++)
     {
-        if(!empty($stories->title[$i]))
+        if(empty($stories->title[$i])) continue;
+        $story = new stdclass();
+        $story->branch     = $stories->branch[$i];
+        $story->module     = $stories->module[$i];
+        $story->plan       = $stories->plan[$i];
+        $story->color      = $stories->color[$i];
+        $story->title      = $stories->title[$i];
+        $story->source     = $stories->source[$i];
+        $story->pri        = $stories->pri[$i];
+        $story->estimate   = $stories->estimate[$i];
+        $story->status     = ($stories->needReview[$i] == 0 and !$forceReview) ? 'active' : 'draft';
+        $story->keywords   = $stories->keywords[$i];
+        $story->product    = $productID;
+        $story->openedBy   = $this->app->user->account;
+        $story->openedDate = $now;
+        $story->version    = 1;
+
+        foreach(explode(',', $this->config->story->create->requiredFields) as $field)
         {
-            $data = new stdclass();
-            $data->branch     = $stories->branch[$i];
-            $data->module     = $stories->module[$i];
-            $data->plan       = $stories->plan[$i];
-            $data->color      = $stories->color[$i];
-            $data->title      = $stories->title[$i];
-            $data->source     = $stories->source[$i];
-            $data->pri        = $stories->pri[$i];
-            $data->estimate   = $stories->estimate[$i];
-            $data->status     = ($stories->needReview[$i] == 0 and !$forceReview) ? 'active' : 'draft';
-            $data->keywords   = $stories->keywords[$i];
-            $data->product    = $productID;
-            $data->openedBy   = $this->app->user->account;
-            $data->openedDate = $now;
-            $data->version    = 1;
+            $field = trim($field);
+            if($field and empty($story->$field)) die(js::alert(sprintf($this->lang->error->notempty, $this->lang->story->$field)));
+        }
 
-            $this->dao->insert(TABLE_STORY)->data($data)->autoCheck()
-                ->batchCheck($this->config->story->create->requiredFields, 'notempty')
-                ->exec();
-            if(dao::isError())
+        $data[$i] = $story;
+    }
+
+    foreach($data as $i => $story)
+    {
+        $this->dao->insert(TABLE_STORY)->data($story)->autoCheck()
+            ->batchCheck($this->config->story->create->requiredFields, 'notempty')
+            ->exec();
+        if(dao::isError())
+        {
+            echo js::error(dao::getError());
+            die(js::reload('parent'));
+        }
+
+        $storyID = $this->dao->lastInsertID();
+        $this->setStage($storyID);
+
+        $specData = new stdclass();
+        $specData->story   = $storyID;
+        $specData->version = 1;
+        $specData->title   = $stories->title[$i];
+        $specData->spec    = '';
+        $specData->verify  = '';
+        if(!empty($stories->spec[$i]))  $specData->spec   = nl2br($stories->spec[$i]);
+        if(!empty($stories->verify[$i]))$specData->verify = nl2br($stories->verify[$i]);
+
+        if(!empty($stories->uploadImage[$i]))
+        {
+            $fileName = $stories->uploadImage[$i];
+            $file     = $this->session->storyImagesFile[$fileName];
+
+            $realPath = $file['realpath'];
+            unset($file['realpath']);
+
+            if(rename($realPath, $this->file->savePath . $this->file->getSaveName($file['pathname'])))
             {
-                echo js::error(dao::getError());
-                die(js::reload('parent'));
-            }
-
-            $storyID = $this->dao->lastInsertID();
-            $this->setStage($storyID);
-
-            $specData = new stdclass();
-            $specData->story   = $storyID;
-            $specData->version = 1;
-            $specData->title   = $stories->title[$i];
-            $specData->spec    = '';
-            $specData->verify  = '';
-            if(!empty($stories->spec[$i]))  $specData->spec   = nl2br($stories->spec[$i]);
-            if(!empty($stories->verify[$i]))$specData->verify = nl2br($stories->verify[$i]);
-
-            if(!empty($stories->uploadImage[$i]))
-            {
-                $fileName = $stories->uploadImage[$i];
-                $file     = $this->session->storyImagesFile[$fileName];
-
-                $realPath = $file['realpath'];
-                unset($file['realpath']);
-
-                if(rename($realPath, $this->file->savePath . $this->file->getSaveName($file['pathname'])))
+                $file['addedBy']    = $this->app->user->account;
+                $file['addedDate']  = $now;
+                $file['objectType'] = 'story';
+                $file['objectID']   = $storyID;
+                if(in_array($file['extension'], $this->config->file->imageExtensions))
                 {
-                    $file['addedBy']    = $this->app->user->account;
-                    $file['addedDate']  = $now;
-                    $file['objectType'] = 'story';
-                    $file['objectID']   = $storyID;
-                    if(in_array($file['extension'], $this->config->file->imageExtensions))
-                    {
-                        $file['extra'] = 'editor';
-                        $this->dao->insert(TABLE_FILE)->data($file)->exec();
+                    $file['extra'] = 'editor';
+                    $this->dao->insert(TABLE_FILE)->data($file)->exec();
 
-                        $fileID = $this->dao->lastInsertID();
-                        $specData->spec .= '<img src="{' . $fileID . '.' . $file['extension'] . '}" alt="" />';
-                    }
-                    else
-                    {
-                        $this->dao->insert(TABLE_FILE)->data($file)->exec();
-                    }
+                    $fileID = $this->dao->lastInsertID();
+                    $specData->spec .= '<img src="{' . $fileID . '.' . $file['extension'] . '}" alt="" />';
+                }
+                else
+                {
+                    $this->dao->insert(TABLE_FILE)->data($file)->exec();
                 }
             }
-
-            $this->dao->insert(TABLE_STORYSPEC)->data($specData)->exec();
-
-            $actionID = $this->action->create('story', $storyID, 'Opened', '');
-            if(!dao::isError()) $this->loadModel('score')->create('story', 'create',$storyID);
-            $mails[$i] = new stdclass();
-            $mails[$i]->storyID  = $storyID;
-            $mails[$i]->actionID = $actionID;
         }
+
+        $this->dao->insert(TABLE_STORYSPEC)->data($specData)->exec();
+
+        $actionID = $this->action->create('story', $storyID, 'Opened', '');
+        if(!dao::isError()) $this->loadModel('score')->create('story', 'create',$storyID);
+        $mails[$i] = new stdclass();
+        $mails[$i]->storyID  = $storyID;
+        $mails[$i]->actionID = $actionID;
     }
 
     /* Remove upload image file and session. */
@@ -384,6 +398,8 @@ public function batchUpdate()
 
             if(!dao::isError())
             {
+                $this->setStage($storyID);
+                if($story->closedReason == 'done') $this->loadModel('score')->create('story', 'close');
                 $allChanges[$storyID] = common::createChanges($oldStory, $story);
             }
             else
@@ -420,6 +436,7 @@ public function close($storyID)
         ->add('assignedTo',   'closed')
         ->add('assignedDate', $now)
         ->add('status', 'closed')
+        ->add('stage', 'closed')
         ->removeIF($this->post->closedReason != 'duplicate', 'duplicateStory')
         ->removeIF($this->post->closedReason != 'subdivided', 'childStories')
         ->setIF($this->post->closedReason == 'done', 'stage', 'released')
@@ -449,7 +466,7 @@ public function close($storyID)
  * @access public
  * @return int|bool the id of the created story or false when error.
  */
-public function create($projectID = 0, $bugID = 0)
+public function create($projectID = 0, $bugID = 0, $from = '')
 {
     $now   = helper::now();
     $story = fixer::input('post')
@@ -568,6 +585,11 @@ public function create($projectID = 0, $bugID = 0)
             }
         }
         $this->setStage($storyID);
+        if(!dao::isError()) $this->loadModel('score')->create('story', 'create',$storyID);
+
+        /* Callback the callable method to process the related data for object that is transfered to story. */
+        if($from && is_callable(array($this, $this->config->story->fromObjects[$from]['callback']))) call_user_func(array($this, $this->config->story->fromObjects[$from]['callback']), $storyID);
+
         return array('status' => 'created', 'id' => $storyID);
     }
     return false;
@@ -604,11 +626,11 @@ public function formatStories($stories, $type = 'full', $limit = 0)
     {
         if($type == 'short')
         {
-            $property = '[p' . $story->pri . ', ' . $story->estimate . 'h]';
+            $property = '[p' . (!empty($this->lang->story->priList[$story->pri]) ? $this->lang->story->priList[$story->pri] : 0) . ', ' . $story->estimate . 'h]';
         }
         else
         {
-            $property = '(' . $this->lang->story->pri . ':' . $story->pri . ',' . $this->lang->story->estimate . ':' . $story->estimate . ')' . $users[$story->openedBy];
+            $property = '(' . $this->lang->story->pri . ':' . (!empty($this->lang->story->priList[$story->pri]) ? $this->lang->story->priList[$story->pri] : 0) . ',' . $this->lang->story->estimate . ':' . $story->estimate . ')';
         }
         $storyPairs[$story->id] = $story->id . ':' . $story->title . $property;
 
@@ -715,7 +737,7 @@ public function getProjectStories($projectID = 0, $orderBy = 't1.`order`_desc', 
             ->leftJoin(TABLE_PRODUCT)->alias('t4')->on('t2.product = t4.id')
             ->where('t1.project')->eq((int)$projectID)
             ->beginIF($type == 'byProduct')->andWhere('t1.product')->eq($param)->fi()
-            ->beginIF($type == 'byBrach')->andWhere('t2.branch')->eq($param)->fi()
+            ->beginIF($type == 'byBranch')->andWhere('t2.branch')->eq($param)->fi()
             ->beginIF($type == 'byModule' and $param)->andWhere('t2.module')->in($modules)->fi()
             ->andWhere('t2.deleted')->eq(0)
             ->orderBy($orderBy)
@@ -812,7 +834,7 @@ public function getStoriesByField($type = 'toTestStory', $browseType, $queryID, 
             ->where('t1.deleted')->eq(0)
             ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
             ->andWhere($storyQuery)
-            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->andWhere('verifyStatus')->ne('freeVerified')->fi()
             ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
             ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
             ->orderBy($orderBy)
@@ -825,7 +847,7 @@ public function getStoriesByField($type = 'toTestStory', $browseType, $queryID, 
             ->leftJoin(TABLE_PRODUCT)->alias('t2')->on('t1.product = t2.id')
             ->where('t1.deleted')->eq(0)
             ->andWhere('product')->notin($this->config->story->storyCollectionPoolProducts)
-            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->fi()
+            ->beginIF($type == 'toTestStory')->andWhere('stage')->in('projected,developing,developed')->andWhere('testDate')->ne('0000-00-00')->andWhere('verifyStatus')->ne('freeVerified')->fi()
             ->beginIF($type == 'toReleaseStory')->andWhere('stage')->notin('released,wait,planned')->andWhere('specialPlan')->ne('0000-00-00')->fi()
             ->andWhere("IF (t1.`status` = 'closed',t1.closedReason = 'done',2>1)")
             ->orderBy($orderBy)
@@ -1008,17 +1030,10 @@ public function mergePlanTitle($productID, $stories, $branch = 0)
         $branch = join(',', $branch);
         if($branch) $branch = "0,$branch";
     }
-    //2273 需求增加一个字段“期望实现时间”，该字段的值采用下拉菜单格式，并且下拉菜单最好能调用产品-计划中的未关闭计划
     $plans = $this->dao->select('id,title')->from(TABLE_PRODUCTPLAN)
         ->where('product')->in($productID)
-        //->beginIF($branch)->andWhere('branch')->in($branch)->fi()
         ->andWhere('deleted')->eq(0)
         ->fetchPairs('id', 'title');
-
-    $stages = $this->dao->select('*')->from(TABLE_STORYSTAGE)->where('branch')->in($branch)->fetchGroup('story', 'branch');
-
-    $branch = trim(str_replace(',0,', '', ",$branch,"), ',');
-    $branch = empty($branch) ? 0 : $branch;
 
     foreach($stories as $story)
     {
@@ -1090,8 +1105,8 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 echo "</span>";
                 break;
             case 'title':
-                if($story->branch) echo "<span class='label label-info label-badge'>{$branches[$story->branch]}</span> ";
-                if($modulePairs and $story->module) echo "<span class='label label-info label-badge'>{$modulePairs[$story->module]}</span> ";
+                if($story->branch and isset($branches[$story->branch])) echo "<span class='label label-info label-badge'>{$branches[$story->branch]}</span> ";
+                if($story->module and isset($modulePairs[$story->module])) echo "<span class='label label-info label-badge'>{$modulePairs[$story->module]}</span> ";
                 echo $canView ? html::a($storyLink, $story->title, '', "style='color: $story->color'") : "<span style='color: $story->color'>{$story->title}</span>";
 
                 break;
@@ -1099,7 +1114,7 @@ public function printCell($col, $story, $users, $branches, $storyStages, $module
                 echo $story->planTitle;
                 break;
             case 'branch':
-                echo $branches[$story->branch];
+                echo zget($branches, $story->branch, '');
                 break;
             case 'keywords':
                 echo $story->keywords;
@@ -1313,14 +1328,17 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
         ->beginIF($productID != 'all' and $productID != '')->andWhere('product')->eq((int)$productID)->fi()
         ->fetchPairs();
 
-    $tmpStories = $this->dao->select('*')->from(TABLE_STORY)->where($sql)
+    $sql = str_replace(array('`product`', '`version`'), array('t1.`product`', 't1.`version`'), $sql);
+    $tmpStories = $this->dao->select('DISTINCT t1.*')->from(TABLE_STORY)->alias('t1')
+        ->leftJoin(TABLE_PROJECTSTORY)->alias('t2')->on('t1.id=t2.story')
+        ->where($sql)
         //跨产品需求搜索无法搜到结果；
         ->beginIF($productID != 'all' and strpos($sql, "`product` =") === false)->andWhere('product')->eq((int)$productID)->fi()
         // ->beginIF($productID != 'all' and $productID != '')->andWhere('product')->eq((int)$productID)->fi()
 
         ->andWhere('deleted')->eq(0)
         ->orderBy($orderBy)
-        ->page($pager)
+        ->page($pager, 't1.id')
         ->fetchAll('id');
 
     if(!$tmpStories) return array();
@@ -1337,98 +1355,6 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
         $stories[] = $story;
     }
     return $stories;
-}/**
- * Send mail
- *
- * @param  int    $storyID
- * @param  int    $actionID
- * @access public
- * @return void
- */
-public function sendmail($storyID, $actionID)
-{
-    $this->loadModel('mail');
-    $story       = $this->getById($storyID);
-    $storyDetail       = $this->dao->select('*')->from(TABLE_STORY)->where('id')->eq($storyID)->fetch();
-    //var_dump($storyDetail);die;
-    $productName = $this->loadModel('product')->getById($story->product)->name;
-    $users       = $this->loadModel('user')->getPairs('noletter');
-
-    /* Get actions. */
-    $action  = $this->loadModel('action')->getById($actionID);
-    $history = $this->action->getHistory($actionID);
-    $action->history    = isset($history[$actionID]) ? $history[$actionID] : array();
-    $action->appendLink = '';
-    if(strpos($action->extra, ':')!== false)
-    {
-        list($extra, $id) = explode(':', $action->extra);
-        $action->extra    = $extra;
-        if($id)
-        {
-            $name  = $this->dao->select('title')->from(TABLE_STORY)->where('id')->eq($id)->fetch('title');
-            if($name) $action->appendLink = html::a(zget($this->config->mail, 'domain', common::getSysURL()) . helper::createLink($action->objectType, 'view', "id=$id"), "#$id " . $name);
-        }
-    }
-
-    /* Get mail content. */
-    $modulePath = $this->app->getModulePath($appName = '', 'story');
-    $oldcwd     = getcwd();
-    $viewFile   = $modulePath . 'view/sendmail.html.php';
-    chdir($modulePath . 'view');
-    if(file_exists($modulePath . 'ext/view/sendmail.html.php'))
-    {
-        $viewFile = $modulePath . 'ext/view/sendmail.html.php';
-        chdir($modulePath . 'ext/view');
-    }
-    ob_start();
-    include $viewFile;
-    foreach(glob($modulePath . 'ext/view/sendmail.*.html.hook.php') as $hookFile) include $hookFile;
-    $mailContent = ob_get_contents();
-    ob_end_clean();
-    chdir($oldcwd);
-
-    /* Set toList and ccList. */
-
-    $toList = $storyDetail->assignedTo;
-    $ccList = str_replace(' ', '', trim($storyDetail->mailto, ','));
-
-    //2284 需求发生任何变动，需要触发邮件（含编辑，备注，变更等所有操作）并且收件人不光含抄送人，还需包含需求原始提出人
-    $ccList = $ccList . ',' . $storyDetail->openedBy;
-
-    /* If the action is changed or reviewed, mail to the project team. */
-    if(strtolower($action->action) == 'changed' or strtolower($action->action) == 'reviewed')
-    {
-        $prjMembers = $this->getProjectMembers($storyID);
-        if($prjMembers)
-        {
-            $ccList .= ',' . join(',', $prjMembers);
-            $ccList = ltrim($ccList, ',');
-        }
-    }
-
-    if(empty($toList))
-    {
-        if(empty($ccList)) return;
-        if(strpos($ccList, ',') === false)
-        {
-            $toList = $ccList;
-            $ccList = '';
-        }
-        else
-        {
-            $commaPos = strpos($ccList, ',');
-            $toList   = substr($ccList, 0, $commaPos);
-            $ccList   = substr($ccList, $commaPos + 1);
-        }
-    }
-    elseif($toList == 'closed')
-    {
-        $toList = $storyDetail->openedBy;
-    }
-
-    /* Send it. */
-    $this->mail->send($toList, 'STORY #' . $storyDetail->id . ' ' . $storyDetail->title . ' - ' . $productName, $mailContent, $ccList);
-    if($this->mail->isError()) trigger_error(join("\n", $this->mail->getError()));
 }/**
  * Set stage of a story.
  *

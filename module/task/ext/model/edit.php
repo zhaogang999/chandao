@@ -68,40 +68,44 @@ public function update($taskID)
         ->remove('comment,files,labels,uid,multiple,team,teamEstimate,teamConsumed,teamLeft')
         ->get();
 
+    if($task->consumed < $oldTask->consumed) die(js::error($this->lang->task->error->consumedSmall));
+
+    /* Fix bug#1388, Check children task projectID and moduleID. */
+    if($task->project != $oldTask->project)
+    {
+        $this->dao->update(TABLE_TASK)->set('project')->eq($task->project)->set('module')->eq($task->module)->where('parent')->eq($taskID)->exec();
+    }
+
+    $task = $this->loadModel('file')->processImgURL($task, $this->config->task->editor->edit['id'], $this->post->uid);
+
     $teams = array();
     if($this->post->multiple)
     {
-        $estimate = 0;
-        $left     = 0;
         foreach($this->post->team as $row => $account)
         {
             if(empty($account) or isset($team[$account])) continue;
+
             $member = new stdClass();
-            $member->project  = 0;
             $member->account  = $account;
             $member->role     = $task->assignedTo;
             $member->join     = helper::today();
-            $member->task     = $taskID;
+            $member->root     = $taskID;
+            $member->type     = 'task';
             $member->estimate = $this->post->teamEstimate[$row] ? $this->post->teamEstimate[$row] : 0;
             $member->consumed = $this->post->teamConsumed[$row] ? $this->post->teamConsumed[$row] : 0;
-            $member->left     = $member->estimate - $member->consumed;
+            $member->left     = $this->post->teamLeft[$row] ? $this->post->teamLeft[$row] : ($member->estimate - $member->consumed);
             $member->order    = $row;
             $teams[$account]  = $member;
-
-            $estimate += (float)$member->eatimate;
-            $left     += (float)$member->left;
+            if($task->status == 'done') $member->left = 0;
         }
+    }
 
-        if(!empty($teams))
-        {
-            $task->estimate = $estimate;
-            $task->left     = $left;
-            if(!isset($task->assignedTo))
-            {
-                $firstMember      = reset($teams);
-                $task->assignedTo = $firstMember->account;
-            }
-        }
+    /* Save team. */
+    $this->dao->delete()->from(TABLE_TEAM)->where('root')->eq($taskID)->andWhere('type')->eq('task')->exec();
+    if(!empty($teams))
+    {
+        foreach($teams as $member) $this->dao->insert(TABLE_TEAM)->data($member)->autoCheck()->exec();
+        $task = $this->computeHours4Multiple($oldTask, $task);
     }
 
     //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
@@ -112,23 +116,6 @@ public function update($taskID)
             die(js::error($this->lang->task->error->doneError));
         }
     }
-    
-    if($task->consumed < $oldTask->consumed)
-    {
-        die(js::error($this->lang->task->error->consumedSmall));
-    }
-    elseif($task->consumed != $oldTask->consumed or $task->left != $oldTask->left)
-    {
-        $estimate = new stdClass();
-        $estimate->consumed = $task->consumed - $oldTask->consumed;
-        $estimate->left     = $task->left;
-        $estimate->task     = $taskID;
-        $estimate->account  = $this->app->user->account;
-        $estimate->date     = helper::now();
-        $this->addTaskEstimate($estimate);
-    }
-
-    $task = $this->loadModel('file')->processImgURL($task, $this->config->task->editor->edit['id'], $this->post->uid);
 
     //任务数据新增
     $taskDetail->module = $task->module;
@@ -460,11 +447,8 @@ public function update($taskID)
     }
 
     $this->dao->commit();
-    $this->computeWorkingHours($oldTask->parent);
-
-    /* Save team. */
-    $this->dao->delete()->from(TABLE_TEAM)->where('task')->eq($taskID)->exec();
-    if(!empty($teams)) foreach($teams as $member) $this->dao->insert(TABLE_TEAM)->data($member)->autoCheck()->exec();
+    if($oldTask->parent) $this->updateParentStatus($taskID);
+    
     if($this->post->story != false) $this->loadModel('story')->setStage($this->post->story);
     
     if($task->status == 'done')   $this->loadModel('score')->create('task', 'finish', $taskID);

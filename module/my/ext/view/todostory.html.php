@@ -159,7 +159,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan= <?php echo $type == 'toTestStory'?'14':'12';?>>
+    <td colspan= <?php echo $type == 'toTestStory'?'14':'13';?>>
       <?php if(count($stories)):?>
       <div class='table-actions clearfix'>
         <?php echo html::selectButton();?>

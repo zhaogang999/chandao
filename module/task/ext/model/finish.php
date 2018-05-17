@@ -43,6 +43,7 @@ public function finish($taskID)
         ->setDefault('status', 'done')
         ->setDefault('finishedBy, lastEditedBy', $this->app->user->account)
         ->setDefault('finishedDate, lastEditedDate', $now)
+        ->removeIF(!empty($oldTask->team), 'finishedBy,finishedDate,status')
         ->remove('comment,files,labels')
         ->get();
     //1340 任务点击完成时，开启时间和完成时间改为必填项。
@@ -53,51 +54,41 @@ public function finish($taskID)
 
     if(!is_numeric($task->consumed)) die(js::error($this->lang->task->error->consumedNumber));
 
-    if(!empty($oldTask->team))
+    /* Record consumed and left. */
+    if(empty($oldTask->team))
     {
-        $teams = array_keys($oldTask->team);
-
-        $myConsumed = $this->dao->select("`consumed`")->from(TABLE_TEAM)->where('task')->eq((int)$taskID)->andWhere('account')->eq($oldTask->assignedTo)->fetch('consumed');
-        if($task->consumed < $myConsumed) die(js::error($this->lang->task->error->consumedSmall));
-
-        $data = new stdClass();
-        $data->left     = 0;
-        $data->consumed = $task->consumed;
-        $this->dao->update(TABLE_TEAM)->data($data)->where('task')->eq((int)$taskID)->andWhere('account')->eq($oldTask->assignedTo)->exec();
-
-        $myTime = $this->dao->select("sum(`left`) as leftTime,sum(`consumed`) as consumed")->from(TABLE_TEAM)->where('task')->eq((int)$taskID)->andWhere('account')->in($teams)->fetch();
-
-        $newTask = new stdClass();
-        $newTask->left         = $myTime->leftTime;
-        $newTask->consumed     = $myTime->consumed;
-        $newTask->assignedTo   = $task->assignedTo;
-        $newTask->assignedDate = $now;
-        $this->dao->update(TABLE_TASK)->data($newTask)->where('id')->eq((int)$taskID)->exec();
-
-        if($oldTask->assignedTo != $teams[count($teams) - 1]) return common::createChanges($oldTask, $newTask);
-        $task->consumed = $myTime->consumed;
+        $consumed = $task->consumed - $oldTask->consumed;
+        if($consumed < 0) die(js::error($this->lang->task->error->consumedSmall));
+    }
+    else
+    {
+        $consumed = $oldTask->team[$this->app->user->account]->consumed;
+        if($task->consumed < $consumed) die(js::error($this->lang->task->error->consumedSmall));
     }
 
-    if($task->finishedDate == substr($now, 0, 10)) $task->finishedDate = $now;
-
-    /* Record consumed and left. */
-    $consumed = $task->consumed - $oldTask->consumed;
-    if($consumed < 0) die(js::error($this->lang->task->error->consumedSmall));
-
-    /*$estimate = fixer::input('post')
+    $estimate = fixer::input('post')
         ->setDefault('account', $this->app->user->account)
         ->setDefault('task', $taskID)
         ->setDefault('date', date(DT_DATE1))
         ->setDefault('left', 0)
-        ->remove('finishedDate,comment,assignedTo,files,labels,consumed,realStarted')
-        ->get();*/
-    $estimate->uid = $task->uid;
-    $estimate->account = $this->app->user->account;
-    $estimate->task = $taskID;
-    $estimate->date = date(DT_DATE1);
-    $estimate->left = 0;
+        ->remove('finishedDate,comment,assignedTo,files,labels,consumed,realStarted,fileNO,recorder,reviewName,reviewDate,doc,reviewScope,referenceDoc,reviewPlace,reference,effort,pages,conclusion,reviewers,number,reviewer,item,line,severity,description,proposal,changed,action,chkd')
+        ->get();
     $estimate->consumed = $consumed;
     if($estimate->consumed) $this->addTaskEstimate($estimate);
+
+    if(!empty($oldTask->team))
+    {
+        $this->dao->update(TABLE_TEAM)
+            ->set('left')->eq(0)
+            ->set('consumed')->eq($task->consumed)
+            ->where('root')->eq((int)$taskID)
+            ->andWhere('type')->eq('task')
+            ->andWhere('account')->eq($this->app->user->account)->exec();
+
+        $task = $this->computeHours4Multiple($oldTask, $task);
+    }
+
+    if($task->finishedDate == substr($now, 0, 10)) $task->finishedDate = $now;
 
     $taskInfo = $this->dao->select('*')->from(TABLE_TASK)->where('id')->eq("$taskID")->fetch();
 
@@ -312,8 +303,7 @@ public function finish($taskID)
     //成功操作
     $this->dao->commit();
     //设置需求状态
-    if($task->status == 'done') $this->updateParentStatus($oldTask->parent, 'done');
-    $this->computeWorkingHours($oldTask->parent);
+    if($oldTask->parent) $this->updateParentStatus($taskID);
 
     if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
     if($task->status == 'done' && !dao::isError()) $this->loadModel('score')->create('task', 'finish', $taskID);

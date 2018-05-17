@@ -51,18 +51,16 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
             case 'title':
                 $class = 'confirm' . $bug->confirmed;
                 echo "<span class='$class'>[{$this->lang->bug->confirmedList[$bug->confirmed]}]</span> ";
-                if($bug->branch)echo "<span class='label label-info label-badge'>{$branches[$bug->branch]}</span> ";
-                if($modulePairs and $bug->module)echo "<span class='label label-info label-badge'>{$modulePairs[$bug->module]}</span> ";
+                if($bug->branch and isset($branches[$bug->branch]))    echo "<span class='label label-info label-badge'>{$branches[$bug->branch]}</span> ";
+                if($bug->module and isset($modulePairs[$bug->module])) echo "<span class='label label-info label-badge'>{$modulePairs[$bug->module]}</span> ";
                 echo $canView ? html::a($bugLink, $bug->title, null, "style='color: $bug->color'") : "<span style='color: $bug->color'>{$bug->title}</span>";
                 break;
-
             //2061 提bug页面增加一个字段“发现阶段”，该字段需要支持后续搜索
             case 'discoveryPhase':
                 echo $this->lang->bug->discoveryPhaseList[$bug->discoveryPhase];
                 break;
-            
             case 'branch':
-                echo $branches[$bug->branch];
+                echo zget($branches, $bug->branch, '');
                 break;
             case 'project':
                 echo zget($projects, $bug->project, '');
@@ -71,10 +69,18 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
                 echo zget($plans, $bug->plan, '');
                 break;
             case 'story':
-                echo zget($stories, $bug->story, '');
+                if(isset($stories[$bug->story]))
+                {
+                    $story = $stories[$bug->story];
+                    echo common::hasPriv('story', 'view') ? html::a(helper::createLink('story', 'view', "storyID=$story->id", 'html', true), $story->title, '', "class='iframe'") : $story->title;
+                }
                 break;
             case 'task':
-                echo zget($tasks, $bug->task, '');
+                if(isset($tasks[$bug->task]))
+                {
+                    $task = $tasks[$bug->task];
+                    echo common::hasPriv('task', 'view') ? html::a(helper::createLink('task', 'view', "taskID=$task->id", 'html', true), $task->name, '', "class='iframe'") : $task->name;
+                }
                 break;
             case 'type':
                 echo zget($this->lang->bug->typeList, $bug->type);
@@ -116,7 +122,23 @@ public function printCell($col, $bug, $users, $builds, $branches, $modulePairs, 
                 echo substr($bug->openedDate, 5, 11);
                 break;
             case 'openedBuild':
-                foreach(explode(',', $bug->openedBuild) as $build) echo zget($builds, $build) . ' ';
+                $builds = array_flip($builds);
+                foreach(explode(',', $bug->openedBuild) as $build)
+                {
+                    $buildID = zget($builds, $build, '');
+                    if($buildID == 'trunk')
+                    {
+                        echo $build;
+                    }
+                    elseif($buildID and common::hasPriv('build', 'view'))
+                    {
+                        echo html::a(helper::createLink('build', 'view', "buildID=$buildID"), $build, '', "title='$bug->openedBuild'");
+                    }
+                    else
+                    {
+                        echo $build;
+                    }
+                }
                 break;
             case 'assignedTo':
                 echo zget($users, $bug->assignedTo, $bug->assignedTo);

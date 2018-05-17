@@ -90,7 +90,7 @@
       <div class='actions'><?php if(!$bug->deleted) echo $actionLinks;?></div>
       <fieldset id='commentBox' class='hide'>
         <legend><?php echo $lang->comment;?></legend>
-        <form method='post' action='<?php echo inlink('edit', "bugID=$bug->id&comment=true")?>'>
+        <form method='post' action='<?php echo $this->createLink('action', 'comment', "objectType=bug&objectID=$bug->id")?>' target='hiddenwin'>
           <div class="form-group"><?php echo html::textarea('comment', '',"rows='5' class='w-p100'");?></div>
           <?php echo html::submitButton() . html::backButton();?>
         </form>
@@ -108,7 +108,7 @@
           <div class='tab-pane active' id='legendBasicInfo'>
             <table class='table table-data table-condensed table-borderless table-fixed'>
               <tr valign='middle'>
-                <th class='w-60px'><?php echo $lang->bug->product;?></th>
+                <th class='w-70px'><?php echo $lang->bug->product;?></th>
                 <td><?php if(!common::printLink('bug', 'browse', "productID=$bug->product", $productName)) echo $productName;?></td>
               </tr>
               <?php if($this->session->currentProductType != 'normal'):?>
@@ -246,7 +246,7 @@
           <div class='tab-pane active' id='legendLife'>
             <table class='table table-data table-condensed table-borderless table-fixed'>
               <tr>
-                <th class='w-60px'><?php echo $lang->bug->openedBy;?></th>
+                <th class='w-70px'><?php echo $lang->bug->openedBy;?></th>
                 <td> <?php echo zget($users, $bug->openedBy) . $lang->at . $bug->openedDate;?></td>
               </tr>
               <tr>
@@ -295,7 +295,7 @@
           <div class='tab-pane' id='legendMisc'>
             <table class='table table-data table-condensed table-borderless table-fixed'>
               <tr class='text-top'>
-                <th class='w-60px'><?php echo $lang->bug->linkBug;?></th>
+                <th class='w-70px'><?php echo $lang->bug->linkBug;?></th>
                 <td>
                   <?php
                   if(isset($bug->linkBugTitles))

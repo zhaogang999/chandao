@@ -29,6 +29,7 @@ $config->patchbuild->search['fields']['testEnv']      = $lang->patchbuild->testE
 $config->patchbuild->search['fields']['assignedTo']   = $lang->patchbuild->assignedTo;
 $config->patchbuild->search['fields']['linkStories']  = $lang->patchbuild->linkStories;
 $config->patchbuild->search['fields']['linkBugs']     = $lang->patchbuild->linkBugs;
+$config->patchbuild->search['fields']['versionDeploy']= $lang->patchbuild->versionDeploy;
 
 $config->patchbuild->search['params']['version']      = array('operator' => 'include', 'control' => 'input',  'values' => '');
 $config->patchbuild->search['params']['workSeason']   = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->workSeasonList);
@@ -44,5 +45,6 @@ $config->patchbuild->search['params']['patchDate']    = array('operator' => '=',
 $config->patchbuild->search['params']['releasedDate'] = array('operator' => '=',      'control' => 'input',  'values' => '', 'class' => 'date');
 $config->patchbuild->search['params']['testPass']     = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->testPassList);
 $config->patchbuild->search['params']['testEnv']      = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->testEnvList);
+$config->patchbuild->search['params']['versionDeploy']= array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->versionDeployList);
 $config->patchbuild->search['params']['linkStories']  = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->linkStoriesList);
 $config->patchbuild->search['params']['linkBugs']     = array('operator' => '=', 'control' => 'select',  'values' => $lang->patchbuild->linkBugsList);

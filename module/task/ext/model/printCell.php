@@ -25,12 +25,16 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
         $class = '';
         if($id == 'status') $class .= ' task-' . $task->status;
         if($id == 'id')     $class .= ' cell-id';
-        if($id == 'name' or $id == 'story') $class .= ' text-left';
+        if($id == 'name')   $class .= ' text-left';
         if($id == 'deadline' and isset($task->delay)) $class .= ' delayed';
         if($id == 'assignedTo' && $task->assignedTo == $account) $class .= ' red';
 
         $title = '';
-        if($id == 'name')  $title = " title='{$task->name}'";
+        if($id == 'name')
+        {
+            $title = " title='{$task->name}'";
+            if(!empty($task->children)) $class .= ' has-child';
+        }
         if($id == 'story') $title = " title='{$task->storyTitle}'";
 
         echo "<td class='" . $class . "'" . $title . ">";
@@ -41,14 +45,14 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 echo $canView ? html::a($taskLink, sprintf('%03d', $task->id)) : sprintf('%03d', $task->id);
                 break;
             case 'pri':
-                echo "<span class='pri" . zget($this->lang->task->priList, $task->pri, $task->pri) . "'>";
-                echo $task->pri == '0' ? '' : zget($this->lang->task->priList, $task->pri, $task->pri);
+                echo "<span class='pri" . zget($this->lang->task->priList, $task->pri) . "'>";
+                echo $task->pri == '0' ? '' : zget($this->lang->task->priList, $task->pri);
                 echo "</span>";
                 break;
             case 'name':
                 if(!empty($task->product) && isset($branchGroups[$task->product][$task->branch])) echo "<span class='label label-info label-badge'>" . $branchGroups[$task->product][$task->branch] . '</span> ';
-                if($task->module and isset($modulePairs[$task->module])) echo "<span class='label label-info label-badge'>" . $modulePairs[$task->module] . '</span> ';
-                if($child) echo '<span class="label">' . $this->lang->task->childrenAB . '</span> ';
+                if(empty($task->children) and $task->module and isset($modulePairs[$task->module])) echo "<span class='label label-info label-badge'>" . $modulePairs[$task->module] . '</span> ';
+                if($child or !empty($task->parent)) echo '<span class="label">' . $this->lang->task->childrenAB . '</span> ';
                 if(!empty($task->team)) echo '<span class="label">' . $this->lang->task->multipleAB . '</span> ';
                 echo $canView ? html::a($taskLink, $task->name, null, "style='color: $task->color'") : "<span style='color: $task->color'>$task->name</span>";
                 if($task->fromBug) echo html::a(helper::createLink('bug', 'view', "id=$task->fromBug"), "[BUG#$task->fromBug]", '_blank', "class='bug'");
@@ -127,7 +131,14 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
             case 'story':
                 if(!empty($task->storyID))
                 {
-                    if(!common::printLink('story', 'view', "storyid=$task->storyID", $task->storyTitle)) echo $task->storyTitle;
+                    if(common::hasPriv('story', 'view'))
+                    {
+                        echo html::a(helper::createLink('story', 'view', "storyid=$task->storyID", 'html', true), "<i class='icon icon-{$this->lang->icons['story']}'></i>", '', "class='iframe' title='{$task->storyTitle}'");
+                    }
+                    else
+                    {
+                        echo "<i class='icon icon-{$this->lang->icons['story']}' title='{$task->storyTitle}'></i>";
+                    }
                 }
                 break;
             case 'mailto':
@@ -160,7 +171,7 @@ public function printCell($col, $task, $users, $browseType, $branchGroups, $modu
                 common::printIcon('task', 'edit',   "taskID=$task->id", $task, 'list');
                 if(empty($task->team) or empty($task->children))
                 {
-                    common::printIcon('task', 'batchCreate', "project=$task->project&storyID=$task->story&moduleID=$task->module&taskID=$task->id", $task, 'list', 'plus', '', '', '', '', $this->lang->task->children);
+                    common::printIcon('task', 'batchCreate', "project=$task->project&storyID=$task->story&moduleID=$task->module&taskID=$task->id&ifame=0", $task, 'list', 'plus', '', '', '', '', $this->lang->task->children);
                 }
                 break;
         }

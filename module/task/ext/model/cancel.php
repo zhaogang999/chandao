@@ -8,9 +8,10 @@
 /**
  * Cancel a task.
  *
- * @param  int      $taskID
+ * @param int $taskID
+ *
  * @access public
- * @return void
+ * @return array
  */
 public function cancel($taskID)
 {
@@ -35,6 +36,7 @@ public function cancel($taskID)
         $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(1)->where('id')->eq($script->id)->exec();
     }
     
-    if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
+    if($oldTask->parent) $this->updateParentStatus($taskID);
+    if($oldTask->story)  $this->loadModel('story')->setStage($oldTask->story);
     if(!dao::isError()) return common::createChanges($oldTask, $task);
 }

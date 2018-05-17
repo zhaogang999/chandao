@@ -19,7 +19,6 @@ class myBug extends bug
 
             $fileAction = !empty($files) ? $this->lang->addFiles . join(',', $files) . "\n" : '';
             $actionID = $this->action->create('bug', $bugID, 'Resolved', $fileAction . $this->post->comment, $this->post->resolution . ($this->post->duplicateBug ? ':' . (int)$this->post->duplicateBug : ''));
-            $this->bug->sendmail($bugID, $actionID);
 
             $bug = $this->bug->getById($bugID);
             if($bug->toTask != 0)

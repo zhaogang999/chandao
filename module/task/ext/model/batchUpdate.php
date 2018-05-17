@@ -50,8 +50,8 @@ public function batchUpdate()
         $task->status         = $data->statuses[$taskID];
         $task->assignedTo     = $task->status == 'closed' ? 'closed' : $data->assignedTos[$taskID];
         $task->pri            = $data->pris[$taskID];
-        $task->estimate       = $data->estimates[$taskID];
-        $task->left           = $data->lefts[$taskID];
+        $task->estimate       = isset($data->estimates[$taskID]) ? $data->estimates[$taskID] : $oldTask->estimate;
+        $task->left           = isset($data->lefts[$taskID]) ? $data->lefts[$taskID] : $oldTask->left;
         $task->estStarted     = $data->estStarteds[$taskID];
         $task->deadline       = $data->deadlines[$taskID];
         $task->finishedBy     = $data->finishedBys[$taskID];
@@ -162,7 +162,7 @@ public function batchUpdate()
         if($oldTask->story != false) $this->loadModel('story')->setStage($oldTask->story);
         if(!dao::isError())
         {
-            $this->computeWorkingHours($oldTask->parent);
+            if($oldTask->parent) $this->updateParentStatus($oldTask->id);
             if($task->status == 'done')   $this->loadModel('score')->create('task', 'finish', $taskID);
             if($task->status == 'closed') $this->loadModel('score')->create('task', 'close', $taskID);
             $allChanges[$taskID] = common::createChanges($oldTask, $task);

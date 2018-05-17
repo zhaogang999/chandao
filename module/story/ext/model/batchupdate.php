@@ -105,6 +105,8 @@ public function batchUpdate()
 
             if(!dao::isError())
             {
+                $this->setStage($storyID);
+                if($story->closedReason == 'done') $this->loadModel('score')->create('story', 'close');
                 $allChanges[$storyID] = common::createChanges($oldStory, $story);
             }
             else

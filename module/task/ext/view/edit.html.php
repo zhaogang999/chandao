@@ -15,6 +15,7 @@
 <?php include '../../../common/view/kindeditor.html.php';?>
 <?php js::set('oldStoryID', $task->story); ?>
 <?php js::set('oldAssignedTo', $task->assignedTo); ?>
+<?php js::set('oldProjectID', $task->project); ?>
 <?php js::set('confirmChangeProject', $lang->task->confirmChangeProject); ?>
 <?php js::set('changeProjectConfirmed', false); ?>
 <form class='form-condensed' method='post' enctype='multipart/form-data' target='hiddenwin' id='dataform'>
@@ -440,15 +441,17 @@
       <fieldset>
         <legend><?php echo $lang->task->legendBasic;?></legend>
         <table class='table table-form'>
+          <?php /*if(empty($task->parent)):*/?>
           <tr>
             <th class='w-80px'><?php echo $lang->task->project;?></th>
             <td><?php echo html::select('project', $projects, $task->project, 'class="form-control chosen" onchange="loadAll(this.value)"');?></td>
           </tr>
+          <?php /*endif;*/?>
           <tr>
-            <th><?php echo $lang->task->module;?></th>
+            <th class='w-80px'><?php echo $lang->task->module;?></th>
             <td id="moduleIdBox"><?php echo html::select('module', $modules, $task->module, 'class="form-control chosen" onchange="loadModuleRelated()"');?></td>
           </tr>
-          <?php if($config->global->flow != 'onlyTask'):?>
+          <?php if($config->global->flow != 'onlyTask' and $project->type != 'ops'):?>
           <tr>
             <th><?php echo $lang->task->story;?></th>
             <td><span id="storyIdBox"><?php echo html::select('story', $stories, $task->story, "class='form-control chosen'");?></span></td>
@@ -469,21 +472,24 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->type;?></th>
-            <td><?php echo html::select('type', $lang->task->typeList, $task->type, 'class=form-control');?></td>
+            <td><?php echo html::select('type', $lang->task->typeList, $task->type, "class='form-control chosen'");?></td>
           </tr>
           <?php if(empty($task->children)):?>
           <tr>
             <th><?php echo $lang->task->status;?></th>
-            <td><?php echo html::select('status', (array)$lang->task->statusList, $task->status, 'class=form-control');?></td>
+            <td><?php echo html::select('status', (array)$lang->task->statusList, $task->status, "class='form-control chosen'");?></td>
           </tr>
           <?php endif;?>
           <tr>
             <th><?php echo $lang->task->pri;?></th>
-            <td><?php echo html::select('pri', $lang->task->priList, $task->pri, 'class=form-control');?> </td>
+            <td><?php echo html::select('pri', $lang->task->priList, $task->pri, "class='form-control chosen'");?> </td>
           </tr>
           <tr>
             <th><?php echo $lang->task->mailto;?></th>
-            <td><?php echo html::select('mailto[]', $project->acl == 'private' ? $members : $users, str_replace(' ' , '', $task->mailto), 'class="form-control" multiple');?></td>
+            <td>
+              <?php echo html::select('mailto[]', $project->acl == 'private' ? $members : $users, str_replace(' ' , '', $task->mailto), 'class="form-control" multiple');?>
+              <?php echo $this->fetch('my', 'buildContactLists');?>
+            </td>
           </tr>
         </table>
       </fieldset>
@@ -504,7 +510,10 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->estimate;?></th>
-            <td><?php echo html::input('estimate', $task->estimate, "class='form-control' autocomplete='off'");?></td>
+            <td>
+              <?php $disabled = !empty($task->team) ? "disabled='disabled'" : '';?>
+              <?php echo html::input('estimate', $task->estimate, "class='form-control' autocomplete='off' {$disabled}");?>
+            </td>
           </tr>
           <tr>
             <th><?php echo $lang->task->consumed;?></th>
@@ -512,7 +521,10 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->left;?></th>
-            <td><?php echo html::input('left', $task->left, "class='form-control' autocomplete='off'");?></td>
+            <td>
+              <?php $disabled = !empty($task->team) ? "disabled='disabled'" : '';?>
+              <?php echo html::input('left', $task->left, "class='form-control' autocomplete='off' {$disabled}");?>
+            </td>
           </tr>
         </table>
       </fieldset>
@@ -525,7 +537,7 @@
           </tr>
           <tr>
             <th><?php echo $lang->task->finishedBy;?></th>
-            <td><?php echo html::select('finishedBy', $members, $task->finishedBy, "class='form-control chosen'");?></td>
+            <td><?php echo html::select('finishedBy', $users, $task->finishedBy, "class='form-control chosen'");?></td>
           </tr>
           <tr>
             <th><?php echo $lang->task->finishedDate;?></th>
@@ -568,7 +580,7 @@
         <table class='table table-form'>
           <?php foreach($task->team as $member):?>
             <tr>
-              <td class='w-80px'><?php echo html::select("team[]", $users, $member->account, "class='form-control chosen'")?></td>
+              <td class='w-80px'><?php echo html::select("team[]", $members, $member->account, "class='form-control chosen'")?></td>
               <td>
                 <div class='input-group'>
                   <span class='input-group-addon'><?php echo $lang->task->estimate?></span>
@@ -585,9 +597,9 @@
               </td>
             </tr>
           <?php endforeach;?>
-          <?php for($i = 0; $i < 3; $i++):?>
+          <?php for($i = 0; $i < 5; $i++):?>
             <tr>
-              <td class='w-150px'><?php echo html::select("team[]", $users, '', "class='form-control chosen'")?></td>
+              <td class='w-150px'><?php echo html::select("team[]", $members, '', "class='form-control chosen'")?></td>
               <td>
                 <div class='input-group'>
                   <span class='input-group-addon'><?php echo $lang->task->estimate?></span>

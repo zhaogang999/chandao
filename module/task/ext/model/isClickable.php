@@ -16,6 +16,9 @@ public static function isClickable($task, $action)
     if($action == 'finish'         and !empty($task->children)) return false;
     if($action == 'cancel'         and !empty($task->children)) return false;
     if($action == 'pause'          and !empty($task->children)) return false;
+    if($action == 'activate'       and !empty($task->children)) return false;
+    if($action == 'assignto'       and !empty($task->children)) return false;
+    if($action == 'close'          and !empty($task->children)) return false;
     if($action == 'batchcreate'    and !empty($task->team))     return false;
     if($action == 'batchcreate'    and $task->parent)           return false;
 

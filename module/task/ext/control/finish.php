@@ -13,11 +13,6 @@ class myTask extends task
     {
         $this->commonAction($taskID);
 
-        if ($this->view->task->status == 'wait' || $this->view->task->status == 'pause')
-        {
-           die($this->lang->task->error->undoingError);
-        }
-
         if(!empty($_POST))
         {
             $this->loadModel('action');
@@ -31,7 +26,6 @@ class myTask extends task
                 $fileAction = !empty($files) ? $this->lang->addFiles . join(',', $files) . "\n" : '';
                 $actionID = $this->action->create('task', $taskID, 'Finished', $fileAction . $this->post->comment);
                 $this->action->logHistory($actionID, $changes);
-                $this->task->sendmail($taskID, $actionID);
             }
 
             if($this->task->needUpdateBugStatus($task))
@@ -51,14 +45,27 @@ class myTask extends task
             die(js::locate($this->createLink('task', 'view', "taskID=$taskID"), 'parent'));
         }
 
-        $task    = $this->view->task;
-        $members = $this->loadModel('user')->getPairs('noletter');
+        $task         = $this->view->task;
+        $members      = $this->loadModel('project')->getTeamMemberPairs($task->project, 'nodeleted');
+        $task->nextBy = $task->openedBy;
 
+        $this->view->users = $members;
         if(!empty($task->team))
         {
-            $task->openedBy   = $this->task->getNextUser(array_keys($task->team), $task->assignedTo);
-            $members          = $this->task->getMemberPairs($task);
-            $task->myConsumed = $this->dao->select('consumed')->from(TABLE_TEAM)->where('task')->eq($taskID)->andWhere('account')->eq($task->assignedTo)->fetch('consumed');
+            $teams = array_keys($task->team);
+
+            $task->nextBy     = $this->task->getNextUser($teams, $task->assignedTo);
+            $task->myConsumed = $task->team[$this->app->user->account]->consumed;
+
+            $lastAccount = end($teams);
+            if($lastAccount != $task->assignedTo)
+            {
+                $members = $this->task->getMemberPairs($task);
+            }
+            else
+            {
+                $task->nextBy = $task->openedBy;
+            }
         }
 
         $this->view->title      = $this->view->project->name . $this->lang->colon .$this->lang->task->finish;
@@ -97,7 +104,7 @@ class myTask extends task
                 ->where('task')->eq($taskID)
                 ->fetch();
         }
-        
+
         $this->display();
     }
 }

@@ -199,7 +199,7 @@ class storyreviewModel extends model
             ->autoCheck()
             //->batchCheck($this->config->storyReview->editBatchBuild->requiredFields, 'notempty')
             ->where('id')->eq((int)$storyReviewID)
-            ->check('title', 'unique', "id != $storyReviewID AND deleted = '0'")
+            ->check("id != $storyReviewID AND deleted = '0'")
             ->exec();
 
         if(!dao::isError())

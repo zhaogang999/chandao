@@ -1,16 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: 月下亭中人
- * Date: 2017/11/2
- * Time: 10:02
- */
-/**
  * Activate a task.
  *
- * @param  int      $taskID
+ * @param int $taskID
+ *
  * @access public
- * @return void
+ * @return array
  */
 public function activate($taskID)
 {
@@ -28,8 +23,20 @@ public function activate($taskID)
         ->setDefault('finishedDate, canceledDate, closedDate', '0000-00-00')
         ->setDefault('lastEditedBy',   $this->app->user->account)
         ->setDefault('lastEditedDate', helper::now())
+        ->setDefault('assignedDate', helper::now())
         ->remove('comment')
         ->get();
+
+    if(!empty($oldTask->team))
+    {
+        $this->dao->update(TABLE_TEAM)->set('left')->eq($this->post->left)
+            ->where('root')->eq($taskID)
+            ->andWhere('type')->eq('task')
+            ->andWhere('account')->eq($this->post->assignedTo)
+            ->exec();
+
+        $task = $this->computeHours4Multiple($oldTask, $task);
+    }
 
     $this->dao->update(TABLE_TASK)->data($task)
         ->autoCheck()
@@ -43,11 +50,7 @@ public function activate($taskID)
         $this->dao->update(TABLE_SCRIPT)->set('deleted')->eq(0)->where('id')->eq($script->id)->exec();
     }
 
-    $this->computeWorkingHours($oldTask->parent);
-
-    $this->dao->update(TABLE_TASK)->set('status')->eq('doing')->where('parent')->eq($taskID)->exec();
-    if($oldTask->parent) $this->dao->update(TABLE_TASK)->set('status')->eq('doing')->where('id')->eq((int)$oldTask->parent)->exec();
-
-    if($oldTask->story) $this->loadModel('story')->setStage($oldTask->story);
+    if($oldTask->parent) $this->updateParentStatus($taskID);
+    if($oldTask->story)  $this->loadModel('story')->setStage($oldTask->story);
     if(!dao::isError()) return common::createChanges($oldTask, $task);
 }

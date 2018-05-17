@@ -125,7 +125,7 @@
   </tr>
   <?php endforeach;?>
   </tbody>
-  <tfoot><tr><td colspan='14'><?php $pager->show();?></td></tr></tfoot>
+  <tfoot><tr><td colspan='15'><?php $pager->show();?></td></tr></tfoot>
 </table>
 <script language="JavaScript">
   $(function()

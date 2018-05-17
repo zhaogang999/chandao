@@ -52,7 +52,7 @@ tfoot tr td .table-actions .btn{display:none;}
   <div class='col-main'>
     <div class='main'>
       <div class='tabs'>
-        <?php $countStories = count($build->linkStories); $countBugs = count($build->linkBugs);?>
+        <?php $countStories = !empty($build->linkStories) ? count($build->linkStories) : 0; $countBugs = empty($build->linkBugs) ? 0 : count($build->linkBugs);?>
         <ul class='nav nav-tabs'>
           <li <?php if($type == 'story')  echo "class='active'"?>><a href='#stories' data-toggle='tab'><?php echo html::icon($lang->icons['story'], 'green') . ' ' . $lang->patchBuild->stories;?></a></li>
           <li <?php if($type == 'bug')    echo "class='active'"?>><a href='#bugs' data-toggle='tab'><?php echo html::icon($lang->icons['bug'], 'green') . ' ' . $lang->patchBuild->bugs;?></a></li>
@@ -112,7 +112,7 @@ tfoot tr td .table-actions .btn{display:none;}
                 <tr>
                   <td colspan='9'>
                     <div class='table-actions clearfix'>
-                      <?php if($countStories and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->patchbuild->batchUnlink);?>
+                      <?php if($countStories and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->patchbuild->batchUnlinkStory);?>
                       <div class='text'><?php echo sprintf($lang->patchbuild->finishStories, $countStories);?></div>
                     </div>
                   </td>
@@ -170,7 +170,7 @@ tfoot tr td .table-actions .btn{display:none;}
                 <tr>
                   <td colspan='8'>
                     <div class='table-actions clearfix'>
-                      <?php if($countBugs and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->patchbuild->batchUnlink);?>
+                      <?php if($countBugs and $canBatchUnlink) echo html::selectButton() . html::submitButton($lang->patchbuild->batchUnlinkStory);?>
                       <div class='text'><?php echo sprintf($lang->patchbuild->resolvedBugs, $countBugs);?></div>
                     </div>
                   </td>
@@ -279,6 +279,10 @@ tfoot tr td .table-actions .btn{display:none;}
           <tr>
             <th><?php echo $lang->patchbuild->patchProgram;?></th>
             <td style='word-break:break-all;'><?php echo $build->patchProgram;?></td>
+          </tr>
+          <tr>
+            <th><?php echo $lang->patchbuild->versionDeploy;?></th>
+            <td><?php echo !empty($build->versionDeploy) ? $lang->patchbuild->versionDeployList[$build->versionDeploy] : '';?></td>
           </tr>
         </table>
       </fieldset>

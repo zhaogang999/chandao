@@ -33,7 +33,6 @@ class myTask extends task
                 $fileAction = !empty($files) ? $this->lang->addFiles . join(',', $files) . "\n" : '';
                 $actionID = $this->action->create('task', $taskID, $action, $fileAction . $this->post->comment);
                 if(!empty($changes)) $this->action->logHistory($actionID, $changes);
-                $this->task->sendmail($taskID, $actionID);
             }
 
             foreach($changes as $change)

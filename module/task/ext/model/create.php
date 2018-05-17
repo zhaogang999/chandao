@@ -40,38 +40,6 @@ public function create($projectID)
         $task->assignedTo = $assignedTo;
         if($assignedTo) $task->assignedDate = helper::now();
 
-        $teams = array();
-        if($this->post->multiple)
-        {
-            $estimate = 0;
-            $left     = 0;
-            foreach($this->post->team as $row => $account)
-            {
-                if(empty($account) or isset($team[$account])) continue;
-                $member = new stdClass();
-                $member->project  = 0;
-                $member->account  = $account;
-                $member->role     = $assignedTo;
-                $member->join     = helper::today();
-                $member->estimate = $this->post->teamEstimate[$row] ? (float)$this->post->teamEstimate[$row] : 0;
-                $member->left     = $member->estimate;
-                $member->order    = $row;
-                $teams[$account]  = $member;
-
-                $estimate += (float)$member->estimate;
-                $left     += (float)$member->left;
-            }
-
-            if(!empty($teams))
-            {
-                $firstMember        = reset($teams);
-                $task->assignedTo   = $firstMember->account;
-                $task->assignedDate = helper::now();
-                $task->estimate     = $estimate;
-                $task->left         = $left;
-            }
-        }
-
         /* Check duplicate task. */
         if($task->type != 'affair')
         {
@@ -140,13 +108,35 @@ public function create($projectID)
                 foreach($taskFiles as $fileID => $taskFile) unset($taskFiles[$fileID]->id);
             }
 
+            $teams = array();
+            if($this->post->multiple)
+            {
+                foreach($this->post->team as $row => $account)
+                {
+                    if(empty($account) or isset($team[$account])) continue;
+                    $member = new stdClass();
+                    $member->root     = 0;
+                    $member->account  = $account;
+                    $member->role     = $assignedTo;
+                    $member->join     = helper::today();
+                    $member->estimate = $this->post->teamEstimate[$row] ? (float)$this->post->teamEstimate[$row] : 0;
+                    $member->left     = $member->estimate;
+                    $member->order    = $row;
+                    $teams[$account]  = $member;
+                }
+            }
+
             if(!empty($teams))
             {
                 foreach($teams as $team)
                 {
-                    $team->task = $taskID;
+                    $team->root = $taskID;
+                    $team->type = 'task';
                     $this->dao->insert(TABLE_TEAM)->data($team)->autoCheck()->exec();
                 }
+
+                $task->id = $taskID;
+                $this->computeHours4Multiple($task);
             }
 
             if(!dao::isError()) $this->loadModel('score')->create('task', 'create', $taskID);

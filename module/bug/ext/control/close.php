@@ -14,8 +14,7 @@ class myBug extends bug
         if (!empty($_POST)) {
             $this->bug->close($bugID);
             if (dao::isError()) die(js::error(dao::getError()));
-            $actionID = $this->action->create('bug', $bugID, 'Closed', $this->post->comment);
-            $this->bug->sendmail($bugID, $actionID);
+            $this->action->create('bug', $bugID, 'Closed', $this->post->comment);
             if (isonlybody()) die(js::closeModal('parent.parent'));
             die(js::locate($this->createLink('bug', 'view', "bugID=$bugID"), 'parent'));
         }

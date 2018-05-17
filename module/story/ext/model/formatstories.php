@@ -24,11 +24,11 @@ public function formatStories($stories, $type = 'full', $limit = 0)
     {
         if($type == 'short')
         {
-            $property = '[p' . $story->pri . ', ' . $story->estimate . 'h]';
+            $property = '[p' . (!empty($this->lang->story->priList[$story->pri]) ? $this->lang->story->priList[$story->pri] : 0) . ', ' . $story->estimate . 'h]';
         }
         else
         {
-            $property = '(' . $this->lang->story->pri . ':' . $story->pri . ',' . $this->lang->story->estimate . ':' . $story->estimate . ')' . $users[$story->openedBy];
+            $property = '(' . $this->lang->story->pri . ':' . (!empty($this->lang->story->priList[$story->pri]) ? $this->lang->story->priList[$story->pri] : 0) . ',' . $this->lang->story->estimate . ':' . $story->estimate . ')';
         }
         $storyPairs[$story->id] = $story->id . ':' . $story->title . $property;
 

@@ -42,7 +42,7 @@
         <?php if($branchProduct):?>
           <th class='w-150px<?php echo zget($visibleFields, 'branch', ' hidden')?>'><?php echo $lang->story->branch;?></th>
         <?php endif;?>
-        <th class='w-150px<?php echo zget($visibleFields, 'module', ' hidden')?>'><?php echo $lang->story->module;?></th>
+        <th class='w-150px'><?php echo $lang->story->module;?></th>
         <th class='w-150px<?php echo zget($visibleFields, 'plan', ' hidden')?>'><?php echo $lang->story->planAB;?></th>
         <th class='w-150px'> <?php echo $lang->story->title;?> <span class='required'></span></th>
         <th class='w-50px<?php echo zget($visibleFields, 'estimate', ' hidden')?>'> <?php echo $lang->story->estimateAB;?></th>
@@ -87,8 +87,12 @@
               <?php echo html::select("branches[$storyID]", $branches, $story->branch, "class='form-control chosen' onchange='loadBranches($branchProductID, this.value, $storyID);' $disabled");?>
             </td>
           <?php endif;?>
-          <td class='text-left<?php echo zget($visibleFields, 'module', ' hidden')?>' style='overflow:visible'>    <?php echo html::select("modules[$storyID]", $modules, $story->module, "class='form-control chosen'");?></td>
-          <td class='text-left<?php echo zget($visibleFields, 'plan', ' hidden')?>' style='overflow:visible'>    <?php echo html::select("plans[$storyID]",   $productPlans, $story->plan, "class='form-control chosen'");?></td>
+          <td class='text-left<?php echo zget($visibleFields, 'module')?>' style='overflow:visible'>
+            <?php echo html::select("modules[$storyID]", $modules, $story->module, "class='form-control chosen'");?>
+          </td>
+          <td class='text-left<?php echo zget($visibleFields, 'plan', ' hidden')?>' style='overflow:visible'>
+            <?php echo html::select("plans[$storyID]", $productPlans, $story->plan, "class='form-control chosen'");?>
+          </td>
           <td style='overflow:visible' title='<?php echo $story->title?>'>
             <div class='input-group'>
               <?php echo html::hidden("colors[$storyID]", $story->color, "data-provide='colorpicker' data-wrapper='input-group-btn fix-border-right' data-pull-menu-right='false' data-btn-tip='{$lang->story->colorTag}' data-update-text='#titles\\[{$storyID}\\]'");?>
@@ -99,7 +103,7 @@
           <td <?php echo zget($visibleFields, 'pri', "class='hidden'")?>><?php echo html::select("pris[$storyID]",     $priList, $story->pri, 'class=form-control');?></td>
           <!--需求指派多人-->
           <td class='text-left<?php echo zget($visibleFields, 'assignedTo', ' hidden')?>' style='overflow:visible'><?php echo html::select("assignedTo[$storyID][]",     $users, $story->assignedTo, "class='form-control chosen' multiple");?></td>
-          
+
           <td <?php echo zget($visibleFields, 'source', "class='hidden'")?>><?php echo html::select("sources[$storyID]",  $sourceList, $story->source, 'class=form-control');?></td>
           <td class='story-<?php echo $story->status;?>'><?php echo $lang->story->statusList[$story->status];?></td>
           <td <?php echo zget($visibleFields, 'stage', "class='hidden'")?>><?php echo html::select("stages[$storyID]", $stageList, $story->stage, 'class="form-control"' . ($story->status == 'draft' ? ' disabled="disabled"' : ''));?></td>
@@ -129,7 +133,7 @@
       <?php endforeach;?>
       </tbody>
       <tfoot>
-      <tr><td colspan='<?php echo count($visibleFields) + 3;?>' class='text-center'><?php echo html::submitButton();?></td></tr>
+      <tr><td colspan='<?php echo count($visibleFields) + ($branchProduct ? 3 : 2);?>' class='text-center'><?php echo html::submitButton();?></td></tr>
       </tfoot>
     </table>
   </form>

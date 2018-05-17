@@ -29,7 +29,6 @@ class myTask extends task
 
                     $actionID = $this->loadModel('action')->create('task', $taskID, 'Edited');
                     $this->action->logHistory($actionID, $changes);
-                    $this->task->sendmail($taskID, $actionID);
 
                     $task = $this->task->getById($taskID);
 
@@ -105,6 +104,7 @@ class myTask extends task
 
         /* Get edited tasks. */
         $tasks = $this->dao->select('*')->from(TABLE_TASK)->where('id')->in($taskIDList)->fetchAll('id');
+        $teams = $this->dao->select('*')->from(TABLE_TEAM)->where('root')->in($taskIDList)->andWhere('type')->eq('task')->fetchAll('root');
 
         /* Judge whether the editedTasks is too large and set session. */
         $countInputVars  = count($tasks) * (count(explode(',', $this->config->task->custom->batchEditFields)) + 3);
@@ -125,6 +125,7 @@ class myTask extends task
         $this->view->typeList    = array('' => '',  'ditto' => $this->lang->task->ditto) + $this->lang->task->typeList;
         $this->view->taskIDList  = $taskIDList;
         $this->view->tasks       = $tasks;
+        $this->view->teams       = $teams;
         $this->view->projectName = isset($project) ? $project->name : '';
 
         $this->display();

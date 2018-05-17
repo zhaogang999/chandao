@@ -55,6 +55,7 @@
       echo '</div>';
 
       echo "<div class='btn-group'>";
+      if(!empty($task->parent)) echo html::a(helper::createLink('task', 'view', "taskID=$task->parent"), "<i class='icon-pre icon-double-angle-left'></i>", '', "class='btn' title='{$lang->task->parent}'");
       //common::printRPN($browseLink, $preAndNext);
       echo '</div>';
 
@@ -88,6 +89,7 @@
         echo "</div>";
         ?>
       </fieldset>
+      <?php if($project->type != 'ops'):?>
       <?php if($task->fromBug != 0):?>
         <fieldset>
           <legend><?php echo $lang->bug->steps;?></legend>
@@ -114,20 +116,21 @@
           </div>
         </fieldset>
       <?php endif;?>
+      <?php endif;?>
       <?php if(!empty($task->children)):?>
         <fieldset>
           <legend><?php echo $this->lang->task->children;?></legend>
           <table class='table table-hover table-data table-fixed'>
             <tr class='text-center'>
-              <th class='w-60px'> <?php echo$lang->task->id;?></th>
-              <th class='w-40px'> <?php echo$lang->task->lblPri;?></th>
-              <th>                <?php echo$lang->task->name;?></th>
-              <th class='w-100px'><?php echo$lang->task->deadline;?></th>
-              <th class='w-80px'> <?php echo$lang->task->assignedTo;?></th>
-              <th class='w-90px'> <?php echo$lang->task->status;?></th>
-              <th class='w-50px visible-lg'> <?php echo $lang->task->consumedAB . $lang->task->lblHour;?></th>
+              <th class='w-60px'> <?php echo $lang->task->id;?></th>
+              <th class='w-40px'> <?php echo $lang->task->lblPri;?></th>
+              <th>                <?php echo $lang->task->name;?></th>
+              <th class='w-100px'><?php echo $lang->task->deadline;?></th>
+              <th class='w-80px'> <?php echo $lang->task->assignedTo;?></th>
+              <th class='w-90px'> <?php echo $lang->task->status;?></th>
+              <th class='w-50px visible-lg'><?php echo $lang->task->consumedAB . $lang->task->lblHour;?></th>
               <th class='w-50px visible-lg'><?php echo $lang->task->leftAB . $lang->task->lblHour;?></th>
-              <th class='w-150px'><?php echo $lang->actions;?></th>
+              <th class='w-160px'><?php echo $lang->actions;?></th>
             </tr>
             <?php foreach($task->children as $child):?>
               <tr class='text-center'>
@@ -149,6 +152,7 @@
                   <?php
                   common::printIcon('task', 'assignTo', "projectID=$child->project&taskID=$child->id", $child, 'list', '', '', 'iframe', true);
                   common::printIcon('task', 'start',    "taskID=$child->id", $child, 'list', '', '', 'iframe', true);
+                  common::printIcon('task', 'activate', "taskID=$child->id", $child, 'list', '', '', 'iframe', true);
                   common::printIcon('task', 'recordEstimate', "taskID=$child->id", $child, 'list', 'time', '', 'iframe', true);
                   common::printIcon('task', 'finish', "taskID=$child->id", $child, 'list', '', '', 'iframe', true);
                   common::printIcon('task', 'close',    "taskID=$child->id", $child, 'list', '', '', 'iframe', true);
@@ -441,7 +445,7 @@
       <div class='actions'> <?php if(!$task->deleted) echo $actionLinks;?></div>
       <fieldset id='commentBox' class='hide'>
         <legend><?php echo $lang->comment;?></legend>
-        <form method='post' action='<?php echo inlink('edit', "taskID=$task->id&comment=true")?>'>
+        <form method='post' action='<?php echo $this->createLink('action', 'comment', "objectType=task&objectID=$task->id")?>' target='hiddenwin'>
           <div class="form-group"><?php echo html::textarea('comment', '',"rows='5' class='w-p100'");?></div>
           <?php echo html::submitButton() . html::backButton();?>
         </form>
