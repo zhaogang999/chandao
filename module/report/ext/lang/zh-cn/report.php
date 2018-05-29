@@ -1,5 +1,6 @@
 <?php
 $lang->reportList->project->lists[13] = $lang->projectCommon . '需求统计|report|storySummary';
+$lang->reportList->project->lists[14] = $lang->projectCommon . '需求进展|report|storyProgress';
 $lang->reportList->project->lists[15] = $lang->projectCommon . '需求评审状态|report|storyReviewSummary';
 $lang->reportList->project->lists[20] = '需求燃起图|report|burnUp';
 $lang->reportList->project->lists[25] = $lang->projectCommon . '需求周期统计|report|storyCycleSummary';
@@ -10,9 +11,12 @@ $lang->reportList->test->lists[14]    = 'Bug整体情况|report|bugSummary';
 $lang->reportList->test->lists[15]    = 'Bug分布情况|report|dailyBugStatistics';
 $lang->reportList->test->lists[16]    = 'Bug平台统计|report|bugBranchStatistics';
 $lang->reportList->test->lists[17]    = 'bug解决&响应时间|report|bugresponsetimestatistics';
+$lang->reportList->staff->lists[20]   = '员工任务统计|report|userTaskSummary';
+$lang->reportList->staff->lists[30]   = '员工Bug统计|report|userBugSummary';
 
 $lang->report->taskSummary      = $lang->projectCommon . '任务统计';
 $lang->report->storySummary     = $lang->projectCommon . '需求统计';
+$lang->report->storyProgress    = $lang->projectCommon . '需求进展';
 $lang->report->storyReviewSummary    = $lang->projectCommon . '需求评审状态';
 $lang->report->storyCycleSummary     = $lang->projectCommon . '需求周期统计';
 $lang->report->storyTaskSummary = '需求任务统计';
@@ -22,6 +26,8 @@ $lang->report->burnUp           = '需求燃起图';
 $lang->report->dailyBugStatistics = 'Bug分布情况';
 $lang->report->bugBranchStatistics = 'Bug平台统计';
 $lang->report->bugResponseTimeStatistics = 'bug解决&响应时间';
+$lang->report->userTaskSummary = '员工任务统计';
+$lang->report->userBugSummary  = '员工Bug统计';
 
 $lang->report->projectID        = '项目ID';
 $lang->report->productID        = '产品ID';
@@ -150,3 +156,16 @@ $lang->report->noTestDateStoryIDs = '无提测时间需求ID';
 $lang->report->hasSpecialPlanStoryCount = '有发版时间数';
 $lang->report->noSpecialPlanStoryCount = '无发版时间数';
 $lang->report->noSpecialPlanStoryIDs = '无发版时间需求ID';
+
+$lang->report->testDate = '提测时间';
+$lang->report->stage = '需求阶段';
+$lang->report->verifySummary = '验收情况';
+$lang->report->tested = '已提测';
+$lang->report->notTest = '未提测';
+$lang->report->freeTest = '免提测';
+$lang->report->pass = '已通过';
+$lang->report->failed = '未通过';
+$lang->report->freeVerified = '免验收';
+$lang->report->deadline = '截止时间';
+$lang->report->doing = '进行中';
+$lang->report->delay = '已延期';

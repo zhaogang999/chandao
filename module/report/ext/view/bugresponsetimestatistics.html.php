@@ -15,24 +15,24 @@
   </div>
 </div>
 <div class='main'>
-  <table class='table table-condensed table-hover table-striped table-bordered tablesorter active-disabled table-selectable' id="bugList">
+  <table class='table table-condensed table-hover table-striped table-bordered tablesorter active-disabled' id="bugList" style="word-break:break-all; word-wrap:break-all;">
     <thead>
-      <tr class='colhead'>
-        <th class="w-30px" rowspan="2"><?php echo $lang->report->productID;?></th>
-        <th class='w-80px' rowspan="2"><?php echo $lang->report->product;?></th>
+      <tr>
+        <th class="w-35px" rowspan="2"><?php echo $lang->report->productID;?></th>
+        <th rowspan="2"><?php echo $lang->report->product;?></th>
         <th colspan='3'><?php echo $lang->report->bugresolveperiod;?></th>
         <th colspan='6'><?php echo $lang->report->responsetime;?></th>
       </tr>
-      <tr class='colhead'>
-        <th class="w-30px"><?php echo $lang->report->resolving1week;?></th>
-        <th class="w-30px"><?php echo $lang->report->resolving2weeks;?></th>
-        <th class="w-35px"><?php echo $lang->report->resolvinglong;?></th>
-        <th class="w-30px"><?php echo $lang->report->responsed1week;?></th>
-        <th class="w-30px"><?php echo $lang->report->responsed2weeks;?></th>
+      <tr>
+        <th class="w-40px"><?php echo $lang->report->resolving1week;?></th>
+        <th class="w-40px"><?php echo $lang->report->resolving2weeks;?></th>
+        <th class="w-40px"><?php echo $lang->report->resolvinglong;?></th>
+        <th class="w-40px"><?php echo $lang->report->responsed1week;?></th>
+        <th class="w-40px"><?php echo $lang->report->responsed2weeks;?></th>
         <th class="w-35px"><?php echo $lang->report->responsedlong;?></th>
-        <th class="w-100px"><?php echo $lang->report->responsed1weekbugs;?></th>
-        <th class="w-100px"><?php echo $lang->report->responsed2weeksbugs;?></th>
-        <th class="w-200px"><?php echo $lang->report->responsedlongbugs;?></th>
+        <th class="w-150px"><?php echo $lang->report->responsed1weekbugs;?></th>
+        <th class="w-150px"><?php echo $lang->report->responsed2weeksbugs;?></th>
+        <th class="w-400px"><?php echo $lang->report->responsedlongbugs;?></th>
       </tr>
     </thead>
     <tbody>

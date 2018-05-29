@@ -40,10 +40,12 @@ var browseType = '<?php echo $browseType;?>';
       <?php $vars = "browseType=$browseType&param=$param&orderBy=%s&recTotal={$pager->recTotal}&recPerPage={$pager->recPerPage}";?>
       <th class='w-150px'><?php common::printOrderLink('date',       $orderBy, $vars, $lang->action->date);?></th>
       <th class='w-user'> <?php common::printOrderLink('actor',      $orderBy, $vars, $lang->action->actor);?></th>
+      <th class='w-100px'><?php echo $lang->action->dept;?></th>
       <th class='w-100px'><?php common::printOrderLink('action',     $orderBy, $vars, $lang->action->action);?></th>
       <th class='w-80px'> <?php common::printOrderLink('objectType', $orderBy, $vars, $lang->action->objectType);?></th>
       <th class='w-id'>   <?php common::printOrderLink('objectID',   $orderBy, $vars, $lang->idAB);?></th>
       <th><?php echo $lang->action->objectName;?></th>
+      <th class='w-150px'><?php common::printOrderLink('project',   $orderBy, $vars, $lang->project);?></th>
     </tr>
   </thead>
   <tbody>
@@ -57,14 +59,16 @@ var browseType = '<?php echo $browseType;?>';
       echo strpos($actor, ':') === false ? $actor : substr($actor, strpos($actor, ':') + 1);
       ?>
     </td>
+    <td><?php echo $action->deptPath;?></td>
     <td><?php echo $action->actionLabel;?></td>
     <td><?php echo $lang->action->objectTypes[$action->objectType];?></td>
     <td><?php echo $action->objectID;?></td>
     <td class='text-left'><?php echo html::a($action->objectLink, $action->objectName);?></td>
+    <td><?php echo isset($action->projectName) ? $action->projectName : '';?></td>
   </tr>
   <?php endforeach;?>
   </tbody>
-  <tfoot><tr><td colspan='6'><?php $pager->show();?></td></tr></tfoot>
+  <tfoot><tr><td colspan='8'><?php $pager->show();?></td></tr></tfoot>
 </table>
 <script>$('#<?php echo $browseType;?>').addClass('active')</script>
 <?php include '../../common/view/footer.html.php';?>

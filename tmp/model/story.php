@@ -1333,8 +1333,8 @@ public function getBySQL($productID, $sql, $orderBy, $pager = null)
         ->leftJoin(TABLE_PROJECTSTORY)->alias('t2')->on('t1.id=t2.story')
         ->where($sql)
         //跨产品需求搜索无法搜到结果；
-        ->beginIF($productID != 'all' and strpos($sql, "`product` =") === false)->andWhere('product')->eq((int)$productID)->fi()
-        // ->beginIF($productID != 'all' and $productID != '')->andWhere('product')->eq((int)$productID)->fi()
+        ->beginIF($productID != 'all' and strpos($sql, "`product` =") === false)->andWhere('t1.`product`')->eq((int)$productID)->fi()
+        //->beginIF($productID != 'all' and $productID != '')->andWhere('t1.`product`')->eq((int)$productID)->fi()
 
         ->andWhere('deleted')->eq(0)
         ->orderBy($orderBy)

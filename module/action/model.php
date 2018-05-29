@@ -771,7 +771,28 @@ class actionModel extends model
             {
                 $action->objectLink = '';
             }
+
+            if($action->project != '0' and $action->objectType === 'story' or  $action->objectType === 'task' or $action->objectType === 'bug' or $action->objectType === 'build' or $action->objectType === 'patchbuild') $action->projectName = $this->dao->findById($action->project)->from(TABLE_PROJECT)->fetch('code');
+            if($action->objectType === 'task' and $action->project != '0') $action->projectName = $this->dao->findById($action->project)->from(TABLE_PROJECT)->fetch('code');
+
+            $action->deptPath = '';
+            $user = $this->loadModel('user')->getById($action->actor);
+            $deptPath = $this->loadModel('dept')->getParents($user->dept);
+            if(empty($deptPath))
+            {
+                $action->deptPath = "/";
+            }
+            else
+            {
+                foreach($deptPath as $key => $dept)
+                {
+                    if($dept->name) $action->deptPath .= $dept->name;
+                    if(isset($deptPath[$key + 1])) $action->deptPath .= $this->lang->fold;
+                }
+            }
+
         }
+
         return $actions;
     }
 

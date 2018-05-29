@@ -1,5 +1,6 @@
 ALTER TABLE `zt_task` ADD `source` varchar(10) NOT NULL AFTER `fromBug`;
-ALTER TABLE `zt_bug` ADD `discoverPhase` varchar(30) NOT NULL AFTER `keywords`;
+ALTER TABLE `zt_bug` ADD `discoveryPhase` varchar(30) NOT NULL AFTER `keywords`;
+ALTER TABLE `zt_task` ADD `keywords` varchar(255) NOT NULL AFTER `name`;
 ALTER TABLE `zt_bug` ADD `toIssue` mediumint(8) NOT NULL AFTER `toStory`;
 ALTER TABLE `zt_story` ADD `customPlan` text NOT NULL AFTER `plan`;
 ALTER TABLE `zt_story` ADD `testDate` date NOT NULL AFTER `customPlan`;

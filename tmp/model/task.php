@@ -1139,7 +1139,7 @@ public function finish($taskID)
         ->setDefault('task', $taskID)
         ->setDefault('date', date(DT_DATE1))
         ->setDefault('left', 0)
-        ->remove('finishedDate,comment,assignedTo,files,labels,consumed,realStarted,fileNO,recorder,reviewName,reviewDate,doc,reviewScope,referenceDoc,reviewPlace,reference,effort,pages,conclusion,reviewers,number,reviewer,item,line,severity,description,proposal,changed,action,chkd')
+        ->remove('finishedDate,comment,assignedTo,files,labels,consumed,realStarted,fileNO,recorder,reviewName,reviewDate,doc,reviewScope,referenceDoc,reviewPlace,reference,effort,pages,conclusion,reviewers,number,reviewer,item,line,severity,description,proposal,changed,action,chkd,tid,tester,AT')
         ->get();
     $estimate->consumed = $consumed;
     if($estimate->consumed) $this->addTaskEstimate($estimate);

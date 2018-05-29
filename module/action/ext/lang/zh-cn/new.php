@@ -23,3 +23,5 @@ $lang->action->search->objectTypeList['riskmanage'] = '风险管理表';
 
 $lang->action->label->linked2patchbuild        = "关联补丁版本";
 $lang->action->label->unlinkedfrompatchbuild   = "移除补丁版本";
+
+$lang->action->dept = '所属部门';

@@ -24,8 +24,8 @@ $lang->testcase->menu->patchbuild = array('link' => '补丁版本|patchbuild|pat
 $lang->caselib->menu->patchbuild  = array('link' => '补丁版本|patchbuild|patchbuild|objectID=0&from=qa', 'subModule' => 'patchbuild');
 //菜单配置
 $lang->report->menu->test    = array('link' => '测试|report|bugcreate', 'alias' => 'bugassign,bugsummary,dailybugstatistics,bugbranchstatistics,bugresponsetimestatistics');
-
-$lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|projectdeviation', 'alias' => 'storysummary,storyreviewsummary,burnup,storycyclesummary,storytasksummary,tasksummary,taskplansummary');
+$lang->report->menu->prj     = array('link' => $lang->projectCommon . '|report|projectdeviation', 'alias' => 'storysummary,storyreviewsummary,burnup,storycyclesummary,storytasksummary,tasksummary,taskplansummary,storyProgress');
+$lang->report->menu->staff   = array('link' => '组织|report|workload', 'alias' => 'usertasksummary,userbugsummary');
 
 $lang->report->menu->scripttask   = array('link' => '脚本任务|report|scripttask', 'alias' => 'viewscript,editscript');
 

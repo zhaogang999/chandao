@@ -44,8 +44,8 @@ public function buildStorySearchForm($products, $branchGroups, $modules, $queryI
     if($type == 'projectStory')
     {
         $this->config->product->search['module'] = 'projectStory';
-        unset($this->config->product->search['fields']['stage']);
-        unset($this->config->product->search['params']['stage']);
+        //unset($this->config->product->search['fields']['stage']);
+        //unset($this->config->product->search['params']['stage']);
     }
     $this->config->product->search['actionURL'] = $actionURL;
     $this->config->product->search['queryID']   = $queryID;

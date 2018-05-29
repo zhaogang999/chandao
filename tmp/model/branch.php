@@ -21,8 +21,9 @@ public function getPairs($productID, $params = '')
         $product = $this->loadModel('product')->getById($productID);
         if(!$product or $product->type == 'normal') return array();
         //交换位置
-        $branches = $branches + array('0' => $this->lang->branch->all . $this->lang->product->branchName[$product->type]);
+        $branches = array('' => '') + $branches + array('0' => $this->lang->branch->all . $this->lang->product->branchName[$product->type]);
     }
     return $branches;
 }
+//**//
 }
