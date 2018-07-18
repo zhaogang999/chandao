@@ -1170,6 +1170,7 @@ class task extends control
                 $chartFunc   = 'getDataOf' . $chart;
                 $chartData   = $this->task->$chartFunc();
                 $chartOption = $this->lang->task->report->$chart;
+                var_dump($chartData);die;
                 if(!empty($chartType)) $chartOption->type = $chartType;
                 $this->task->mergeChartOption($chart);
 
